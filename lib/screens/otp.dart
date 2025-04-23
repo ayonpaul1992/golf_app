@@ -188,7 +188,7 @@ class _OtpPageState extends State<OtpPage>{
                   ),
                   SizedBox(height: 20,),
                   Padding(
-                    padding: EdgeInsets.only(left: 20, right: 20, bottom: 20),
+                    padding: EdgeInsets.only(left: 38, right: 38, bottom: 20),
                     child: Stack(
                       children: [
                         Container(

@@ -57,13 +57,13 @@ class selcetBookingClassState extends State<selcetBookingClass> {
         child: Stack(
           children: [
             Positioned(
-              width: MediaQuery.of(context).size.width - 40,
+              width: MediaQuery.of(context).size.width - 70,
               left: 20,
               top: getDropdownTopOffset(),
               child: CompositedTransformFollower(
                 link: _layerLink,
                 showWhenUnlinked: false,
-                offset: const Offset(21.5, 50),
+                offset: const Offset(36.5, 50),
                 child: Material(
                   elevation: 6,
                   borderRadius: BorderRadius.circular(12),
@@ -91,10 +91,10 @@ class selcetBookingClassState extends State<selcetBookingClass> {
                                 horizontal: 16, vertical: 12),
                             child: Text(
                               item,
-                              style: const TextStyle(
+                              style:  GoogleFonts.poppins(
                                 fontSize: 14,
-                                color: Color(0xFF6E7373),
-                                fontWeight: FontWeight.w500,
+                                color: Color(0xFF244065),
+                                fontWeight: FontWeight.w600,
                               ),
                             ),
                           ),
@@ -133,7 +133,7 @@ class selcetBookingClassState extends State<selcetBookingClass> {
     Widget? targetPage;
     switch (item) {
       case "Garden Side Teesheet":
-        targetPage = const GardenSideTeesheetPage(gsTeeSheetuserId: '',);
+        targetPage = const GardenSideTeesheetPage(gsTeeSheetuserId: '', userId: '',);
         break;
       case "Lake Side Teesheet":
         targetPage = const LakeSideTeesheetPage(lsSheetuserId: '',);
@@ -260,7 +260,7 @@ class selcetBookingClassState extends State<selcetBookingClass> {
                         CompositedTransformTarget(
                           link: _layerLink,
                           child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            padding: const EdgeInsets.symmetric(horizontal: 38),
                             child: Container(
                               width: double.infinity,
                               decoration: BoxDecoration(
@@ -284,9 +284,9 @@ class selcetBookingClassState extends State<selcetBookingClass> {
                                   decoration: InputDecoration(
                                     hintText: 'Select',
                                     hintStyle: GoogleFonts.poppins(
-                                      color: Color(0xFF6E7373),
+                                      color: Color(0xFF244065),
                                       fontSize: 14,
-                                      fontWeight: FontWeight.w500
+                                      fontWeight: FontWeight.w600
                                     ),
                                     contentPadding:
                                     const EdgeInsets.symmetric(vertical: 8, horizontal: 15),
@@ -294,7 +294,7 @@ class selcetBookingClassState extends State<selcetBookingClass> {
                                       isDropdownOpen
                                           ? Icons.keyboard_arrow_up
                                           : Icons.keyboard_arrow_down,
-                                      color: Color(0xFF648683),
+                                      color: Color(0xFF244065),
                                     ),
                                     enabledBorder: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(50),
@@ -306,9 +306,9 @@ class selcetBookingClassState extends State<selcetBookingClass> {
                                     ),
                                   ),
                                   style: GoogleFonts.poppins(
-                                    color: Color(0xFF6E7373),
+                                    color: Color(0xFF244065),
                                     fontSize: 14,
-                                    fontWeight: FontWeight.w500,
+                                    fontWeight: FontWeight.w600,
                                   ),
                                 ),
                               ),
@@ -334,7 +334,7 @@ class selcetBookingClassState extends State<selcetBookingClass> {
                       height: 25,
                     ),
                     Padding(
-                      padding: EdgeInsets.only(left: 20, right: 20, bottom: 20),
+                      padding: EdgeInsets.only(left: 38, right: 38, bottom: 20),
                       child: Stack(
                         children: [
                           Container(
@@ -378,7 +378,7 @@ class selcetBookingClassState extends State<selcetBookingClass> {
                       ),
                     ),
                     Padding(
-                      padding: EdgeInsets.only(left: 20, right: 20, bottom: 20),
+                      padding: EdgeInsets.only(left: 38, right: 38, bottom: 20),
                       child: Stack(
                         children: [
                           Container(

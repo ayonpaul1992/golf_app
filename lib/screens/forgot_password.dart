@@ -133,7 +133,7 @@ return Scaffold(
                         },
                         child: Padding(
                           padding:
-                          const EdgeInsets.symmetric(horizontal: 15.0),
+                          const EdgeInsets.symmetric(horizontal: 38.0),
                           child: Container(
                             decoration: BoxDecoration(
                               color: Colors.white,
@@ -141,7 +141,7 @@ return Scaffold(
                               border: Border.all(
                                 color: isPhoneFocused
                                     ? const Color(0xFF9ECF9A)
-                                    : Colors.white,
+                                    : Color(0xFFB2C1C0),
                                 width: 1,
                               ),
                               boxShadow: [
@@ -161,9 +161,10 @@ return Scaffold(
                                   child: DropdownButton<String>(
                                     value: selectedCountryCode,
                                     icon: const Icon(Icons.arrow_drop_down,
-                                        color: Color(0xFF6E7373)),
+                                        color: Color(0xFF244065)),
                                     style: GoogleFonts.poppins(
-                                      color: const Color(0xFF6E7373),
+                                      color: const Color(0xFF244065),
+                                      fontWeight: FontWeight.w600,
                                       fontSize: 14,
                                     ),
                                     items:
@@ -191,13 +192,15 @@ return Scaffold(
                                       border: InputBorder.none,
                                       hintText: '8777784755',
                                       hintStyle: TextStyle(
-                                        color: Color(0xFF6E7373),
+                                        color: Color(0xFF244065),
+                                        fontWeight: FontWeight.w600,
                                         fontSize: 14,
                                       ),
                                     ),
                                     keyboardType: TextInputType.phone,
                                     style: const TextStyle(
-                                      color: Color(0xFF648683),
+                                      color: Color(0xFF244065),
+                                      fontWeight: FontWeight.w600,
                                       fontSize: 14,
                                     ),
                                   ),
@@ -214,7 +217,7 @@ return Scaffold(
                   height: 25,
                 ),
                 Padding(
-                  padding: EdgeInsets.only(left: 20, right: 20, bottom: 20),
+                  padding: EdgeInsets.only(left: 38, right: 38, bottom: 20),
                   child: Stack(
                     children: [
                       Container(

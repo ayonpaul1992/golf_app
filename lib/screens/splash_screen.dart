@@ -74,7 +74,7 @@ class splashScreenState extends State<splashScreen> {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.only(left: 20,right: 20,bottom: 40),
+                padding: EdgeInsets.only(left: 38,right: 38,bottom: 40),
                 child: Stack(
                   children: [
                     Container(

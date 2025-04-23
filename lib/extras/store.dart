@@ -1,0 +1,45 @@
+import 'dart:convert';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:http/http.dart' as http;
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:gulf_app/components/custom_app_bar.dart';
+import 'package:gulf_app/components/custom_drawer.dart';
+import 'package:gulf_app/components/custom_bottom_nav_bar.dart';
+import 'package:syncfusion_flutter_datepicker/datepicker.dart';
+import 'package:intl/intl.dart';
+
+class storePage extends StatefulWidget {
+  final String storeId; // ✅ Add this
+  const storePage(
+      {super.key,required this.storeId, required String storeName}); // ✅ Fix constructor
+
+  @override
+  State<storePage> createState() => _storePageState();
+}
+class _storePageState extends State<storePage>{
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  final FlutterSecureStorage secureStorage = FlutterSecureStorage();
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      key: _scaffoldKey,
+      appBar: CustomAppBar(
+        scaffoldKey: _scaffoldKey,
+        userId: widget.storeId, // ✅ Pass the correct userId
+        showLeading: false, // ✅ This should prevent the back button
+      ),
+      drawer: CustomDrawer(
+        activeTile: 'Home',
+        onTileTap: (selectedTile) {
+          //print("Navigating to $selectedTile");
+          // Handle navigation logic
+        },
+      ),
+      body: Container(),
+      bottomNavigationBar: CustomBottomNavBar(selectedIndex: 0),
+    );
+  }
+
+}

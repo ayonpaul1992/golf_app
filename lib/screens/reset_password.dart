@@ -116,26 +116,29 @@ return Scaffold(
                     ),
                     const SizedBox(height: 20),
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                      padding: const EdgeInsets.symmetric(horizontal: 38.0),
                       child: Container(
                         decoration: BoxDecoration(
-                          color: Colors
-                              .white, // Set background color if needed
+                          color: Colors.white, // Background color
                           borderRadius: BorderRadius.circular(50),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black
-                                  .withOpacity(0.1), // Shadow color
+                              color: Colors.black.withOpacity(0.1),
                               blurRadius: 6,
-                              offset: Offset(0, 3), // Shadow position
+                              offset: Offset(0, 3),
                             ),
                           ],
+                          border: Border.all(
+                            color: Color(0xFFB2C1C0), // Add a color here
+                            width: 1, // Optional: set the border width
+                          ),
                         ),
                         child: TextField(
                           controller: passText,
                           decoration: _inputDecoration(''),
                           style: const TextStyle(
-                            color: Color(0xFF648683),
+                            color: Color(0xFF244065),
+                            fontWeight: FontWeight.w600,
                             fontSize: 14,
                           ),
                         ),
@@ -159,7 +162,7 @@ return Scaffold(
                     ),
                     const SizedBox(height: 20),
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                      padding: const EdgeInsets.symmetric(horizontal: 38.0),
                       child: Container(
                         decoration: BoxDecoration(
                           color: Colors
@@ -173,12 +176,17 @@ return Scaffold(
                               offset: Offset(0, 3), // Shadow position
                             ),
                           ],
+                          border: Border.all(
+                            color: Color(0xFFB2C1C0), // Add a color here
+                            width: 1, // Optional: set the border width
+                          ),
                         ),
                         child: TextField(
                           controller: repassText,
                           decoration: _inputDecoration(''),
                           style: const TextStyle(
-                            color: Color(0xFF648683),
+                            color: Color(0xFF244065),
+                            fontWeight: FontWeight.w600,
                             fontSize: 14,
                           ),
                         ),
@@ -190,7 +198,7 @@ return Scaffold(
                   height: 25,
                 ),
                 Padding(
-                  padding: EdgeInsets.only(left: 20, right: 20, bottom: 20),
+                  padding: EdgeInsets.only(left: 38, right: 38, bottom: 20),
                   child: Stack(
                     children: [
                       Container(
