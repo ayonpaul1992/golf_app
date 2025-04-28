@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -8,6 +9,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'signup.dart';
 import 'forgot_password.dart';
 import 'selcet_booking_class.dart';
+import 'reset_password.dart';
 
 class loginPage extends StatefulWidget {
   const loginPage({super.key});
@@ -39,6 +41,105 @@ class loginPageState extends State<loginPage> {
         .showSnackBar(SnackBar(content: Text(message)));
   }
 
+  // Login API call
+  Future<void> _loginUser() async {
+    setState(() {
+      isLoading = true; // Show loading indicator
+    });
+
+    final String apiUrlWithParams =
+        'https://api.dev.driverpos.io/api/v1/auth/login?role=customer&golfCourseCode=YdTIjvWB';
+
+    try {
+      final response = await http.post(
+        Uri.parse(apiUrlWithParams),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, String>{
+          'email': phoneText.text.trim(), // Still using 'email' field for mobile/email
+          'password': passText.text.trim(),
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = jsonDecode(response.body);
+
+        if (data['success'] == true) {
+          final userData = data['data'];
+          final String emailOrMobile = userData['email'] ?? userData['mobile'] ?? '';
+          final String userId = userData['id'] ?? '';
+
+          if (userData['isVerified'] == false) {
+            // Navigate to Reset Password screen if not verified
+            if (mounted) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => resetPasswordPage(
+                    userId: userId,   // from your login response
+                    emailOrMobile: phoneText.text.trim(), // from login screen input
+                  ),
+                ),
+              );
+
+
+            }
+            return; // ⛔ Stop further execution
+          }
+
+          // If user is verified, save tokens and go to booking page
+          await secureStorage.write(key: 'accessToken', value: data['accessToken']);
+          await secureStorage.write(key: 'refreshToken', value: data['refreshToken']);
+
+          if (mounted) {
+            Navigator.pushReplacement(
+              context,
+              PageRouteBuilder(
+                transitionDuration: const Duration(milliseconds: 500),
+                pageBuilder: (context, animation, secondaryAnimation) =>
+                    selcetBookingClass(userId: userId),
+                transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                  const begin = Offset(1.0, 0.0);
+                  const end = Offset.zero;
+                  const curve = Curves.easeInOut;
+                  var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+                  var offsetAnimation = animation.drive(tween);
+                  return SlideTransition(
+                    position: offsetAnimation,
+                    child: child,
+                  );
+                },
+              ),
+            );
+          }
+          _showMessage(data['message'] ?? 'Logged in successfully');
+        } else {
+          _showMessage(data['message'] ?? 'Login failed');
+        }
+      } else {
+        print('Login failed. Status code: ${response.statusCode}');
+        print('Response body: ${response.body}');
+        _showMessage('Login failed, Email ID and Password do not match');
+      }
+    } on SocketException catch (e) {
+      _showMessage('Network error: Could not connect to the server. $e');
+      print('SocketException: $e');
+    } catch (error) {
+      _showMessage('Unexpected error: $error');
+      print('Unexpected error: $error');
+    } finally {
+      if (mounted) {
+        setState(() {
+          isLoading = false; // Always hide loading indicator
+        });
+      }
+    }
+  }
+
+  bool _isPassVisible = false;
+  String? phoneMailError;
+  String? passError;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -120,7 +221,7 @@ class loginPageState extends State<loginPage> {
                     Column(
                       children: [
                         Text(
-                          'Enter Mobile Number',
+                          'Enter Mobile Number or Email Id',
                           style: GoogleFonts.poppins(
                             color: const Color(0xFF6E7373),
                             fontSize: 14,
@@ -137,8 +238,7 @@ class loginPageState extends State<loginPage> {
                               });
                             },
                             child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 38.0),
+                              padding: const EdgeInsets.symmetric(horizontal: 38.0),
                               child: Container(
                                 decoration: BoxDecoration(
                                   color: Colors.white,
@@ -146,76 +246,59 @@ class loginPageState extends State<loginPage> {
                                   border: Border.all(
                                     color: isPhoneFocused
                                         ? const Color(0xFF9ECF9A)
-                                        : Color(0xFFB2C1C0),
+                                        : const Color(0xFFB2C1C0),
                                     width: 1,
                                   ),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: Colors.black
-                                          .withOpacity(0.1), // Shadow color
+                                      color: Colors.black.withOpacity(0.1),
                                       blurRadius: 6,
-                                      offset: Offset(0, 3), // Shadow position
+                                      offset: const Offset(0, 3),
                                     ),
                                   ],
                                 ),
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 12),
-                                child: Row(
-                                  children: [
-                                    DropdownButtonHideUnderline(
-                                      child: DropdownButton<String>(
-                                        value: selectedCountryCode,
-                                        icon: const Icon(Icons.arrow_drop_down,
-                                            color: Color(0xFF244065)),
-                                        style: GoogleFonts.poppins(
-                                          color: const Color(0xFF244065),
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                        items:
-                                            ['+91', '+1', '+44', '+61', '+971']
-                                                .map((code) => DropdownMenuItem(
-                                                      value: code,
-                                                      child: Text(code),
-                                                    ))
-                                                .toList(),
-                                        onChanged: (value) {
-                                          if (value != null) {
-                                            setState(() {
-                                              selectedCountryCode = value;
-                                            });
-                                          }
-                                        },
-                                      ),
+                                padding: const EdgeInsets.symmetric(horizontal: 20),
+                                child: TextField(
+                                  controller: phoneText,
+                                  focusNode: phoneFocusNode,
+                                  decoration: const InputDecoration(
+                                    border: InputBorder.none,
+                                    hintText: '',
+                                    hintStyle: TextStyle(
+                                      color: Color(0xFF244065),
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 14,
                                     ),
-                                    const SizedBox(width: 10),
-                                    Expanded(
-                                      child: TextField(
-                                        controller: phoneText,
-                                        focusNode: phoneFocusNode,
-                                        decoration: const InputDecoration(
-                                          border: InputBorder.none,
-                                          hintText: '8777784755',
-                                          hintStyle: TextStyle(
-                                            color: Color(0xFF244065),
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 14,
-                                          ),
-                                        ),
-                                        keyboardType: TextInputType.phone,
-                                        style: const TextStyle(
-                                          color: Color(0xFF244065),
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 14,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
+                                  ),
+                                  keyboardType: TextInputType.emailAddress,
+                                  style:  GoogleFonts.poppins(
+                                    color: Color(0xFF244065),
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 14,
+                                  ),
+                                  onChanged: (value) {
+                                    if (value.length == 10 && phoneMailError != null) {
+                                      setState(() {
+                                        phoneMailError = null;
+                                      });
+                                    }
+                                  },
+                                  autofillHints: [AutofillHints.email],
                                 ),
                               ),
                             ),
                           ),
                         ),
+                        if (phoneMailError != null)
+                          Padding(
+                            padding: const EdgeInsets.only(left: 8.0, top: 5),
+                              child: Text(
+                                phoneMailError!,
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                    color: Colors.red, fontSize: 12),
+                              ),
+                          ),
                       ],
                     ),
                     SizedBox(
@@ -255,16 +338,39 @@ class loginPageState extends State<loginPage> {
                             ),
                             child: TextField(
                               controller: passText,
-                              decoration: _inputDecoration(''),
-                              style: const TextStyle(
+                              obscureText: !_isPassVisible, // Toggle text visibilityk
+                              decoration: _inputDecoration('**********').copyWith(
+                                suffixIcon: IconButton(
+                                  icon: Icon(
+                                    _isPassVisible ? Icons.visibility : Icons.visibility_off,
+                                    color: Color(0xFF648683),
+                                  ),
+                                  onPressed: () {
+                                    setState(() {
+                                      _isPassVisible = !_isPassVisible; // Toggle visibility
+                                    });
+                                  },
+                                ),
+                              ),
+                              style:  GoogleFonts.poppins(
                                 color: Color(0xFF244065),
                                 fontWeight: FontWeight.w600,
                                 fontSize: 14,
                               ),
-
+                              autofillHints: [AutofillHints.password],
                             ),
                           ),
                         ),
+                        if (passError != null)
+                          Padding(
+                            padding: const EdgeInsets.only(left: 8.0, top: 5),
+                            child: Text(
+                              passError!,
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                  color: Colors.red, fontSize: 12),
+                            ),
+                          ),
                       ],
                     ),
                     SizedBox(
@@ -274,30 +380,58 @@ class loginPageState extends State<loginPage> {
                       padding: EdgeInsets.only(left: 38, right: 38, bottom: 20),
                       child: Stack(
                         children: [
-                          Container(
-                            width: double.infinity,
-                            child: ElevatedButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => selcetBookingClass(userId: '',)),
-                                );
-                              },
-                              style: ElevatedButton.styleFrom(
-                                  backgroundColor: Color(0xFF9ECF9A)),
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 15.0, vertical: 10.0),
-                                child: Center(
-                                  child: Text(
-                                    "Login",
-                                    style: GoogleFonts.poppins(
-                                      color: Color(0xFFFFFFFF),
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
+                          ElevatedButton(
+                            onPressed: isLoading
+                                ? null
+                                : () {
+                              bool hasError = false;
+
+                              setState(() {
+                                // Reset error messages
+                                phoneMailError = passError = null;
+
+                                String input = phoneText.text.trim();
+
+                                // Validate Mobile or Email
+                                if (input.isEmpty) {
+                                  phoneMailError = 'Mobile number or Email id is required.';
+                                  hasError = true;
+                                } else if (RegExp(r'^[0-9]{10}$').hasMatch(input)) {
+                                  // ✅ Valid 10-digit phone number
+                                } else if (RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(input)) {
+                                  // ✅ Valid email format
+                                } else {
+                                  phoneMailError = 'Enter valid mobile number or email address.';
+                                  hasError = true;
+                                }
+
+                                // Validate Password
+                                if (passText.text.trim().isEmpty) {
+                                  passError = 'Password is required.';
+                                  hasError = true;
+                                }
+                              });
+
+                              if (hasError) return; // 🚫 Stop if any error exists
+
+                              _loginUser(); // ✅ Call login function if all validations passed
+                            },
+
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF9ECF9A),
+                              padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10.0),
+                            ),
+                            child: Center(
+                              child: isLoading
+                                  ? const CircularProgressIndicator(
+                                color: Colors.white,
+                              )
+                                  : Text(
+                                "Login",
+                                style: GoogleFonts.poppins(
+                                  color: const Color(0xFFFFFFFF),
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
                                 ),
                               ),
                             ),
@@ -310,10 +444,11 @@ class loginPageState extends State<loginPage> {
                               color: Color(0xFFFFFFFF),
                               size: 18,
                             ),
-                          )
+                          ),
                         ],
                       ),
                     ),
+
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisSize: MainAxisSize.min,

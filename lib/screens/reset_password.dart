@@ -1,18 +1,28 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:gulf_app/components/userentry_app_bar.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'login.dart';
 import 'password_confirm.dart';
 
-class resetPasswordPage extends StatefulWidget{
-  const resetPasswordPage({super.key});
+class resetPasswordPage extends StatefulWidget {
+  final String emailOrMobile;
+  final String golfCourseCode;
+  final String userId;
+
+  const resetPasswordPage({
+    Key? key,
+    required this.userId,
+    required this.emailOrMobile,
+    this.golfCourseCode = 'YdTIjvWB',
+  }) : super(key: key);
 
   @override
-  State<StatefulWidget> createState()=>resetPasswordPageState();
-
+  resetPasswordPageState createState() => resetPasswordPageState();
 }
 class resetPasswordPageState extends State<resetPasswordPage>{
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -20,18 +30,130 @@ class resetPasswordPageState extends State<resetPasswordPage>{
   final FlutterSecureStorage secureStorage = FlutterSecureStorage();
   final passText = TextEditingController();
   final repassText = TextEditingController();
+  bool _isLoading = false; // Track loading state
   // Function to show the error or success messages
   void _showMessage(String message) {
     ScaffoldMessenger.of(context)
         .showSnackBar(SnackBar(content: Text(message)));
   }
+
+  Future<void> _resetPassword() async {
+    if (!mounted) return;
+    setState(() {
+      _isLoading = true;
+    });
+
+    String password = passText.text.trim();
+    String confirmPassword = repassText.text.trim();
+    String emailOrMobile = widget.emailOrMobile.trim();
+    String userId = widget.userId.trim();
+
+    if (password.isEmpty || confirmPassword.isEmpty) {
+      _showMessage("Please enter and confirm your password.");
+      setState(() {
+        _isLoading = false;
+      });
+      return;
+    }
+
+    if (password != confirmPassword) {
+      _showMessage("Passwords do not match.");
+      setState(() {
+        _isLoading = false;
+      });
+      return;
+    }
+
+    if (password.length < 6) {
+      _showMessage("Password must be at least 6 characters long.");
+      setState(() {
+        _isLoading = false;
+      });
+      return;
+    }
+
+    if (emailOrMobile.isEmpty) {
+      _showMessage("Email or Mobile is missing. Cannot reset password.");
+      setState(() {
+        _isLoading = false;
+      });
+      return;
+    }
+
+    try {
+      var headers = {
+        'Content-Type': 'application/json',
+      };
+
+      Map<String, dynamic> body = {
+        'newPassword': password,
+        'confirmPassword': confirmPassword,
+        'userId': userId,
+        'golfCourseCode': widget.golfCourseCode, // ✅
+      };
+
+      if (emailOrMobile.contains('@')) {
+        body['email'] = emailOrMobile;
+      } else {
+        body['email'] = '${emailOrMobile}@dummy.com';
+        body['mobile'] = emailOrMobile;
+      }
+
+      final String url = 'https://api.dev.driverpos.io/api/v1/auth/password?role=customer';
+
+      final response = await http.put(
+        Uri.parse(url),
+        headers: headers,
+        body: json.encode(body),
+      );
+
+      print('Response Status: ${response.statusCode}');
+      print('Response Body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        var data = json.decode(response.body);
+        if (data['success'] == true) {
+          _showMessage("Password changed successfully! Please log in.");
+          passText.clear();
+          repassText.clear();
+          if (mounted) {
+            Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(builder: (context) => loginPage()), // replace with your Login screen
+                  (Route<dynamic> route) => false,
+            );
+          }
+        } else {
+          _showMessage(data['message'] ?? "Failed to change password.");
+        }
+      } else {
+        var data = json.decode(response.body);
+        _showMessage(data['message'] ?? "Failed to change password. Please try again.");
+      }
+    } on SocketException catch (e) {
+      _showMessage("Network error: $e");
+      print("SocketException error: $e");
+    } catch (e) {
+      _showMessage("An error occurred. Please try again later.");
+      print("Error: $e");
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+  bool _isPassVisible = false;
+  String? passError;
+  String? repassError;
+
   @override
   Widget build(BuildContext context) {
 return Scaffold(
   key: _scaffoldKey,
   appBar: userentryAppbar(
     scaffoldKey: _scaffoldKey,
-    userId: '',
+    userId: widget.userId,
     showLeading: false,
   ),
   body: Container(
@@ -135,15 +257,38 @@ return Scaffold(
                         ),
                         child: TextField(
                           controller: passText,
-                          decoration: _inputDecoration(''),
-                          style: const TextStyle(
+                          decoration: _inputDecoration('**********').copyWith(
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                _isPassVisible ? Icons.visibility : Icons.visibility_off,
+                                color: Color(0xFF648683),
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  _isPassVisible = !_isPassVisible; // Toggle visibility
+                                });
+                              },
+                            ),
+                          ),
+                          style:  GoogleFonts.poppins(
                             color: Color(0xFF244065),
                             fontWeight: FontWeight.w600,
                             fontSize: 14,
                           ),
+                          autofillHints: [AutofillHints.password],
                         ),
                       ),
                     ),
+                    if (passError != null)
+                      Padding(
+                        padding: const EdgeInsets.only(left: 8.0, top: 5),
+                        child: Text(
+                          passError!,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                              color: Colors.red, fontSize: 12),
+                        ),
+                      ),
                   ],
                 ),
                 SizedBox(
@@ -183,15 +328,38 @@ return Scaffold(
                         ),
                         child: TextField(
                           controller: repassText,
-                          decoration: _inputDecoration(''),
-                          style: const TextStyle(
+                          decoration: _inputDecoration('**********').copyWith(
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                _isPassVisible ? Icons.visibility : Icons.visibility_off,
+                                color: Color(0xFF648683),
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  _isPassVisible = !_isPassVisible; // Toggle visibility
+                                });
+                              },
+                            ),
+                          ),
+                          style: GoogleFonts.poppins(
                             color: Color(0xFF244065),
                             fontWeight: FontWeight.w600,
                             fontSize: 14,
                           ),
+                          autofillHints: [AutofillHints.password],
                         ),
                       ),
                     ),
+                    if (repassError != null)
+                      Padding(
+                        padding: const EdgeInsets.only(left: 8.0, top: 5),
+                        child: Text(
+                          repassError!,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                              color: Colors.red, fontSize: 12),
+                        ),
+                      ),
                   ],
                 ),
                 SizedBox(
@@ -204,38 +372,38 @@ return Scaffold(
                       Container(
                         width: double.infinity,
                         child: ElevatedButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => passwordConfirmPage()),
-                            );
-                          },
+                          onPressed: _isLoading ? null : _resetPassword, // Disable button when loading
                           style: ElevatedButton.styleFrom(
-                              backgroundColor: Color(0xFF9ECF9A)),
+                            backgroundColor: const Color(0xFF9ECF9A),
+                          ),
                           child: Padding(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 15.0, vertical: 10.0),
+                            padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10.0),
                             child: Center(
-                              child: Text(
-                                "Reset password",
-                                style: GoogleFonts.poppins(
-                                  color: Color(0xFFFFFFFF),
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                ),
+                              child: _isLoading
+                                  ? const CircularProgressIndicator(
+                                color: Colors.white,
+                              )
+                                  : Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    "Reset password",
+                                    style: GoogleFonts.poppins(
+                                      color: const Color(0xFFFFFFFF),
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  SizedBox(width: 8),
+                                  Icon(
+                                    Icons.arrow_forward,
+                                    color: const Color(0xFFFFFFFF),
+                                    size: 18,
+                                  ),
+                                ],
                               ),
                             ),
                           ),
-                        ),
-                      ),
-                      Positioned(
-                        top: 16.5,
-                        right: 15,
-                        child: Icon(
-                          Icons.arrow_forward,
-                          color: Color(0xFFFFFFFF),
-                          size: 18,
                         ),
                       )
                     ],

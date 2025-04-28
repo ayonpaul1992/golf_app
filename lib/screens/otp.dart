@@ -195,11 +195,11 @@ class _OtpPageState extends State<OtpPage>{
                           width: double.infinity,
                           child: ElevatedButton(
                             onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => resetPasswordPage()),
-                              );
+                              // Navigator.push(
+                              //   context,
+                              //   MaterialPageRoute(
+                              //       builder: (context) => resetPasswordPage(userId: null,)),
+                              // );
                             },
                             style: ElevatedButton.styleFrom(
                                 backgroundColor: Color(0xFF9ECF9A)),

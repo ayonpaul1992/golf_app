@@ -40,6 +40,7 @@ dependencies:
   pin_code_fields: ^8.0.1
   syncfusion_flutter_datepicker: ^29.1.38
   intl: ^0.20.2
+  connectivity_plus: ^6.1.4
 
 dev_dependencies:
   flutter_test:
