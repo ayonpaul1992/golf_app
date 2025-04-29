@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../extras/notification.dart';
+import '../extras/my_profile.dart';
 import '../screens/selcet_booking_class.dart'; // Adjust the path as needed
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -24,7 +26,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       backgroundColor: Colors.white,
       leading: showLeading
           ? IconButton(
-              icon: const Icon(Icons.arrow_back, color: Colors.black),
+              icon: const Icon(Icons.arrow_back_ios, color: Color(0xFF9ECF9A)),
               onPressed: onBackPressed ?? () => Navigator.pop(context),
             )
           : IconButton(
@@ -59,23 +61,38 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       ),
       actions: [
         Container(
-          padding: EdgeInsets.only(left: 7,right: 7,top: 5,bottom: 5),
+          padding: EdgeInsets.only(left: 7, right: 7, top: 5, bottom: 5),
           decoration: BoxDecoration(
-          color: Color(0xFF244065),
+            color: Color(0xFF244065),
             borderRadius: BorderRadius.circular(50),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Image.asset("assets/images/mmbr_arw.png"),
-              SizedBox(width: 5,),
-              Text("Platinum",style: GoogleFonts.poppins(fontWeight: FontWeight.w500,fontSize: 11.5,color: Color(0xFFFFFFFF)),)
+              SizedBox(
+                width: 5,
+              ),
+              Text(
+                "Platinum",
+                style: GoogleFonts.poppins(
+                    fontWeight: FontWeight.w500,
+                    fontSize: 11.5,
+                    color: Color(0xFFFFFFFF)),
+              )
             ],
           ),
         ),
         const SizedBox(width: 10),
         TextButton(
-          onPressed: () {},
+          onPressed: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => notificationPage(
+                          myNtfId: '',
+                        )));
+          },
           style: TextButton.styleFrom(
             minimumSize: const Size(20, 20),
             padding: EdgeInsets.zero,
@@ -90,7 +107,12 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         const SizedBox(width: 10),
         TextButton(
           onPressed: () {
-            scaffoldKey.currentState?.openDrawer();
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => myProfilePage(
+                      myPfId: '',
+                    )));
           },
           style: TextButton.styleFrom(
             minimumSize: const Size(20, 20),
