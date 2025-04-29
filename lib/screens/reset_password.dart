@@ -39,8 +39,11 @@ class resetPasswordPageState extends State<resetPasswordPage>{
 
   Future<void> _resetPassword() async {
     if (!mounted) return;
+
     setState(() {
       _isLoading = true;
+      passError = null;
+      repassError = null;
     });
 
     String password = passText.text.trim();
@@ -48,32 +51,37 @@ class resetPasswordPageState extends State<resetPasswordPage>{
     String emailOrMobile = widget.emailOrMobile.trim();
     String userId = widget.userId.trim();
 
-    if (password.isEmpty || confirmPassword.isEmpty) {
-      _showMessage("Please enter and confirm your password.");
-      setState(() {
-        _isLoading = false;
-      });
-      return;
+    bool hasError = false;
+
+    if (password.isEmpty) {
+      passError = "Please enter a password.";
+      hasError = true;
     }
 
-    if (password != confirmPassword) {
-      _showMessage("Passwords do not match.");
-      setState(() {
-        _isLoading = false;
-      });
-      return;
+    if (confirmPassword.isEmpty) {
+      repassError = "Please confirm your password.";
+      hasError = true;
     }
 
-    if (password.length < 6) {
-      _showMessage("Password must be at least 6 characters long.");
-      setState(() {
-        _isLoading = false;
-      });
-      return;
+    if (!hasError && password != confirmPassword) {
+      repassError = "Passwords do not match.";
+      hasError = true;
+    }
+
+    if (!hasError && password.length < 6) {
+      passError = "Password must be at least 6 characters long.";
+      hasError = true;
     }
 
     if (emailOrMobile.isEmpty) {
       _showMessage("Email or Mobile is missing. Cannot reset password.");
+      setState(() {
+        _isLoading = false;
+      });
+      return;
+    }
+
+    if (hasError) {
       setState(() {
         _isLoading = false;
       });
@@ -89,7 +97,7 @@ class resetPasswordPageState extends State<resetPasswordPage>{
         'newPassword': password,
         'confirmPassword': confirmPassword,
         'userId': userId,
-        'golfCourseCode': widget.golfCourseCode, // ✅
+        'golfCourseCode': widget.golfCourseCode,
       };
 
       if (emailOrMobile.contains('@')) {
@@ -118,7 +126,7 @@ class resetPasswordPageState extends State<resetPasswordPage>{
           repassText.clear();
           if (mounted) {
             Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(builder: (context) => loginPage()), // replace with your Login screen
+              MaterialPageRoute(builder: (context) => loginPage()),
                   (Route<dynamic> route) => false,
             );
           }
@@ -143,6 +151,7 @@ class resetPasswordPageState extends State<resetPasswordPage>{
       }
     }
   }
+
   bool _isPassVisible = false;
   String? passError;
   String? repassError;
@@ -212,7 +221,7 @@ return Scaffold(
             padding:
             EdgeInsets.only(top: 15, left: 20, right: 20, bottom: 30),
             child: Text(
-              "Remember and setup your new password and secure your account.",
+              "As you are not verified setup your new password and secure your account.",
               textAlign: TextAlign.center,
               style: GoogleFonts.poppins(
                 color: Color(0xFF6E7373),
