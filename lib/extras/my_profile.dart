@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:gulf_app/screens/login.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:gulf_app/components/custom_app_bar.dart';
@@ -29,7 +30,10 @@ class myProfilePageState extends State<myProfilePage> {
       appBar: CustomAppBar(
         scaffoldKey: _scaffoldKey,
         userId: widget.myPfId, // ✅ Pass the correct userId
-        showLeading: false, // ✅ Set to true to show the back button
+        showLeading: true, // ✅ Set to true to show the back button
+        onBackPressed: () {
+          Navigator.pop(context); // Optional: customize back behavior if needed
+        },
       ),
       drawer: CustomDrawer(
         activeTile: 'Home',
@@ -84,9 +88,9 @@ class myProfilePageState extends State<myProfilePage> {
               Container(
                 width: double.infinity,
                 margin:
-                    EdgeInsets.only(left: 15, right: 15, top: 10, bottom: 10),
+                    EdgeInsets.only(left: 15, right: 15, top: 10, bottom: 0),
                 padding:
-                    EdgeInsets.only(left: 15, right: 15, top: 15, bottom: 30),
+                    EdgeInsets.only(left: 15, right: 15, top: 30, bottom: 30),
                 decoration: BoxDecoration(
                     image: DecorationImage(
                       image: AssetImage(
@@ -178,6 +182,9 @@ class myProfilePageState extends State<myProfilePage> {
                         ],
                       ),
                     ),
+                    SizedBox(
+                      height: 5,
+                    ),
                     Container(
                       child: Column(
                         children: [
@@ -188,6 +195,9 @@ class myProfilePageState extends State<myProfilePage> {
                                 color: Color(0xFFFFFFFF),
                                 fontWeight: FontWeight.w600),
                           ),
+                          SizedBox(
+                            height: 5,
+                          ),
                           Text(
                             "+91 8777794755",
                             style: GoogleFonts.poppins(
@@ -195,12 +205,18 @@ class myProfilePageState extends State<myProfilePage> {
                                 color: Color(0xFFFFFFFF),
                                 fontWeight: FontWeight.w600),
                           ),
+                          SizedBox(
+                            height: 5,
+                          ),
                           Text(
                             "koushik@hih7.com",
                             style: GoogleFonts.poppins(
                                 fontSize: 14,
                                 color: Color(0xFFFFFFFF),
                                 fontWeight: FontWeight.w600),
+                          ),
+                          SizedBox(
+                            height: 10,
                           ),
                           GestureDetector(
                             onTap: () {},
@@ -213,11 +229,13 @@ class myProfilePageState extends State<myProfilePage> {
                                 borderRadius: BorderRadius.circular(50),
                               ),
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center, // Center along the horizontal axis (for Row)
+                                mainAxisAlignment: MainAxisAlignment
+                                    .spaceBetween, // Center along the horizontal axis (for Row)
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   Stack(
-                                    alignment: Alignment.centerLeft, // Align Stack content to the left
+                                    alignment: Alignment
+                                        .centerLeft, // Align Stack content to the left
                                     children: [
                                       Row(
                                         children: [
@@ -241,10 +259,11 @@ class myProfilePageState extends State<myProfilePage> {
                                       ),
                                     ],
                                   ),
-                                  Icon( // Moved Icon outside the Stack and removed Container
+                                  Icon(
+                                    // Moved Icon outside the Stack and removed Container
                                     Icons.arrow_forward_ios_outlined,
                                     color: Color(0xFFFFFFFF),
-                                    size: 14,
+                                    size: 13,
                                   ),
                                 ],
                               ),
@@ -253,6 +272,449 @@ class myProfilePageState extends State<myProfilePage> {
                         ],
                       ),
                     )
+                  ],
+                ),
+              ),
+              Container(
+                margin: EdgeInsets.only(bottom: 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  spacing: 10,
+                  children: [
+                    Container(
+                      width: double.infinity,
+                      margin: EdgeInsets.only(left: 15, right: 15),
+                      padding: EdgeInsets.only(left: 15, right: 15),
+                      decoration: BoxDecoration(
+                        boxShadow: [
+                          BoxShadow(
+                            color: Color(0xFF9ECF9A).withOpacity(0.15), // make it visible
+                            blurRadius: 20, // soft edges
+                            spreadRadius: 6, // controls how far the shadow spreads
+                            offset: Offset(3, 0), // shift shadow down slightly
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          GestureDetector(
+                            onTap: () {},
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 7, vertical: 5),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(50),
+                                border: Border.all(
+                                  color: Color(0xFF9ECF9A),
+                                  width: 1,
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Container(
+                                        width: 40,
+                                        height: 40,
+                                        decoration: BoxDecoration(
+                                          color: Color(0xFFF8F8F8),
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(
+                                                  100)), // Use Radius.circular
+                                        ),
+                                        child: Center(
+                                          child: Icon(
+                                            Icons.edit,
+                                            size: 17,
+                                            color: Color(0xFF6B7280),
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: 6,
+                                      ),
+                                      Text(
+                                        "Edit Profile",
+                                        style: GoogleFonts.poppins(
+                                          color: Color(0xFF244065),
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Icon(
+                                    Icons.arrow_forward_ios_outlined,
+                                    size: 13,
+                                    color: Color(0xFF9ECF9A),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      width: double.infinity,
+                      margin: EdgeInsets.only(left: 15, right: 15),
+                      padding: EdgeInsets.only(left: 15, right: 15),
+                      decoration: BoxDecoration(
+                        boxShadow: [
+                          BoxShadow(
+                            color: Color(0xFF9ECF9A).withOpacity(0.15), // make it visible
+                            blurRadius: 20, // soft edges
+                            spreadRadius: 6, // controls how far the shadow spreads
+                            offset: Offset(3, 0), // shift shadow down slightly
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          GestureDetector(
+                            onTap: () {},
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 7, vertical: 5),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(50),
+                                border: Border.all(
+                                  color: Color(0xFF9ECF9A),
+                                  width: 1,
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Container(
+                                        width: 40,
+                                        height: 40,
+                                        decoration: BoxDecoration(
+                                          color: Color(0xFFF8F8F8),
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(
+                                                  100)), // Use Radius.circular
+                                        ),
+                                        child: Center(
+                                          child: Icon(
+                                            Icons.card_giftcard,
+                                            size: 17,
+                                            color: Color(0xFF6B7280),
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: 6,
+                                      ),
+                                      Text(
+                                        "My Gift Card",
+                                        style: GoogleFonts.poppins(
+                                          color: Color(0xFF244065),
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Icon(
+                                    Icons.arrow_forward_ios_outlined,
+                                    size: 13,
+                                    color: Color(0xFF9ECF9A),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      width: double.infinity,
+                      margin: EdgeInsets.only(left: 15, right: 15),
+                      padding: EdgeInsets.only(left: 15, right: 15),
+                      decoration: BoxDecoration(
+                        boxShadow: [
+                          BoxShadow(
+                            color: Color(0xFF9ECF9A).withOpacity(0.15), // make it visible
+                            blurRadius: 20, // soft edges
+                            spreadRadius: 6, // controls how far the shadow spreads
+                            offset: Offset(3, 0), // shift shadow down slightly
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          GestureDetector(
+                            onTap: () {},
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 7, vertical: 5),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(50),
+                                border: Border.all(
+                                  color: Color(0xFF9ECF9A),
+                                  width: 1,
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Container(
+                                        width: 40,
+                                        height: 40,
+                                        decoration: BoxDecoration(
+                                          color: Color(0xFFF8F8F8),
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(
+                                                  100)), // Use Radius.circular
+                                        ),
+                                        child: Center(
+                                          child: Icon(
+                                            Icons.fact_check,
+                                            size: 17,
+                                            color: Color(0xFF6B7280),
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: 6,
+                                      ),
+                                      Text(
+                                        "My Transaction",
+                                        style: GoogleFonts.poppins(
+                                          color: Color(0xFF244065),
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Icon(
+                                    Icons.arrow_forward_ios_outlined,
+                                    size: 13,
+                                    color: Color(0xFF9ECF9A),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      width: double.infinity,
+                      margin: EdgeInsets.only(left: 15, right: 15),
+                      padding: EdgeInsets.only(left: 15, right: 15),
+                      decoration: BoxDecoration(
+                        boxShadow: [
+                          BoxShadow(
+                            color: Color(0xFF9ECF9A).withOpacity(0.15), // make it visible
+                            blurRadius: 20, // soft edges
+                            spreadRadius: 6, // controls how far the shadow spreads
+                            offset: Offset(3, 0), // shift shadow down slightly
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          GestureDetector(
+                            onTap: () {},
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 7, vertical: 5),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(50),
+                                border: Border.all(
+                                  color: Color(0xFF9ECF9A),
+                                  width: 1,
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Container(
+                                        width: 40,
+                                        height: 40,
+                                        decoration: BoxDecoration(
+                                          color: Color(0xFFF8F8F8),
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(
+                                                  100)), // Use Radius.circular
+                                        ),
+                                        child: Center(
+                                          child: Icon(
+                                            Icons.date_range_outlined,
+                                            size: 17,
+                                            color: Color(0xFF6B7280),
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: 6,
+                                      ),
+                                      Text(
+                                        "My Reservation",
+                                        style: GoogleFonts.poppins(
+                                          color: Color(0xFF244065),
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Icon(
+                                    Icons.arrow_forward_ios_outlined,
+                                    size: 13,
+                                    color: Color(0xFF9ECF9A),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      width: double.infinity,
+                      margin: EdgeInsets.only(left: 15, right: 15),
+                      padding: EdgeInsets.only(left: 15, right: 15),
+                      decoration: BoxDecoration(
+                        boxShadow: [
+                          BoxShadow(
+                            color: Color(0xFF9ECF9A).withOpacity(0.15), // make it visible
+                            blurRadius: 20, // soft edges
+                            spreadRadius: 6, // controls how far the shadow spreads
+                            offset: Offset(3, 0), // shift shadow down slightly
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          GestureDetector(
+                            onTap: () {},
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 7, vertical: 5),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(50),
+                                border: Border.all(
+                                  color: Color(0xFF9ECF9A),
+                                  width: 1,
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Container(
+                                        width: 40,
+                                        height: 40,
+                                        decoration: BoxDecoration(
+                                          color: Color(0xFFF8F8F8),
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(
+                                                  100)), // Use Radius.circular
+                                        ),
+                                        child: Center(
+                                          child: Icon(
+                                            Icons.settings,
+                                            size: 17,
+                                            color: Color(0xFF6B7280),
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: 6,
+                                      ),
+                                      Text(
+                                        "Settings",
+                                        style: GoogleFonts.poppins(
+                                          color: Color(0xFF244065),
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Icon(
+                                    Icons.arrow_forward_ios_outlined,
+                                    size: 13,
+                                    color: Color(0xFF9ECF9A),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(left: 38, right: 38, bottom: 20),
+                      child: Stack(
+                        children: [
+                          Container(
+                            width: double.infinity,
+                            child: ElevatedButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => loginPage()),
+                                );
+                              },
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: Color(0xFF9ECF9A)),
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 15.0, vertical: 10.0),
+                                child: Center(
+                                  child: Text(
+                                    "Logout",
+                                    style: GoogleFonts.poppins(
+                                      color: Color(0xFFFFFFFF),
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            top: 16.5,
+                            right: 15,
+                            child: Icon(
+                              Icons.arrow_forward,
+                              color: Color(0xFFFFFFFF),
+                              size: 18,
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
                   ],
                 ),
               ),

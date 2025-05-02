@@ -427,7 +427,7 @@ class loginPageState extends State<loginPage> {
                                 color: Colors.white,
                               )
                                   : Text(
-                                "Login",
+                                "Proceed",
                                 style: GoogleFonts.poppins(
                                   color: const Color(0xFFFFFFFF),
                                   fontSize: 16,
