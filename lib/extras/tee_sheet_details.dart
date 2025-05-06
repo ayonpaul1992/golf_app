@@ -10,15 +10,15 @@ import 'package:gulf_app/components/custom_bottom_nav_bar.dart';
 import 'package:gulf_app/extras/my_cart.dart';
 import 'package:intl/intl.dart';
 
-class teeSheetDtls extends StatefulWidget {
-  final String teeSheetDtlsUsrId;
-  const teeSheetDtls({super.key, required this.teeSheetDtlsUsrId});
+class TeeSheetDtls extends StatefulWidget {
+  final String TeeSheetDtlsUsrId;
+  const TeeSheetDtls({super.key, required this.TeeSheetDtlsUsrId});
 
   @override
-  State<StatefulWidget> createState() => teeSheetDtlsState();
+  State<StatefulWidget> createState() => TeeSheetDtlsState();
 }
 
-class teeSheetDtlsState extends State<teeSheetDtls> {
+class TeeSheetDtlsState extends State<TeeSheetDtls> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final FlutterSecureStorage secureStorage = FlutterSecureStorage();
   void _showMessage(String message) {
@@ -232,7 +232,7 @@ class teeSheetDtlsState extends State<teeSheetDtls> {
       key: _scaffoldKey,
       appBar: CustomAppBar(
         scaffoldKey: _scaffoldKey,
-        userId: widget.teeSheetDtlsUsrId, // ✅ Pass the correct userId
+        userId: widget.TeeSheetDtlsUsrId, // ✅ Pass the correct userId
         showLeading: false, // ✅ This should prevent the back button
       ),
       drawer: CustomDrawer(
@@ -845,7 +845,7 @@ class teeSheetDtlsState extends State<teeSheetDtls> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => myCartPage(myCartId: ''), // Replace with your target widget
+                                    builder: (context) => MyCartPage(myCartId: ''), // Replace with your target widget
                                   ),
                                 );
                               },

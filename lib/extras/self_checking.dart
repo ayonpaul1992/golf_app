@@ -10,15 +10,15 @@ import 'package:gulf_app/components/custom_bottom_nav_bar.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:intl/intl.dart';
 
-class selfCheckingPage extends StatefulWidget {
+class SelfCheckingPage extends StatefulWidget {
   final String selfChkId; // ✅ Add this
-  const selfCheckingPage(
+  const SelfCheckingPage(
       {super.key,required this.selfChkId, required String selfcheck}); // ✅ Fix constructor
 
   @override
-  State<selfCheckingPage> createState() => _selfCheckingPageState();
+  State<SelfCheckingPage> createState() => _SelfCheckingPageState();
 }
-class _selfCheckingPageState extends State<selfCheckingPage>{
+class _SelfCheckingPageState extends State<SelfCheckingPage>{
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final FlutterSecureStorage secureStorage = FlutterSecureStorage();
   @override

@@ -9,12 +9,12 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'login.dart';
 import 'password_confirm.dart';
 
-class resetPasswordPage extends StatefulWidget {
+class ResetPasswordPage extends StatefulWidget {
   final String emailOrMobile;
   final String golfCourseCode;
   final String userId;
 
-  const resetPasswordPage({
+  const ResetPasswordPage({
     Key? key,
     required this.userId,
     required this.emailOrMobile,
@@ -22,9 +22,9 @@ class resetPasswordPage extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  resetPasswordPageState createState() => resetPasswordPageState();
+  ResetPasswordPageState createState() => ResetPasswordPageState();
 }
-class resetPasswordPageState extends State<resetPasswordPage>{
+class ResetPasswordPageState extends State<ResetPasswordPage>{
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   // Create a storage instance
   final FlutterSecureStorage secureStorage = FlutterSecureStorage();
@@ -126,7 +126,7 @@ class resetPasswordPageState extends State<resetPasswordPage>{
           repassText.clear();
           if (mounted) {
             Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(builder: (context) => loginPage()),
+              MaterialPageRoute(builder: (context) => LoginPage()),
                   (Route<dynamic> route) => false,
             );
           }
@@ -160,7 +160,7 @@ class resetPasswordPageState extends State<resetPasswordPage>{
   Widget build(BuildContext context) {
 return Scaffold(
   key: _scaffoldKey,
-  appBar: userentryAppbar(
+  appBar: UserentryAppbar(
     scaffoldKey: _scaffoldKey,
     userId: widget.userId,
     showLeading: false,

@@ -10,15 +10,15 @@ import 'package:gulf_app/components/custom_bottom_nav_bar.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:intl/intl.dart';
 
-class historyPage extends StatefulWidget {
+class HistoryPage extends StatefulWidget {
   final String historyId; // ✅ Add this
-  const historyPage(
+  const HistoryPage(
       {super.key,required this.historyId,required String history}); // ✅ Fix constructor
 
   @override
-  State<historyPage> createState() => _historyPageState();
+  State<HistoryPage> createState() => _HistoryPageState();
 }
-class _historyPageState extends State<historyPage>{
+class _HistoryPageState extends State<HistoryPage>{
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final FlutterSecureStorage secureStorage = FlutterSecureStorage();
   @override

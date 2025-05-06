@@ -9,15 +9,15 @@ import 'package:gulf_app/components/custom_drawer.dart';
 import 'package:gulf_app/components/custom_bottom_nav_bar.dart';
 import 'package:intl/intl.dart';
 
-class myCartPage extends StatefulWidget {
+class MyCartPage extends StatefulWidget {
   final String myCartId;
-  const myCartPage({super.key, required this.myCartId});
+  const MyCartPage({super.key, required this.myCartId});
 
   @override
-  State<StatefulWidget> createState() => myCartPageState();
+  State<StatefulWidget> createState() => MyCartPageState();
 }
 
-class myCartPageState extends State<myCartPage> {
+class MyCartPageState extends State<MyCartPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final FlutterSecureStorage secureStorage = FlutterSecureStorage();
   void _showMessage(String message) {
@@ -957,7 +957,7 @@ class myCartPageState extends State<myCartPage> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => myCartPage(myCartId: ''), // Replace with your target widget
+                              builder: (context) => MyCartPage(myCartId: ''), // Replace with your target widget
                             ),
                           );
                         },

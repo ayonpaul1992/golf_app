@@ -8,19 +8,22 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:gulf_app/components/custom_app_bar.dart';
 import 'package:gulf_app/components/custom_drawer.dart';
 import 'package:gulf_app/components/custom_bottom_nav_bar.dart';
+import 'my_reservation.dart';
+import 'my_transaction.dart';
+import 'my_setting.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:intl/intl.dart';
 
-class myProfilePage extends StatefulWidget {
+class MyProfilePage extends StatefulWidget {
   final String myPfId;
 
-  const myProfilePage({super.key, required this.myPfId});
+  const MyProfilePage({super.key, required this.myPfId});
 
   @override
-  State<StatefulWidget> createState() => myProfilePageState();
+  State<StatefulWidget> createState() => MyProfilePageState();
 }
 
-class myProfilePageState extends State<myProfilePage> {
+class MyProfilePageState extends State<MyProfilePage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final FlutterSecureStorage secureStorage = FlutterSecureStorage();
   @override
@@ -455,7 +458,14 @@ class myProfilePageState extends State<myProfilePage> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           GestureDetector(
-                            onTap: () {},
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => MyTransactionPage(myTransId: '',), // Replace with your target widget
+                                  ),
+                                );
+                              },
                             child: Container(
                               padding: EdgeInsets.symmetric(
                                   horizontal: 7, vertical: 5),
@@ -533,7 +543,14 @@ class myProfilePageState extends State<myProfilePage> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           GestureDetector(
-                            onTap: () {},
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => MyReservationPage(myRsvId: '',), // Replace with your target widget
+                                ),
+                              );
+                            },
                             child: Container(
                               padding: EdgeInsets.symmetric(
                                   horizontal: 7, vertical: 5),
@@ -611,7 +628,14 @@ class myProfilePageState extends State<myProfilePage> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           GestureDetector(
-                            onTap: () {},
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => MySettingPage(myStngId: '',), // Replace with your target widget
+                                ),
+                              );
+                            },
                             child: Container(
                               padding: EdgeInsets.symmetric(
                                   horizontal: 7, vertical: 5),
@@ -682,7 +706,7 @@ class myProfilePageState extends State<myProfilePage> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => loginPage()),
+                                      builder: (context) => LoginPage()),
                                 );
                               },
                               style: ElevatedButton.styleFrom(

@@ -8,14 +8,14 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'login.dart';
 import 'signup_confirm.dart';
 
-class signupPage extends StatefulWidget {
-  const signupPage({super.key});
+class SignupPage extends StatefulWidget {
+  const SignupPage({super.key});
 
   @override
-  State<StatefulWidget> createState() => signupPageState();
+  State<StatefulWidget> createState() => SignupPageState();
 }
 
-class signupPageState extends State<signupPage> {
+class SignupPageState extends State<SignupPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   // Create a storage instance
   final FlutterSecureStorage secureStorage = FlutterSecureStorage();
@@ -44,7 +44,7 @@ class signupPageState extends State<signupPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      appBar: userentryAppbar(
+      appBar: UserentryAppbar(
         scaffoldKey: _scaffoldKey,
         userId: '',
         showLeading: false,
@@ -153,7 +153,7 @@ class signupPageState extends State<signupPage> {
                             child: TextField(
                               controller: fullNameText,
                               decoration: _inputDecoration(''),
-                              style: const TextStyle(
+                              style: GoogleFonts.poppins(
                                 color: Color(0xFF244065),
                                 fontWeight: FontWeight.w600,
                                 fontSize: 14,
@@ -252,7 +252,7 @@ class signupPageState extends State<signupPage> {
                                           ),
                                         ),
                                         keyboardType: TextInputType.phone,
-                                        style: const TextStyle(
+                                        style: GoogleFonts.poppins(
                                           color: Color(0xFF244065),
                                           fontWeight: FontWeight.w600,
                                           fontSize: 14,
@@ -305,7 +305,7 @@ class signupPageState extends State<signupPage> {
                             child: TextField(
                               controller: passText,
                               decoration: _inputDecoration(''),
-                              style: const TextStyle(
+                              style: GoogleFonts.poppins(
                                 color: Color(0xFF244065),
                                 fontWeight: FontWeight.w600,
                                 fontSize: 14,
@@ -353,7 +353,7 @@ class signupPageState extends State<signupPage> {
                             child: TextField(
                               controller: repassText,
                               decoration: _inputDecoration(''),
-                              style: const TextStyle(
+                              style: GoogleFonts.poppins(
                                 color: Color(0xFF244065),
                                 fontWeight: FontWeight.w600,
                                 fontSize: 14,
@@ -377,7 +377,7 @@ class signupPageState extends State<signupPage> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => signupConfirmPage()),
+                                      builder: (context) => SignupConfirmPage()),
                                 );
                               },
                               style: ElevatedButton.styleFrom(
@@ -429,7 +429,7 @@ class signupPageState extends State<signupPage> {
                             InkWell(
                               onTap: (){
                                 Navigator.push(context,
-                                    MaterialPageRoute(builder: (context)=> loginPage()
+                                    MaterialPageRoute(builder: (context)=> LoginPage()
                                     ));
                               },
                               child: Text(

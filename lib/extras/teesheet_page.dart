@@ -656,8 +656,8 @@ class TeesheetPageState extends State<TeesheetPage> {
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) =>
-                                      teeSheetDtls(
-                                          teeSheetDtlsUsrId: ''), // Replace with your target widget
+                                      TeeSheetDtls(
+                                          TeeSheetDtlsUsrId: ''), // Replace with your target widget
                                 ),
                               );
                             },

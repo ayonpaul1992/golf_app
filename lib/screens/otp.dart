@@ -28,7 +28,7 @@ class _OtpPageState extends State<OtpPage>{
   Widget build(BuildContext context) {
   return Scaffold(
     key: _scaffoldKey,
-    appBar: userentryAppbar(
+    appBar: UserentryAppbar(
       scaffoldKey: _scaffoldKey,
       userId: '',
       showLeading: false,

@@ -10,16 +10,16 @@ import 'package:gulf_app/components/custom_bottom_nav_bar.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:intl/intl.dart';
 
-class notificationPage extends StatefulWidget {
+class NotificationPage extends StatefulWidget {
   final String myNtfId;
 
-  const notificationPage({super.key, required this.myNtfId});
+  const NotificationPage({super.key, required this.myNtfId});
 
   @override
-  State<StatefulWidget> createState() => notificationPageState();
+  State<StatefulWidget> createState() => NotificationPageState();
 }
 
-class notificationPageState extends State<notificationPage> {
+class NotificationPageState extends State<NotificationPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final FlutterSecureStorage secureStorage = FlutterSecureStorage();
   @override

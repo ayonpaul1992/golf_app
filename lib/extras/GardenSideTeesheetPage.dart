@@ -640,7 +640,7 @@ class _GardenSideTeesheetPageState extends State<GardenSideTeesheetPage> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => teeSheetDtls(teeSheetDtlsUsrId: ''), // Replace with your target widget
+                                  builder: (context) => TeeSheetDtls(TeeSheetDtlsUsrId: ''), // Replace with your target widget
                                 ),
                               );
                             },

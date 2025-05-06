@@ -7,13 +7,13 @@ import 'package:gulf_app/components/userentry_app_bar.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'otp.dart';
 
-class forgotPasswordPage extends StatefulWidget{
-  const forgotPasswordPage({super.key});
+class ForgotPasswordPage extends StatefulWidget{
+  const ForgotPasswordPage({super.key});
 
   @override
-  State<StatefulWidget> createState()=> forgotPasswordPageState();
+  State<StatefulWidget> createState()=> ForgotPasswordPageState();
 }
-class forgotPasswordPageState extends State<forgotPasswordPage>{
+class ForgotPasswordPageState extends State<ForgotPasswordPage>{
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   // Create a storage instance
   final FlutterSecureStorage secureStorage = FlutterSecureStorage();
@@ -38,7 +38,7 @@ class forgotPasswordPageState extends State<forgotPasswordPage>{
   Widget build(BuildContext context) {
 return Scaffold(
   key: _scaffoldKey,
-  appBar: userentryAppbar(
+  appBar: UserentryAppbar(
     scaffoldKey: _scaffoldKey,
     userId: '',
     showLeading: false,

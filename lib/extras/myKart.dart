@@ -10,15 +10,15 @@ import 'package:gulf_app/components/custom_bottom_nav_bar.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:intl/intl.dart';
 
-class myKartPage extends StatefulWidget {
+class MyKartPage extends StatefulWidget {
   final String myKartId; // ✅ Add this
-  const myKartPage(
+  const MyKartPage(
       {super.key,required this.myKartId, required String myCart}); // ✅ Fix constructor
 
   @override
-  State<myKartPage> createState() => _myKartPageState();
+  State<MyKartPage> createState() => _MyKartPageState();
 }
-class _myKartPageState extends State<myKartPage>{
+class _MyKartPageState extends State<MyKartPage>{
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final FlutterSecureStorage secureStorage = FlutterSecureStorage();
   @override

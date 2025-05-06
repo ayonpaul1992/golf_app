@@ -44,7 +44,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => selcetBookingClass(
+                  builder: (context) => SelcetBookingClass(
                       userId: userId), // Corrected class name
                 ),
               );
@@ -89,7 +89,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => notificationPage(
+                    builder: (context) => NotificationPage(
                           myNtfId: '',
                         )));
           },
@@ -110,7 +110,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => myProfilePage(
+                    builder: (context) => MyProfilePage(
                       myPfId: '',
                     )));
           },

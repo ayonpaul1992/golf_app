@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 
-class userentryAppbar extends StatelessWidget implements PreferredSizeWidget {
+class UserentryAppbar extends StatelessWidget implements PreferredSizeWidget {
   final GlobalKey<ScaffoldState> scaffoldKey;
   final VoidCallback? onBackPressed;
   final String userId;
   final bool showLeading;
 
-  const userentryAppbar({
+  const UserentryAppbar({
     super.key,
     required this.userId,
     this.onBackPressed,

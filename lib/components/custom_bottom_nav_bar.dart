@@ -58,7 +58,7 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
           {
             'icon': 'assets/images/ftr_hstry.png',
             'label': 'History',
-            'route': const historyPage(
+            'route': const HistoryPage(
               history: '',
               historyId: '',
             )
@@ -66,7 +66,7 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
           {
             'icon': 'assets/images/self_chkng.png',
             'label': 'Self Checking',
-            'route': const selfCheckingPage(
+            'route': const SelfCheckingPage(
               selfcheck: '',
               selfChkId: '',
             )
@@ -74,7 +74,7 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
           {
             'icon': 'assets/images/ftr_str.png',
             'label': 'Store',
-            'route': const storePage(
+            'route': const StorePage(
               storeName: '',
               storeId: '',
             )
@@ -82,7 +82,7 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
           {
             'icon': 'assets/images/ftr_kart.png',
             'label': 'Settings',
-            'route': const myKartPage(
+            'route': const MyKartPage(
               myCart: '',
               myKartId: '',
             )

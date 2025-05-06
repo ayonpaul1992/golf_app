@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'login.dart';
 
-class splashScreen extends StatefulWidget {
-  const splashScreen({super.key});
+class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
 
   @override
-  State<StatefulWidget> createState() => splashScreenState();
+  State<StatefulWidget> createState() => SplashScreenState();
 }
 
-class splashScreenState extends State<splashScreen> {
+class SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -83,7 +83,7 @@ class splashScreenState extends State<splashScreen> {
                         onPressed: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => loginPage()),
+                            MaterialPageRoute(builder: (context) => LoginPage()),
                           );
                         },
                         style: ElevatedButton.styleFrom(

@@ -11,14 +11,14 @@ import 'forgot_password.dart';
 import 'selcet_booking_class.dart';
 import 'reset_password.dart';
 
-class loginPage extends StatefulWidget {
-  const loginPage({super.key});
+class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
 
   @override
-  State<StatefulWidget> createState() => loginPageState();
+  State<StatefulWidget> createState() => LoginPageState();
 }
 
-class loginPageState extends State<loginPage> {
+class LoginPageState extends State<LoginPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   // Create a storage instance
   final FlutterSecureStorage secureStorage = FlutterSecureStorage();
@@ -49,7 +49,6 @@ class loginPageState extends State<loginPage> {
 
     final String apiUrlWithParams =
         'https://api.dev.driverpos.io/api/v1/auth/login?role=customer&golfCourseCode=YdTIjvWB';
-
     try {
       final response = await http.post(
         Uri.parse(apiUrlWithParams),
@@ -76,7 +75,7 @@ class loginPageState extends State<loginPage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => resetPasswordPage(
+                  builder: (context) => ResetPasswordPage(
                     userId: userId,   // from your login response
                     emailOrMobile: phoneText.text.trim(), // from login screen input
                   ),
@@ -98,7 +97,7 @@ class loginPageState extends State<loginPage> {
               PageRouteBuilder(
                 transitionDuration: const Duration(milliseconds: 500),
                 pageBuilder: (context, animation, secondaryAnimation) =>
-                    selcetBookingClass(userId: userId),
+                    SelcetBookingClass(userId: userId),
                 transitionsBuilder: (context, animation, secondaryAnimation, child) {
                   const begin = Offset(1.0, 0.0);
                   const end = Offset.zero;
@@ -144,7 +143,7 @@ class loginPageState extends State<loginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      appBar: userentryAppbar(
+      appBar: UserentryAppbar(
         scaffoldKey: _scaffoldKey,
         userId: '',
         showLeading: false,
@@ -461,7 +460,7 @@ class loginPageState extends State<loginPage> {
                           child: TextButton(
                             onPressed: () {
                               Navigator.push(context,
-                                  MaterialPageRoute(builder: (context)=> forgotPasswordPage()
+                                  MaterialPageRoute(builder: (context)=> ForgotPasswordPage()
                               ));
                             },
                             style: ButtonStyle(
@@ -495,7 +494,7 @@ class loginPageState extends State<loginPage> {
                         TextButton(
                           onPressed: () {
                             Navigator.push(context,
-                                MaterialPageRoute(builder: (context)=> signupPage()
+                                MaterialPageRoute(builder: (context)=> SignupPage()
                                 ));
                           },
                           style: ButtonStyle(

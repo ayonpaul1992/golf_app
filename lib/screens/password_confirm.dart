@@ -7,18 +7,18 @@ import 'package:gulf_app/components/userentry_app_bar.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import "login.dart";
 
-class passwordConfirmPage extends StatefulWidget{
+class PasswordConfirmPage extends StatefulWidget{
   @override
-  State<StatefulWidget> createState()=>passwordConfirmPageState();
+  State<StatefulWidget> createState()=>PasswordConfirmPageState();
 
 }
-class passwordConfirmPageState extends State<passwordConfirmPage>{
+class PasswordConfirmPageState extends State<PasswordConfirmPage>{
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
 return Scaffold(
   key: _scaffoldKey,
-  appBar: userentryAppbar(
+  appBar: UserentryAppbar(
     scaffoldKey: _scaffoldKey,
     userId: '',
     showLeading: false,
@@ -110,7 +110,7 @@ return Scaffold(
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => loginPage()),
+                                  builder: (context) => LoginPage()),
                             );
                           },
                           style: ElevatedButton.styleFrom(

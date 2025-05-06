@@ -10,15 +10,15 @@ import 'package:gulf_app/components/custom_bottom_nav_bar.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:intl/intl.dart';
 
-class storePage extends StatefulWidget {
+class StorePage extends StatefulWidget {
   final String storeId; // ✅ Add this
-  const storePage(
+  const StorePage(
       {super.key,required this.storeId, required String storeName}); // ✅ Fix constructor
 
   @override
-  State<storePage> createState() => _storePageState();
+  State<StorePage> createState() => _StorePageState();
 }
-class _storePageState extends State<storePage>{
+class _StorePageState extends State<StorePage>{
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final FlutterSecureStorage secureStorage = FlutterSecureStorage();
   @override

@@ -8,16 +8,16 @@ import 'package:gulf_app/components/custom_app_bar.dart';
 import 'package:gulf_app/components/custom_drawer.dart';
 import 'package:gulf_app/extras/teesheet_page.dart'; // Import generic page
 
-class selcetBookingClass extends StatefulWidget {
+class SelcetBookingClass extends StatefulWidget {
   final String userId; // ✅ Add this
 
-  const selcetBookingClass({super.key, required this.userId}); // ✅ Fix constructor
+  const SelcetBookingClass({super.key, required this.userId}); // ✅ Fix constructor
 
   @override
-  State<selcetBookingClass> createState() => selcetBookingClassState();
+  State<SelcetBookingClass> createState() => SelcetBookingClassState();
 }
 
-class selcetBookingClassState extends State<selcetBookingClass> {
+class SelcetBookingClassState extends State<SelcetBookingClass> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final FlutterSecureStorage secureStorage = FlutterSecureStorage();
   final TextEditingController holdingNtrText = TextEditingController();
@@ -370,7 +370,6 @@ class selcetBookingClassState extends State<selcetBookingClass> {
                                 child: ElevatedButton(
                                   onPressed: () {
                                     if (_selectedTeesheet == null) return;
-
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
@@ -383,7 +382,6 @@ class selcetBookingClassState extends State<selcetBookingClass> {
                                         ),
                                       ),
                                     );
-
                                   },
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: const Color(0xFF9ECF9A),

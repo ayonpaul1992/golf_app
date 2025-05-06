@@ -281,7 +281,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
             _buildDrawerTile(
               title: 'Home',
               icon: Icons.home,
-              destinationScreen: selcetBookingClass(userId: ''),
+              destinationScreen: SelcetBookingClass(userId: ''),
             ),
             _buildDrawerTile(
               title: 'My Orders',
