@@ -106,8 +106,8 @@ class MySettingPageState extends State<MySettingPage> {
                             boxShadow: [
                               BoxShadow(
                                 color: Color(0xFF9ECF9A).withOpacity(0.15), // make it visible
-                                blurRadius: 20, // soft edges
-                                spreadRadius: 6, // controls how far the shadow spreads
+                                blurRadius: 30, // soft edges
+                                spreadRadius: 1, // controls how far the shadow spreads
                                 offset: Offset(3, 0), // shift shadow down slightly
                               ),
                             ],
@@ -203,8 +203,8 @@ class MySettingPageState extends State<MySettingPage> {
                             boxShadow: [
                               BoxShadow(
                                 color: Color(0xFF9ECF9A).withOpacity(0.15), // make it visible
-                                blurRadius: 20, // soft edges
-                                spreadRadius: 6, // controls how far the shadow spreads
+                                blurRadius: 30, // soft edges
+                                spreadRadius: 1, // controls how far the shadow spreads
                                 offset: Offset(3, 0), // shift shadow down slightly
                               ),
                             ],
@@ -279,8 +279,8 @@ class MySettingPageState extends State<MySettingPage> {
                             boxShadow: [
                               BoxShadow(
                                 color: Color(0xFF9ECF9A).withOpacity(0.15), // make it visible
-                                blurRadius: 20, // soft edges
-                                spreadRadius: 6, // controls how far the shadow spreads
+                                blurRadius: 30, // soft edges
+                                spreadRadius: 1, // controls how far the shadow spreads
                                 offset: Offset(3, 0), // shift shadow down slightly
                               ),
                             ],
@@ -355,8 +355,8 @@ class MySettingPageState extends State<MySettingPage> {
                             boxShadow: [
                               BoxShadow(
                                 color: Color(0xFF9ECF9A).withOpacity(0.15), // make it visible
-                                blurRadius: 20, // soft edges
-                                spreadRadius: 6, // controls how far the shadow spreads
+                                blurRadius: 30, // soft edges
+                                spreadRadius: 1, // controls how far the shadow spreads
                                 offset: Offset(3, 0), // shift shadow down slightly
                               ),
                             ],
@@ -431,8 +431,8 @@ class MySettingPageState extends State<MySettingPage> {
                             boxShadow: [
                               BoxShadow(
                                 color: Color(0xFF9ECF9A).withOpacity(0.15), // make it visible
-                                blurRadius: 20, // soft edges
-                                spreadRadius: 6, // controls how far the shadow spreads
+                                blurRadius: 30, // soft edges
+                                spreadRadius: 1, // controls how far the shadow spreads
                                 offset: Offset(3, 0), // shift shadow down slightly
                               ),
                             ],
@@ -507,8 +507,8 @@ class MySettingPageState extends State<MySettingPage> {
                             boxShadow: [
                               BoxShadow(
                                 color: Color(0xFF9ECF9A).withOpacity(0.15), // make it visible
-                                blurRadius: 20, // soft edges
-                                spreadRadius: 6, // controls how far the shadow spreads
+                                blurRadius: 30, // soft edges
+                                spreadRadius: 1, // controls how far the shadow spreads
                                 offset: Offset(3, 0), // shift shadow down slightly
                               ),
                             ],
@@ -583,8 +583,8 @@ class MySettingPageState extends State<MySettingPage> {
                             boxShadow: [
                               BoxShadow(
                                 color: Color(0xFF9ECF9A).withOpacity(0.15), // make it visible
-                                blurRadius: 20, // soft edges
-                                spreadRadius: 6, // controls how far the shadow spreads
+                                blurRadius: 30, // soft edges
+                                spreadRadius: 1, // controls how far the shadow spreads
                                 offset: Offset(3, 0), // shift shadow down slightly
                               ),
                             ],
@@ -659,8 +659,8 @@ class MySettingPageState extends State<MySettingPage> {
                             boxShadow: [
                               BoxShadow(
                                 color: Color(0xFF9ECF9A).withOpacity(0.15), // make it visible
-                                blurRadius: 20, // soft edges
-                                spreadRadius: 6, // controls how far the shadow spreads
+                                blurRadius: 30, // soft edges
+                                spreadRadius: 1, // controls how far the shadow spreads
                                 offset: Offset(3, 0), // shift shadow down slightly
                               ),
                             ],
@@ -735,8 +735,8 @@ class MySettingPageState extends State<MySettingPage> {
                             boxShadow: [
                               BoxShadow(
                                 color: Color(0xFF9ECF9A).withOpacity(0.15), // make it visible
-                                blurRadius: 20, // soft edges
-                                spreadRadius: 6, // controls how far the shadow spreads
+                                blurRadius: 30, // soft edges
+                                spreadRadius: 1, // controls how far the shadow spreads
                                 offset: Offset(3, 0), // shift shadow down slightly
                               ),
                             ],
@@ -811,8 +811,8 @@ class MySettingPageState extends State<MySettingPage> {
                             boxShadow: [
                               BoxShadow(
                                 color: Color(0xFF9ECF9A).withOpacity(0.15), // make it visible
-                                blurRadius: 20, // soft edges
-                                spreadRadius: 6, // controls how far the shadow spreads
+                                blurRadius: 30, // soft edges
+                                spreadRadius: 1, // controls how far the shadow spreads
                                 offset: Offset(3, 0), // shift shadow down slightly
                               ),
                             ],

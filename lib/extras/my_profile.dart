@@ -11,6 +11,7 @@ import 'package:gulf_app/components/custom_bottom_nav_bar.dart';
 import 'my_reservation.dart';
 import 'my_transaction.dart';
 import 'my_setting.dart';
+import 'edit_profile.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:intl/intl.dart';
 
@@ -302,7 +303,14 @@ class MyProfilePageState extends State<MyProfilePage> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           GestureDetector(
-                            onTap: () {},
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => MyEditPage(myEdId: '',), // Replace with your target widget
+                                ),
+                              );
+                            },
                             child: Container(
                               padding: EdgeInsets.symmetric(
                                   horizontal: 7, vertical: 5),
