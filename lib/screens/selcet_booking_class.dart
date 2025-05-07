@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
@@ -11,7 +10,8 @@ import 'package:gulf_app/extras/teesheet_page.dart'; // Import generic page
 class SelcetBookingClass extends StatefulWidget {
   final String userId; // ✅ Add this
 
-  const SelcetBookingClass({super.key, required this.userId}); // ✅ Fix constructor
+  const SelcetBookingClass(
+      {super.key, required this.userId}); // ✅ Fix constructor
 
   @override
   State<SelcetBookingClass> createState() => SelcetBookingClassState();
@@ -50,8 +50,7 @@ class SelcetBookingClassState extends State<SelcetBookingClass> {
     const String apiUrl =
         'https://api.dev.driverpos.io/api/v1/teesheet/customer-facility?golfCourseCode=YdTIjvWB';
 
-    const String token =
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3OTcwZmRiYTZkOTZkNGVjZDA1ZDk5OSIsInJvbGUiOiJDdXN0b21lciIsImlhdCI6MTc0NjE3MDA1MywiZXhwIjoxNzQ3NDY2MDUzfQ.zajMap6OLGCsRgKmheBdMkK0G2WM4U_gP8FSlLxsl9M';
+    String? token = await secureStorage.read(key: 'accessToken') ?? '';
 
     try {
       final response = await http.get(
@@ -67,7 +66,9 @@ class SelcetBookingClassState extends State<SelcetBookingClass> {
         if (data is Map<String, dynamic> && data['data'] is List) {
           setState(() {
             _fetchedTeesheets = data['data'];
-            dropdownItems = _fetchedTeesheets.map<String>((t) => t['name']?.toString() ?? 'Unnamed Teesheet').toList();
+            dropdownItems = _fetchedTeesheets
+                .map<String>((t) => t['name']?.toString() ?? 'Unnamed Teesheet')
+                .toList();
           });
         } else {
           _showMessage('Invalid response structure');
@@ -81,7 +82,6 @@ class SelcetBookingClassState extends State<SelcetBookingClass> {
       setState(() => isLoading = false);
     }
   }
-
 
   void toggleDropdown() {
     if (isDropdownOpen) {
@@ -107,7 +107,8 @@ class SelcetBookingClassState extends State<SelcetBookingClass> {
             borderRadius: BorderRadius.circular(15),
             color: Colors.white,
             child: ConstrainedBox(
-              constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.3),
+              constraints: BoxConstraints(
+                  maxHeight: MediaQuery.of(context).size.height * 0.3),
               child: ListView.separated(
                 padding: EdgeInsets.zero, // ✅ Remove top space
                 itemCount: dropdownItems.length,
@@ -124,7 +125,8 @@ class SelcetBookingClassState extends State<SelcetBookingClass> {
                       navigateToDynamicPage(item);
                     },
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 12),
                       child: Text(
                         item,
                         style: GoogleFonts.poppins(
@@ -137,7 +139,6 @@ class SelcetBookingClassState extends State<SelcetBookingClass> {
                   );
                 },
               ),
-
             ),
           ),
         ),
@@ -153,9 +154,11 @@ class SelcetBookingClassState extends State<SelcetBookingClass> {
     dropdownOverlay = null;
     setState(() => isDropdownOpen = false);
   }
+
   List<Map<String, dynamic>> _reservationGroups = [];
   void navigateToDynamicPage(String itemName) {
-    final selected = _fetchedTeesheets.firstWhere((e) => e['name'] == itemName, orElse: () => null);
+    final selected = _fetchedTeesheets.firstWhere((e) => e['name'] == itemName,
+        orElse: () => null);
 
     if (selected == null) {
       _showMessage('No matching data found.');
@@ -170,11 +173,8 @@ class SelcetBookingClassState extends State<SelcetBookingClass> {
     _fetchReservationGroups(teeSheetId);
   }
 
-
   Future<void> _fetchReservationGroups(String teeSheetId) async {
-    const String token =
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3OTcwZmRiYTZkOTZkNGVjZDA1ZDk5OSIsInJvbGUiOiJDdXN0b21lciIsImlhdCI6MTc0NjE3MDA1MywiZXhwIjoxNzQ3NDY2MDUzfQ.zajMap6OLGCsRgKmheBdMkK0G2WM4U_gP8FSlLxsl9M';
-
+    String? token = await secureStorage.read(key: 'accessToken') ?? '';
     final String url =
         'https://api.dev.driverpos.io/api/v1/reservationGroup/customer?teeSheet=$teeSheetId';
 
@@ -200,7 +200,6 @@ class SelcetBookingClassState extends State<SelcetBookingClass> {
     }
   }
 
-
   void _showMessage(String msg) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
   }
@@ -210,7 +209,6 @@ class SelcetBookingClassState extends State<SelcetBookingClass> {
   //   holdingNtrText.dispose();
   //   super.dispose();
   // }
-
 
   @override
   Widget build(BuildContext context) {
@@ -273,7 +271,7 @@ class SelcetBookingClassState extends State<SelcetBookingClass> {
               ),
               Padding(
                 padding:
-                EdgeInsets.only(top: 15, left: 20, right: 20, bottom: 20),
+                    EdgeInsets.only(top: 15, left: 20, right: 20, bottom: 20),
                 child: Text(
                   "Select a tee sheet to book a tee time or enjoy other activities.",
                   textAlign: TextAlign.center,
@@ -285,9 +283,14 @@ class SelcetBookingClassState extends State<SelcetBookingClass> {
                 ),
               ),
               Container(
-                child: Image.asset("assets/images/golf_ground.png",width: 100,),
+                child: Image.asset(
+                  "assets/images/golf_ground.png",
+                  width: 100,
+                ),
               ),
-              SizedBox(height: 10,),
+              SizedBox(
+                height: 10,
+              ),
               Container(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -313,26 +316,34 @@ class SelcetBookingClassState extends State<SelcetBookingClass> {
                                 GestureDetector(
                                   onTap: toggleDropdown,
                                   child: Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 15, vertical: 8),
                                     decoration: BoxDecoration(
                                       border: Border.all(
                                         color: isDropdownOpen
-                                            ? const Color(0xFF9ECF9A) // Focused/Open border color
-                                            : const Color(0xFFB2C1C0), // Enabled border color
+                                            ? const Color(
+                                                0xFF9ECF9A) // Focused/Open border color
+                                            : const Color(
+                                                0xFFB2C1C0), // Enabled border color
                                         width: 1.0,
                                       ),
                                       borderRadius: BorderRadius.circular(50),
                                     ),
-
                                     child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
                                       children: [
-                                        Text(selectedItem,style: GoogleFonts.poppins(
-                                          fontSize: 14,
-                                          color: Color(0xFF244065),
-                                          fontWeight: FontWeight.w600,
-                                        ),),
-                                        Icon(isDropdownOpen ? Icons.arrow_drop_up : Icons.arrow_drop_down),
+                                        Text(
+                                          selectedItem,
+                                          style: GoogleFonts.poppins(
+                                            fontSize: 14,
+                                            color: Color(0xFF244065),
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                        Icon(isDropdownOpen
+                                            ? Icons.arrow_drop_up
+                                            : Icons.arrow_drop_down),
                                       ],
                                     ),
                                   ),
@@ -360,9 +371,11 @@ class SelcetBookingClassState extends State<SelcetBookingClass> {
                     ),
                     Column(
                       children: _reservationGroups.map((group) {
-                        final String label = group['name']?.toString() ?? 'Unnamed';
+                        final String label =
+                            group['name']?.toString() ?? 'Unnamed';
                         return Padding(
-                          padding: const EdgeInsets.only(left: 38, right: 38, bottom: 15),
+                          padding: const EdgeInsets.only(
+                              left: 38, right: 38, bottom: 15),
                           child: Stack(
                             children: [
                               SizedBox(
@@ -370,15 +383,24 @@ class SelcetBookingClassState extends State<SelcetBookingClass> {
                                 child: ElevatedButton(
                                   onPressed: () {
                                     if (_selectedTeesheet == null) return;
+
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
                                         builder: (_) => TeesheetPage(
-                                          id: _selectedTeesheet!['_id']?.toString() ?? '',
-                                          name: _selectedTeesheet!['name']?.toString() ?? '',
-                                          logoUrl: _selectedTeesheet!['golfCourseLogo']?.toString() ?? '',
+                                          id: _selectedTeesheet!['_id']
+                                                  ?.toString() ??
+                                              '',
+                                          name: _selectedTeesheet!['name']
+                                                  ?.toString() ??
+                                              '',
+                                          logoUrl: _selectedTeesheet![
+                                                      'golfCourseLogo']
+                                                  ?.toString() ??
+                                              '',
                                           userId: widget.userId,
-                                          teesheetPageId: group['_id']?.toString() ?? '',
+                                          teesheetPageId:
+                                              group['_id']?.toString() ?? '',
                                         ),
                                       ),
                                     );
@@ -387,7 +409,8 @@ class SelcetBookingClassState extends State<SelcetBookingClass> {
                                     backgroundColor: const Color(0xFF9ECF9A),
                                   ),
                                   child: Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10.0),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 15.0, vertical: 10.0),
                                     child: Center(
                                       child: Text(
                                         label,
@@ -404,14 +427,14 @@ class SelcetBookingClassState extends State<SelcetBookingClass> {
                               const Positioned(
                                 top: 16.5,
                                 right: 15,
-                                child: Icon(Icons.arrow_forward, color: Colors.white, size: 18),
+                                child: Icon(Icons.arrow_forward,
+                                    color: Colors.white, size: 18),
                               ),
                             ],
                           ),
                         );
                       }).toList(),
                     )
-
                   ],
                 ),
               ),
@@ -421,6 +444,7 @@ class SelcetBookingClassState extends State<SelcetBookingClass> {
       ), // temporary body
     );
   }
+
   InputDecoration _inputDecoration(String hintText) {
     return InputDecoration(
       filled: true,
@@ -448,4 +472,3 @@ class SelcetBookingClassState extends State<SelcetBookingClass> {
     );
   }
 }
-
