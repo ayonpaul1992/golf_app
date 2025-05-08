@@ -34,6 +34,7 @@ class MyEditPageState extends State<MyEditPage> {
   final fullNmText = TextEditingController();
   final lastNmText = TextEditingController();
   final emailIdText = TextEditingController();
+  final lgnemailIdText = TextEditingController();
   final phoneNoText = TextEditingController();
   final addressController = TextEditingController();
   final cityController = TextEditingController();
@@ -43,6 +44,7 @@ class MyEditPageState extends State<MyEditPage> {
   bool _isPassVisible = false;
   String? passError;
   String? emailError;
+  String? lgnemailError;
   String? phoneError;
   String? firstNameError;
   String? lastNameError;
@@ -374,16 +376,25 @@ class MyEditPageState extends State<MyEditPage> {
                       if (customerIdError != null)
                         Padding(
                           padding: const EdgeInsets.only(left: 12.0, top: 5),
-                          child: Text(
-                            customerIdError!,
-                            style: const TextStyle(color: Colors.red, fontSize: 12),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  customerIdError!,
+                                  style: const TextStyle(color: Colors.red, fontSize: 12),
+                                  textAlign: TextAlign.start,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       const SizedBox(height: 15),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          Expanded(
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.44,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -391,15 +402,25 @@ class MyEditPageState extends State<MyEditPage> {
                                 if (firstNameError != null)
                                   Padding(
                                     padding: const EdgeInsets.only(left: 12.0, top: 5),
-                                    child: Text(
-                                      firstNameError!,
-                                      style: const TextStyle(color: Colors.red, fontSize: 12),
+                                    child: Row(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            firstNameError!,
+                                            style: const TextStyle(color: Colors.red, fontSize: 12),
+                                            textAlign: TextAlign.start,
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
                               ],
                             ),
                           ),
-                          Expanded(
+                          SizedBox(width: 4,),
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.44,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -407,9 +428,17 @@ class MyEditPageState extends State<MyEditPage> {
                                 if (lastNameError != null)
                                   Padding(
                                     padding: const EdgeInsets.only(left: 12.0, top: 5),
-                                    child: Text(
-                                      lastNameError!,
-                                      style: const TextStyle(color: Colors.red, fontSize: 12),
+                                    child: Row(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            lastNameError!,
+                                            style: const TextStyle(color: Colors.red, fontSize: 12),
+                                            textAlign: TextAlign.start,
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
                               ],
@@ -421,24 +450,40 @@ class MyEditPageState extends State<MyEditPage> {
                       _buildLabel("Email"),
                       SizedBox(height: 10),
                       _buildTextField(emailIdText, isEmail: true),
-                      if (emailError!= null)
+                      if (emailError != null)
                         Padding(
                           padding: const EdgeInsets.only(left: 12.0, top: 5),
-                          child: Text(
-                            emailError!,
-                            style: const TextStyle(color: Colors.red, fontSize: 12),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  emailError!,
+                                  style: const TextStyle(color: Colors.red, fontSize: 12),
+                                  textAlign: TextAlign.start,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       const SizedBox(height: 15),
                       _buildLabel("Phone Number"),
                       SizedBox(height: 10),
                       _buildTextField(phoneNoText, isPhone: true),
-                      if (phoneError!= null)
+                      if (phoneError != null)
                         Padding(
                           padding: const EdgeInsets.only(left: 12.0, top: 5),
-                          child: Text(
-                            phoneError!,
-                            style: const TextStyle(color: Colors.red, fontSize: 12),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  phoneError!,
+                                  style: const TextStyle(color: Colors.red, fontSize: 12),
+                                  textAlign: TextAlign.start,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       const SizedBox(height: 15),
@@ -507,29 +552,46 @@ class MyEditPageState extends State<MyEditPage> {
                           ),
                         ),
                       ),
-                      if (dobError!= null)
+                      if (dobError != null)
                         Padding(
                           padding: const EdgeInsets.only(left: 12.0, top: 5),
-                          child: Text(
-                            dobError!,
-                            style: const TextStyle(color: Colors.red, fontSize: 12),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  dobError!,
+                                  style: const TextStyle(color: Colors.red, fontSize: 12),
+                                  textAlign: TextAlign.start,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       const SizedBox(height: 15),
                       _buildLabel("Address"),
                       SizedBox(height: 10),
                       _buildTextField(addressController, maxLines: 1),
-                      if (addressError!= null)
+                      if (addressError != null)
                         Padding(
                           padding: const EdgeInsets.only(left: 12.0, top: 5),
-                          child: Text(
-                            addressError!,
-                            style: const TextStyle(color: Colors.red, fontSize: 12),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  addressError!,
+                                  style: const TextStyle(color: Colors.red, fontSize: 12),
+                                  textAlign: TextAlign.start,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       const SizedBox(height: 15),
                       Wrap(
                         alignment: WrapAlignment.spaceBetween,
+                        spacing: 10,
                         runSpacing: 15,
                         children: [
                           SizedBox(
@@ -538,12 +600,20 @@ class MyEditPageState extends State<MyEditPage> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 _buildHalfField("City", cityController),
-                                if (cityError!= null)
+                                if (cityError != null)
                                   Padding(
                                     padding: const EdgeInsets.only(left: 12.0, top: 5),
-                                    child: Text(
-                                      cityError!,
-                                      style: const TextStyle(color: Colors.red, fontSize: 12),
+                                    child: Row(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            cityError!,
+                                            style: const TextStyle(color: Colors.red, fontSize: 12),
+                                            textAlign: TextAlign.start,
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
                               ],
@@ -555,12 +625,20 @@ class MyEditPageState extends State<MyEditPage> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 _buildHalfField("State", stateController),
-                                if (stateError!= null)
+                                if (stateError != null)
                                   Padding(
                                     padding: const EdgeInsets.only(left: 12.0, top: 5),
-                                    child: Text(
-                                      stateError!,
-                                      style: const TextStyle(color: Colors.red, fontSize: 12),
+                                    child: Row(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            stateError!,
+                                            style: const TextStyle(color: Colors.red, fontSize: 12),
+                                            textAlign: TextAlign.start,
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
                               ],
@@ -572,12 +650,20 @@ class MyEditPageState extends State<MyEditPage> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 _buildHalfField("Zip", zipController),
-                                if (zipError!= null)
+                                if (zipError != null)
                                   Padding(
                                     padding: const EdgeInsets.only(left: 12.0, top: 5),
-                                    child: Text(
-                                      zipError!,
-                                      style: const TextStyle(color: Colors.red, fontSize: 12),
+                                    child: Row(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            zipError!,
+                                            style: const TextStyle(color: Colors.red, fontSize: 12),
+                                            textAlign: TextAlign.start,
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
                               ],
@@ -635,13 +721,21 @@ class MyEditPageState extends State<MyEditPage> {
                     if(_isLoginInfo) ...[
                       _buildLabel("Email"),
                       SizedBox(height: 10),
-                      _buildTextField(emailIdText, isEmail: true),
-                      if (emailError!= null)
+                      _buildTextField(lgnemailIdText, isEmail: true),
+                      if (lgnemailError != null)
                         Padding(
                           padding: const EdgeInsets.only(left: 12.0, top: 5),
-                          child: Text(
-                            emailError!,
-                            style: const TextStyle(color: Colors.red, fontSize: 12),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  lgnemailError!,
+                                  style: const TextStyle(color: Colors.red, fontSize: 12),
+                                  textAlign: TextAlign.start,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       const SizedBox(height: 15),
@@ -658,12 +752,20 @@ class MyEditPageState extends State<MyEditPage> {
                         },
 
                       ),
-                      if (passError!= null && passText.text.length < 6)
+                      if (passError != null && passText.text.length < 6)
                         Padding(
                           padding: const EdgeInsets.only(left: 12.0, top: 5),
-                          child: Text(
-                            passError!,
-                            style: const TextStyle(color: Colors.red, fontSize: 12),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  passError!,
+                                  style: const TextStyle(color: Colors.red, fontSize: 12),
+                                  textAlign: TextAlign.start,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       const SizedBox(height: 15),
@@ -707,7 +809,35 @@ class MyEditPageState extends State<MyEditPage> {
                     Container(
                       child: GestureDetector(
                         onTap: () {
-                          // Your onTap action here
+                          print("Clear button tapped!"); // Your onTap action here
+                          // You might want to call a function to clear form fields, etc.
+                          setState(() {
+                            customerIdText.clear();
+                            fullNmText.clear();
+                            lastNmText.clear();
+                            emailIdText.clear();
+                            lgnemailIdText.clear();
+                            phoneNoText.clear();
+                            _dateController.clear();
+                            addressController.clear();
+                            cityController.clear();
+                            stateController.clear();
+                            zipController.clear();
+                            passText.clear();
+
+                            customerIdError = null;
+                            firstNameError = null;
+                            lastNameError = null;
+                            emailError = null;
+                            lgnemailError = null;
+                            phoneError = null;
+                            dobError = null;
+                            addressError = null;
+                            cityError = null;
+                            stateError = null;
+                            zipError = null;
+                            passError = null;
+                          });
                         },
                         child: Container(
                           decoration: BoxDecoration(
@@ -743,70 +873,59 @@ class MyEditPageState extends State<MyEditPage> {
                       child: GestureDetector(
                         onTap: () {
                           setState(() {
-                            // Reset errors
-                            emailError = null;
-                            phoneError = null;
-                            passError = null;
-                            dobError = null;
-                            firstNameError = null;
-                            lastNameError = null;
-                            customerIdError = null;
-                            addressError = null;
-                            cityError = null;
-                            stateError = null;
-                            zipError = null;
+                            // Reset all errors
+                            emailError = lgnemailError = phoneError = passError = dobError =
+                                firstNameError = lastNameError = customerIdError =
+                                addressError = cityError = stateError = zipError = null;
 
-                            // Validate
-                            if (customerIdText.text.isEmpty) {
-                              customerIdError = "Customer ID is required";
+                            // Validation
+                            if (customerIdText.text.isEmpty) customerIdError = "Customer ID is required";
+                            if (fullNmText.text.isEmpty) firstNameError = "First Name is required";
+                            if (lastNmText.text.isEmpty) lastNameError = "Last Name is required";
+                            if (cityController.text.isEmpty) cityError = "City Name is required";
+                            if (stateController.text.isEmpty) stateError = "State Name is required";
+                            if (addressController.text.isEmpty) addressError = "Address is required";
+                            if (zipController.text.isEmpty) zipError = "Zip code is required";
+
+                            // Email validation (lowercase, must have '@' and domain like '.com')
+                            if (emailIdText.text.isEmpty) {
+                              emailError = "Email is required";
+                            } else if (!RegExp(r'^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$').hasMatch(emailIdText.text)) {
+                              emailError = "Enter a valid email address";
                             }
-                            if (fullNmText.text.isEmpty) {
-                              firstNameError = "First Name is required";
+
+                            if (lgnemailIdText.text.isEmpty) {
+                              lgnemailError = "Email is required";
+                            } else if (!RegExp(r'^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$').hasMatch(lgnemailIdText.text)) {
+                              lgnemailError = "Enter a valid email address";
                             }
-                            if (cityController.text.isEmpty) {
-                              cityError = "City Name is required";
+
+                            // Phone validation
+                            if (phoneNoText.text.isEmpty) {
+                              phoneError = "Phone number is required";
+                            } else if (phoneNoText.text.length < 10) {
+                              phoneError = "Phone number must be at least 10 digits";
+                            } else if (phoneNoText.text.length > 10) {
+                              phoneError = "Phone number cannot be more than 10 digits";
                             }
-                            if (stateController.text.isEmpty) {
-                              stateError = "State Name is required";
-                            }
-                            if (addressController.text.isEmpty) {
-                              addressError = "Address is required";
-                            }
-                            if (zipController.text.isEmpty) {
-                              zipError = "Zip code is required";
-                            }
-                            if (lastNmText.text.isEmpty) {
-                              lastNameError = "Last Name is required";
-                            }
-                            if (emailIdText.text.isEmpty || !emailIdText.text.contains("@")) {
-                              emailError = "Enter a valid email";
-                            }
-                            if (phoneNoText.text.isEmpty || phoneNoText.text.length != 10) {
-                              phoneError = "Enter a valid phone number";
-                            }
+
+                            // Date of birth validation
                             if (_dateController.text.isEmpty) {
                               dobError = "Date of birth is required";
                             }
+
+                            // Password validation
                             if (passText.text.isEmpty) {
                               passError = "Password is required";
-                            }
-                            if (passText.text.length < 6) {
+                            } else if (passText.text.length < 6) {
                               passError = "Password must be at least 6 characters";
                             }
 
-                            // If no errors, proceed
-                            if (emailError == null &&
-                                phoneError == null &&
-                                passError == null &&
-                                dobError == null &&
-                                firstNameError == null &&
-                                lastNameError == null &&
-                                customerIdError == null &&
-                            cityError == null &&
-                            stateError == null &&
-                            zipError == null &&
-                            addressError == null) {
-                              // All fields valid — proceed to save or navigate
+                            // Proceed if no errors
+                            if (emailError == null && lgnemailError == null && phoneError == null && passError == null && dobError == null &&
+                                firstNameError == null && lastNameError == null && customerIdError == null &&
+                                cityError == null && stateError == null && zipError == null && addressError == null) {
+                              // Proceed to next screen or save data
                               // Navigator.push(context, MaterialPageRoute(builder: (context) => MyCartPage(myCartId: '')));
                             }
                           });
@@ -826,8 +945,7 @@ class MyEditPageState extends State<MyEditPage> {
                               ),
                             ],
                           ),
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 15, vertical: 7),
+                          padding: EdgeInsets.symmetric(horizontal: 15, vertical: 7),
                           child: Center(
                             child: Text(
                               "Save",
@@ -895,6 +1013,7 @@ class MyEditPageState extends State<MyEditPage> {
   Widget _buildTextField(
       TextEditingController controller, {
         bool isEmail = false,
+        bool isLgEmail = false,
         bool isPhone = false,
         bool isPassword = false,
         bool obscureText = false,
@@ -926,14 +1045,52 @@ class MyEditPageState extends State<MyEditPage> {
             child: TextField(
               controller: controller,
               obscureText: isPassword ? obscureText : false,
-              keyboardType: isEmail
+              keyboardType: isEmail || isLgEmail
                   ? TextInputType.emailAddress
                   : isPhone
                   ? TextInputType.phone
                   : TextInputType.multiline,
               textInputAction: TextInputAction.done,
-              inputFormatters:
-              isPhone ? [FilteringTextInputFormatter.digitsOnly] : null,
+              inputFormatters: [
+                if (isPhone) FilteringTextInputFormatter.digitsOnly,
+                if (isPhone) LengthLimitingTextInputFormatter(10),
+                if (isEmail || isLgEmail) FilteringTextInputFormatter.deny(RegExp(r'[A-Z]')), // Prevent uppercase
+              ],
+              onChanged: (value) {
+                if (isEmail || isLgEmail) {
+                  if (!value.contains('@') || !value.contains('.')) {
+                    setState(() {
+                      if (isEmail) {
+                        emailError = "Enter a valid email address";
+                      } else if (isLgEmail) {
+                        lgnemailError = "Enter a valid email address";
+                      }
+                    });
+                  } else {
+                    setState(() {
+                      if (isEmail) {
+                        emailError = null;
+                      } else if (isLgEmail) {
+                        lgnemailError = null;
+                      }
+                    });
+                  }
+                } else if (isPhone) {
+                  if (value.length < 10) {
+                    setState(() {
+                      phoneError = "Phone number must be at least 10 digits";
+                    });
+                  } else if (value.length > 10) {
+                    setState(() {
+                      phoneError = "Phone number cannot be more than 10 digits";
+                    });
+                  } else {
+                    setState(() {
+                      phoneError = null;
+                    });
+                  }
+                }
+              },
               maxLines: maxLines,
               decoration: _inputDecoration(isPassword ? '**********' : '').copyWith(
                 suffixIcon: isPassword
@@ -961,8 +1118,7 @@ class MyEditPageState extends State<MyEditPage> {
               autofillHints: isPassword ? [AutofillHints.password] : null,
             ),
           ),
-          if (errorText != null)
-            const SizedBox(height: 5),
+          if (errorText != null) const SizedBox(height: 5),
           if (errorText != null)
             Padding(
               padding: const EdgeInsets.only(left: 12.0),
@@ -975,16 +1131,61 @@ class MyEditPageState extends State<MyEditPage> {
       ),
     );
   }
-
-  Widget _buildHalfField(String label, TextEditingController controller) {
+  Widget _buildHalfField(String label, TextEditingController controller, {String? errorText}) {
     return SizedBox(
-      width: 180,
+      width: MediaQuery.of(context).size.width * 0.46,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildLabel(label),
           const SizedBox(height: 10),
-          _buildTextField(controller),
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(50),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 6,
+                  offset: const Offset(0, 3),
+                ),
+              ],
+              border: Border.all(
+                color: errorText != null ? Colors.red : const Color(0xFFB2C1C0),
+                width: 1,
+              ),
+            ),
+            child: TextField(
+              controller: controller,
+              textInputAction: TextInputAction.done,
+              inputFormatters: [
+                LengthLimitingTextInputFormatter(30), // Add this line for the 30-letter limit
+              ],
+              style: GoogleFonts.poppins(
+                color: const Color(0xFF244065),
+                fontWeight: FontWeight.w600,
+                fontSize: 14,
+              ),
+              decoration: _inputDecoration('').copyWith(
+                suffixIcon: const Padding(
+                  padding: EdgeInsets.only(right: 10),
+                  child: Icon(
+                    Icons.edit,
+                    color: Color(0xFF6B7280),
+                    size: 18,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          if (errorText != null)
+            Padding(
+              padding: const EdgeInsets.only(left: 12.0, top: 5),
+              child: Text(
+                errorText,
+                style: const TextStyle(color: Colors.red, fontSize: 12),
+              ),
+            ),
         ],
       ),
     );
