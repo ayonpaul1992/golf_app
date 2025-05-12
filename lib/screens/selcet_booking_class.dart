@@ -170,6 +170,7 @@ class SelcetBookingClassState extends State<SelcetBookingClass> {
     });
 
     final String teeSheetId = selected['_id'];
+    print(_selectedTeesheet?['_id']);
     _fetchReservationGroups(teeSheetId);
   }
 
@@ -400,6 +401,10 @@ class SelcetBookingClassState extends State<SelcetBookingClass> {
                                               '',
                                           userId: widget.userId,
                                           teesheetPageId:
+                                              _selectedTeesheet?['_id']
+                                                      ?.toString() ??
+                                                  '',
+                                          reservationGroupId:
                                               group['_id']?.toString() ?? '',
                                         ),
                                       ),
