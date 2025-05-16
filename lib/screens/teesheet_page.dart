@@ -1,10 +1,7 @@
-// ignore_for_file: deprecated_member_use
-
-import 'dart:convert';
+// ignore_for_file: deprecated_member_use, library_prefixes
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:gulf_app/components/custom_app_bar.dart';
 import 'package:gulf_app/components/custom_drawer.dart';
@@ -12,6 +9,7 @@ import 'package:gulf_app/components/custom_bottom_nav_bar.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:gulf_app/extras/tee_sheet_details.dart';
 import 'package:intl/intl.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class TeesheetPage extends StatefulWidget {
   final String teesheetPageId;
@@ -56,13 +54,26 @@ class TeesheetPageState extends State<TeesheetPage> {
 
   // List<String> teeSheetConfigHoles = [];
 
+  IO.Socket? socket;
+
   @override
   void initState() {
     super.initState();
     final now = DateTime.now();
     _selectedDate = now;
     _dateController.text = DateFormat("MMM dd, yyyy").format(now);
-    _fetchCustomerTeesheets(); // Call the API on screen load
+
+    final queryParameters = {
+      'timeOfDay': 'all', // Assuming timeSlot is based on selectedIndex
+      'teeSheet': widget.teesheetPageId,
+      'reservationGroup': widget.reservationGroupId,
+      'date': _selectedDate != null
+          ? DateFormat("yyyy-MM-dd").format(_selectedDate!)
+          : '',
+      // 'holes': selectedHole,
+      // 'players': selectedPlayer.toString(),
+    };
+    _fetchCustomerTeesheets(queryParameters); // Call the API on screen load
   }
 
   void setTeeSheetConfig(Map<String, dynamic> config) {
@@ -79,7 +90,7 @@ class TeesheetPageState extends State<TeesheetPage> {
 
   void setTeeSheetData() {
     setState(() {
-      allTeeSheetData = jsonDecode(teesheetData)['data'];
+      allTeeSheetData = teesheetData;
     });
   }
 
@@ -103,56 +114,55 @@ class TeesheetPageState extends State<TeesheetPage> {
     }
   }
 
-  void _fetchCustomerTeesheets() async {
+  Future<void> _fetchCustomerTeesheets(Map<String, dynamic> params) async {
     setState(() {
       isLoading = true;
     });
+    // Always dispose the old one
+    final FlutterSecureStorage secureStorage = FlutterSecureStorage();
 
-    String? token = await secureStorage.read(key: 'accessToken') ?? '';
+    String token = await secureStorage.read(key: 'accessToken') ?? '';
 
-    try {
-      final queryParameters = {
-        'timeOfDay': 'all', // Assuming timeSlot is based on selectedIndex
-        'teeSheet': widget.teesheetPageId,
-        'reservationGroup': widget.reservationGroupId,
-        'date': _selectedDate != null
-            ? DateFormat("yyyy-MM-dd").format(_selectedDate!)
-            : '',
-        // 'holes': selectedHole,
-        // 'players': selectedPlayer.toString(),
-      };
+    socket?.clearListeners(); // ✅ clear all previous .on() handlers
+    socket?.disconnect();
+    socket?.destroy();
+    socket = null;
 
-      final uri = Uri.https(
-        'api.dev.driverpos.io',
-        '/api/v1/teesheet/customer-teesheet',
-        queryParameters,
-      );
-      final response = await http.get(
-        uri, // Use the constructed URI with query parameters
-        headers: {
-          'Authorization': 'Bearer $token', // Include the token in the headers
-        },
-      );
+    socket?.dispose();
 
-      if (response.statusCode == 200) {
-        // Parse the response and update the state
-        final data = response.body; // Parse the JSON response
-        setState(() {
-          teesheetData = data;
-          final teeSheetConfig = jsonDecode(data)['teeSheetConfig'];
-          setTeeSheetConfig(teeSheetConfig);
-          setTeeSheetData();
-        });
-      } else {
-        print(response.body);
-      }
-    } catch (e) {
-      print('Error fetching data: $e');
-    } finally {
+    socket = IO.io('https://api.dev.driverpos.io', <String, dynamic>{
+      'transports': ['websocket'],
+      'timeout': 5000,
+      'reconnection': true,
+      'reconnectionAttempts': 5,
+      'auth': {
+        'token': token, // ✅ this matches the React structure
+      },
+    });
+
+    socket!.onConnect((_) {
+      socket!.emit("/customerTeesheet", params);
+    });
+
+    socket!.off("/customerTeesheet");
+
+    socket!.on("/customerTeesheet", (data) {
+      final innerData = data['data']; // Extract the inner 'data' object
+      final teeSheetConfig = data['teeSheetConfig']; // Get config
+
       setState(() {
+        teesheetData = innerData;
+        setTeeSheetConfig(teeSheetConfig);
+        setTeeSheetData();
         isLoading = false;
       });
-    }
+    });
+
+    socket!.onConnectError((err) => print('❌ Connect error: $err'));
+    socket!.onError((err) => print('❌ General error: $err'));
+    socket!.onDisconnect((_) => print('🔌 Socket disconnected'));
+
+    socket!.connect();
   }
 
   void _showDatePicker(BuildContext context) {
@@ -302,6 +312,10 @@ class TeesheetPageState extends State<TeesheetPage> {
   @override
   void dispose() {
     _dropdownOverlay?.remove();
+    socket?.clearListeners();
+    socket?.disconnect();
+    socket?.destroy();
+    socket = null;
     super.dispose();
   }
 

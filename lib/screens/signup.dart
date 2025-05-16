@@ -1,5 +1,3 @@
-import 'dart:convert';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
@@ -377,7 +375,8 @@ class SignupPageState extends State<SignupPage> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => SignupConfirmPage()),
+                                      builder: (context) =>
+                                          SignupConfirmPage()),
                                 );
                               },
                               style: ElevatedButton.styleFrom(
@@ -425,12 +424,15 @@ class SignupPageState extends State<SignupPage> {
                                   fontWeight: FontWeight.w400,
                                   color: Color(0xFF6E7373)),
                             ),
-                            SizedBox(width: 4,),
+                            SizedBox(
+                              width: 4,
+                            ),
                             InkWell(
-                              onTap: (){
-                                Navigator.push(context,
-                                    MaterialPageRoute(builder: (context)=> LoginPage()
-                                    ));
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => LoginPage()));
                               },
                               child: Text(
                                 "LOGIN",
@@ -445,7 +447,9 @@ class SignupPageState extends State<SignupPage> {
                         )
                       ],
                     ),
-                    SizedBox(height: 20,),
+                    SizedBox(
+                      height: 20,
+                    ),
                   ],
                 ),
               ),
