@@ -1,20 +1,19 @@
-import 'dart:convert';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:gulf_app/components/custom_app_bar.dart';
 import 'package:gulf_app/components/custom_drawer.dart';
 import 'package:gulf_app/components/custom_bottom_nav_bar.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
-import 'package:gulf_app/extras/tee_sheet_details.dart';
+// import 'package:gulf_app/screens/tee_sheet_details.dart';
 import 'package:intl/intl.dart';
 
 class GardenSideTeesheetPage extends StatefulWidget {
   final String gsTeeSheetuserId; // ✅ Add this
   const GardenSideTeesheetPage(
-      {super.key, required this.gsTeeSheetuserId, required String userId}); // ✅ Fix constructor
+      {super.key,
+      required this.gsTeeSheetuserId,
+      required String userId}); // ✅ Fix constructor
 
   @override
   State<GardenSideTeesheetPage> createState() => _GardenSideTeesheetPageState();
@@ -112,7 +111,8 @@ class _GardenSideTeesheetPageState extends State<GardenSideTeesheetPage> {
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                    onSelectionChanged: (DateRangePickerSelectionChangedArgs args) {
+                    onSelectionChanged:
+                        (DateRangePickerSelectionChangedArgs args) {
                       setState(() {
                         _selectedDate = args.value;
                       });
@@ -185,11 +185,6 @@ class _GardenSideTeesheetPageState extends State<GardenSideTeesheetPage> {
     );
   }
 
-  void _showMessage(String message) {
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text(message)));
-  }
-
   int? editingIndex;
   int selectedPlayer = 1;
   String selectedHole = "9";
@@ -208,7 +203,8 @@ class _GardenSideTeesheetPageState extends State<GardenSideTeesheetPage> {
       return;
     }
 
-    final RenderBox renderBox = _iconKey.currentContext!.findRenderObject() as RenderBox;
+    final RenderBox renderBox =
+        _iconKey.currentContext!.findRenderObject() as RenderBox;
     final Offset offset = renderBox.localToGlobal(Offset.zero);
     final Size size = renderBox.size;
 
@@ -230,7 +226,8 @@ class _GardenSideTeesheetPageState extends State<GardenSideTeesheetPage> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 IconButton(
-                  icon: Icon(Icons.keyboard_arrow_up, size: 20, color: Color(0xFF244065)),
+                  icon: Icon(Icons.keyboard_arrow_up,
+                      size: 20, color: Color(0xFF244065)),
                   onPressed: () => _toggleDropdown(context),
                 ),
                 ...List.generate(6, (index) {
@@ -243,11 +240,14 @@ class _GardenSideTeesheetPageState extends State<GardenSideTeesheetPage> {
                       _toggleDropdown(context);
                     },
                     child: Container(
-                      padding: EdgeInsets.symmetric(vertical: 8, horizontal: 10),
+                      padding:
+                          EdgeInsets.symmetric(vertical: 8, horizontal: 10),
                       child: Text(
                         "$playerNum",
                         style: GoogleFonts.poppins(
-                          color: selectedPlayer == playerNum ? Color(0xFF9ECF9A) : Color(0xFF244065),
+                          color: selectedPlayer == playerNum
+                              ? Color(0xFF9ECF9A)
+                              : Color(0xFF244065),
                           fontWeight: FontWeight.w600,
                           fontSize: 13,
                         ),
@@ -262,7 +262,7 @@ class _GardenSideTeesheetPageState extends State<GardenSideTeesheetPage> {
       ),
     );
 
-    Overlay.of(context)?.insert(_dropdownOverlay!);
+    Overlay.of(context).insert(_dropdownOverlay!);
     setState(() {
       _isDropdownVisible = true;
     });
@@ -273,6 +273,7 @@ class _GardenSideTeesheetPageState extends State<GardenSideTeesheetPage> {
     _dropdownOverlay?.remove();
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -475,7 +476,7 @@ class _GardenSideTeesheetPageState extends State<GardenSideTeesheetPage> {
                                       return playerCircle(
                                         "$playerNum",
                                         selectedPlayer == playerNum,
-                                            () {
+                                        () {
                                           setState(() {
                                             selectedPlayer = playerNum;
                                           });
@@ -483,13 +484,16 @@ class _GardenSideTeesheetPageState extends State<GardenSideTeesheetPage> {
                                       );
                                     }),
                                   ),
-                                  SizedBox(width: 5,),
+                                  SizedBox(
+                                    width: 5,
+                                  ),
                                   Column(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       IconButton(
                                         key: _iconKey,
-                                        onPressed: () => _toggleDropdown(context),
+                                        onPressed: () =>
+                                            _toggleDropdown(context),
                                         icon: Icon(
                                           Icons.keyboard_arrow_down,
                                           color: Color(0xFF244065),
@@ -640,7 +644,9 @@ class _GardenSideTeesheetPageState extends State<GardenSideTeesheetPage> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => TeeSheetDtls(TeeSheetDtlsUsrId: ''), // Replace with your target widget
+                                  builder: (context) => const Scaffold(
+                                    body: Center(child: Text('Demo Page')),
+                                  ),
                                 ),
                               );
                             },
@@ -669,24 +675,27 @@ class _GardenSideTeesheetPageState extends State<GardenSideTeesheetPage> {
                                         fontSize: 13,
                                         fontWeight: FontWeight.w500),
                                   ),
-                                  SizedBox(height: 6,),
+                                  SizedBox(
+                                    height: 6,
+                                  ),
                                   Container(
-                                    width: 119,
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 15, vertical: 7),
-                                    decoration: BoxDecoration(
-                                      color: Color(0xFF9ECF9A),
-                                      borderRadius:
-                                          BorderRadius.circular(50), // Optional
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.black.withOpacity(0.1),
-                                          blurRadius: 3,
-                                          spreadRadius: 1,
-                                          offset: Offset(0, 2),
-                                        ),
-                                      ],
-                                    ),
+                                      width: 119,
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 15, vertical: 7),
+                                      decoration: BoxDecoration(
+                                        color: Color(0xFF9ECF9A),
+                                        borderRadius: BorderRadius.circular(
+                                            50), // Optional
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color:
+                                                Colors.black.withOpacity(0.1),
+                                            blurRadius: 3,
+                                            spreadRadius: 1,
+                                            offset: Offset(0, 2),
+                                          ),
+                                        ],
+                                      ),
                                       child: Center(
                                         child: Text(
                                           "6:30AM",
@@ -696,61 +705,93 @@ class _GardenSideTeesheetPageState extends State<GardenSideTeesheetPage> {
                                             fontWeight: FontWeight.w600,
                                           ),
                                         ),
-                                      )
+                                      )),
+                                  SizedBox(
+                                    height: 6,
                                   ),
-                                  SizedBox(height: 6,),
                                   Container(
-                                  child: SingleChildScrollView(
+                                      child: SingleChildScrollView(
                                     scrollDirection: Axis.horizontal,
                                     child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
                                       children: [
                                         Container(
                                           child: Row(
-                                            mainAxisAlignment: MainAxisAlignment.end,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.end,
                                             spacing: 3,
                                             children: [
-                                              Icon(Icons.flag,size: 14,color: Color(0xFF6B7280),),
+                                              Icon(
+                                                Icons.flag,
+                                                size: 14,
+                                                color: Color(0xFF6B7280),
+                                              ),
                                               Row(
-                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
                                                 spacing: 3,
                                                 children: [
-                                                  Text("9",style: GoogleFonts.poppins(
-                                                    color: Color(0xFF6E7373),
-                                                    fontSize: 13,
-                                                    fontWeight: FontWeight.w400
-                                                  ),),
-                                                  Text("or",style: GoogleFonts.poppins(
-                                                      color: Color(0xFF6E7373),
-                                                      fontSize: 13,
-                                                      fontWeight: FontWeight.w400
-                                                  ),),
-                                                  Text("18",style: GoogleFonts.poppins(
-                                                      color: Color(0xFF6E7373),
-                                                      fontSize: 13,
-                                                      fontWeight: FontWeight.w400
-                                                  ),)
+                                                  Text(
+                                                    "9",
+                                                    style: GoogleFonts.poppins(
+                                                        color:
+                                                            Color(0xFF6E7373),
+                                                        fontSize: 13,
+                                                        fontWeight:
+                                                            FontWeight.w400),
+                                                  ),
+                                                  Text(
+                                                    "or",
+                                                    style: GoogleFonts.poppins(
+                                                        color:
+                                                            Color(0xFF6E7373),
+                                                        fontSize: 13,
+                                                        fontWeight:
+                                                            FontWeight.w400),
+                                                  ),
+                                                  Text(
+                                                    "18",
+                                                    style: GoogleFonts.poppins(
+                                                        color:
+                                                            Color(0xFF6E7373),
+                                                        fontSize: 13,
+                                                        fontWeight:
+                                                            FontWeight.w400),
+                                                  )
                                                 ],
                                               )
                                             ],
                                           ),
                                         ),
-                                        SizedBox(width: 20,),
+                                        SizedBox(
+                                          width: 20,
+                                        ),
                                         Container(
                                           child: Row(
-                                            mainAxisAlignment: MainAxisAlignment.end,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.end,
                                             spacing: 3,
                                             children: [
-                                              Icon(Icons.person,size: 14,color: Color(0xFF6B7280),),
+                                              Icon(
+                                                Icons.person,
+                                                size: 14,
+                                                color: Color(0xFF6B7280),
+                                              ),
                                               Row(
-                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
                                                 spacing: 3,
                                                 children: [
-                                                  Text("3",style: GoogleFonts.poppins(
-                                                      color: Color(0xFF6E7373),
-                                                      fontSize: 13,
-                                                      fontWeight: FontWeight.w400
-                                                  ),),
+                                                  Text(
+                                                    "3",
+                                                    style: GoogleFonts.poppins(
+                                                        color:
+                                                            Color(0xFF6E7373),
+                                                        fontSize: 13,
+                                                        fontWeight:
+                                                            FontWeight.w400),
+                                                  ),
                                                 ],
                                               )
                                             ],
@@ -758,8 +799,7 @@ class _GardenSideTeesheetPageState extends State<GardenSideTeesheetPage> {
                                         )
                                       ],
                                     ),
-                                  )
-                                  ),
+                                  )),
                                 ],
                               ),
                             ),
@@ -791,18 +831,21 @@ class _GardenSideTeesheetPageState extends State<GardenSideTeesheetPage> {
                                         fontSize: 13,
                                         fontWeight: FontWeight.w500),
                                   ),
-                                  SizedBox(height: 6,),
+                                  SizedBox(
+                                    height: 6,
+                                  ),
                                   Container(
                                       width: 119,
                                       padding: EdgeInsets.symmetric(
                                           horizontal: 15, vertical: 7),
                                       decoration: BoxDecoration(
                                         color: Color(0xFF9ECF9A),
-                                        borderRadius:
-                                        BorderRadius.circular(50), // Optional
+                                        borderRadius: BorderRadius.circular(
+                                            50), // Optional
                                         boxShadow: [
                                           BoxShadow(
-                                            color: Colors.black.withOpacity(0.1),
+                                            color:
+                                                Colors.black.withOpacity(0.1),
                                             blurRadius: 3,
                                             spreadRadius: 1,
                                             offset: Offset(0, 2),
@@ -818,70 +861,101 @@ class _GardenSideTeesheetPageState extends State<GardenSideTeesheetPage> {
                                             fontWeight: FontWeight.w600,
                                           ),
                                         ),
-                                      )
+                                      )),
+                                  SizedBox(
+                                    height: 6,
                                   ),
-                                  SizedBox(height: 6,),
                                   Container(
                                       child: SingleChildScrollView(
-                                        scrollDirection: Axis.horizontal,
-                                        child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Container(
-                                              child: Row(
-                                                mainAxisAlignment: MainAxisAlignment.end,
+                                    scrollDirection: Axis.horizontal,
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Container(
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.end,
+                                            spacing: 3,
+                                            children: [
+                                              Icon(
+                                                Icons.flag,
+                                                size: 14,
+                                                color: Color(0xFF6B7280),
+                                              ),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
                                                 spacing: 3,
                                                 children: [
-                                                  Icon(Icons.flag,size: 14,color: Color(0xFF6B7280),),
-                                                  Row(
-                                                    mainAxisAlignment: MainAxisAlignment.center,
-                                                    spacing: 3,
-                                                    children: [
-                                                      Text("9",style: GoogleFonts.poppins(
-                                                          color: Color(0xFF6E7373),
-                                                          fontSize: 13,
-                                                          fontWeight: FontWeight.w400
-                                                      ),),
-                                                      Text("or",style: GoogleFonts.poppins(
-                                                          color: Color(0xFF6E7373),
-                                                          fontSize: 13,
-                                                          fontWeight: FontWeight.w400
-                                                      ),),
-                                                      Text("18",style: GoogleFonts.poppins(
-                                                          color: Color(0xFF6E7373),
-                                                          fontSize: 13,
-                                                          fontWeight: FontWeight.w400
-                                                      ),)
-                                                    ],
+                                                  Text(
+                                                    "9",
+                                                    style: GoogleFonts.poppins(
+                                                        color:
+                                                            Color(0xFF6E7373),
+                                                        fontSize: 13,
+                                                        fontWeight:
+                                                            FontWeight.w400),
+                                                  ),
+                                                  Text(
+                                                    "or",
+                                                    style: GoogleFonts.poppins(
+                                                        color:
+                                                            Color(0xFF6E7373),
+                                                        fontSize: 13,
+                                                        fontWeight:
+                                                            FontWeight.w400),
+                                                  ),
+                                                  Text(
+                                                    "18",
+                                                    style: GoogleFonts.poppins(
+                                                        color:
+                                                            Color(0xFF6E7373),
+                                                        fontSize: 13,
+                                                        fontWeight:
+                                                            FontWeight.w400),
                                                   )
                                                 ],
-                                              ),
-                                            ),
-                                            SizedBox(width: 20,),
-                                            Container(
-                                              child: Row(
-                                                mainAxisAlignment: MainAxisAlignment.end,
-                                                spacing: 3,
-                                                children: [
-                                                  Icon(Icons.person,size: 14,color: Color(0xFF6B7280),),
-                                                  Row(
-                                                    mainAxisAlignment: MainAxisAlignment.center,
-                                                    spacing: 3,
-                                                    children: [
-                                                      Text("3",style: GoogleFonts.poppins(
-                                                          color: Color(0xFF6E7373),
-                                                          fontSize: 13,
-                                                          fontWeight: FontWeight.w400
-                                                      ),),
-                                                    ],
-                                                  )
-                                                ],
-                                              ),
-                                            )
-                                          ],
+                                              )
+                                            ],
+                                          ),
                                         ),
-                                      )
-                                  ),
+                                        SizedBox(
+                                          width: 20,
+                                        ),
+                                        Container(
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.end,
+                                            spacing: 3,
+                                            children: [
+                                              Icon(
+                                                Icons.person,
+                                                size: 14,
+                                                color: Color(0xFF6B7280),
+                                              ),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                spacing: 3,
+                                                children: [
+                                                  Text(
+                                                    "3",
+                                                    style: GoogleFonts.poppins(
+                                                        color:
+                                                            Color(0xFF6E7373),
+                                                        fontSize: 13,
+                                                        fontWeight:
+                                                            FontWeight.w400),
+                                                  ),
+                                                ],
+                                              )
+                                            ],
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  )),
                                 ],
                               ),
                             ),
@@ -913,18 +987,21 @@ class _GardenSideTeesheetPageState extends State<GardenSideTeesheetPage> {
                                         fontSize: 13,
                                         fontWeight: FontWeight.w500),
                                   ),
-                                  SizedBox(height: 6,),
+                                  SizedBox(
+                                    height: 6,
+                                  ),
                                   Container(
                                       width: 119,
                                       padding: EdgeInsets.symmetric(
                                           horizontal: 15, vertical: 7),
                                       decoration: BoxDecoration(
                                         color: Color(0xFF9ECF9A),
-                                        borderRadius:
-                                        BorderRadius.circular(50), // Optional
+                                        borderRadius: BorderRadius.circular(
+                                            50), // Optional
                                         boxShadow: [
                                           BoxShadow(
-                                            color: Colors.black.withOpacity(0.1),
+                                            color:
+                                                Colors.black.withOpacity(0.1),
                                             blurRadius: 3,
                                             spreadRadius: 1,
                                             offset: Offset(0, 2),
@@ -940,70 +1017,101 @@ class _GardenSideTeesheetPageState extends State<GardenSideTeesheetPage> {
                                             fontWeight: FontWeight.w600,
                                           ),
                                         ),
-                                      )
+                                      )),
+                                  SizedBox(
+                                    height: 6,
                                   ),
-                                  SizedBox(height: 6,),
                                   Container(
                                       child: SingleChildScrollView(
-                                        scrollDirection: Axis.horizontal,
-                                        child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Container(
-                                              child: Row(
-                                                mainAxisAlignment: MainAxisAlignment.end,
+                                    scrollDirection: Axis.horizontal,
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Container(
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.end,
+                                            spacing: 3,
+                                            children: [
+                                              Icon(
+                                                Icons.flag,
+                                                size: 14,
+                                                color: Color(0xFF6B7280),
+                                              ),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
                                                 spacing: 3,
                                                 children: [
-                                                  Icon(Icons.flag,size: 14,color: Color(0xFF6B7280),),
-                                                  Row(
-                                                    mainAxisAlignment: MainAxisAlignment.center,
-                                                    spacing: 3,
-                                                    children: [
-                                                      Text("9",style: GoogleFonts.poppins(
-                                                          color: Color(0xFF6E7373),
-                                                          fontSize: 13,
-                                                          fontWeight: FontWeight.w400
-                                                      ),),
-                                                      Text("or",style: GoogleFonts.poppins(
-                                                          color: Color(0xFF6E7373),
-                                                          fontSize: 13,
-                                                          fontWeight: FontWeight.w400
-                                                      ),),
-                                                      Text("18",style: GoogleFonts.poppins(
-                                                          color: Color(0xFF6E7373),
-                                                          fontSize: 13,
-                                                          fontWeight: FontWeight.w400
-                                                      ),)
-                                                    ],
+                                                  Text(
+                                                    "9",
+                                                    style: GoogleFonts.poppins(
+                                                        color:
+                                                            Color(0xFF6E7373),
+                                                        fontSize: 13,
+                                                        fontWeight:
+                                                            FontWeight.w400),
+                                                  ),
+                                                  Text(
+                                                    "or",
+                                                    style: GoogleFonts.poppins(
+                                                        color:
+                                                            Color(0xFF6E7373),
+                                                        fontSize: 13,
+                                                        fontWeight:
+                                                            FontWeight.w400),
+                                                  ),
+                                                  Text(
+                                                    "18",
+                                                    style: GoogleFonts.poppins(
+                                                        color:
+                                                            Color(0xFF6E7373),
+                                                        fontSize: 13,
+                                                        fontWeight:
+                                                            FontWeight.w400),
                                                   )
                                                 ],
-                                              ),
-                                            ),
-                                            SizedBox(width: 20,),
-                                            Container(
-                                              child: Row(
-                                                mainAxisAlignment: MainAxisAlignment.end,
-                                                spacing: 3,
-                                                children: [
-                                                  Icon(Icons.person,size: 14,color: Color(0xFF6B7280),),
-                                                  Row(
-                                                    mainAxisAlignment: MainAxisAlignment.center,
-                                                    spacing: 3,
-                                                    children: [
-                                                      Text("3",style: GoogleFonts.poppins(
-                                                          color: Color(0xFF6E7373),
-                                                          fontSize: 13,
-                                                          fontWeight: FontWeight.w400
-                                                      ),),
-                                                    ],
-                                                  )
-                                                ],
-                                              ),
-                                            )
-                                          ],
+                                              )
+                                            ],
+                                          ),
                                         ),
-                                      )
-                                  ),
+                                        SizedBox(
+                                          width: 20,
+                                        ),
+                                        Container(
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.end,
+                                            spacing: 3,
+                                            children: [
+                                              Icon(
+                                                Icons.person,
+                                                size: 14,
+                                                color: Color(0xFF6B7280),
+                                              ),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                spacing: 3,
+                                                children: [
+                                                  Text(
+                                                    "3",
+                                                    style: GoogleFonts.poppins(
+                                                        color:
+                                                            Color(0xFF6E7373),
+                                                        fontSize: 13,
+                                                        fontWeight:
+                                                            FontWeight.w400),
+                                                  ),
+                                                ],
+                                              )
+                                            ],
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  )),
                                 ],
                               ),
                             ),
@@ -1035,18 +1143,21 @@ class _GardenSideTeesheetPageState extends State<GardenSideTeesheetPage> {
                                         fontSize: 13,
                                         fontWeight: FontWeight.w500),
                                   ),
-                                  SizedBox(height: 6,),
+                                  SizedBox(
+                                    height: 6,
+                                  ),
                                   Container(
                                       width: 119,
                                       padding: EdgeInsets.symmetric(
                                           horizontal: 15, vertical: 7),
                                       decoration: BoxDecoration(
                                         color: Color(0xFF9ECF9A),
-                                        borderRadius:
-                                        BorderRadius.circular(50), // Optional
+                                        borderRadius: BorderRadius.circular(
+                                            50), // Optional
                                         boxShadow: [
                                           BoxShadow(
-                                            color: Colors.black.withOpacity(0.1),
+                                            color:
+                                                Colors.black.withOpacity(0.1),
                                             blurRadius: 3,
                                             spreadRadius: 1,
                                             offset: Offset(0, 2),
@@ -1062,70 +1173,101 @@ class _GardenSideTeesheetPageState extends State<GardenSideTeesheetPage> {
                                             fontWeight: FontWeight.w600,
                                           ),
                                         ),
-                                      )
+                                      )),
+                                  SizedBox(
+                                    height: 6,
                                   ),
-                                  SizedBox(height: 6,),
                                   Container(
                                       child: SingleChildScrollView(
-                                        scrollDirection: Axis.horizontal,
-                                        child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Container(
-                                              child: Row(
-                                                mainAxisAlignment: MainAxisAlignment.end,
+                                    scrollDirection: Axis.horizontal,
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Container(
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.end,
+                                            spacing: 3,
+                                            children: [
+                                              Icon(
+                                                Icons.flag,
+                                                size: 14,
+                                                color: Color(0xFF6B7280),
+                                              ),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
                                                 spacing: 3,
                                                 children: [
-                                                  Icon(Icons.flag,size: 14,color: Color(0xFF6B7280),),
-                                                  Row(
-                                                    mainAxisAlignment: MainAxisAlignment.center,
-                                                    spacing: 3,
-                                                    children: [
-                                                      Text("9",style: GoogleFonts.poppins(
-                                                          color: Color(0xFF6E7373),
-                                                          fontSize: 13,
-                                                          fontWeight: FontWeight.w400
-                                                      ),),
-                                                      Text("or",style: GoogleFonts.poppins(
-                                                          color: Color(0xFF6E7373),
-                                                          fontSize: 13,
-                                                          fontWeight: FontWeight.w400
-                                                      ),),
-                                                      Text("18",style: GoogleFonts.poppins(
-                                                          color: Color(0xFF6E7373),
-                                                          fontSize: 13,
-                                                          fontWeight: FontWeight.w400
-                                                      ),)
-                                                    ],
+                                                  Text(
+                                                    "9",
+                                                    style: GoogleFonts.poppins(
+                                                        color:
+                                                            Color(0xFF6E7373),
+                                                        fontSize: 13,
+                                                        fontWeight:
+                                                            FontWeight.w400),
+                                                  ),
+                                                  Text(
+                                                    "or",
+                                                    style: GoogleFonts.poppins(
+                                                        color:
+                                                            Color(0xFF6E7373),
+                                                        fontSize: 13,
+                                                        fontWeight:
+                                                            FontWeight.w400),
+                                                  ),
+                                                  Text(
+                                                    "18",
+                                                    style: GoogleFonts.poppins(
+                                                        color:
+                                                            Color(0xFF6E7373),
+                                                        fontSize: 13,
+                                                        fontWeight:
+                                                            FontWeight.w400),
                                                   )
                                                 ],
-                                              ),
-                                            ),
-                                            SizedBox(width: 20,),
-                                            Container(
-                                              child: Row(
-                                                mainAxisAlignment: MainAxisAlignment.end,
-                                                spacing: 3,
-                                                children: [
-                                                  Icon(Icons.person,size: 14,color: Color(0xFF6B7280),),
-                                                  Row(
-                                                    mainAxisAlignment: MainAxisAlignment.center,
-                                                    spacing: 3,
-                                                    children: [
-                                                      Text("3",style: GoogleFonts.poppins(
-                                                          color: Color(0xFF6E7373),
-                                                          fontSize: 13,
-                                                          fontWeight: FontWeight.w400
-                                                      ),),
-                                                    ],
-                                                  )
-                                                ],
-                                              ),
-                                            )
-                                          ],
+                                              )
+                                            ],
+                                          ),
                                         ),
-                                      )
-                                  ),
+                                        SizedBox(
+                                          width: 20,
+                                        ),
+                                        Container(
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.end,
+                                            spacing: 3,
+                                            children: [
+                                              Icon(
+                                                Icons.person,
+                                                size: 14,
+                                                color: Color(0xFF6B7280),
+                                              ),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                spacing: 3,
+                                                children: [
+                                                  Text(
+                                                    "3",
+                                                    style: GoogleFonts.poppins(
+                                                        color:
+                                                            Color(0xFF6E7373),
+                                                        fontSize: 13,
+                                                        fontWeight:
+                                                            FontWeight.w400),
+                                                  ),
+                                                ],
+                                              )
+                                            ],
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  )),
                                 ],
                               ),
                             ),
@@ -1157,18 +1299,21 @@ class _GardenSideTeesheetPageState extends State<GardenSideTeesheetPage> {
                                         fontSize: 13,
                                         fontWeight: FontWeight.w500),
                                   ),
-                                  SizedBox(height: 6,),
+                                  SizedBox(
+                                    height: 6,
+                                  ),
                                   Container(
                                       width: 119,
                                       padding: EdgeInsets.symmetric(
                                           horizontal: 15, vertical: 7),
                                       decoration: BoxDecoration(
                                         color: Color(0xFF9ECF9A),
-                                        borderRadius:
-                                        BorderRadius.circular(50), // Optional
+                                        borderRadius: BorderRadius.circular(
+                                            50), // Optional
                                         boxShadow: [
                                           BoxShadow(
-                                            color: Colors.black.withOpacity(0.1),
+                                            color:
+                                                Colors.black.withOpacity(0.1),
                                             blurRadius: 3,
                                             spreadRadius: 1,
                                             offset: Offset(0, 2),
@@ -1184,70 +1329,101 @@ class _GardenSideTeesheetPageState extends State<GardenSideTeesheetPage> {
                                             fontWeight: FontWeight.w600,
                                           ),
                                         ),
-                                      )
+                                      )),
+                                  SizedBox(
+                                    height: 6,
                                   ),
-                                  SizedBox(height: 6,),
                                   Container(
                                       child: SingleChildScrollView(
-                                        scrollDirection: Axis.horizontal,
-                                        child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Container(
-                                              child: Row(
-                                                mainAxisAlignment: MainAxisAlignment.end,
+                                    scrollDirection: Axis.horizontal,
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Container(
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.end,
+                                            spacing: 3,
+                                            children: [
+                                              Icon(
+                                                Icons.flag,
+                                                size: 14,
+                                                color: Color(0xFF6B7280),
+                                              ),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
                                                 spacing: 3,
                                                 children: [
-                                                  Icon(Icons.flag,size: 14,color: Color(0xFF6B7280),),
-                                                  Row(
-                                                    mainAxisAlignment: MainAxisAlignment.center,
-                                                    spacing: 3,
-                                                    children: [
-                                                      Text("9",style: GoogleFonts.poppins(
-                                                          color: Color(0xFF6E7373),
-                                                          fontSize: 13,
-                                                          fontWeight: FontWeight.w400
-                                                      ),),
-                                                      Text("or",style: GoogleFonts.poppins(
-                                                          color: Color(0xFF6E7373),
-                                                          fontSize: 13,
-                                                          fontWeight: FontWeight.w400
-                                                      ),),
-                                                      Text("18",style: GoogleFonts.poppins(
-                                                          color: Color(0xFF6E7373),
-                                                          fontSize: 13,
-                                                          fontWeight: FontWeight.w400
-                                                      ),)
-                                                    ],
+                                                  Text(
+                                                    "9",
+                                                    style: GoogleFonts.poppins(
+                                                        color:
+                                                            Color(0xFF6E7373),
+                                                        fontSize: 13,
+                                                        fontWeight:
+                                                            FontWeight.w400),
+                                                  ),
+                                                  Text(
+                                                    "or",
+                                                    style: GoogleFonts.poppins(
+                                                        color:
+                                                            Color(0xFF6E7373),
+                                                        fontSize: 13,
+                                                        fontWeight:
+                                                            FontWeight.w400),
+                                                  ),
+                                                  Text(
+                                                    "18",
+                                                    style: GoogleFonts.poppins(
+                                                        color:
+                                                            Color(0xFF6E7373),
+                                                        fontSize: 13,
+                                                        fontWeight:
+                                                            FontWeight.w400),
                                                   )
                                                 ],
-                                              ),
-                                            ),
-                                            SizedBox(width: 20,),
-                                            Container(
-                                              child: Row(
-                                                mainAxisAlignment: MainAxisAlignment.end,
-                                                spacing: 3,
-                                                children: [
-                                                  Icon(Icons.person,size: 14,color: Color(0xFF6B7280),),
-                                                  Row(
-                                                    mainAxisAlignment: MainAxisAlignment.center,
-                                                    spacing: 3,
-                                                    children: [
-                                                      Text("3",style: GoogleFonts.poppins(
-                                                          color: Color(0xFF6E7373),
-                                                          fontSize: 13,
-                                                          fontWeight: FontWeight.w400
-                                                      ),),
-                                                    ],
-                                                  )
-                                                ],
-                                              ),
-                                            )
-                                          ],
+                                              )
+                                            ],
+                                          ),
                                         ),
-                                      )
-                                  ),
+                                        SizedBox(
+                                          width: 20,
+                                        ),
+                                        Container(
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.end,
+                                            spacing: 3,
+                                            children: [
+                                              Icon(
+                                                Icons.person,
+                                                size: 14,
+                                                color: Color(0xFF6B7280),
+                                              ),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                spacing: 3,
+                                                children: [
+                                                  Text(
+                                                    "3",
+                                                    style: GoogleFonts.poppins(
+                                                        color:
+                                                            Color(0xFF6E7373),
+                                                        fontSize: 13,
+                                                        fontWeight:
+                                                            FontWeight.w400),
+                                                  ),
+                                                ],
+                                              )
+                                            ],
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  )),
                                 ],
                               ),
                             ),
@@ -1279,18 +1455,21 @@ class _GardenSideTeesheetPageState extends State<GardenSideTeesheetPage> {
                                         fontSize: 13,
                                         fontWeight: FontWeight.w500),
                                   ),
-                                  SizedBox(height: 6,),
+                                  SizedBox(
+                                    height: 6,
+                                  ),
                                   Container(
                                       width: 119,
                                       padding: EdgeInsets.symmetric(
                                           horizontal: 15, vertical: 7),
                                       decoration: BoxDecoration(
                                         color: Color(0xFF9ECF9A),
-                                        borderRadius:
-                                        BorderRadius.circular(50), // Optional
+                                        borderRadius: BorderRadius.circular(
+                                            50), // Optional
                                         boxShadow: [
                                           BoxShadow(
-                                            color: Colors.black.withOpacity(0.1),
+                                            color:
+                                                Colors.black.withOpacity(0.1),
                                             blurRadius: 3,
                                             spreadRadius: 1,
                                             offset: Offset(0, 2),
@@ -1306,70 +1485,101 @@ class _GardenSideTeesheetPageState extends State<GardenSideTeesheetPage> {
                                             fontWeight: FontWeight.w600,
                                           ),
                                         ),
-                                      )
+                                      )),
+                                  SizedBox(
+                                    height: 6,
                                   ),
-                                  SizedBox(height: 6,),
                                   Container(
                                       child: SingleChildScrollView(
-                                        scrollDirection: Axis.horizontal,
-                                        child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Container(
-                                              child: Row(
-                                                mainAxisAlignment: MainAxisAlignment.end,
+                                    scrollDirection: Axis.horizontal,
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Container(
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.end,
+                                            spacing: 3,
+                                            children: [
+                                              Icon(
+                                                Icons.flag,
+                                                size: 14,
+                                                color: Color(0xFF6B7280),
+                                              ),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
                                                 spacing: 3,
                                                 children: [
-                                                  Icon(Icons.flag,size: 14,color: Color(0xFF6B7280),),
-                                                  Row(
-                                                    mainAxisAlignment: MainAxisAlignment.center,
-                                                    spacing: 3,
-                                                    children: [
-                                                      Text("9",style: GoogleFonts.poppins(
-                                                          color: Color(0xFF6E7373),
-                                                          fontSize: 13,
-                                                          fontWeight: FontWeight.w400
-                                                      ),),
-                                                      Text("or",style: GoogleFonts.poppins(
-                                                          color: Color(0xFF6E7373),
-                                                          fontSize: 13,
-                                                          fontWeight: FontWeight.w400
-                                                      ),),
-                                                      Text("18",style: GoogleFonts.poppins(
-                                                          color: Color(0xFF6E7373),
-                                                          fontSize: 13,
-                                                          fontWeight: FontWeight.w400
-                                                      ),)
-                                                    ],
+                                                  Text(
+                                                    "9",
+                                                    style: GoogleFonts.poppins(
+                                                        color:
+                                                            Color(0xFF6E7373),
+                                                        fontSize: 13,
+                                                        fontWeight:
+                                                            FontWeight.w400),
+                                                  ),
+                                                  Text(
+                                                    "or",
+                                                    style: GoogleFonts.poppins(
+                                                        color:
+                                                            Color(0xFF6E7373),
+                                                        fontSize: 13,
+                                                        fontWeight:
+                                                            FontWeight.w400),
+                                                  ),
+                                                  Text(
+                                                    "18",
+                                                    style: GoogleFonts.poppins(
+                                                        color:
+                                                            Color(0xFF6E7373),
+                                                        fontSize: 13,
+                                                        fontWeight:
+                                                            FontWeight.w400),
                                                   )
                                                 ],
-                                              ),
-                                            ),
-                                            SizedBox(width: 20,),
-                                            Container(
-                                              child: Row(
-                                                mainAxisAlignment: MainAxisAlignment.end,
-                                                spacing: 3,
-                                                children: [
-                                                  Icon(Icons.person,size: 14,color: Color(0xFF6B7280),),
-                                                  Row(
-                                                    mainAxisAlignment: MainAxisAlignment.center,
-                                                    spacing: 3,
-                                                    children: [
-                                                      Text("3",style: GoogleFonts.poppins(
-                                                          color: Color(0xFF6E7373),
-                                                          fontSize: 13,
-                                                          fontWeight: FontWeight.w400
-                                                      ),),
-                                                    ],
-                                                  )
-                                                ],
-                                              ),
-                                            )
-                                          ],
+                                              )
+                                            ],
+                                          ),
                                         ),
-                                      )
-                                  ),
+                                        SizedBox(
+                                          width: 20,
+                                        ),
+                                        Container(
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.end,
+                                            spacing: 3,
+                                            children: [
+                                              Icon(
+                                                Icons.person,
+                                                size: 14,
+                                                color: Color(0xFF6B7280),
+                                              ),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                spacing: 3,
+                                                children: [
+                                                  Text(
+                                                    "3",
+                                                    style: GoogleFonts.poppins(
+                                                        color:
+                                                            Color(0xFF6E7373),
+                                                        fontSize: 13,
+                                                        fontWeight:
+                                                            FontWeight.w400),
+                                                  ),
+                                                ],
+                                              )
+                                            ],
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  )),
                                 ],
                               ),
                             ),
@@ -1449,17 +1659,15 @@ class _GardenSideTeesheetPageState extends State<GardenSideTeesheetPage> {
         child: Text(
           label,
           style: GoogleFonts.poppins(
-                color: isSelected
-                    ? Colors.white
-                    : Color(0xFF244065), // 👈 Change here
-                fontWeight: FontWeight.w600,
-                fontSize: 13,
-              ),
+            color:
+                isSelected ? Colors.white : Color(0xFF244065), // 👈 Change here
+            fontWeight: FontWeight.w600,
+            fontSize: 13,
+          ),
         ),
       ),
     );
   }
-
 
   Widget _buildButton({
     required String label,

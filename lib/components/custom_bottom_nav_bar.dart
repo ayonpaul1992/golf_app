@@ -43,9 +43,6 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
           return const SizedBox(); // Show nothing until SharedPreferences is loaded
         }
 
-        final prefs = snapshot.data as SharedPreferences;
-        String fetchedMemberName = prefs.getString('user_name') ?? 'Guest';
-
         List<Map<String, dynamic>> items = [
           {
             'icon': 'assets/images/ftr_teesheet.png',
@@ -151,10 +148,13 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
                           Stack(
                             alignment: Alignment.center,
                             children: [
-                              AnimatedContainer( // Use AnimatedContainer for background and icon
+                              AnimatedContainer(
+                                // Use AnimatedContainer for background and icon
                                 duration: const Duration(milliseconds: 200),
                                 decoration: BoxDecoration(
-                                  color: hoverIndex == index ? Color(0xFF9ECF9A) : Colors.transparent,
+                                  color: hoverIndex == index
+                                      ? Color(0xFF9ECF9A)
+                                      : Colors.transparent,
                                   shape: BoxShape.circle,
                                 ),
                                 padding: const EdgeInsets.all(8.0),
@@ -162,12 +162,17 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
                                   items[index]['icon']!,
                                   fit: BoxFit.contain,
                                   width: 17,
-                                  color: hoverIndex == index ? Colors.white : (widget.selectedIndex == index ? Color(0xFF244065) : const Color(0xFF244065)),
+                                  color: hoverIndex == index
+                                      ? Colors.white
+                                      : (widget.selectedIndex == index
+                                          ? Color(0xFF244065)
+                                          : const Color(0xFF244065)),
                                 ),
                               ),
                             ],
                           ),
-                          AnimatedOpacity( // Use AnimatedOpacity for text fade
+                          AnimatedOpacity(
+                            // Use AnimatedOpacity for text fade
                             duration: const Duration(milliseconds: 200),
                             opacity: hoverIndex == index ? 0.0 : 1.0,
                             child: Text(

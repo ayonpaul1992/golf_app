@@ -1,4 +1,4 @@
-// ignore_for_file: deprecated_member_use, library_prefixes
+// ignore_for_file: deprecated_member_use, library_prefixes, unnecessary_string_interpolations
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -7,7 +7,7 @@ import 'package:gulf_app/components/custom_app_bar.dart';
 import 'package:gulf_app/components/custom_drawer.dart';
 import 'package:gulf_app/components/custom_bottom_nav_bar.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
-import 'package:gulf_app/extras/tee_sheet_details.dart';
+import 'package:gulf_app/screens/tee_sheet_details.dart';
 import 'package:intl/intl.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
@@ -673,7 +673,10 @@ class TeesheetPageState extends State<TeesheetPage> {
                                       context,
                                       MaterialPageRoute(
                                         builder: (context) => TeeSheetDtls(
-                                          TeeSheetDtlsUsrId: '',
+                                          date: '${_dateController.text}',
+                                          time: slot['time'],
+                                          players: slot['players'],
+                                          holes: slot['holes'],
                                         ), // Replace with your target widget
                                       ),
                                     );

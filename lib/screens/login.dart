@@ -56,7 +56,8 @@ class LoginPageState extends State<LoginPage> {
           'Content-Type': 'application/json; charset=UTF-8',
         },
         body: jsonEncode(<String, String>{
-          'email': phoneText.text.trim(), // Still using 'email' field for mobile/email
+          'email': phoneText.text
+              .trim(), // Still using 'email' field for mobile/email
           'password': passText.text.trim(),
         }),
       );
@@ -66,7 +67,8 @@ class LoginPageState extends State<LoginPage> {
 
         if (data['success'] == true) {
           final userData = data['data'];
-          final String emailOrMobile = userData['email'] ?? userData['mobile'] ?? '';
+          final String emailOrMobile =
+              userData['email'] ?? userData['mobile'] ?? '';
           final String userId = userData['id'] ?? '';
 
           if (userData['isVerified'] == false) {
@@ -76,20 +78,25 @@ class LoginPageState extends State<LoginPage> {
                 context,
                 MaterialPageRoute(
                   builder: (context) => ResetPasswordPage(
-                    userId: userId,   // from your login response
-                    emailOrMobile: phoneText.text.trim(), // from login screen input
+                    userId: userId, // from your login response
+                    emailOrMobile:
+                        phoneText.text.trim(), // from login screen input
                   ),
                 ),
               );
-
-
             }
             return; // ⛔ Stop further execution
           }
 
           // If user is verified, save tokens and go to booking page
-          await secureStorage.write(key: 'accessToken', value: data['accessToken']);
-          await secureStorage.write(key: 'refreshToken', value: data['refreshToken']);
+          await secureStorage.write(
+              key: 'userName', value: data['data']['fullName']);
+          await secureStorage.write(
+              key: 'profilePic', value: data['data']['profilePicture']);
+          await secureStorage.write(
+              key: 'accessToken', value: data['accessToken']);
+          await secureStorage.write(
+              key: 'refreshToken', value: data['refreshToken']);
 
           if (mounted) {
             Navigator.pushReplacement(
@@ -98,11 +105,13 @@ class LoginPageState extends State<LoginPage> {
                 transitionDuration: const Duration(milliseconds: 500),
                 pageBuilder: (context, animation, secondaryAnimation) =>
                     SelcetBookingClass(userId: userId),
-                transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                transitionsBuilder:
+                    (context, animation, secondaryAnimation, child) {
                   const begin = Offset(1.0, 0.0);
                   const end = Offset.zero;
                   const curve = Curves.easeInOut;
-                  var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+                  var tween = Tween(begin: begin, end: end)
+                      .chain(CurveTween(curve: curve));
                   var offsetAnimation = animation.drive(tween);
                   return SlideTransition(
                     position: offsetAnimation,
@@ -237,7 +246,8 @@ class LoginPageState extends State<LoginPage> {
                               });
                             },
                             child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 38.0),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 38.0),
                               child: Container(
                                 decoration: BoxDecoration(
                                   color: Colors.white,
@@ -256,7 +266,8 @@ class LoginPageState extends State<LoginPage> {
                                     ),
                                   ],
                                 ),
-                                padding: const EdgeInsets.symmetric(horizontal: 20),
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 20),
                                 child: TextField(
                                   controller: phoneText,
                                   focusNode: phoneFocusNode,
@@ -270,13 +281,14 @@ class LoginPageState extends State<LoginPage> {
                                     ),
                                   ),
                                   keyboardType: TextInputType.emailAddress,
-                                  style:  GoogleFonts.poppins(
+                                  style: GoogleFonts.poppins(
                                     color: Color(0xFF244065),
                                     fontWeight: FontWeight.w600,
                                     fontSize: 14,
                                   ),
                                   onChanged: (value) {
-                                    if (value.length == 10 && phoneMailError != null) {
+                                    if (value.length == 10 &&
+                                        phoneMailError != null) {
                                       setState(() {
                                         phoneMailError = null;
                                       });
@@ -291,12 +303,12 @@ class LoginPageState extends State<LoginPage> {
                         if (phoneMailError != null)
                           Padding(
                             padding: const EdgeInsets.only(left: 8.0, top: 5),
-                              child: Text(
-                                phoneMailError!,
-                                textAlign: TextAlign.center,
-                                style: const TextStyle(
-                                    color: Colors.red, fontSize: 12),
-                              ),
+                            child: Text(
+                              phoneMailError!,
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                  color: Colors.red, fontSize: 12),
+                            ),
                           ),
                       ],
                     ),
@@ -337,21 +349,26 @@ class LoginPageState extends State<LoginPage> {
                             ),
                             child: TextField(
                               controller: passText,
-                              obscureText: !_isPassVisible, // Toggle text visibilityk
-                              decoration: _inputDecoration('**********').copyWith(
+                              obscureText:
+                                  !_isPassVisible, // Toggle text visibilityk
+                              decoration:
+                                  _inputDecoration('**********').copyWith(
                                 suffixIcon: IconButton(
                                   icon: Icon(
-                                    _isPassVisible ? Icons.visibility : Icons.visibility_off,
+                                    _isPassVisible
+                                        ? Icons.visibility
+                                        : Icons.visibility_off,
                                     color: Color(0xFF648683),
                                   ),
                                   onPressed: () {
                                     setState(() {
-                                      _isPassVisible = !_isPassVisible; // Toggle visibility
+                                      _isPassVisible =
+                                          !_isPassVisible; // Toggle visibility
                                     });
                                   },
                                 ),
                               ),
-                              style:  GoogleFonts.poppins(
+                              style: GoogleFonts.poppins(
                                 color: Color(0xFF244065),
                                 fontWeight: FontWeight.w600,
                                 fontSize: 14,
@@ -383,56 +400,62 @@ class LoginPageState extends State<LoginPage> {
                             onPressed: isLoading
                                 ? null
                                 : () {
-                              bool hasError = false;
+                                    bool hasError = false;
 
-                              setState(() {
-                                // Reset error messages
-                                phoneMailError = passError = null;
+                                    setState(() {
+                                      // Reset error messages
+                                      phoneMailError = passError = null;
 
-                                String input = phoneText.text.trim();
+                                      String input = phoneText.text.trim();
 
-                                // Validate Mobile or Email
-                                if (input.isEmpty) {
-                                  phoneMailError = 'Mobile number or Email id is required.';
-                                  hasError = true;
-                                } else if (RegExp(r'^[0-9]{10}$').hasMatch(input)) {
-                                  // ✅ Valid 10-digit phone number
-                                } else if (RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(input)) {
-                                  // ✅ Valid email format
-                                } else {
-                                  phoneMailError = 'Enter valid mobile number or email address.';
-                                  hasError = true;
-                                }
+                                      // Validate Mobile or Email
+                                      if (input.isEmpty) {
+                                        phoneMailError =
+                                            'Mobile number or Email id is required.';
+                                        hasError = true;
+                                      } else if (RegExp(r'^[0-9]{10}$')
+                                          .hasMatch(input)) {
+                                        // ✅ Valid 10-digit phone number
+                                      } else if (RegExp(
+                                              r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                                          .hasMatch(input)) {
+                                        // ✅ Valid email format
+                                      } else {
+                                        phoneMailError =
+                                            'Enter valid mobile number or email address.';
+                                        hasError = true;
+                                      }
 
-                                // Validate Password
-                                if (passText.text.trim().isEmpty) {
-                                  passError = 'Password is required.';
-                                  hasError = true;
-                                }
-                              });
+                                      // Validate Password
+                                      if (passText.text.trim().isEmpty) {
+                                        passError = 'Password is required.';
+                                        hasError = true;
+                                      }
+                                    });
 
-                              if (hasError) return; // 🚫 Stop if any error exists
+                                    if (hasError)
+                                      return; // 🚫 Stop if any error exists
 
-                              _loginUser(); // ✅ Call login function if all validations passed
-                            },
-
+                                    _loginUser(); // ✅ Call login function if all validations passed
+                                  },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: const Color(0xFF9ECF9A),
-                              padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10.0),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 15.0, vertical: 10.0),
                             ),
                             child: Center(
                               child: isLoading
                                   ? const CircularProgressIndicator(
-                                color: Colors.white,
-                              )
+                                      color: Colors.white,
+                                    )
                                   : Text(
-                                "Proceed",
-                                style: GoogleFonts.poppins(
-                                  color: const Color(0xFFFFFFFF),
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
+                                      "Proceed",
+                                      style: GoogleFonts.poppins(
+                                        color: const Color(0xFFFFFFFF),
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
                             ),
                           ),
                           Positioned(
@@ -447,7 +470,6 @@ class LoginPageState extends State<LoginPage> {
                         ],
                       ),
                     ),
-
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisSize: MainAxisSize.min,
@@ -459,9 +481,11 @@ class LoginPageState extends State<LoginPage> {
                               setState(() => _isHoveredForgotPassword = false),
                           child: TextButton(
                             onPressed: () {
-                              Navigator.push(context,
-                                  MaterialPageRoute(builder: (context)=> ForgotPasswordPage()
-                              ));
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          ForgotPasswordPage()));
                             },
                             style: ButtonStyle(
                               padding:
@@ -493,9 +517,10 @@ class LoginPageState extends State<LoginPage> {
                         ),
                         TextButton(
                           onPressed: () {
-                            Navigator.push(context,
-                                MaterialPageRoute(builder: (context)=> SignupPage()
-                                ));
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => SignupPage()));
                           },
                           style: ButtonStyle(
                             padding: MaterialStateProperty.all(EdgeInsets.zero),
