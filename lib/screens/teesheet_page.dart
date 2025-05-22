@@ -74,6 +74,8 @@ class TeesheetPageState extends State<TeesheetPage> {
       // 'players': selectedPlayer.toString(),
     };
     _fetchCustomerTeesheets(queryParameters); // Call the API on screen load
+
+    // _fetchPendingReservation();
   }
 
   void setTeeSheetConfig(Map<String, dynamic> config) {
@@ -150,6 +152,7 @@ class TeesheetPageState extends State<TeesheetPage> {
       final innerData = data['data']; // Extract the inner 'data' object
       final teeSheetConfig = data['teeSheetConfig']; // Get config
 
+      // print("📦 Received data: $data");
       setState(() {
         teesheetData = innerData;
         setTeeSheetConfig(teeSheetConfig);
@@ -673,10 +676,12 @@ class TeesheetPageState extends State<TeesheetPage> {
                                       context,
                                       MaterialPageRoute(
                                         builder: (context) => TeeSheetDtls(
+                                          teesheetPageId: widget.teesheetPageId,
                                           date: '${_dateController.text}',
                                           time: slot['time'],
                                           players: slot['players'],
                                           holes: slot['holes'],
+                                          socket: socket!,
                                         ), // Replace with your target widget
                                       ),
                                     );

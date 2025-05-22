@@ -8,19 +8,24 @@ import 'package:gulf_app/components/custom_drawer.dart';
 import 'package:gulf_app/components/custom_bottom_nav_bar.dart';
 import 'package:gulf_app/extras/my_cart.dart';
 import 'dart:async';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class TeeSheetDtls extends StatefulWidget {
+  final String teesheetPageId;
   final String date;
   final String time;
   final int players;
   final List<dynamic> holes;
+  final IO.Socket socket;
 
   const TeeSheetDtls({
     super.key,
+    required this.teesheetPageId,
     required this.date,
     required this.time,
     required this.players,
     required this.holes,
+    required this.socket,
   });
 
   @override
@@ -52,6 +57,12 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
   final GlobalKey _iconKey = GlobalKey(); // Key for Players dropdown
   final GlobalKey _iconKeySecond = GlobalKey(); // Key for Riders dropdown
   String userName = '';
+  int selectedPlayerCount = 1;
+
+  IO.Socket? socket;
+
+  String? pendingSlotId;
+
   // Separate function for Players dropdown
   void _togglePlayerDropdown(BuildContext context) {
     if (_isDropdownVisible) {
@@ -207,31 +218,39 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
   @override
   void dispose() {
     _dropdownOverlay?.remove();
-    _dropdownRideOverlay?.remove(); // Dispose the second overlay as well
+    _dropdownRideOverlay?.remove();
+    // Dispose the second overlay as well
+    for (var controller in _controllers) {
+      controller.dispose();
+    }
 
     for (var focusNode in _focusNodes) {
       focusNode.removeListener(_onFocusChange);
       focusNode.dispose();
     }
     _timer.cancel();
+
+    // socket?.clearListeners();
+    // socket?.disconnect();
+    // socket?.destroy();
+    // socket = null;
+
+    widget.socket.off("/pendingReservation");
+
     super.dispose();
   }
 
   // Added FocusNode List
-  final List<FocusNode> _focusNodes = List.generate(
-    3,
-    (index) => FocusNode(),
-  );
+  late List<FocusNode> _focusNodes;
 
-  final List<TextEditingController> _controllers = List.generate(
-    3,
-    (index) => TextEditingController(text: index == 0 ? 'Koushik Datta' : ''),
-  );
+  late List<TextEditingController> _controllers;
 
   void _startCountdown() {
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
       if (_remaining.inSeconds == 0) {
         timer.cancel();
+        cancelPendingReservation();
+        Navigator.pop(context);
       } else {
         setState(() {
           _remaining = _remaining - Duration(seconds: 1);
@@ -253,27 +272,166 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
     // Fetch userName asynchronously
     _loadUserName();
 
-    print('Date: ${widget.date}');
-    print('Time: ${widget.time}');
-    print('Players: ${widget.players}');
-    print('Holes: ${widget.holes}');
+    _controllers = List.generate(
+      selectedPlayerCount,
+      (index) => TextEditingController(),
+    );
 
+    _focusNodes = List.generate(
+      selectedPlayerCount,
+      (index) => FocusNode(),
+    );
+
+    // print('controllers length: ${_controllers.length}');
     // Attach listener to each FocusNode
     for (var i = 0; i < _focusNodes.length; i++) {
       _focusNodes[i].addListener(_onFocusChange);
     }
+
+    // _fetchPendingReservation();
+
+    _createPendingReservation();
   }
 
   Future<void> _loadUserName() async {
     String? name = await secureStorage.read(key: 'userName');
+    // print(name);
     setState(() {
       userName = name ?? '';
+
+      // Update controller text for the first field
+      if (_controllers.isNotEmpty) {
+        _controllers[0].text = userName;
+      }
     });
+
+    // print(userName);
   }
 
   void _onFocusChange() {
     setState(() {}); // Rebuild to update border color
   }
+
+  void _createPendingReservation() {
+    final payload = {
+      "teeSheetId": widget.teesheetPageId,
+      "date": DateFormat('yyyy-MM-dd').format(
+        DateFormat('MMMM dd, yyyy').parse(widget.date),
+      ),
+      "startingSlot": widget.time,
+      "slotCustomer": 5 - widget.players,
+      "isPending": true,
+      // "pendingSlotId": "20250522630AM1860",
+      // "pendingSlotId": "20250522630AM1860"
+    };
+
+    print("📤 Emitting /pendingReservation");
+    widget.socket.emit("/pendingReservation", payload);
+
+    widget.socket.on("/pendingReservation", (data) {
+      print("📥 Received reservation data: $data");
+
+      setState(() {
+        pendingSlotId = data['slotId'];
+      });
+
+      // Handle UI update here
+    });
+  }
+
+  void cancelPendingReservation() {
+    if (pendingSlotId == null) {
+      print("⚠️ Cannot cancel — pendingSlotId is null");
+      return;
+    }
+
+    final cancelPayload = {
+      "teeSheetId": widget.teesheetPageId,
+      "date": DateFormat('yyyy-MM-dd').format(
+        DateFormat('MMMM dd, yyyy').parse(widget.date),
+      ),
+      "startingSlot": widget.time,
+      "pendingSlotId": pendingSlotId,
+      "isPending": false,
+    };
+
+    print("📤 Emitting /pendingReservation (cancel)");
+    widget.socket.emit("/pendingReservation", cancelPayload);
+
+    widget.socket.on("/pendingReservation", (data) {
+      print("📥 Cancel response: $data");
+
+      // Optional: reset state if needed
+      if (data['success'] == true && mounted) {
+        setState(() {
+          pendingSlotId = null;
+        });
+      }
+    });
+  }
+
+  // Future<void> _fetchPendingReservation() async {
+  //   // String token = await secureStorage.read(key: 'accessToken') ?? '';
+
+  //   // Dispose the old socket
+  //   // socket?.clearListeners();
+  //   // socket?.disconnect();
+  //   // socket?.destroy();
+  //   // socket = null;
+
+  //   print("called");
+
+  //   // socket = IO.io('https://api.dev.driverpos.io', <String, dynamic>{
+  //   //   'transports': ['websocket'],
+  //   //   'timeout': 5000,
+  //   //   'reconnection': true,
+  //   //   'reconnectionAttempts': 5,
+  //   //   'auth': {
+  //   //     'token': token,
+  //   //   },
+  //   // });
+
+  //   // Socket connect listener
+  //   socket!.onConnect((_) {
+  //     print("✅ Socket connected. Emitting /pendingReservation");
+
+  //     final payload = {
+  //       "teeSheetId": "679b0b81e8e0e74211f5df95",
+  //       "date": "2025-05-21",
+  //       "startingSlot": "7:30AM",
+  //       "slotCustomer": 3,
+  //       "isPending": true,
+  //       "pendingSlotId": ""
+  //     };
+
+  //     socket!.emit("/pendingReservation", payload);
+  //     print("📦 Emitted data: $payload");
+  //   });
+
+  //   // Remove old listener
+  //   // socket!.off("/teesheet/pendingReservation");
+
+  //   // Response listener
+  //   socket!.on("/pendingReservation", (data) {
+  //     print("📦 Received data: $data");
+
+  //     // final innerData = data['data'];
+  //     // final teeSheetConfig = data['teeSheetConfig'];
+
+  //     // setState(() {
+  //     //   teesheetData = innerData;
+  //     //   setTeeSheetConfig(teeSheetConfig);
+  //     //   setTeeSheetData();
+  //     //   isLoading = false;
+  //     // });
+  //   });
+
+  //   socket!.onConnectError((err) => print('❌ Connect error: $err'));
+  //   socket!.onError((err) => print('❌ General error: $err'));
+  //   socket!.onDisconnect((_) => print('🔌 Socket disconnected'));
+
+  //   socket!.connect();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -578,6 +736,28 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
                                                     setState(() {
                                                       selectedPlayer =
                                                           playerNum;
+                                                      selectedPlayerCount =
+                                                          playerNum;
+                                                      _controllers =
+                                                          List.generate(
+                                                        selectedPlayerCount,
+                                                        (index) => index <
+                                                                _controllers
+                                                                    .length
+                                                            ? _controllers[
+                                                                index] // reuse existing controllers if possible
+                                                            : TextEditingController(),
+                                                      );
+                                                      _focusNodes =
+                                                          List.generate(
+                                                        selectedPlayerCount,
+                                                        (index) => index <
+                                                                _focusNodes
+                                                                    .length
+                                                            ? _focusNodes[
+                                                                index] // reuse existing focus nodes if possible
+                                                            : FocusNode(),
+                                                      );
                                                     });
                                                   },
                                                 );
@@ -593,7 +773,8 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
                                                   key: _iconKey,
                                                   onPressed: () =>
                                                       _togglePlayerDropdown(
-                                                          context),
+                                                    context,
+                                                  ),
                                                   icon: Icon(
                                                     Icons.keyboard_arrow_down,
                                                     color: Color(0xFF244065),
@@ -627,17 +808,22 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
                                       ),
                                       Wrap(
                                         spacing: 8,
-                                        children: ["9", "18"].map((hole) {
-                                          return playerCircle(
-                                            hole,
-                                            selectedHole == hole,
-                                            () {
-                                              setState(() {
-                                                selectedHole = hole;
-                                              });
-                                            },
-                                          );
-                                        }).toList(),
+                                        children: List.generate(
+                                          widget.holes.length,
+                                          (index) {
+                                            final hole = widget.holes[index];
+                                            return playerCircle(
+                                              hole.toString(),
+                                              selectedHole == hole.toString(),
+                                              () {
+                                                setState(() {
+                                                  selectedHole =
+                                                      hole.toString();
+                                                });
+                                              },
+                                            );
+                                          },
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -848,6 +1034,8 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
                           GestureDetector(
                             onTap: () {
                               // Your onTap action here
+                              cancelPendingReservation();
+                              Navigator.pop(context);
                             },
                             child: Container(
                               decoration: BoxDecoration(
@@ -1015,6 +1203,7 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
                   child: TextField(
                     controller: _controllers[index],
                     focusNode: _focusNodes[index], // Assign FocusNode
+                    readOnly: index == 0,
                     style: GoogleFonts.poppins(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
