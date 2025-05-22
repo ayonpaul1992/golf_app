@@ -1,5 +1,5 @@
+import 'dart:async';
 import 'dart:convert';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
@@ -20,9 +20,144 @@ class MyCartPage extends StatefulWidget {
 class MyCartPageState extends State<MyCartPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final FlutterSecureStorage secureStorage = FlutterSecureStorage();
-  void _showMessage(String message) {
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text(message)));
+
+  late Timer _timer;
+  Duration _remaining = Duration(minutes: 5);
+
+  String bookingTime = '';
+  String bookingDate = '';
+  String fomattedBookingDate = '';
+  String golfCourseName = '';
+  String rotation = '';
+  int holes = 0;
+  int players = 0;
+  int carts = 0;
+
+  num totalCartAmount = 0.0;
+  num totalTaxAmount = 0.0;
+
+  List<Map<String, dynamic>> customers = [];
+
+  // void _showMessage(String message) {
+  //   ScaffoldMessenger.of(context).showSnackBar(
+  //     SnackBar(
+  //       content: Text(message),
+  //     ),
+  //   );
+  // }
+
+  @override
+  void initState() {
+    super.initState();
+    _startCountdown();
+    // Fetch data or perform any initialization here
+    _fetchCustomerCart();
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
+  }
+
+  void _startCountdown() {
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      if (_remaining.inSeconds == 0) {
+        timer.cancel();
+        // Navigator.pop(context);
+      } else {
+        setState(() {
+          _remaining = _remaining - Duration(seconds: 1);
+        });
+      }
+    });
+  }
+
+  String _formatDuration(Duration duration) {
+    String twoDigits(int n) => n.toString().padLeft(2, '0');
+    return '${twoDigits(duration.inMinutes.remainder(60))}:${twoDigits(duration.inSeconds.remainder(60))}';
+  }
+
+  void _fetchCustomerCart() async {
+    try {
+      String token = await secureStorage.read(key: 'accessToken') ?? '';
+
+      final response = await http.get(
+        Uri.parse(
+          'https://api.dev.driverpos.io/api/v1/sales/customer',
+        ),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token', // if needed
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+
+        final responseData = data['data'];
+        bookingDate = responseData['teesheet']['date'] ?? '';
+        DateTime parsedDate =
+            DateTime.parse(bookingDate).toLocal(); // Convert to local time
+
+        fomattedBookingDate = DateFormat('EEE, MMM d').format(parsedDate);
+
+        bookingTime = responseData['teesheet']['startingSlot'] ?? '';
+        golfCourseName = responseData['golfCourse']['name'] ?? '';
+        holes = responseData['teesheet']['holes'] ?? 0;
+        rotation = holes == 9 ? 'Front' : 'Front - Back';
+        players = responseData['teesheet']['persons'] ?? 0;
+        carts = responseData['teesheet']['carts'] ?? 0;
+
+        totalCartAmount = responseData['totalCartAmount'] ?? 0.0;
+        totalTaxAmount = responseData['totalTaxAmount'] ?? 0.0;
+
+        customers = List<Map<String, dynamic>>.from(
+            responseData['teesheet']['customers']);
+
+        // print('✅ Booking API Response: $data');
+
+        print('bookingDate: $fomattedBookingDate');
+        print('bookingTime: $bookingTime');
+        print('golfCourseName: $golfCourseName');
+        print('rotation: $rotation');
+        print('holes: $holes');
+        print('players: $players');
+        print('carts: $carts');
+        print('totalCartAmount: $totalCartAmount');
+        print('totalTaxAmount: $totalTaxAmount');
+        print('customers: $customers');
+
+        // if (data['success'] == true) {
+        //   // Handle success
+        //   // print('✅ Booking successful');
+
+        // } else {
+        //   // Handle error
+        //   print('❌ Booking failed: ${data['message']}');
+        //   ScaffoldMessenger.of(context).showSnackBar(
+        //     SnackBar(
+        //       content: Text('Booking failed'),
+        //     ),
+        //   );
+        // }
+      } else {
+        // Handle API error
+        print('❌ API Error: ${response.body}');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to fetch cart'),
+          ),
+        );
+      }
+    } catch (e) {
+      print('❌ Exception: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Something went wrong'),
+        ),
+      );
+    }
   }
 
   @override
@@ -153,7 +288,7 @@ class MyCartPageState extends State<MyCartPage> {
                                       fontWeight: FontWeight.w500),
                                 ),
                                 Text(
-                                  "Wed, Apr 16",
+                                  fomattedBookingDate,
                                   style: GoogleFonts.poppins(
                                       color: Color(0xFF244065),
                                       fontSize: 13,
@@ -177,7 +312,7 @@ class MyCartPageState extends State<MyCartPage> {
                                       fontWeight: FontWeight.w500),
                                 ),
                                 Text(
-                                  "6:30AM",
+                                  bookingTime,
                                   style: GoogleFonts.poppins(
                                       color: Color(0xFF244065),
                                       fontSize: 13,
@@ -201,7 +336,7 @@ class MyCartPageState extends State<MyCartPage> {
                                       fontWeight: FontWeight.w500),
                                 ),
                                 Text(
-                                  "01:21",
+                                  _formatDuration(_remaining),
                                   style: GoogleFonts.poppins(
                                       color: Color(0xFFDB0606),
                                       fontSize: 13,
@@ -297,7 +432,7 @@ class MyCartPageState extends State<MyCartPage> {
                                       fontWeight: FontWeight.w500),
                                 ),
                                 Text(
-                                  "Eden Gardens Golf Course",
+                                  golfCourseName,
                                   style: GoogleFonts.poppins(
                                       color: Color(0xFF244065),
                                       fontSize: 13,
@@ -321,7 +456,7 @@ class MyCartPageState extends State<MyCartPage> {
                                       fontWeight: FontWeight.w500),
                                 ),
                                 Text(
-                                  "Front - Back",
+                                  rotation,
                                   style: GoogleFonts.poppins(
                                       color: Color(0xFF244065),
                                       fontSize: 13,
@@ -357,7 +492,7 @@ class MyCartPageState extends State<MyCartPage> {
                                               color: Color(0xFF6E7373)),
                                         ),
                                         Text(
-                                          "18",
+                                          holes == 9 ? "9" : "18",
                                           style: GoogleFonts.poppins(
                                               fontWeight: FontWeight.w600,
                                               fontSize: 13,
@@ -385,7 +520,7 @@ class MyCartPageState extends State<MyCartPage> {
                                               color: Color(0xFF6E7373)),
                                         ),
                                         Text(
-                                          "1",
+                                          players.toString(),
                                           style: GoogleFonts.poppins(
                                               fontWeight: FontWeight.w600,
                                               fontSize: 13,
@@ -413,7 +548,7 @@ class MyCartPageState extends State<MyCartPage> {
                                               color: Color(0xFF6E7373)),
                                         ),
                                         Text(
-                                          "0",
+                                          carts.toString(),
                                           style: GoogleFonts.poppins(
                                               fontWeight: FontWeight.w600,
                                               fontSize: 13,
@@ -484,335 +619,438 @@ class MyCartPageState extends State<MyCartPage> {
                               ),
                             ),
                           ),
-                          Container(
-                            width: double.infinity,
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 12, vertical: 8),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.start,
+
+                          //
+                          // Iterate over customers and display booking summary for each
+                          ...customers.map((customer) {
+                            final playerName = customer['fullName'] ?? 'Player';
+                            final feeLabel =
+                                customer['description'] ?? 'Player';
+                            final price = customer['amount'] ?? 0.0;
+                            final qty = 1;
+                            final amt = customer['amount'] ?? price * qty;
+                            final tax = customer['taxAmount'] ?? 0.0;
+                            final total = amt + tax;
+
+                            return Column(
                               children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  spacing: 15,
-                                  children: [
-                                    Container(
-                                      width: 100,
-                                      decoration: BoxDecoration(
-                                          color: Color(0xFFF8F8F8),
-                                          borderRadius:
-                                              BorderRadius.circular(10)),
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 15, vertical: 6),
-                                      child: Center(
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Text(
-                                              "Players: ",
-                                              style: GoogleFonts.poppins(
-                                                  fontWeight: FontWeight.w500,
-                                                  fontSize: 13,
-                                                  color: Color(0xFF6E7373)),
+                                Container(
+                                  width: double.infinity,
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 12, vertical: 8),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Container(
+                                            width: 100,
+                                            decoration: BoxDecoration(
+                                                color: Color(0xFFF8F8F8),
+                                                borderRadius:
+                                                    BorderRadius.circular(10)),
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 15, vertical: 6),
+                                            child: Center(
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  Text(
+                                                    "Player: ",
+                                                    style: GoogleFonts.poppins(
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        fontSize: 13,
+                                                        color:
+                                                            Color(0xFF6E7373)),
+                                                  ),
+                                                  Text(
+                                                    '${customers.indexOf(customer) + 1}',
+                                                    style: GoogleFonts.poppins(
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        fontSize: 13,
+                                                        color:
+                                                            Color(0xFF669933)),
+                                                  ),
+                                                ],
+                                              ),
                                             ),
-                                            Text(
-                                              "1",
-                                              style: GoogleFonts.poppins(
-                                                  fontWeight: FontWeight.w600,
-                                                  fontSize: 13,
-                                                  color: Color(0xFF669933)),
+                                          ),
+                                          Container(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  playerName,
+                                                  style: GoogleFonts.poppins(
+                                                      color: Color(0xFF244065),
+                                                      fontSize: 14,
+                                                      fontWeight:
+                                                          FontWeight.w600),
+                                                ),
+                                                Text(
+                                                  "($feeLabel)",
+                                                  style: GoogleFonts.poppins(
+                                                      color: Color(0xFF244065),
+                                                      fontSize: 13,
+                                                      fontWeight:
+                                                          FontWeight.w400),
+                                                )
+                                              ],
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                      Container(
+                                        width: 120,
+                                        child: Column(
+                                          children: [
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Text(
+                                                  "Price: ",
+                                                  style: GoogleFonts.poppins(
+                                                      fontWeight:
+                                                          FontWeight.w400,
+                                                      fontSize: 13,
+                                                      color: Color(0xFF6E7373)),
+                                                ),
+                                                Text(
+                                                  "\$${price.toStringAsFixed(2)}",
+                                                  style: GoogleFonts.poppins(
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      fontSize: 13,
+                                                      color: Color(0xFF244065)),
+                                                ),
+                                              ],
+                                            ),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Text(
+                                                  "Qty: ",
+                                                  style: GoogleFonts.poppins(
+                                                      fontWeight:
+                                                          FontWeight.w400,
+                                                      fontSize: 13,
+                                                      color: Color(0xFF6E7373)),
+                                                ),
+                                                Text(
+                                                  qty.toString(),
+                                                  style: GoogleFonts.poppins(
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      fontSize: 13,
+                                                      color: Color(0xFF244065)),
+                                                ),
+                                              ],
+                                            ),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Text(
+                                                  "Amt: ",
+                                                  style: GoogleFonts.poppins(
+                                                      fontWeight:
+                                                          FontWeight.w400,
+                                                      fontSize: 13,
+                                                      color: Color(0xFF6E7373)),
+                                                ),
+                                                Text(
+                                                  "\$${amt.toStringAsFixed(2)}",
+                                                  style: GoogleFonts.poppins(
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      fontSize: 13,
+                                                      color: Color(0xFF244065)),
+                                                ),
+                                              ],
+                                            ),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Text(
+                                                  "Tax: ",
+                                                  style: GoogleFonts.poppins(
+                                                      fontWeight:
+                                                          FontWeight.w400,
+                                                      fontSize: 13,
+                                                      color: Color(0xFF6E7373)),
+                                                ),
+                                                Text(
+                                                  "\$${tax.toStringAsFixed(2)}",
+                                                  style: GoogleFonts.poppins(
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      fontSize: 13,
+                                                      color: Color(0xFF244065)),
+                                                ),
+                                              ],
                                             ),
                                           ],
                                         ),
                                       ),
-                                    ),
-                                    Container(
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Text("Koushik Dutta",style: GoogleFonts.poppins(
-                                            color: Color(0xFF244065),
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w600
-                                          ),),
-                                          Text("(Green Fee 18 Holes)",style: GoogleFonts.poppins(
-                                              color: Color(0xFF244065),
-                                              fontSize: 13,
-                                              fontWeight: FontWeight.w400
-                                          ),)
-                                        ],
-                                      ),
-                                    )
-                                  ],
-                                ),
-                                Container(
-                                  width: 120,
-                                  child: Column(
-                                    spacing: 15,
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text("Price: ",style: GoogleFonts.poppins(
-                                            fontWeight: FontWeight.w400,
-                                              fontSize: 13,
-                                            color: Color(0xFF6E7373)
-                                          ),),
-                                          Text("\$20.00",style: GoogleFonts.poppins(
-                                              fontWeight: FontWeight.w500,
-                                              fontSize: 13,
-                                              color: Color(0xFF244065)
-                                          ),),
-                                        ],
-                                      ),
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text("Qty: ",style: GoogleFonts.poppins(
-                                            fontWeight: FontWeight.w400,
-                                              fontSize: 13,
-                                            color: Color(0xFF6E7373)
-                                          ),),
-                                          Text("1",style: GoogleFonts.poppins(
-                                              fontWeight: FontWeight.w500,
-                                              fontSize: 13,
-                                              color: Color(0xFF244065)
-                                          ),),
-                                        ],
-                                      ),
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text("Amt: ",style: GoogleFonts.poppins(
-                                            fontWeight: FontWeight.w400,
-                                              fontSize: 13,
-                                            color: Color(0xFF6E7373)
-                                          ),),
-                                          Text("\$20.00",style: GoogleFonts.poppins(
-                                              fontWeight: FontWeight.w500,
-                                              fontSize: 13,
-                                              color: Color(0xFF244065)
-                                          ),),
-                                        ],
-                                      ),
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text("Tax: ",style: GoogleFonts.poppins(
-                                            fontWeight: FontWeight.w400,
-                                              fontSize: 13,
-                                            color: Color(0xFF6E7373)
-                                          ),),
-                                          Text("\$1.40",style: GoogleFonts.poppins(
-                                              fontWeight: FontWeight.w500,
-                                              fontSize: 13,
-                                              color: Color(0xFF244065)
-                                          ),),
-                                        ],
-                                      ),
                                     ],
                                   ),
                                 ),
-                              ],
-                            ),
-                          ),
-                          Container(
-                            width: double.infinity,
-                            color: Color(0xFFF8F8F8),
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 12, vertical: 8),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
                                 Container(
-                                  width: 120,
+                                  width: double.infinity,
+                                  color: Color(0xFFF8F8F8),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 12, vertical: 8),
                                   child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
-                                      Text("Total: ",style: GoogleFonts.poppins(
-                                        color: Color(0xFF6E7373),
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w500
-                                      ),),
-                                      Text(" \$21.40 ",style: GoogleFonts.poppins(
-                                          color: Color(0xFF244065),
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w600
-                                      ),),
-                                    ],
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                          Container(
-                            width: double.infinity,
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 12, vertical: 8),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  spacing: 15,
-                                  children: [
-                                    Container(
-                                      width: 100,
-                                      decoration: BoxDecoration(
-                                          color: Color(0xFFF8F8F8),
-                                          borderRadius:
-                                          BorderRadius.circular(10)),
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 15, vertical: 6),
-                                      child: Center(
+                                      Container(
+                                        width: 120,
                                         child: Row(
                                           mainAxisAlignment:
-                                          MainAxisAlignment.center,
+                                              MainAxisAlignment.spaceBetween,
                                           children: [
                                             Text(
-                                              "Players: ",
+                                              "Total: ",
                                               style: GoogleFonts.poppins(
-                                                  fontWeight: FontWeight.w500,
-                                                  fontSize: 13,
-                                                  color: Color(0xFF6E7373)),
+                                                  color: Color(0xFF6E7373),
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w500),
                                             ),
                                             Text(
-                                              "2",
+                                              " \$${total.toStringAsFixed(2)} ",
                                               style: GoogleFonts.poppins(
-                                                  fontWeight: FontWeight.w600,
-                                                  fontSize: 13,
-                                                  color: Color(0xFF669933)),
+                                                  color: Color(0xFF244065),
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w600),
                                             ),
                                           ],
                                         ),
-                                      ),
-                                    ),
-                                    Container(
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Text("Guest Customer",style: GoogleFonts.poppins(
-                                              color: Color(0xFF244065),
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w600
-                                          ),),
-                                          Text("(Green Fee 18 Holes)",style: GoogleFonts.poppins(
-                                              color: Color(0xFF244065),
-                                              fontSize: 13,
-                                              fontWeight: FontWeight.w400
-                                          ),)
-                                        ],
-                                      ),
-                                    )
-                                  ],
-                                ),
-                                Container(
-                                  width: 120,
-                                  child: Column(
-                                    spacing: 15,
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text("Price: ",style: GoogleFonts.poppins(
-                                              fontWeight: FontWeight.w400,
-                                              fontSize: 13,
-                                              color: Color(0xFF6E7373)
-                                          ),),
-                                          Text("\$7.00",style: GoogleFonts.poppins(
-                                              fontWeight: FontWeight.w500,
-                                              fontSize: 13,
-                                              color: Color(0xFF244065)
-                                          ),),
-                                        ],
-                                      ),
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text("Qty: ",style: GoogleFonts.poppins(
-                                              fontWeight: FontWeight.w400,
-                                              fontSize: 13,
-                                              color: Color(0xFF6E7373)
-                                          ),),
-                                          Text("1",style: GoogleFonts.poppins(
-                                              fontWeight: FontWeight.w500,
-                                              fontSize: 13,
-                                              color: Color(0xFF244065)
-                                          ),),
-                                        ],
-                                      ),
-                                      Row (
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text("Amt: ",style: GoogleFonts.poppins(
-                                              fontWeight: FontWeight.w400,
-                                              fontSize: 13,
-                                              color: Color(0xFF6E7373)
-                                          ),),
-                                          Text("\$7.00",style: GoogleFonts.poppins(
-                                              fontWeight: FontWeight.w500,
-                                              fontSize: 13,
-                                              color: Color(0xFF244065)
-                                          ),),
-                                        ],
-                                      ),
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text("Tax: ",style: GoogleFonts.poppins(
-                                              fontWeight: FontWeight.w400,
-                                              fontSize: 13,
-                                              color: Color(0xFF6E7373)
-                                          ),),
-                                          Text("\$0.49",style: GoogleFonts.poppins(
-                                              fontWeight: FontWeight.w500,
-                                              fontSize: 13,
-                                              color: Color(0xFF244065)
-                                          ),),
-                                        ],
-                                      ),
+                                      )
                                     ],
                                   ),
                                 ),
                               ],
-                            ),
-                          ),
+                            );
+                          }).toList(),
+
+                          // // Second Player
+                          // Container(
+                          //   width: double.infinity,
+                          //   padding: const EdgeInsets.symmetric(
+                          //       horizontal: 12, vertical: 8),
+                          //   child: Row(
+                          //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          //     crossAxisAlignment: CrossAxisAlignment.start,
+                          //     children: [
+                          //       Column(
+                          //         crossAxisAlignment: CrossAxisAlignment.start,
+                          //         spacing: 15,
+                          //         children: [
+                          //           Container(
+                          //             width: 100,
+                          //             decoration: BoxDecoration(
+                          //                 color: Color(0xFFF8F8F8),
+                          //                 borderRadius:
+                          //                     BorderRadius.circular(10)),
+                          //             padding: EdgeInsets.symmetric(
+                          //                 horizontal: 15, vertical: 6),
+                          //             child: Center(
+                          //               child: Row(
+                          //                 mainAxisAlignment:
+                          //                     MainAxisAlignment.center,
+                          //                 children: [
+                          //                   Text(
+                          //                     "Players: ",
+                          //                     style: GoogleFonts.poppins(
+                          //                         fontWeight: FontWeight.w500,
+                          //                         fontSize: 13,
+                          //                         color: Color(0xFF6E7373)),
+                          //                   ),
+                          //                   Text(
+                          //                     "2",
+                          //                     style: GoogleFonts.poppins(
+                          //                         fontWeight: FontWeight.w600,
+                          //                         fontSize: 13,
+                          //                         color: Color(0xFF669933)),
+                          //                   ),
+                          //                 ],
+                          //               ),
+                          //             ),
+                          //           ),
+                          //           Container(
+                          //             child: Column(
+                          //               crossAxisAlignment:
+                          //                   CrossAxisAlignment.start,
+                          //               children: [
+                          //                 Text(
+                          //                   "Guest Customer",
+                          //                   style: GoogleFonts.poppins(
+                          //                       color: Color(0xFF244065),
+                          //                       fontSize: 14,
+                          //                       fontWeight: FontWeight.w600),
+                          //                 ),
+                          //                 Text(
+                          //                   "(Green Fee 18 Holes)",
+                          //                   style: GoogleFonts.poppins(
+                          //                       color: Color(0xFF244065),
+                          //                       fontSize: 13,
+                          //                       fontWeight: FontWeight.w400),
+                          //                 )
+                          //               ],
+                          //             ),
+                          //           )
+                          //         ],
+                          //       ),
+                          //       Container(
+                          //         width: 120,
+                          //         child: Column(
+                          //           spacing: 15,
+                          //           children: [
+                          //             Row(
+                          //               mainAxisAlignment:
+                          //                   MainAxisAlignment.spaceBetween,
+                          //               children: [
+                          //                 Text(
+                          //                   "Price: ",
+                          //                   style: GoogleFonts.poppins(
+                          //                       fontWeight: FontWeight.w400,
+                          //                       fontSize: 13,
+                          //                       color: Color(0xFF6E7373)),
+                          //                 ),
+                          //                 Text(
+                          //                   "\$7.00",
+                          //                   style: GoogleFonts.poppins(
+                          //                       fontWeight: FontWeight.w500,
+                          //                       fontSize: 13,
+                          //                       color: Color(0xFF244065)),
+                          //                 ),
+                          //               ],
+                          //             ),
+                          //             Row(
+                          //               mainAxisAlignment:
+                          //                   MainAxisAlignment.spaceBetween,
+                          //               children: [
+                          //                 Text(
+                          //                   "Qty: ",
+                          //                   style: GoogleFonts.poppins(
+                          //                       fontWeight: FontWeight.w400,
+                          //                       fontSize: 13,
+                          //                       color: Color(0xFF6E7373)),
+                          //                 ),
+                          //                 Text(
+                          //                   "1",
+                          //                   style: GoogleFonts.poppins(
+                          //                       fontWeight: FontWeight.w500,
+                          //                       fontSize: 13,
+                          //                       color: Color(0xFF244065)),
+                          //                 ),
+                          //               ],
+                          //             ),
+                          //             Row(
+                          //               mainAxisAlignment:
+                          //                   MainAxisAlignment.spaceBetween,
+                          //               children: [
+                          //                 Text(
+                          //                   "Amt: ",
+                          //                   style: GoogleFonts.poppins(
+                          //                       fontWeight: FontWeight.w400,
+                          //                       fontSize: 13,
+                          //                       color: Color(0xFF6E7373)),
+                          //                 ),
+                          //                 Text(
+                          //                   "\$7.00",
+                          //                   style: GoogleFonts.poppins(
+                          //                       fontWeight: FontWeight.w500,
+                          //                       fontSize: 13,
+                          //                       color: Color(0xFF244065)),
+                          //                 ),
+                          //               ],
+                          //             ),
+                          //             Row(
+                          //               mainAxisAlignment:
+                          //                   MainAxisAlignment.spaceBetween,
+                          //               children: [
+                          //                 Text(
+                          //                   "Tax: ",
+                          //                   style: GoogleFonts.poppins(
+                          //                       fontWeight: FontWeight.w400,
+                          //                       fontSize: 13,
+                          //                       color: Color(0xFF6E7373)),
+                          //                 ),
+                          //                 Text(
+                          //                   "\$0.49",
+                          //                   style: GoogleFonts.poppins(
+                          //                       fontWeight: FontWeight.w500,
+                          //                       fontSize: 13,
+                          //                       color: Color(0xFF244065)),
+                          //                 ),
+                          //               ],
+                          //             ),
+                          //           ],
+                          //         ),
+                          //       ),
+                          //     ],
+                          //   ),
+                          // ),
+                          // Container(
+                          //   width: double.infinity,
+                          //   color: Color(0xFFF8F8F8),
+                          //   padding: const EdgeInsets.symmetric(
+                          //       horizontal: 12, vertical: 8),
+                          //   child: Row(
+                          //     mainAxisAlignment: MainAxisAlignment.end,
+                          //     crossAxisAlignment: CrossAxisAlignment.start,
+                          //     children: [
+                          //       Container(
+                          //         width: 120,
+                          //         child: Row(
+                          //           mainAxisAlignment:
+                          //               MainAxisAlignment.spaceBetween,
+                          //           children: [
+                          //             Text(
+                          //               "Total: ",
+                          //               style: GoogleFonts.poppins(
+                          //                   color: Color(0xFF6E7373),
+                          //                   fontSize: 14,
+                          //                   fontWeight: FontWeight.w500),
+                          //             ),
+                          //             Text(
+                          //               " \$7.49 ",
+                          //               style: GoogleFonts.poppins(
+                          //                   color: Color(0xFF244065),
+                          //                   fontSize: 14,
+                          //                   fontWeight: FontWeight.w600),
+                          //             ),
+                          //           ],
+                          //         ),
+                          //       )
+                          //     ],
+                          //   ),
+                          // ),
+
+                          // Totals
                           Container(
                             width: double.infinity,
-                            color: Color(0xFFF8F8F8),
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 12, vertical: 8),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  width: 120,
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text("Total: ",style: GoogleFonts.poppins(
-                                          color: Color(0xFF6E7373),
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w500
-                                      ),),
-                                      Text(" \$7.49 ",style: GoogleFonts.poppins(
-                                          color: Color(0xFF244065),
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w600
-                                      ),),
-                                    ],
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                          Container(
-                            width: double.infinity,
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                             child: Align(
                               alignment: Alignment.centerRight,
                               child: Row(
@@ -827,7 +1065,7 @@ class MyCartPageState extends State<MyCartPage> {
                                     ),
                                   ),
                                   Text(
-                                    " \$27.00",
+                                    " \$ ${totalCartAmount - totalTaxAmount}",
                                     style: GoogleFonts.poppins(
                                       color: Color(0xFF244065),
                                       fontSize: 14,
@@ -840,7 +1078,8 @@ class MyCartPageState extends State<MyCartPage> {
                           ),
                           Container(
                             width: double.infinity,
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 8),
                             child: Align(
                               alignment: Alignment.centerRight,
                               child: Row(
@@ -855,7 +1094,7 @@ class MyCartPageState extends State<MyCartPage> {
                                     ),
                                   ),
                                   Text(
-                                    " \$1.89",
+                                    " \$ $totalTaxAmount",
                                     style: GoogleFonts.poppins(
                                       color: Color(0xFF244065),
                                       fontSize: 14,
@@ -883,18 +1122,23 @@ class MyCartPageState extends State<MyCartPage> {
                               children: [
                                 Container(
                                   child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Text("Total payble: ",style: GoogleFonts.poppins(
-                                          color: Color(0xFFFFFFFF),
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w500
-                                      ),),
-                                      Text(" \$28.89 ",style: GoogleFonts.poppins(
-                                          color: Color(0xFFFFFFFF),
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w600
-                                      ),),
+                                      Text(
+                                        "Total payble: ",
+                                        style: GoogleFonts.poppins(
+                                            color: Color(0xFFFFFFFF),
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w500),
+                                      ),
+                                      Text(
+                                        " \$ $totalCartAmount",
+                                        style: GoogleFonts.poppins(
+                                            color: Color(0xFFFFFFFF),
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w600),
+                                      ),
                                     ],
                                   ),
                                 )
@@ -925,8 +1169,8 @@ class MyCartPageState extends State<MyCartPage> {
                           decoration: BoxDecoration(
                             color: Color(0xFFFFFFFF),
                             borderRadius: BorderRadius.circular(50),
-                            border: Border.all(
-                                color: Color(0xFF9ECF9A), width: 1),
+                            border:
+                                Border.all(color: Color(0xFF9ECF9A), width: 1),
                             boxShadow: [
                               BoxShadow(
                                 color: Colors.black.withOpacity(0.1),
@@ -936,8 +1180,8 @@ class MyCartPageState extends State<MyCartPage> {
                               ),
                             ],
                           ),
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 15, vertical: 7),
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 15, vertical: 7),
                           child: Center(
                             child: Text(
                               "Cancel",
@@ -957,7 +1201,9 @@ class MyCartPageState extends State<MyCartPage> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => MyCartPage(myCartId: ''), // Replace with your target widget
+                              builder: (context) => MyCartPage(
+                                  myCartId:
+                                      ''), // Replace with your target widget
                             ),
                           );
                         },
@@ -965,8 +1211,8 @@ class MyCartPageState extends State<MyCartPage> {
                           decoration: BoxDecoration(
                             color: Color(0xFF9ECF9A),
                             borderRadius: BorderRadius.circular(50),
-                            border: Border.all(
-                                color: Color(0xFF9ECF9A), width: 1),
+                            border:
+                                Border.all(color: Color(0xFF9ECF9A), width: 1),
                             boxShadow: [
                               BoxShadow(
                                 color: Colors.black.withOpacity(0.1),
@@ -976,8 +1222,8 @@ class MyCartPageState extends State<MyCartPage> {
                               ),
                             ],
                           ),
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 15, vertical: 7),
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 15, vertical: 7),
                           child: Center(
                             child: Text(
                               "Book Now",
@@ -994,7 +1240,9 @@ class MyCartPageState extends State<MyCartPage> {
                   ],
                 ),
               ),
-              SizedBox(height: 20,),
+              SizedBox(
+                height: 20,
+              ),
             ],
           )),
         ),

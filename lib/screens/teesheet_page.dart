@@ -677,10 +677,13 @@ class TeesheetPageState extends State<TeesheetPage> {
                                       MaterialPageRoute(
                                         builder: (context) => TeeSheetDtls(
                                           teesheetPageId: widget.teesheetPageId,
+                                          reservationGroupId:
+                                              widget.reservationGroupId,
                                           date: '${_dateController.text}',
                                           time: slot['time'],
                                           players: slot['players'],
                                           holes: slot['holes'],
+                                          allowName: allowName,
                                           socket: socket!,
                                         ), // Replace with your target widget
                                       ),

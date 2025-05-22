@@ -1,4 +1,6 @@
 // ignore_for_file: deprecated_member_use
+import 'dart:convert';
+
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -9,22 +11,30 @@ import 'package:gulf_app/components/custom_bottom_nav_bar.dart';
 import 'package:gulf_app/extras/my_cart.dart';
 import 'dart:async';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
+import 'package:http/http.dart' as http;
 
 class TeeSheetDtls extends StatefulWidget {
   final String teesheetPageId;
+  final String reservationGroupId;
+
   final String date;
   final String time;
   final int players;
   final List<dynamic> holes;
+  final bool allowName;
+
   final IO.Socket socket;
 
   const TeeSheetDtls({
     super.key,
     required this.teesheetPageId,
+    required this.reservationGroupId,
     required this.date,
     required this.time,
     required this.players,
     required this.holes,
+    required this.allowName,
+    // required this.teesheetData,
     required this.socket,
   });
 
@@ -45,7 +55,7 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
   bool isYes = false;
   int? editingIndex;
   int selectedPlayer = 1;
-  int selectedRidePlayer = 1;
+  int selectedRidePlayer = 0;
   String selectedHole = "9";
   int selectedIndex = 0;
   bool showDropdown = false;
@@ -250,7 +260,7 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
       if (_remaining.inSeconds == 0) {
         timer.cancel();
         cancelPendingReservation();
-        Navigator.pop(context);
+        // Navigator.pop(context);
       } else {
         setState(() {
           _remaining = _remaining - Duration(seconds: 1);
@@ -271,6 +281,8 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
 
     // Fetch userName asynchronously
     _loadUserName();
+
+    print('reservationGroupId: ${widget.reservationGroupId}');
 
     _controllers = List.generate(
       selectedPlayerCount,
@@ -369,69 +381,6 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
       }
     });
   }
-
-  // Future<void> _fetchPendingReservation() async {
-  //   // String token = await secureStorage.read(key: 'accessToken') ?? '';
-
-  //   // Dispose the old socket
-  //   // socket?.clearListeners();
-  //   // socket?.disconnect();
-  //   // socket?.destroy();
-  //   // socket = null;
-
-  //   print("called");
-
-  //   // socket = IO.io('https://api.dev.driverpos.io', <String, dynamic>{
-  //   //   'transports': ['websocket'],
-  //   //   'timeout': 5000,
-  //   //   'reconnection': true,
-  //   //   'reconnectionAttempts': 5,
-  //   //   'auth': {
-  //   //     'token': token,
-  //   //   },
-  //   // });
-
-  //   // Socket connect listener
-  //   socket!.onConnect((_) {
-  //     print("✅ Socket connected. Emitting /pendingReservation");
-
-  //     final payload = {
-  //       "teeSheetId": "679b0b81e8e0e74211f5df95",
-  //       "date": "2025-05-21",
-  //       "startingSlot": "7:30AM",
-  //       "slotCustomer": 3,
-  //       "isPending": true,
-  //       "pendingSlotId": ""
-  //     };
-
-  //     socket!.emit("/pendingReservation", payload);
-  //     print("📦 Emitted data: $payload");
-  //   });
-
-  //   // Remove old listener
-  //   // socket!.off("/teesheet/pendingReservation");
-
-  //   // Response listener
-  //   socket!.on("/pendingReservation", (data) {
-  //     print("📦 Received data: $data");
-
-  //     // final innerData = data['data'];
-  //     // final teeSheetConfig = data['teeSheetConfig'];
-
-  //     // setState(() {
-  //     //   teesheetData = innerData;
-  //     //   setTeeSheetConfig(teeSheetConfig);
-  //     //   setTeeSheetData();
-  //     //   isLoading = false;
-  //     // });
-  //   });
-
-  //   socket!.onConnectError((err) => print('❌ Connect error: $err'));
-  //   socket!.onError((err) => print('❌ General error: $err'));
-  //   socket!.onDisconnect((_) => print('🔌 Socket disconnected'));
-
-  //   socket!.connect();
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -1067,16 +1016,99 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
                             ),
                           ),
                           GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => MyCartPage(
-                                      myCartId:
-                                          ''), // Replace with your target widget
-                                ),
-                              );
+                            onTap: () async {
+                              cancelPendingReservation();
+                              try {
+                                String token = await secureStorage.read(
+                                        key: 'accessToken') ??
+                                    '';
+
+                                final response = await http.post(
+                                  Uri.parse(
+                                    'https://api.dev.driverpos.io/api/v1/teesheet/book-teesheet',
+                                  ),
+                                  headers: {
+                                    'Content-Type': 'application/json',
+                                    'Authorization':
+                                        'Bearer $token', // if needed
+                                  },
+                                  body: jsonEncode({
+                                    "teeSheetId": widget.teesheetPageId,
+                                    "onlineReservationGroupId":
+                                        widget.reservationGroupId,
+                                    // "onlineReservationGroupId": null,
+                                    "date": DateFormat('yyyy-MM-dd').format(
+                                      DateFormat('MMMM dd, yyyy')
+                                          .parse(widget.date),
+                                    ),
+                                    "startingSlot": widget.time,
+                                    "persons": selectedPlayerCount,
+                                    "holes": selectedHole,
+                                    "carts": selectedRidePlayer,
+                                    "rentalClubs": isYes,
+                                    "customers": [
+                                      // {
+                                      //     "customerId": "679a415aadc084bea8ebb0e0"
+                                      // }
+                                    ]
+                                  }),
+                                );
+
+                                if (response.statusCode == 200) {
+                                  final data = jsonDecode(response.body);
+                                  print('✅ Booking API Response: $data');
+
+                                  if (data['success'] == true) {
+                                    // Handle success
+                                    // print('✅ Booking successful');
+
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            MyCartPage(myCartId: ''),
+                                      ),
+                                    );
+                                  } else {
+                                    // Handle error
+                                    print(
+                                        '❌ Booking failed: ${data['message']}');
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text('Booking failed'),
+                                      ),
+                                    );
+                                  }
+                                } else {
+                                  // Handle API error
+                                  print('❌ API Error: ${response.body}');
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text('Failed to fetch cart'),
+                                    ),
+                                  );
+                                }
+                              } catch (e) {
+                                print('❌ Exception: $e');
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('Something went wrong'),
+                                  ),
+                                );
+                              }
                             },
+
+                            // {
+                            //   print('Api call');
+                            //   // Navigator.push(
+                            //   //   context,
+                            //   //   MaterialPageRoute(
+                            //   //     builder: (context) => MyCartPage(
+                            //   //         myCartId:
+                            //   //             ''), // Replace with your target widget
+                            //   //   ),
+                            //   // );
+                            // },
                             child: Container(
                               decoration: BoxDecoration(
                                 color: Color(0xFF9ECF9A),
@@ -1163,68 +1195,136 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
             ),
           ),
         ),
+        // ...List.generate(_controllers.length, (index) {
+        //   return Container(
+        //     margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+        //     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        //     decoration: BoxDecoration(
+        //       color: const Color(0xFFF8F8F8),
+        //       borderRadius: BorderRadius.circular(30),
+        //       border: Border.all(
+        //         color: _focusNodes[index].hasFocus
+        //             ? Color(0xFF9ECF9A)
+        //             : Colors.transparent, // Use focus to change color
+        //         width: 1,
+        //       ),
+        //     ),
+        //     child: Row(
+        //       children: [
+        //         Container(
+        //           width: 26,
+        //           height: 26,
+        //           decoration: BoxDecoration(
+        //             color: Colors.white,
+        //             borderRadius: BorderRadius.circular(13),
+        //             border:
+        //                 Border.all(color: const Color(0xFF80C783), width: 1),
+        //           ),
+        //           alignment: Alignment.center,
+        //           child: Text(
+        //             '${index + 1}',
+        //             style: GoogleFonts.poppins(
+        //               fontSize: 13,
+        //               fontWeight: FontWeight.w700,
+        //               color: const Color(0xFF669933),
+        //             ),
+        //           ),
+        //         ),
+        //         const SizedBox(width: 12),
+        //         Expanded(
+        //           child: TextField(
+        //             controller: _controllers[index],
+        //             focusNode: _focusNodes[index], // Assign FocusNode
+        //             readOnly: index == 0,
+        //             style: GoogleFonts.poppins(
+        //               fontSize: 13,
+        //               fontWeight: FontWeight.w600,
+        //               color: const Color(0xFF1E3552),
+        //             ),
+        //             decoration: const InputDecoration(
+        //               isDense: true,
+        //               border: InputBorder.none,
+        //               contentPadding: EdgeInsets.zero,
+        //               hintText: 'Guest Customer',
+        //               hintStyle: TextStyle(
+        //                 fontSize: 13,
+        //                 fontWeight: FontWeight.w500,
+        //                 color: Colors.grey,
+        //               ),
+        //             ),
+        //           ),
+        //         ),
+        //       ],
+        //     ),
+        //   );
+        // }),
+
         ...List.generate(_controllers.length, (index) {
-          return Container(
-            margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: BoxDecoration(
-              color: const Color(0xFFF8F8F8),
-              borderRadius: BorderRadius.circular(30),
-              border: Border.all(
-                color: _focusNodes[index].hasFocus
-                    ? Color(0xFF9ECF9A)
-                    : Colors.transparent, // Use focus to change color
-                width: 1,
-              ),
-            ),
-            child: Row(
-              children: [
-                Container(
-                  width: 26,
-                  height: 26,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(13),
-                    border:
-                        Border.all(color: const Color(0xFF80C783), width: 1),
-                  ),
-                  alignment: Alignment.center,
-                  child: Text(
-                    '${index + 1}',
-                    style: GoogleFonts.poppins(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w700,
-                      color: const Color(0xFF669933),
-                    ),
-                  ),
+          if (index == 0 || widget.allowName) {
+            return Container(
+              margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF8F8F8),
+                borderRadius: BorderRadius.circular(30),
+                border: Border.all(
+                  color: _focusNodes[index].hasFocus
+                      ? const Color(0xFF9ECF9A)
+                      : Colors.transparent,
+                  width: 1,
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: TextField(
-                    controller: _controllers[index],
-                    focusNode: _focusNodes[index], // Assign FocusNode
-                    readOnly: index == 0,
-                    style: GoogleFonts.poppins(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                      color: const Color(0xFF1E3552),
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    width: 26,
+                    height: 26,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(13),
+                      border:
+                          Border.all(color: const Color(0xFF80C783), width: 1),
                     ),
-                    decoration: const InputDecoration(
-                      isDense: true,
-                      border: InputBorder.none,
-                      contentPadding: EdgeInsets.zero,
-                      hintText: 'Guest Customer',
-                      hintStyle: TextStyle(
+                    alignment: Alignment.center,
+                    child: Text(
+                      '${index + 1}',
+                      style: GoogleFonts.poppins(
                         fontSize: 13,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.grey,
+                        fontWeight: FontWeight.w700,
+                        color: const Color(0xFF669933),
                       ),
                     ),
                   ),
-                ),
-              ],
-            ),
-          );
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: TextField(
+                      controller: _controllers[index],
+                      focusNode: _focusNodes[index],
+                      readOnly: index == 0,
+                      style: GoogleFonts.poppins(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: const Color(0xFF1E3552),
+                      ),
+                      decoration: const InputDecoration(
+                        isDense: true,
+                        border: InputBorder.none,
+                        contentPadding: EdgeInsets.zero,
+                        hintText: 'Guest Customer',
+                        hintStyle: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          } else {
+            return const SizedBox.shrink(); // hides the widget
+          }
         }),
       ],
     );
