@@ -8,7 +8,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:gulf_app/components/custom_app_bar.dart';
 import 'package:gulf_app/components/custom_drawer.dart';
 import 'package:gulf_app/components/custom_bottom_nav_bar.dart';
-import 'my_reservation.dart';
+import '../screens/my_reservation.dart';
 import 'my_transaction.dart';
 import 'my_setting.dart';
 import 'edit_profile.dart';
