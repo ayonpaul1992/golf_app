@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+// import 'package:gulf_app/screens/weather_screen.dart';
 import 'screens/splash_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -19,6 +20,7 @@ class MyApp extends StatelessWidget {
         textTheme: GoogleFonts.poppinsTextTheme(),
       ),
       home: const SplashScreen(),
+      // home: const WeatherScreen(),
     );
   }
 }
