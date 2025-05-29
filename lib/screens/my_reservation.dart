@@ -276,35 +276,36 @@ class MyReservationPageState extends State<MyReservationPage> {
                           height: 15,
                         ),
                         SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Container(
-                                  width: 40,
-                                  height: 1,
-                                  color: Color(0xFFB2C1C0),
-                                ),
-                                SizedBox(
-                                  width: 10,
-                                ),
-                                Text(
-                                  "My Reservation",
-                                  style: GoogleFonts.poppins(
-                                      color: Color(0xFF244065),
-                                      fontSize: 22,
-                                      fontWeight: FontWeight.w600),
-                                ),
-                                SizedBox(
-                                  width: 10,
-                                ),
-                                Container(
-                                  width: 40,
-                                  height: 1,
-                                  color: Color(0xFFB2C1C0),
-                                ),
-                              ],
-                            )),
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                width: 40,
+                                height: 1,
+                                color: Color(0xFFB2C1C0),
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              Text(
+                                "My Reservation",
+                                style: GoogleFonts.poppins(
+                                    color: Color(0xFF244065),
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.w600),
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              Container(
+                                width: 40,
+                                height: 1,
+                                color: Color(0xFFB2C1C0),
+                              ),
+                            ],
+                          ),
+                        ),
                         SizedBox(
                           height: 15,
                         ),
@@ -316,7 +317,8 @@ class MyReservationPageState extends State<MyReservationPage> {
                               Expanded(
                                 child: Padding(
                                   padding: const EdgeInsets.symmetric(
-                                      horizontal: 10.0),
+                                    horizontal: 10.0,
+                                  ),
                                   child: Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
@@ -466,6 +468,8 @@ class MyReservationPageState extends State<MyReservationPage> {
                                 final status = reservation['booking']
                                         ['status'] ??
                                     'Booked';
+                                final slotId =
+                                    reservation['slotId']?.toString() ?? '';
 
                                 // Format date and time
                                 String bookingDate = '';
@@ -610,9 +614,75 @@ class MyReservationPageState extends State<MyReservationPage> {
                                                     reservation['canceled'] ==
                                                         false
                                                 ? ElevatedButton(
-                                                    onPressed: () {
-                                                      // Add your cancel logic here
+                                                    // onPressed: () {
+                                                    //   // Add your cancel logic here
+                                                    // },
+                                                    onPressed: () async {
+                                                      try {
+                                                        final secureStorage =
+                                                            FlutterSecureStorage();
+                                                        final token =
+                                                            await secureStorage
+                                                                .read(
+                                                                    key:
+                                                                        'accessToken');
+
+                                                        if (token == null) {
+                                                          throw Exception(
+                                                              'Access token not found');
+                                                        }
+
+                                                        // Replace this with your dynamic slot ID
+                                                        // String slotId =
+                                                        //     "20250423630AM9958"; // Example; should be dynamic
+
+                                                        final uri = Uri.parse(
+                                                          'https://api.dev.driverpos.io/api/v1/teesheet/myBookings/cancel/$slotId',
+                                                        );
+
+                                                        final response =
+                                                            await http.delete(
+                                                          uri,
+                                                          headers: {
+                                                            'Authorization':
+                                                                'Bearer $token',
+                                                            'Content-Type':
+                                                                'application/json',
+                                                          },
+                                                          body: jsonEncode({
+                                                            "process": "Cancel",
+                                                          }),
+                                                        );
+
+                                                        if (response
+                                                                .statusCode ==
+                                                            200) {
+                                                          print(
+                                                              '✅ Tee time cancelled successfully');
+
+                                                          // Reload the screen
+                                                          Navigator
+                                                              .pushReplacement(
+                                                            context,
+                                                            MaterialPageRoute(
+                                                              builder: (context) =>
+                                                                  MyReservationPage(
+                                                                myRsvId: '',
+                                                              ),
+                                                            ), // Replace with your screen widget
+                                                          );
+                                                        } else {
+                                                          print(
+                                                              '❌ Failed to cancel tee time: ${response.statusCode}');
+                                                          // Optionally show a snackbar or alert
+                                                        }
+                                                      } catch (e) {
+                                                        print(
+                                                            '❗ Error cancelling tee time: $e');
+                                                        // Optionally show a snackbar or alert
+                                                      }
                                                     },
+
                                                     style: ElevatedButton
                                                         .styleFrom(
                                                       backgroundColor:

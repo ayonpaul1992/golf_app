@@ -42,6 +42,7 @@ dependencies:
   connectivity_plus: ^6.1.4
   socket_io_client: ^3.1.2
   geolocator: ^10.1.0
+  weather_icons: ^3.0.0
 
 dev_dependencies:
   flutter_test:

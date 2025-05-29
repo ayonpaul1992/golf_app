@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:gulf_app/screens/dashboard.dart';
 import 'package:http/http.dart' as http;
 import 'package:gulf_app/components/userentry_app_bar.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -94,6 +94,14 @@ class LoginPageState extends State<LoginPage> {
           await secureStorage.write(
               key: 'profilePic', value: data['data']['profilePicture']);
           await secureStorage.write(
+            key: 'accountNumber',
+            value: data['data']['accountNumber'],
+          );
+          await secureStorage.write(
+            key: 'membership',
+            value: data['data']['membership'],
+          );
+          await secureStorage.write(
               key: 'accessToken', value: data['accessToken']);
           await secureStorage.write(
               key: 'refreshToken', value: data['refreshToken']);
@@ -104,7 +112,8 @@ class LoginPageState extends State<LoginPage> {
               PageRouteBuilder(
                 transitionDuration: const Duration(milliseconds: 500),
                 pageBuilder: (context, animation, secondaryAnimation) =>
-                    SelcetBookingClass(userId: userId),
+                    // SelcetBookingClass(userId: userId),
+                    DashboardPage(dshbId: ''),
                 transitionsBuilder:
                     (context, animation, secondaryAnimation, child) {
                   const begin = Offset(1.0, 0.0);

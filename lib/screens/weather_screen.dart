@@ -50,7 +50,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
                 children: [
                   Text('🌤 $weatherDescription',
                       style: TextStyle(fontSize: 24)),
-                  Text('🌡 $temperature°C', style: TextStyle(fontSize: 20)),
+                  Text('🌡 $temperature°F', style: TextStyle(fontSize: 20)),
                 ],
               ),
       ),
