@@ -148,7 +148,9 @@ class TeesheetPageState extends State<TeesheetPage> {
 
     socket!.off("/customerTeesheet");
 
-    socket!.on("/customerTeesheet", (data) {
+    socket!.on(
+        "/customerTeesheet?teesheetId=${widget.teesheetPageId}&date=${DateFormat("yyyy-MM-dd").format(_selectedDate!)}",
+        (data) {
       final innerData = data['data']; // Extract the inner 'data' object
       final teeSheetConfig = data['teeSheetConfig']; // Get config
 
