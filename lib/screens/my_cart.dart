@@ -1,7 +1,10 @@
+// ignore_for_file: deprecated_member_use, use_build_context_synchronously
 import 'dart:async';
 import 'dart:convert';
+// import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:gulf_app/screens/my_reservation.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:gulf_app/components/custom_app_bar.dart';
@@ -20,7 +23,6 @@ class MyCartPage extends StatefulWidget {
 class MyCartPageState extends State<MyCartPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final FlutterSecureStorage secureStorage = FlutterSecureStorage();
-
   late Timer _timer;
   Duration _remaining = Duration(minutes: 5);
 
@@ -42,14 +44,6 @@ class MyCartPageState extends State<MyCartPage> {
   bool isBookButtonDisabled = false;
 
   bool isLoading = false;
-
-  // void _showMessage(String message) {
-  //   ScaffoldMessenger.of(context).showSnackBar(
-  //     SnackBar(
-  //       content: Text(message),
-  //     ),
-  //   );
-  // }
 
   @override
   void initState() {
@@ -197,7 +191,7 @@ class MyCartPageState extends State<MyCartPage> {
               ),
             )
           : Padding(
-              padding: EdgeInsets.symmetric(horizontal: 15),
+              padding: EdgeInsets.symmetric(),
               child: Container(
                 color: Color(0xFFFAFCFA),
                 width: double.infinity,
@@ -209,38 +203,36 @@ class MyCartPageState extends State<MyCartPage> {
                     SizedBox(
                       height: 15,
                     ),
-                    Container(
-                      child: SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Container(
-                                width: 40,
-                                height: 1.1,
-                                color: Color(0xFFB2C1C0),
-                              ),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              Text(
-                                "My Cart",
-                                style: GoogleFonts.poppins(
-                                    color: Color(0xFF244065),
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.w600),
-                              ),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              Container(
-                                width: 40,
-                                height: 1.1,
-                                color: Color(0xFFB2C1C0),
-                              ),
-                            ],
-                          )),
-                    ),
+                    SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Container(
+                              width: 40,
+                              height: 1.1,
+                              color: Color(0xFFB2C1C0),
+                            ),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Text(
+                              "My Cart",
+                              style: GoogleFonts.poppins(
+                                  color: Color(0xFF244065),
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.w600),
+                            ),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Container(
+                              width: 40,
+                              height: 1.1,
+                              color: Color(0xFFB2C1C0),
+                            ),
+                          ],
+                        )),
                     SizedBox(
                       height: 10,
                     ),
@@ -278,152 +270,29 @@ class MyCartPageState extends State<MyCartPage> {
                                   ),
                                   child: Padding(
                                     padding: const EdgeInsets.all(10.0),
-                                    child: Container(
+                                    child: SizedBox(
                                       width: 200, // 👈 Give a fixed width
-                                      child: Center(
-                                        child: Text(
-                                          "Booking Date and Time",
-                                          textAlign: TextAlign.center,
-                                          style: GoogleFonts.poppins(
-                                            color: Color(0xFF244065),
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.w600,
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            "Booking Details",
+                                            style: GoogleFonts.poppins(
+                                              color: Color(0xFF244065),
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.w600,
+                                            ),
                                           ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Container(
-                                  width: double.infinity,
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 12, vertical: 8),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        "Booking Date:",
-                                        style: GoogleFonts.poppins(
-                                            color: Color(0xFF6E7373),
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.w500),
-                                      ),
-                                      Text(
-                                        fomattedBookingDate,
-                                        style: GoogleFonts.poppins(
-                                            color: Color(0xFF244065),
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.w600),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Container(
-                                  width: double.infinity,
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 12, vertical: 8),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        "Booking Time:",
-                                        style: GoogleFonts.poppins(
-                                            color: Color(0xFF6E7373),
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.w500),
-                                      ),
-                                      Text(
-                                        bookingTime,
-                                        style: GoogleFonts.poppins(
-                                            color: Color(0xFF244065),
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.w600),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Container(
-                                  width: double.infinity,
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 12, vertical: 8),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        "Remaining Time:",
-                                        style: GoogleFonts.poppins(
-                                            color: Color(0xFF6E7373),
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.w500),
-                                      ),
-                                      Text(
-                                        _formatDuration(_remaining),
-                                        style: GoogleFonts.poppins(
-                                            color: Color(0xFFDB0606),
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.w600),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Container(
-                      margin: EdgeInsets.only(left: 10, right: 10, bottom: 10),
-                      child: Column(
-                        children: [
-                          Container(
-                            decoration: BoxDecoration(
-                              color: Color(0xFFFFFFFF),
-                              border: Border.all(
-                                  color: Color(0xFF9ECF9A), width: 1.5),
-                              borderRadius: BorderRadius.circular(15),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Color(0xFF9ECF9A)
-                                      .withOpacity(0.2), // soft shadow
-                                  spreadRadius: 2,
-                                  blurRadius: 20,
-                                  offset: Offset(
-                                      0, 3), // changes position of shadow
-                                ),
-                              ],
-                            ),
-                            child: Column(
-                              children: [
-                                Container(
-                                  width: double.infinity,
-                                  decoration: BoxDecoration(
-                                    color: Color(0xFFF8F8F8),
-                                    borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(15),
-                                      topRight: Radius.circular(15),
-                                    ),
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(10.0),
-                                    child: Container(
-                                      width: 200, // 👈 Give a fixed width
-                                      child: Center(
-                                        child: Text(
-                                          "Tee Time Details",
-                                          textAlign: TextAlign.center,
-                                          style: GoogleFonts.poppins(
-                                            color: Color(0xFF244065),
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.w600,
+                                          Text(
+                                            _formatDuration(_remaining),
+                                            style: GoogleFonts.poppins(
+                                              color: Color(0xFFDB0606),
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.w600,
+                                            ),
                                           ),
-                                        ),
+                                        ],
                                       ),
                                     ),
                                   ),
@@ -433,12 +302,23 @@ class MyCartPageState extends State<MyCartPage> {
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 12, vertical: 8),
                                   child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
-                                      SizedBox(
-                                        child: Image.asset(
-                                            "assets/images/mycrtgland.png"),
-                                      )
+                                      Text(
+                                        "Date & Time:",
+                                        style: GoogleFonts.poppins(
+                                            color: Color(0xFF6E7373),
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.w500),
+                                      ),
+                                      Text(
+                                        "$fomattedBookingDate, $bookingTime",
+                                        style: GoogleFonts.poppins(
+                                            color: Color(0xFF244065),
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.w600),
+                                      ),
                                     ],
                                   ),
                                 ),
@@ -472,22 +352,45 @@ class MyCartPageState extends State<MyCartPage> {
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 12, vertical: 8),
                                   child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                                    spacing: 35,
                                     children: [
-                                      Text(
-                                        "Rotation:",
-                                        style: GoogleFonts.poppins(
-                                            color: Color(0xFF6E7373),
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.w500),
+                                      Row(
+                                        spacing: 5,
+                                        children: [
+                                          Text(
+                                            "Rotation:",
+                                            style: GoogleFonts.poppins(
+                                                color: Color(0xFF6E7373),
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.w500),
+                                          ),
+                                          Text(
+                                            rotation,
+                                            style: GoogleFonts.poppins(
+                                                color: Color(0xFF244065),
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.w600),
+                                          ),
+                                        ],
                                       ),
-                                      Text(
-                                        rotation,
-                                        style: GoogleFonts.poppins(
-                                            color: Color(0xFF244065),
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.w600),
+                                      Row(
+                                        spacing: 5,
+                                        children: [
+                                          Text(
+                                            "Holes",
+                                            style: GoogleFonts.poppins(
+                                                color: Color(0xFF6E7373),
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.w500),
+                                          ),
+                                          Text(
+                                            "$holes",
+                                            style: GoogleFonts.poppins(
+                                                color: Color(0xFF244065),
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.w600),
+                                          ),
+                                        ],
                                       ),
                                     ],
                                   ),
@@ -497,96 +400,78 @@ class MyCartPageState extends State<MyCartPage> {
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 12, vertical: 8),
                                   child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                                    spacing: 35,
                                     children: [
-                                      Container(
-                                        width: 100,
-                                        decoration: BoxDecoration(
-                                            color: Color(0xFFF8F8F8),
-                                            borderRadius:
-                                                BorderRadius.circular(10)),
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 15, vertical: 6),
-                                        child: Center(
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              Text(
-                                                "Holes: ",
-                                                style: GoogleFonts.poppins(
-                                                    fontWeight: FontWeight.w500,
-                                                    fontSize: 13,
-                                                    color: Color(0xFF6E7373)),
+                                      Row(
+                                        spacing: 5,
+                                        children: [
+                                          Container(
+                                            width: 25,
+                                            height: 25,
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(50),
+                                              color: Color(0xFF794EDA),
+                                            ),
+                                            child: Center(
+                                              child: Icon(
+                                                Icons.person,
+                                                color: Colors.white,
+                                                size: 16,
                                               ),
-                                              Text(
-                                                holes == 9 ? "9" : "18",
-                                                style: GoogleFonts.poppins(
-                                                    fontWeight: FontWeight.w600,
-                                                    fontSize: 13,
-                                                    color: Color(0xFF244065)),
-                                              ),
-                                            ],
+                                            ),
                                           ),
-                                        ),
+                                          Text(
+                                            "Players:",
+                                            style: GoogleFonts.poppins(
+                                                color: Color(0xFF6E7373),
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.w500),
+                                          ),
+                                          Text(
+                                            "$players",
+                                            style: GoogleFonts.poppins(
+                                                color: Color(0xFF244065),
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.w600),
+                                          ),
+                                        ],
                                       ),
-                                      Container(
-                                        width: 100,
-                                        color: Color(0xFFF8F8F8),
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 15, vertical: 6),
-                                        child: Center(
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              Text(
-                                                "Players: ",
-                                                style: GoogleFonts.poppins(
-                                                    fontWeight: FontWeight.w500,
-                                                    fontSize: 13,
-                                                    color: Color(0xFF6E7373)),
+                                      Row(
+                                        spacing: 5,
+                                        children: [
+                                          Container(
+                                            width: 25,
+                                            height: 25,
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(50),
+                                              color: Color(0xFFF1AE24),
+                                            ),
+                                            child: Center(
+                                              child: Icon(
+                                                Icons.flag,
+                                                color: Colors.white,
+                                                size: 16,
                                               ),
-                                              Text(
-                                                players.toString(),
-                                                style: GoogleFonts.poppins(
-                                                    fontWeight: FontWeight.w600,
-                                                    fontSize: 13,
-                                                    color: Color(0xFF244065)),
-                                              ),
-                                            ],
+                                            ),
                                           ),
-                                        ),
+                                          Text(
+                                            "Carts:",
+                                            style: GoogleFonts.poppins(
+                                                color: Color(0xFF6E7373),
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.w500),
+                                          ),
+                                          Text(
+                                            "$carts",
+                                            style: GoogleFonts.poppins(
+                                                color: Color(0xFF244065),
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.w600),
+                                          ),
+                                        ],
                                       ),
-                                      Container(
-                                        width: 100,
-                                        color: Color(0xFFF8F8F8),
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 15, vertical: 6),
-                                        child: Center(
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              Text(
-                                                "Carts: ",
-                                                style: GoogleFonts.poppins(
-                                                    fontWeight: FontWeight.w500,
-                                                    fontSize: 13,
-                                                    color: Color(0xFF6E7373)),
-                                              ),
-                                              Text(
-                                                carts.toString(),
-                                                style: GoogleFonts.poppins(
-                                                    fontWeight: FontWeight.w600,
-                                                    fontSize: 13,
-                                                    color: Color(0xFF244065)),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      )
                                     ],
                                   ),
                                 ),
@@ -633,7 +518,7 @@ class MyCartPageState extends State<MyCartPage> {
                                   ),
                                   child: Padding(
                                     padding: const EdgeInsets.all(10.0),
-                                    child: Container(
+                                    child: SizedBox(
                                       width: 200, // 👈 Give a fixed width
                                       child: Center(
                                         child: Text(
@@ -649,9 +534,6 @@ class MyCartPageState extends State<MyCartPage> {
                                     ),
                                   ),
                                 ),
-
-                                //
-                                // Iterate over customers and display booking summary for each
                                 ...customers.map((customer) {
                                   final playerName =
                                       customer['fullName'] ?? 'Player';
@@ -667,26 +549,27 @@ class MyCartPageState extends State<MyCartPage> {
                                     children: [
                                       Container(
                                         width: double.infinity,
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 12, vertical: 8),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
+                                        padding: const EdgeInsets.all(
+                                            12.0), // Added padding to the outer Container
+                                        child: Column(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
                                               children: [
                                                 Container(
                                                   width: 100,
                                                   decoration: BoxDecoration(
-                                                      color: Color(0xFFF8F8F8),
+                                                      color: const Color(
+                                                          0xFFF8F8F8),
                                                       borderRadius:
                                                           BorderRadius.circular(
                                                               10)),
-                                                  padding: EdgeInsets.symmetric(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
                                                       horizontal: 15,
                                                       vertical: 6),
                                                   child: Center(
@@ -696,263 +579,212 @@ class MyCartPageState extends State<MyCartPage> {
                                                               .center,
                                                       children: [
                                                         Text(
-                                                          "Player: ",
-                                                          style: GoogleFonts
-                                                              .poppins(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w500,
-                                                                  fontSize: 13,
-                                                                  color: Color(
-                                                                      0xFF6E7373)),
+                                                          "Players: ",
+                                                          style: GoogleFonts.poppins(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500,
+                                                              fontSize: 13,
+                                                              color: const Color(
+                                                                  0xFF6E7373)),
                                                         ),
                                                         Text(
                                                           '${customers.indexOf(customer) + 1}',
-                                                          style: GoogleFonts
-                                                              .poppins(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w600,
-                                                                  fontSize: 13,
-                                                                  color: Color(
-                                                                      0xFF669933)),
+                                                          style: GoogleFonts.poppins(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600,
+                                                              fontSize: 13,
+                                                              color: const Color(
+                                                                  0xFF669933)),
                                                         ),
                                                       ],
                                                     ),
                                                   ),
                                                 ),
-                                                Container(
-                                                  child: Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      Text(
-                                                        playerName,
-                                                        style:
-                                                            GoogleFonts.poppins(
-                                                                color: Color(
-                                                                    0xFF244065),
-                                                                fontSize: 14,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w600),
-                                                      ),
-                                                      Text(
-                                                        "($feeLabel)",
-                                                        style:
-                                                            GoogleFonts.poppins(
-                                                                color: Color(
-                                                                    0xFF244065),
-                                                                fontSize: 13,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w400),
-                                                      )
-                                                    ],
-                                                  ),
-                                                )
+                                                Text(
+                                                  "\$${price.toStringAsFixed(2)}",
+                                                  style: GoogleFonts.poppins(
+                                                      fontSize: 14,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      color: const Color(
+                                                          0xFF244065)),
+                                                ),
                                               ],
                                             ),
-                                            Container(
-                                              width: 120,
-                                              child: Column(
-                                                children: [
-                                                  Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                    children: [
-                                                      Text(
-                                                        "Price: ",
-                                                        style:
-                                                            GoogleFonts.poppins(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w400,
-                                                                fontSize: 13,
-                                                                color: Color(
-                                                                    0xFF6E7373)),
+                                            const SizedBox(
+                                                height:
+                                                    15), // Added vertical spacing
+                                            Column(
+                                              crossAxisAlignment: CrossAxisAlignment
+                                                  .start, // Align inner Column to start
+                                              children: [
+                                                Row(
+                                                  children: [
+                                                    Text(
+                                                      playerName,
+                                                      style:
+                                                          GoogleFonts.poppins(
+                                                        color: const Color(
+                                                            0xFF244065),
+                                                        fontSize: 13.5,
+                                                        fontWeight:
+                                                            FontWeight.w600,
                                                       ),
-                                                      Text(
-                                                        "\$${price.toStringAsFixed(2)}",
-                                                        style:
-                                                            GoogleFonts.poppins(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w500,
-                                                                fontSize: 13,
-                                                                color: Color(
-                                                                    0xFF244065)),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                    children: [
-                                                      Text(
-                                                        "Qty: ",
-                                                        style:
-                                                            GoogleFonts.poppins(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w400,
-                                                                fontSize: 13,
-                                                                color: Color(
-                                                                    0xFF6E7373)),
-                                                      ),
-                                                      Text(
-                                                        qty.toString(),
-                                                        style:
-                                                            GoogleFonts.poppins(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w500,
-                                                                fontSize: 13,
-                                                                color: Color(
-                                                                    0xFF244065)),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                    children: [
-                                                      Text(
-                                                        "Amt: ",
-                                                        style:
-                                                            GoogleFonts.poppins(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w400,
-                                                                fontSize: 13,
-                                                                color: Color(
-                                                                    0xFF6E7373)),
-                                                      ),
-                                                      Text(
-                                                        "\$${amt.toStringAsFixed(2)}",
-                                                        style:
-                                                            GoogleFonts.poppins(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w500,
-                                                                fontSize: 13,
-                                                                color: Color(
-                                                                    0xFF244065)),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                    children: [
-                                                      Text(
-                                                        "Tax: ",
-                                                        style:
-                                                            GoogleFonts.poppins(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w400,
-                                                                fontSize: 13,
-                                                                color: Color(
-                                                                    0xFF6E7373)),
-                                                      ),
-                                                      Text(
-                                                        "\$${tax.toStringAsFixed(2)}",
-                                                        style:
-                                                            GoogleFonts.poppins(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w500,
-                                                                fontSize: 13,
-                                                                color: Color(
-                                                                    0xFF244065)),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ],
-                                              ),
+                                                      maxLines: 1,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                    ),
+                                                    const SizedBox(
+                                                        width:
+                                                            5), // Add some spacing
+                                                    Text(
+                                                      "($feeLabel)",
+                                                      style: GoogleFonts.poppins(
+                                                          color: const Color(
+                                                              0xFF244065),
+                                                          fontSize: 12,
+                                                          fontWeight:
+                                                              FontWeight.w400),
+                                                    )
+                                                  ],
+                                                ),
+                                                const SizedBox(
+                                                  height: 6,
+                                                ),
+                                                Row(
+                                                  children: [
+                                                    Row(
+                                                      children: [
+                                                        Text(
+                                                          "Qty:",
+                                                          style: GoogleFonts.poppins(
+                                                              color: const Color(
+                                                                  0xFF6E7373),
+                                                              fontSize: 13.5,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w400),
+                                                        ),
+                                                        const SizedBox(
+                                                            width: 5),
+                                                        Text(
+                                                          "$qty",
+                                                          style: GoogleFonts.poppins(
+                                                              color: const Color(
+                                                                  0xFF244065),
+                                                              fontSize: 13,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500),
+                                                        )
+                                                      ],
+                                                    ),
+                                                    const SizedBox(width: 25),
+                                                    Row(
+                                                      children: [
+                                                        Text(
+                                                          "Price:",
+                                                          style: GoogleFonts.poppins(
+                                                              color: const Color(
+                                                                  0xFF6E7373),
+                                                              fontSize: 13.5,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w400),
+                                                        ),
+                                                        const SizedBox(
+                                                            width: 5),
+                                                        Text(
+                                                          "\$${amt.toStringAsFixed(2)}",
+                                                          style: GoogleFonts.poppins(
+                                                              color: const Color(
+                                                                  0xFF244065),
+                                                              fontSize: 13,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500),
+                                                        )
+                                                      ],
+                                                    ),
+                                                    const SizedBox(width: 25),
+                                                    Row(
+                                                      children: [
+                                                        Text(
+                                                          "Tax:",
+                                                          style: GoogleFonts.poppins(
+                                                              color: const Color(
+                                                                  0xFF6E7373),
+                                                              fontSize: 13.5,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w400),
+                                                        ),
+                                                        const SizedBox(
+                                                            width: 5),
+                                                        Text(
+                                                          "\$${tax.toStringAsFixed(2)}",
+                                                          style: GoogleFonts.poppins(
+                                                              color: const Color(
+                                                                  0xFF244065),
+                                                              fontSize: 13,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500),
+                                                        )
+                                                      ],
+                                                    ),
+                                                  ],
+                                                ),
+                                              ],
                                             ),
                                           ],
                                         ),
                                       ),
-                                      Container(
-                                        width: double.infinity,
-                                        color: Color(0xFFF8F8F8),
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 12, vertical: 8),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.end,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Container(
-                                              width: 120,
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  Text(
-                                                    "Total: ",
-                                                    style: GoogleFonts.poppins(
-                                                        color:
-                                                            Color(0xFF6E7373),
-                                                        fontSize: 14,
-                                                        fontWeight:
-                                                            FontWeight.w500),
-                                                  ),
-                                                  Text(
-                                                    " \$${total.toStringAsFixed(2)} ",
-                                                    style: GoogleFonts.poppins(
-                                                        color:
-                                                            Color(0xFF244065),
-                                                        fontSize: 14,
-                                                        fontWeight:
-                                                            FontWeight.w600),
-                                                  ),
-                                                ],
-                                              ),
+                                      customers.last != customer
+                                          ? Divider(
+                                              color: Color(0xFFE4E4E4),
+                                              thickness: 1.15,
                                             )
-                                          ],
-                                        ),
-                                      ),
+                                          : SizedBox.shrink(),
                                     ],
                                   );
-                                }).toList(),
-
+                                }),
                                 Container(
                                   width: double.infinity,
+                                  color: Color(0xFFF8F8F8),
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 12, vertical: 8),
-                                  child: Align(
-                                    alignment: Alignment.centerRight,
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Text(
-                                          "Total amt: ",
-                                          style: GoogleFonts.poppins(
-                                            color: Color(0xFF6E7373),
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w500,
-                                          ),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      SizedBox(
+                                        width: 120,
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              "Total: ",
+                                              style: GoogleFonts.poppins(
+                                                  color: Color(0xFF6E7373),
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w500),
+                                            ),
+                                            Text(
+                                              " \$${totalCartAmount - totalTaxAmount}",
+                                              style: GoogleFonts.poppins(
+                                                  color: Color(0xFF244065),
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w600),
+                                            ),
+                                          ],
                                         ),
-                                        Text(
-                                          " \$ ${totalCartAmount - totalTaxAmount}",
-                                          style: GoogleFonts.poppins(
-                                            color: Color(0xFF244065),
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
+                                      )
+                                    ],
                                   ),
                                 ),
                                 Container(
@@ -973,7 +805,7 @@ class MyCartPageState extends State<MyCartPage> {
                                           ),
                                         ),
                                         Text(
-                                          " \$ $totalTaxAmount",
+                                          " \$$totalTaxAmount",
                                           style: GoogleFonts.poppins(
                                             color: Color(0xFF244065),
                                             fontSize: 14,
@@ -1000,27 +832,25 @@ class MyCartPageState extends State<MyCartPage> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      Container(
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(
-                                              "Total payble: ",
-                                              style: GoogleFonts.poppins(
-                                                  color: Color(0xFFFFFFFF),
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.w500),
-                                            ),
-                                            Text(
-                                              " \$ $totalCartAmount",
-                                              style: GoogleFonts.poppins(
-                                                  color: Color(0xFFFFFFFF),
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.w600),
-                                            ),
-                                          ],
-                                        ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            "Total payble: ",
+                                            style: GoogleFonts.poppins(
+                                                color: Color(0xFFFFFFFF),
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w500),
+                                          ),
+                                          Text(
+                                            " \$$totalCartAmount",
+                                            style: GoogleFonts.poppins(
+                                                color: Color(0xFFFFFFFF),
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w600),
+                                          ),
+                                        ],
                                       )
                                     ],
                                   ),
@@ -1040,248 +870,226 @@ class MyCartPageState extends State<MyCartPage> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         spacing: 7,
                         children: [
-                          Container(
-                            child: GestureDetector(
-                              onTap: () async {
-                                // Your onTap action here
-                                try {
-                                  final token = await secureStorage.read(
-                                      key: 'accessToken');
+                          GestureDetector(
+                            onTap: () async {
+                              // Your onTap action here
+                              try {
+                                final token = await secureStorage.read(
+                                    key: 'accessToken');
 
-                                  if (token == null) {
-                                    throw Exception('Access token not found');
-                                  }
-
-                                  final uri = Uri.parse(
-                                    'https://api.dev.driverpos.io/api/v1/sales/clear?cartState=customerCart',
-                                  );
-
-                                  final response = await http.delete(
-                                    uri,
-                                    headers: {
-                                      'Authorization': 'Bearer $token',
-                                      'Content-Type': 'application/json',
-                                    },
-                                  );
-
-                                  if (response.statusCode == 200) {
-                                    print('🧹 Cart cleared successfully');
-                                    int count = 0;
-                                    Navigator.popUntil(
-                                        context, (_) => count++ == 2);
-
-                                    // Navigator.push(
-                                    //   context,
-                                    //   MaterialPageRoute(
-                                    //     builder: (context) =>
-                                    //         SelcetBookingClass(userId: ''),
-                                    //   ),
-                                    // );
-
-                                    // Optionally, show a success message or update UI
-                                  } else {
-                                    print(
-                                        '❌ Failed to clear cart: ${response.statusCode}');
-                                    // Optionally handle different status codes
-                                  }
-                                } catch (e) {
-                                  print('❗ Error clearing cart: $e');
-                                  // Optionally show an error message to the user
+                                if (token == null) {
+                                  throw Exception('Access token not found');
                                 }
-                              },
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: Color(0xFFFFFFFF),
-                                  borderRadius: BorderRadius.circular(50),
-                                  border: Border.all(
-                                      color: Color(0xFF9ECF9A), width: 1),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.1),
-                                      blurRadius: 3,
-                                      spreadRadius: 1,
-                                      offset: Offset(0, 2),
-                                    ),
-                                  ],
-                                ),
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 15, vertical: 7),
-                                child: Center(
-                                  child: Text(
-                                    "Cancel",
-                                    style: GoogleFonts.poppins(
-                                      color: Color(0xFF244065),
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.w600,
-                                    ),
+
+                                final uri = Uri.parse(
+                                  'https://api.dev.driverpos.io/api/v1/sales/clear?cartState=customerCart',
+                                );
+
+                                final response = await http.delete(
+                                  uri,
+                                  headers: {
+                                    'Authorization': 'Bearer $token',
+                                    'Content-Type': 'application/json',
+                                  },
+                                );
+
+                                if (response.statusCode == 200) {
+                                  print('🧹 Cart cleared successfully');
+                                  int count = 0;
+                                  Navigator.popUntil(
+                                      context, (_) => count++ == 3);
+
+                                  // Optionally, show a success message or update UI
+                                } else {
+                                  print(
+                                      '❌ Failed to clear cart: ${response.statusCode}');
+                                  // Optionally handle different status codes
+                                }
+                              } catch (e) {
+                                print('❗ Error clearing cart: $e');
+                                // Optionally show an error message to the user
+                              }
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Color(0xFFFFFFFF),
+                                borderRadius: BorderRadius.circular(50),
+                                border: Border.all(
+                                    color: Color(0xFF9ECF9A), width: 1),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.1),
+                                    blurRadius: 3,
+                                    spreadRadius: 1,
+                                    offset: Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 15, vertical: 7),
+                              child: Center(
+                                child: Text(
+                                  "Cancel",
+                                  style: GoogleFonts.poppins(
+                                    color: Color(0xFF244065),
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w600,
                                   ),
                                 ),
                               ),
                             ),
                           ),
-                          Container(
-                            child: GestureDetector(
-                              onTap: isBookButtonDisabled
-                                  ? null // 🔒 Disable tap when API call is successful
-                                  : () async {
-                                      try {
-                                        String token = await secureStorage.read(
-                                                key: 'accessToken') ??
-                                            '';
+                          GestureDetector(
+                            onTap: isBookButtonDisabled
+                                ? null // 🔒 Disable tap when API call is successful
+                                : () async {
+                                    try {
+                                      String token = await secureStorage.read(
+                                              key: 'accessToken') ??
+                                          '';
 
-                                        final response = await http.post(
-                                          Uri.parse(
-                                            'https://api.dev.driverpos.io/api/v1/transaction/payment',
-                                          ),
-                                          headers: {
-                                            'Content-Type': 'application/json',
-                                            'Authorization':
-                                                'Bearer $token', // if needed
-                                          },
-                                          body: jsonEncode({
-                                            "golfCourseCode": golfCourseCode,
-                                            "totalAmount": totalCartAmount,
-                                            "amount": totalCartAmount,
-                                            "paymentType": "Book"
-                                          }),
-                                        );
+                                      final response = await http.post(
+                                        Uri.parse(
+                                          'https://api.dev.driverpos.io/api/v1/transaction/payment',
+                                        ),
+                                        headers: {
+                                          'Content-Type': 'application/json',
+                                          'Authorization':
+                                              'Bearer $token', // if needed
+                                        },
+                                        body: jsonEncode({
+                                          "golfCourseCode": golfCourseCode,
+                                          "totalAmount": totalCartAmount,
+                                          "amount": totalCartAmount,
+                                          "paymentType": "Book"
+                                        }),
+                                      );
 
-                                        if (response.statusCode == 200) {
-                                          final data =
-                                              jsonDecode(response.body);
-                                          print(
-                                              '✅ Booking API Response: $data');
+                                      if (response.statusCode == 200) {
+                                        final data = jsonDecode(response.body);
+                                        print('✅ Booking API Response: $data');
 
-                                          if (data['success'] == true) {
-                                            print(
-                                                '✅ Booking successful: $data');
-                                            setState(() {
-                                              isBookButtonDisabled =
-                                                  true; // ✅ Disable button
-                                            });
+                                        if (data['success'] == true) {
+                                          print('✅ Booking successful: $data');
+                                          setState(() {
+                                            isBookButtonDisabled =
+                                                true; // ✅ Disable button
+                                          });
 
-                                            showDialog(
-                                              context: context,
-                                              builder: (BuildContext context) {
-                                                return AlertDialog(
-                                                  shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            16),
+                                          showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return AlertDialog(
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(16),
+                                                ),
+                                                title: Text(
+                                                  "Success",
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
                                                   ),
-                                                  title: Text(
-                                                    "Success",
-                                                    style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
+                                                ),
+                                                content: Text(
+                                                    "Your Tee Time has been booked successfully."),
+                                                actions: [
+                                                  TextButton(
+                                                    child: Text("OK"),
+                                                    onPressed: () {
+                                                      //go to reservation screen
+                                                      Navigator.pushReplacement(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              MyReservationPage(
+                                                            myRsvId: '',
+                                                          ),
+                                                        ),
+                                                      );
+                                                      // int count = 0;
+                                                      // Navigator.popUntil(
+                                                      //   context,
+                                                      //   (_) => count++ == 4,
+                                                      // ); // Close the dialog
+                                                    },
                                                   ),
-                                                  content: Text(
-                                                      "Your Tee Time has been booked successfully."),
-                                                  actions: [
-                                                    TextButton(
-                                                      child: Text("OK"),
-                                                      onPressed: () {
-                                                        int count = 0;
-                                                        Navigator.popUntil(
-                                                          context,
-                                                          (_) => count++ == 3,
-                                                        ); // Close the dialog
-                                                      },
-                                                    ),
-                                                  ],
-                                                );
-                                              },
-                                            );
-
-                                            // ScaffoldMessenger.of(context)
-                                            //     .showSnackBar(
-                                            //   SnackBar(
-                                            //     content: Text(
-                                            //         'Your Tee Time has been booked successfully'),
-                                            //   ),
-                                            // );
-                                            // Handle success
-                                            // print('✅ Booking successful');
-
-                                            // Navigator.push(
-                                            //   context,
-                                            //   MaterialPageRoute(
-                                            //     builder: (context) =>
-                                            //         MyCartPage(myCartId: ''),
-                                            //   ),
-                                            // );
-                                          } else {
-                                            // Handle error
-                                            print(
-                                                '❌ Booking failed: ${data['message']}');
-                                            ScaffoldMessenger.of(context)
-                                                .showSnackBar(
-                                              SnackBar(
-                                                content: Text('Payment failed'),
-                                              ),
-                                            );
-                                          }
+                                                ],
+                                              );
+                                            },
+                                          );
                                         } else {
-                                          // Handle API error
+                                          // Handle error
                                           print(
-                                              '❌ API Error: ${response.body}');
+                                              '❌ Booking failed: ${data['message']}');
                                           ScaffoldMessenger.of(context)
                                               .showSnackBar(
                                             SnackBar(
-                                              content:
-                                                  Text('Failed to payment'),
+                                              content: Text('Payment failed'),
                                             ),
                                           );
+
+                                          int count = 0;
+                                          Navigator.popUntil(
+                                            context,
+                                            (_) => count++ == 4,
+                                          );
                                         }
-                                      } catch (e) {
-                                        print('❌ Exception: $e');
+                                      } else {
+                                        // Handle API error
+                                        print('❌ API Error: ${response.body}');
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(
                                           SnackBar(
-                                            content:
-                                                Text('Something went wrong'),
+                                            content: Text('Failed to payment'),
                                           ),
                                         );
+
+                                        int count = 0;
+                                        Navigator.popUntil(
+                                          context,
+                                          (_) => count++ == 4,
+                                        );
                                       }
-                                    },
+                                    } catch (e) {
+                                      print('❌ Exception: $e');
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                          content: Text('Something went wrong'),
+                                        ),
+                                      );
 
-                              // {
-
-                              //   // Navigator.push(
-                              //   //   context,
-                              //   //   MaterialPageRoute(
-                              //   //     builder: (context) => MyCartPage(
-                              //   //         myCartId:
-                              //   //             ''), // Replace with your target widget
-                              //   //   ),
-                              //   // );
-                              // },
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: Color(0xFF9ECF9A),
-                                  borderRadius: BorderRadius.circular(50),
-                                  border: Border.all(
-                                      color: Color(0xFF9ECF9A), width: 1),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.1),
-                                      blurRadius: 3,
-                                      spreadRadius: 1,
-                                      offset: Offset(0, 2),
-                                    ),
-                                  ],
-                                ),
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 15, vertical: 7),
-                                child: Center(
-                                  child: Text(
-                                    "Book Now",
-                                    style: GoogleFonts.poppins(
-                                      color: Colors.white,
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.w600,
-                                    ),
+                                      int count = 0;
+                                      Navigator.popUntil(
+                                        context,
+                                        (_) => count++ == 4,
+                                      );
+                                    }
+                                  },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Color(0xFF9ECF9A),
+                                borderRadius: BorderRadius.circular(50),
+                                border: Border.all(
+                                    color: Color(0xFF9ECF9A), width: 1),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.1),
+                                    blurRadius: 3,
+                                    spreadRadius: 1,
+                                    offset: Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 15, vertical: 7),
+                              child: Center(
+                                child: Text(
+                                  "Book Now",
+                                  style: GoogleFonts.poppins(
+                                    color: Colors.white,
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w600,
                                   ),
                                 ),
                               ),

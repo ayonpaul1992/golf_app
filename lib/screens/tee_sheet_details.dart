@@ -1084,7 +1084,8 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
                                   print('❌ API Error: ${response.body}');
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
-                                      content: Text('Failed to fetch cart'),
+                                      content: Text(
+                                          jsonDecode(response.body)['message']),
                                     ),
                                   );
                                 }
