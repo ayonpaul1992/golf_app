@@ -102,6 +102,18 @@ class LoginPageState extends State<LoginPage> {
             value: data['data']['membership'],
           );
           await secureStorage.write(
+            key: 'golfCourseName',
+            value: data['data']['golfCourse']['name'],
+          );
+          await secureStorage.write(
+            key: 'golfCourseLogo',
+            value: data['data']['golfCourse']['logo'],
+          );
+          await secureStorage.write(
+            key: 'golfCourseSmallLogo',
+            value: data['data']['golfCourse']['small_logo'],
+          );
+          await secureStorage.write(
               key: 'accessToken', value: data['accessToken']);
           await secureStorage.write(
               key: 'refreshToken', value: data['refreshToken']);

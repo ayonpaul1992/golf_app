@@ -850,7 +850,9 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => MyCartPage(myCartId: ''), // Replace with your target widget
+                                    builder: (context) => MyCartPage(
+                                        myCartId:
+                                            ''), // Replace with your target widget
                                   ),
                                 );
                               },
@@ -1048,20 +1050,6 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
   //   );
   // }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   Widget _buildPlayerNameFields() {
     final List<String> suggestions = [
       'Amit Sharma',
@@ -1109,7 +1097,8 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(13),
-                    border: Border.all(color: const Color(0xFF80C783), width: 1),
+                    border:
+                        Border.all(color: const Color(0xFF80C783), width: 1),
                   ),
                   alignment: Alignment.center,
                   child: Text(
@@ -1125,12 +1114,125 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
                 Expanded(
                   child: isSuggestionField
                       ? Stack(
-                    children: [
-                      CompositedTransformTarget(
-                        link: _layerLinks[index],
-                        child: TextField(
+                          children: [
+                            CompositedTransformTarget(
+                              link: _layerLinks[index],
+                              child: TextField(
+                                controller: _controllers[index],
+                                focusNode: _focusNodes[index],
+                                decoration: const InputDecoration(
+                                  isDense: true,
+                                  border: InputBorder.none,
+                                  contentPadding: EdgeInsets.zero,
+                                  hintText: 'Guest Customer',
+                                  hintStyle: TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                                style: GoogleFonts.poppins(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w600,
+                                  color: Color(0xFF1E3552),
+                                ),
+                              ),
+                            ),
+                            RawAutocomplete<String>(
+                              textEditingController: _controllers[index],
+                              focusNode: _focusNodes[index],
+
+                              // ✅ Show suggestions only when input is not empty
+                              optionsBuilder:
+                                  (TextEditingValue textEditingValue) {
+                                if (textEditingValue.text.isEmpty) {
+                                  return const Iterable<String>.empty();
+                                }
+                                return suggestions.where((String option) {
+                                  return option.toLowerCase().contains(
+                                      textEditingValue.text.toLowerCase());
+                                });
+                              },
+
+                              fieldViewBuilder: (context, controller, focusNode,
+                                  onFieldSubmitted) {
+                                return const SizedBox
+                                    .shrink(); // Already rendered TextField above
+                              },
+
+                              // ✅ This stays exactly as you already have it
+                              optionsViewBuilder:
+                                  (context, onSelected, options) {
+                                return Align(
+                                  alignment: Alignment.topLeft,
+                                  child: CompositedTransformFollower(
+                                    link: _layerLinks[index],
+                                    showWhenUnlinked: false,
+                                    offset: const Offset(
+                                        -50, 31), // Match TextField height
+                                    child: Container(
+                                      margin: const EdgeInsets.only(right: 10),
+                                      width: MediaQuery.of(context).size.width -
+                                          71,
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(8),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color:
+                                                Colors.black.withOpacity(0.2),
+                                            offset: const Offset(0, 3),
+                                            blurRadius: 6,
+                                            spreadRadius: 1,
+                                          ),
+                                        ],
+                                      ),
+                                      child: Material(
+                                        color: Colors.transparent,
+                                        elevation: 0,
+                                        borderRadius: BorderRadius.circular(8),
+                                        child: ConstrainedBox(
+                                          constraints: const BoxConstraints(
+                                            maxHeight: 72,
+                                          ),
+                                          child: ListView.builder(
+                                            padding: EdgeInsets.zero,
+                                            shrinkWrap: true,
+                                            itemCount: options.length,
+                                            itemBuilder: (context, i) {
+                                              final option =
+                                                  options.elementAt(i);
+                                              return ListTile(
+                                                dense: true,
+                                                title: Text(
+                                                  option,
+                                                  style: GoogleFonts.poppins(
+                                                    fontSize: 13,
+                                                    fontWeight: FontWeight.w500,
+                                                    color: Colors.grey[800],
+                                                  ),
+                                                ),
+                                                onTap: () => onSelected(option),
+                                              );
+                                            },
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
+                        )
+                      : TextField(
                           controller: _controllers[index],
                           focusNode: _focusNodes[index],
+                          style: GoogleFonts.poppins(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                            color: const Color(0xFF1E3552),
+                          ),
                           decoration: const InputDecoration(
                             isDense: true,
                             border: InputBorder.none,
@@ -1142,114 +1244,8 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
                               color: Colors.grey,
                             ),
                           ),
-                          style: GoogleFonts.poppins(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600,
-                            color: Color(0xFF1E3552),
-                          ),
                         ),
-                      ),
-                      RawAutocomplete<String>(
-                        textEditingController: _controllers[index],
-                        focusNode: _focusNodes[index],
-
-                        // ✅ Show suggestions only when input is not empty
-                        optionsBuilder: (TextEditingValue textEditingValue) {
-                          if (textEditingValue.text.isEmpty) {
-                            return const Iterable<String>.empty();
-                          }
-                          return suggestions.where((String option) {
-                            return option.toLowerCase().contains(textEditingValue.text.toLowerCase());
-                          });
-                        },
-
-                        fieldViewBuilder: (context, controller, focusNode, onFieldSubmitted) {
-                          return const SizedBox.shrink(); // Already rendered TextField above
-                        },
-
-                        // ✅ This stays exactly as you already have it
-                        optionsViewBuilder: (context, onSelected, options) {
-                          return Align(
-                            alignment: Alignment.topLeft,
-                            child: CompositedTransformFollower(
-                              link: _layerLinks[index],
-                              showWhenUnlinked: false,
-                              offset: const Offset(-50, 31), // Match TextField height
-                              child: Container(
-                                margin: const EdgeInsets.only(right: 10),
-                                width: MediaQuery.of(context).size.width - 71,
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(8),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.2),
-                                      offset: const Offset(0, 3),
-                                      blurRadius: 6,
-                                      spreadRadius: 1,
-                                    ),
-                                  ],
-                                ),
-                                child: Material(
-                                  color: Colors.transparent,
-                                  elevation: 0,
-                                  borderRadius: BorderRadius.circular(8),
-                                  child: ConstrainedBox(
-                                    constraints: const BoxConstraints(
-                                      maxHeight: 72,
-                                    ),
-                                    child: ListView.builder(
-                                      padding: EdgeInsets.zero,
-                                      shrinkWrap: true,
-                                      itemCount: options.length,
-                                      itemBuilder: (context, i) {
-                                        final option = options.elementAt(i);
-                                        return ListTile(
-                                          dense: true,
-                                          title: Text(
-                                            option,
-                                            style: GoogleFonts.poppins(
-                                              fontSize: 13,
-                                              fontWeight: FontWeight.w500,
-                                              color: Colors.grey[800],
-                                            ),
-                                          ),
-                                          onTap: () => onSelected(option),
-                                        );
-                                      },
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-
-                    ],
-                  )
-                      : TextField(
-                    controller: _controllers[index],
-                    focusNode: _focusNodes[index],
-                    style: GoogleFonts.poppins(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                      color: const Color(0xFF1E3552),
-                    ),
-                    decoration: const InputDecoration(
-                      isDense: true,
-                      border: InputBorder.none,
-                      contentPadding: EdgeInsets.zero,
-                      hintText: 'Guest Customer',
-                      hintStyle: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.grey,
-                      ),
-                    ),
-                  ),
                 ),
-
               ],
             ),
           );
@@ -1257,5 +1253,4 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
       ],
     );
   }
-
 }

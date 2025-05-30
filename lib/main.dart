@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:gulf_app/screens/weather_screen.dart';
-// import 'package:gulf_app/screens/dashboard.dart';
-// import 'package:gulf_app/screens/weather_screen.dart';
 import 'screens/splash_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 

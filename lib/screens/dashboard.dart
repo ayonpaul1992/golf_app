@@ -187,31 +187,25 @@ class DashboardPageState extends State<DashboardPage> {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(100),
-                                          // child: Image.asset(
-                                          //   "assets/images/profile_prsn.jpg",
-                                          //   width: 50,
-                                          //   height: 50,
-                                          //   fit: BoxFit.cover,
-                                          // ),
-                                          child: Image(
-                                            // image: (profilePic
-                                            //         .toString()
-                                            //         .startsWith('http'))
-                                            //     ? NetworkImage(profilePic)
-                                            //     : AssetImage(
-                                            //             'assets/images/bkdu1.png')
-                                            //         as ImageProvider,
-                                            image: profilePic.isNotEmpty
-                                                ? NetworkImage(profilePic)
-                                                : AssetImage(
-                                                        'assets/images/bkdu1.png')
-                                                    as ImageProvider,
-                                            fit: BoxFit.cover,
-                                            width: 50,
-                                            height: 50,
-                                          )),
+                                        borderRadius:
+                                            BorderRadius.circular(100),
+                                        // child: Image.asset(
+                                        //   "assets/images/profile_prsn.jpg",
+                                        //   width: 50,
+                                        //   height: 50,
+                                        //   fit: BoxFit.cover,
+                                        // ),
+                                        child: Image(
+                                          image: profilePic.isNotEmpty
+                                              ? NetworkImage(profilePic)
+                                              : AssetImage(
+                                                      'assets/images/bkdu1.png')
+                                                  as ImageProvider,
+                                          fit: BoxFit.cover,
+                                          width: 50,
+                                          height: 50,
+                                        ),
+                                      ),
                                       SizedBox(
                                         width: 6,
                                       ),
