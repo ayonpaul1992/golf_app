@@ -121,7 +121,7 @@ class MyCartPageState extends State<MyCartPage> {
         setState(() {
           isLoading = false;
         });
-        // print('✅ Booking API Response: $data');
+        print('✅ Booking API Response: $data');
 
         // print('bookingDate: $fomattedBookingDate');
         // print('bookingTime: $bookingTime');
@@ -402,6 +402,8 @@ class MyCartPageState extends State<MyCartPage> {
                                   child: Row(
                                     spacing: 35,
                                     children: [
+                                      // following first row will not show if customerId is repeated
+
                                       Row(
                                         spacing: 5,
                                         children: [
@@ -422,7 +424,7 @@ class MyCartPageState extends State<MyCartPage> {
                                             ),
                                           ),
                                           Text(
-                                            "Players:",
+                                            "Player:",
                                             style: GoogleFonts.poppins(
                                                 color: Color(0xFF6E7373),
                                                 fontSize: 13,
@@ -437,6 +439,7 @@ class MyCartPageState extends State<MyCartPage> {
                                           ),
                                         ],
                                       ),
+
                                       Row(
                                         spacing: 5,
                                         children: [
@@ -543,8 +546,7 @@ class MyCartPageState extends State<MyCartPage> {
                                   final qty = 1;
                                   final amt = customer['amount'] ?? price * qty;
                                   final tax = customer['taxAmount'] ?? 0.0;
-                                  final total = amt + tax;
-
+                                  // Initialize playerIndex to 0
                                   return Column(
                                     children: [
                                       Container(
@@ -560,57 +562,59 @@ class MyCartPageState extends State<MyCartPage> {
                                                   MainAxisAlignment
                                                       .spaceBetween,
                                               children: [
-                                                Container(
-                                                  width: 100,
-                                                  decoration: BoxDecoration(
+                                                if (!customer['isCart'])
+                                                  Container(
+                                                    width: 100,
+                                                    decoration: BoxDecoration(
                                                       color: const Color(
-                                                          0xFFF8F8F8),
+                                                          0xFF9ECF9A),
                                                       borderRadius:
                                                           BorderRadius.circular(
-                                                              10)),
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      horizontal: 15,
-                                                      vertical: 6),
-                                                  child: Center(
-                                                    child: Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .center,
-                                                      children: [
-                                                        Text(
-                                                          "Players: ",
-                                                          style: GoogleFonts.poppins(
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w500,
-                                                              fontSize: 13,
-                                                              color: const Color(
-                                                                  0xFF6E7373)),
-                                                        ),
-                                                        Text(
-                                                          '${customers.indexOf(customer) + 1}',
-                                                          style: GoogleFonts.poppins(
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w600,
-                                                              fontSize: 13,
-                                                              color: const Color(
-                                                                  0xFF669933)),
-                                                        ),
-                                                      ],
+                                                              10),
+                                                    ),
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                        horizontal: 15,
+                                                        vertical: 6),
+                                                    child: Center(
+                                                      child: Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        children: [
+                                                          Text(
+                                                            "Player: ",
+                                                            style: GoogleFonts.poppins(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500,
+                                                                fontSize: 13,
+                                                                color: const Color(
+                                                                    0xFFFFFFFF)),
+                                                          ),
+                                                          Text(
+                                                            '${customers.indexOf(customer) == 0 ? '1' : customers.indexOf(customer)}',
+                                                            style: GoogleFonts.poppins(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w600,
+                                                                fontSize: 13,
+                                                                color: const Color(
+                                                                    0xFFFFFFFF)),
+                                                          ),
+                                                        ],
+                                                      ),
                                                     ),
                                                   ),
-                                                ),
-                                                Text(
-                                                  "\$${price.toStringAsFixed(2)}",
-                                                  style: GoogleFonts.poppins(
-                                                      fontSize: 14,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      color: const Color(
-                                                          0xFF244065)),
-                                                ),
+                                                // Text(
+                                                //   "\$${price.toStringAsFixed(2)}",
+                                                //   style: GoogleFonts.poppins(
+                                                //       fontSize: 14,
+                                                //       fontWeight:
+                                                //           FontWeight.w600,
+                                                //       color: const Color(
+                                                //           0xFF244065)),
+                                                // ),
                                               ],
                                             ),
                                             const SizedBox(
@@ -733,6 +737,23 @@ class MyCartPageState extends State<MyCartPage> {
                                                                   FontWeight
                                                                       .w500),
                                                         )
+                                                      ],
+                                                    ),
+                                                    const SizedBox(width: 60),
+                                                    Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment.end,
+                                                      children: [
+                                                        Text(
+                                                          "\$${price.toStringAsFixed(2)}",
+                                                          style: GoogleFonts.poppins(
+                                                              fontSize: 14,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600,
+                                                              color: const Color(
+                                                                  0xFF244065)),
+                                                        ),
                                                       ],
                                                     ),
                                                   ],

@@ -23,7 +23,7 @@ class MyReservationPageState extends State<MyReservationPage> {
   final FlutterSecureStorage secureStorage = FlutterSecureStorage();
   final TextEditingController _dateController = TextEditingController();
   final searchBarText = TextEditingController();
-  bool isLoading = false;
+  bool isLoading = true;
   String? nomineedobError;
   final LayerLink _layerLink = LayerLink();
 
@@ -470,75 +470,86 @@ class MyReservationPageState extends State<MyReservationPage> {
                                                                     // },
                                                                     onPressed:
                                                                         () async {
-                                                                      try {
-                                                                        final secureStorage =
-                                                                            FlutterSecureStorage();
-                                                                        final token =
-                                                                            await secureStorage.read(key: 'accessToken');
+                                                                      // A pop up dialog to confirm cancellation
+                                                                      showDialog(
+                                                                          context:
+                                                                              context,
+                                                                          builder:
+                                                                              (BuildContext context) {
+                                                                            return AlertDialog(
+                                                                              title: Text('Confirm Cancellation'),
+                                                                              content: Text('Are you sure you want to cancel this tee time?'),
+                                                                              actions: [
+                                                                                TextButton(
+                                                                                  onPressed: () {
+                                                                                    Navigator.of(context).pop(); // Close the dialog
+                                                                                  },
+                                                                                  child: Text('No'),
+                                                                                ),
+                                                                                TextButton(
+                                                                                  onPressed: () async {
+                                                                                    Navigator.of(context).pop(); // Close the dialog
+                                                                                    // await _cancelTeeTime(slotId);
+                                                                                    try {
+                                                                                      final secureStorage = FlutterSecureStorage();
+                                                                                      final token = await secureStorage.read(key: 'accessToken');
 
-                                                                        if (token ==
-                                                                            null) {
-                                                                          throw Exception(
-                                                                              'Access token not found');
-                                                                        }
+                                                                                      if (token == null) {
+                                                                                        throw Exception('Access token not found');
+                                                                                      }
 
-                                                                        // Replace this with your dynamic slot ID
-                                                                        // String slotId =
-                                                                        //     "20250423630AM9958"; // Example; should be dynamic
+                                                                                      // Replace this with your dynamic slot ID
+                                                                                      // String slotId =
+                                                                                      //     "20250423630AM9958"; // Example; should be dynamic
 
-                                                                        final uri =
-                                                                            Uri.parse(
-                                                                          'https://api.dev.driverpos.io/api/v1/teesheet/myBookings/cancel/$slotId',
-                                                                        );
+                                                                                      final uri = Uri.parse(
+                                                                                        'https://api.dev.driverpos.io/api/v1/teesheet/myBookings/cancel/$slotId',
+                                                                                      );
 
-                                                                        final response =
-                                                                            await http.delete(
-                                                                          uri,
-                                                                          headers: {
-                                                                            'Authorization':
-                                                                                'Bearer $token',
-                                                                            'Content-Type':
-                                                                                'application/json',
-                                                                          },
-                                                                          body:
-                                                                              jsonEncode({
-                                                                            "process":
-                                                                                "Cancel",
-                                                                          }),
-                                                                        );
+                                                                                      final response = await http.delete(
+                                                                                        uri,
+                                                                                        headers: {
+                                                                                          'Authorization': 'Bearer $token',
+                                                                                          'Content-Type': 'application/json',
+                                                                                        },
+                                                                                        body: jsonEncode({
+                                                                                          "process": "Cancel",
+                                                                                        }),
+                                                                                      );
 
-                                                                        if (response.statusCode ==
-                                                                            200) {
-                                                                          print(
-                                                                              '✅ Tee time cancelled successfully');
+                                                                                      if (response.statusCode == 200) {
+                                                                                        print('✅ Tee time cancelled successfully');
 
-                                                                          // Reload the screen
-                                                                          Navigator
-                                                                              .pushReplacement(
-                                                                            context,
-                                                                            MaterialPageRoute(
-                                                                              builder: (context) => MyReservationPage(
-                                                                                myRsvId: '',
-                                                                              ),
-                                                                            ), // Replace with your screen widget
-                                                                          );
-                                                                        } else {
-                                                                          print(
-                                                                              '❌ Failed to cancel tee time: ${response.statusCode}');
-                                                                          // Optionally show a snackbar or alert
-                                                                        }
-                                                                      } catch (e) {
-                                                                        print(
-                                                                            '❗ Error cancelling tee time: $e');
-                                                                        // Optionally show a snackbar or alert
-                                                                      }
+                                                                                        // Reload the screen
+                                                                                        Navigator.pushReplacement(
+                                                                                          context,
+                                                                                          MaterialPageRoute(
+                                                                                            builder: (context) => MyReservationPage(
+                                                                                              myRsvId: '',
+                                                                                            ),
+                                                                                          ), // Replace with your screen widget
+                                                                                        );
+                                                                                      } else {
+                                                                                        print('❌ Failed to cancel tee time: ${response.statusCode}');
+                                                                                        // Optionally show a snackbar or alert
+                                                                                      }
+                                                                                    } catch (e) {
+                                                                                      print('❗ Error cancelling tee time: $e');
+                                                                                      // Optionally show a snackbar or alert
+                                                                                    }
+                                                                                  },
+                                                                                  child: Text('Yes'),
+                                                                                ),
+                                                                              ],
+                                                                            );
+                                                                          });
                                                                     },
 
                                                                     style: ElevatedButton
                                                                         .styleFrom(
                                                                       backgroundColor:
-                                                                          Colors
-                                                                              .red,
+                                                                          Color(
+                                                                              0xFF9ECF9A),
                                                                       foregroundColor:
                                                                           Colors
                                                                               .white,
