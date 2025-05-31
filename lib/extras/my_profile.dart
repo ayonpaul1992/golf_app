@@ -9,7 +9,7 @@ import 'package:gulf_app/components/custom_app_bar.dart';
 import 'package:gulf_app/components/custom_drawer.dart';
 import 'package:gulf_app/components/custom_bottom_nav_bar.dart';
 import '../screens/my_reservation.dart';
-import 'my_transaction.dart';
+import '../screens/my_transaction.dart';
 import 'my_setting.dart';
 import 'edit_profile.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';

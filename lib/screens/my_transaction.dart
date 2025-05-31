@@ -25,166 +25,22 @@ class MyTransactionPageState extends State<MyTransactionPage> {
   final searchBarText = TextEditingController();
   bool isLoading = false;
   String? nomineedobError;
-  DateTime? _selectedDate;
+  final LayerLink _layerLink = LayerLink();
+
+  OverlayEntry? _dropdownOverlay;
+  String _selectedFilter = "This month";
+  final List<String> _filterOptions = [
+    "Today",
+    "This week",
+    "This month",
+    "This year"
+  ];
 
   @override
   void initState() {
     super.initState();
     final now = DateTime.now();
-    _selectedDate = now;
     _dateController.text = DateFormat("MMM dd, yyyy").format(now);
-  }
-
-  void _showDatePicker(BuildContext context) {
-    showGeneralDialog(
-      context: context,
-      barrierDismissible: true,
-      barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
-      barrierColor: Colors.black.withOpacity(0.5),
-      transitionDuration: const Duration(milliseconds: 300),
-      transitionBuilder: (context, animation, secondaryAnimation, child) {
-        const begin = Offset(0.0, -1.0);
-        const end = Offset.zero;
-        const curve = Curves.easeInOut;
-        var tween =
-            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-        return SlideTransition(
-          position: animation.drive(tween),
-          child: child,
-        );
-      },
-      pageBuilder: (BuildContext buildContext, Animation<double> animation,
-          Animation<double> secondaryAnimation) {
-        return Align(
-          alignment: const FractionalOffset(0.5, 0.42),
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 15.0),
-            child: Container(
-              height: 400,
-              width: MediaQuery.of(context).size.width,
-              padding: EdgeInsets.all(15),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.vertical(
-                    top: Radius.circular(20), bottom: Radius.circular(20)),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.2),
-                    blurRadius: 10,
-                    spreadRadius: 2,
-                    offset: Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // SfDateRangePicker(
-                  //   selectionMode: DateRangePickerSelectionMode.single,
-                  //   backgroundColor: Colors.white,
-                  //   selectionColor: Color(0xFF9ECF9A),
-                  //   todayHighlightColor: Color(0xFF9ECF9A),
-                  //   headerStyle: DateRangePickerHeaderStyle(
-                  //     backgroundColor: Colors.transparent,
-                  //     textStyle: GoogleFonts.poppins(
-                  //         color: Color(0xFF3F4B4B),
-                  //         fontSize: 18,
-                  //         fontWeight: FontWeight.w600),
-                  //   ),
-                  //   onSelectionChanged:
-                  //       (DateRangePickerSelectionChangedArgs args) {
-                  //     setState(() {
-                  //       _selectedDate = args.value;
-                  //     });
-                  //   },
-                  // ),
-                  SfDateRangePicker(
-                    initialSelectedDate: _selectedDate,
-                    // <- ADD THIS LINE
-                    selectionMode: DateRangePickerSelectionMode.single,
-                    backgroundColor: Colors.white,
-                    selectionColor: Color(0xFF9ECF9A),
-                    todayHighlightColor: Color(0xFF9ECF9A),
-                    headerStyle: DateRangePickerHeaderStyle(
-                      backgroundColor: Colors.transparent,
-                      textStyle: GoogleFonts.poppins(
-                        color: Color(0xFF3F4B4B),
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    onSelectionChanged:
-                        (DateRangePickerSelectionChangedArgs args) {
-                      setState(() {
-                        _selectedDate = args.value;
-                      });
-                    },
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      TextButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        style: TextButton.styleFrom(
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 20, vertical: 0),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                            side: BorderSide(
-                                width: 1.5, color: Color(0xFF9ECF9A)),
-                          ),
-                        ),
-                        child: Text(
-                          "Cancel",
-                          style: GoogleFonts.poppins(
-                            color: Color(0xFF244065),
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                      SizedBox(width: 10),
-                      TextButton(
-                        onPressed: () {
-                          if (_selectedDate != null) {
-                            final formattedDate = DateFormat("MMM dd, yyyy")
-                                .format(_selectedDate!);
-                            setState(() {
-                              _dateController.text = formattedDate;
-                            });
-                          }
-                          Navigator.pop(context);
-                        },
-                        style: TextButton.styleFrom(
-                          backgroundColor: Color(0xFF9ECF9A),
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 20, vertical: 0),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                            side: BorderSide(
-                                width: 1.5, color: Color(0xFF9ECF9A)),
-                          ),
-                        ),
-                        child: Text(
-                          "OK",
-                          style: GoogleFonts.poppins(
-                            color: Colors.white,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
-    );
   }
 
   void _showMessage(String message) {
@@ -194,8 +50,80 @@ class MyTransactionPageState extends State<MyTransactionPage> {
 
   int? editingIndex;
   int selectedIndex = 0; // index 0 is "All"
-  String _activeLabel = "All"; // "All" is active by default
-  final List<String> filters = ["All", "Completed", "Cancelled", "Failed"];
+
+  double _getDropdownOffset() {
+    final renderBox = context.findRenderObject() as RenderBox?;
+    return renderBox?.localToGlobal(Offset.zero).dy ?? 100;
+  }
+
+  void _toggleDropdown() {
+    if (_dropdownOverlay == null) {
+      final overlay = Overlay.of(context);
+      _dropdownOverlay = OverlayEntry(
+        builder: (context) => Positioned(
+          left: 10,
+          right: 20,
+          child: CompositedTransformFollower(
+            link: _layerLink,
+            showWhenUnlinked: false,
+            offset: Offset(0, 30),
+            child: Material(
+              elevation: 4,
+              borderRadius: BorderRadius.circular(8),
+              child: Container(
+                margin: EdgeInsets.symmetric(
+                    horizontal: 0), // Adjust horizontal padding
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  border: Border.all(color: Color(0xFFB2C1C0)),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: _filterOptions.map((option) {
+                    return InkWell(
+                      onTap: () {
+                        setState(() {
+                          _selectedFilter = option;
+                        });
+                        _removeDropdown();
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 10.0, horizontal: 12),
+                        child: Text(
+                          option,
+                          style: GoogleFonts.poppins(
+                            fontSize: 13,
+                            color: option == _selectedFilter
+                                ? Color(0xFF669933)
+                                : Color(0xFF244065),
+                            fontWeight: option == _selectedFilter
+                                ? FontWeight.w600
+                                : FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+      overlay.insert(_dropdownOverlay!);
+      setState(() {}); // To refresh the icon
+    } else {
+      _removeDropdown();
+    }
+  }
+
+  void _removeDropdown() {
+    _dropdownOverlay?.remove();
+    _dropdownOverlay = null;
+    setState(() {}); // Refresh icon
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -264,178 +192,56 @@ class MyTransactionPageState extends State<MyTransactionPage> {
               // SizedBox(
               //   height: 15,
               // ),
-              Container(
-                width: double.infinity,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    // Expanded(
-                    //   child: Padding(
-                    //     padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                    //     child: Column(
-                    //       crossAxisAlignment: CrossAxisAlignment.start,
-                    //       children: [
-                    //         Container(
-                    //           decoration: BoxDecoration(
-                    //             color: Colors.white,
-                    //             borderRadius: BorderRadius.circular(50),
-                    //             boxShadow: [
-                    //               BoxShadow(
-                    //                 color: Colors.black.withOpacity(0.1),
-                    //                 blurRadius: 6,
-                    //                 offset: Offset(0, 3),
-                    //               ),
-                    //             ],
-                    //             border: Border.all(
-                    //               color: Color(0xFFB2C1C0),
-                    //               width: 1,
-                    //             ),
-                    //           ),
-                    //           child: TextField(
-                    //             controller: searchBarText,
-                    //             decoration: InputDecoration(
-                    //               hintText: 'Search here',
-                    //               hintStyle: const TextStyle(
-                    //                 color: Color(0xFF6E7373),
-                    //                 fontWeight: FontWeight.w500,
-                    //               ),
-                    //               border: InputBorder.none,
-                    //               prefixIcon: const Icon(Icons.search,
-                    //                   color: Color(0xFF6E7373)),
-                    //               contentPadding: const EdgeInsets.symmetric(
-                    //                   vertical: 14), // vertical centering
-                    //               focusedBorder: OutlineInputBorder(
-                    //                 borderRadius: BorderRadius.circular(50),
-                    //                 borderSide: const BorderSide(
-                    //                   color: Color(0xFF9ECF9A),
-                    //                 ),
-                    //               ),
-                    //               enabledBorder: OutlineInputBorder(
-                    //                 borderRadius: BorderRadius.circular(50),
-                    //                 borderSide: const BorderSide(
-                    //                   color: Colors.white,
-                    //                 ),
-                    //               ),
-                    //               filled: true,
-                    //               fillColor: Colors.white,
-                    //             ),
-                    //             style: GoogleFonts.poppins(
-                    //               color: Color(0xFF244065),
-                    //               fontWeight: FontWeight.w600,
-                    //               fontSize: 14,
-                    //             ),
-                    //           ),
-                    //         ),
-                    //         if (nomineedobError != null)
-                    //           Padding(
-                    //             padding:
-                    //                 const EdgeInsets.only(top: 6.0, left: 12),
-                    //             child: Text(
-                    //               nomineedobError!,
-                    //               style: const TextStyle(
-                    //                 color: Colors.red,
-                    //                 fontSize: 12,
-                    //               ),
-                    //             ),
-                    //           ),
-                    //       ],
-                    //     ),
-                    //   ),
-                    // ),
-                    Text(
-                      "My Reservation",
-                      style: GoogleFonts.poppins(
-                          color: Color(0xFF244065),
-                          fontSize: 17,
-                          fontWeight: FontWeight.w600),
-                    ),
-                    Row(
-                      children: [
-                        GestureDetector(
-                          onTap: editingIndex == null
-                              ? () => _showDatePicker(context)
-                              : null,
-                          child: Padding(
-                            padding: const EdgeInsets.only(right: 5.0),
-                            child: Icon(
-                              Icons.calendar_month_outlined,
-                              color: Color(0xFF648683),
-                              size: 20,
+              CompositedTransformTarget(
+                link: _layerLink,
+                child: Container(
+                  width: double.infinity,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "My Transactions",
+                        style: GoogleFonts.poppins(
+                            color: Color(0xFF244065),
+                            fontSize: 17,
+                            fontWeight: FontWeight.w600),
+                      ),
+                      GestureDetector(
+                        onTap: _toggleDropdown,
+                        child: Row(
+                          children: [
+                            Text(
+                              "Filter by:",
+                              style: GoogleFonts.poppins(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w500,
+                                  color: Color(0xFF6E7373)),
                             ),
-                          ),
+                            SizedBox(width: 5),
+                            Text(
+                              _selectedFilter,
+                              style: GoogleFonts.poppins(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w600,
+                                  color: Color(0xFF244065)),
+                            ),
+                            Icon(
+                              _dropdownOverlay == null
+                                  ? Icons.keyboard_arrow_down_rounded
+                                  : Icons.keyboard_arrow_up_rounded,
+                              size: 22,
+                              color: Color(0xFF669933),
+                            )
+                          ],
                         ),
-                        Text(
-                          "Filter by:",
-                          style: GoogleFonts.poppins(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w500,
-                              color: Color(0xFF6E7373)),
-                        ),
-                        SizedBox(
-                          width: 5,
-                        ),
-                        Text(
-                          "This month",
-                          style: GoogleFonts.poppins(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w600,
-                              color: Color(0xFF244065)),
-                        ),
-                        Icon(
-                          Icons.keyboard_arrow_down_rounded,
-                          size: 22,
-                          color: Color(0xFF669933),
-                        )
-                      ],
-                    ),
-                  ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
               SizedBox(
                 height: 15,
               ),
-              // Container(
-              //   width: double.infinity,
-              //   child: Center(
-              //     child: Wrap(
-              //       alignment: WrapAlignment.center,
-              //       spacing: 8,
-              //       runSpacing: 8,
-              //       children: filters.map((label) {
-              //         final bool isActive = _activeLabel == label;
-              //         return InkWell(
-              //           onTap: () {
-              //             setState(() {
-              //               _activeLabel = label;
-              //             });
-              //           },
-              //           child: Container(
-              //             decoration: BoxDecoration(
-              //               color: isActive ? Color(0xFF9ECF9A) : Colors.white,
-              //               borderRadius: BorderRadius.circular(20),
-              //               border: Border.all(
-              //                 color: Color(0xFF9ECF9A),
-              //                 width: 1,
-              //               ),
-              //             ),
-              //             padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-              //             child: Text(
-              //               label,
-              //               style: GoogleFonts.poppins(
-              //                 color: isActive ? Colors.white : Color(0xFF244065),
-              //                 fontWeight: FontWeight.w600,
-              //                 fontSize: 13,
-              //               ),
-              //             ),
-              //           ),
-              //         );
-              //       }).toList(),
-              //     ),
-              //   ),
-              // ),
-              // SizedBox(
-              //   height: 15,
-              // ),
               Container(
                 width: double.infinity,
                 child: Column(
@@ -533,7 +339,7 @@ class MyTransactionPageState extends State<MyTransactionPage> {
                               ),
                               Row(
                                 mainAxisAlignment:
-                                MainAxisAlignment.spaceBetween,
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Row(
                                     children: [
@@ -565,7 +371,7 @@ class MyTransactionPageState extends State<MyTransactionPage> {
                           Divider(
                             color: Color(0xFFE9EBEB), // Set your desired color
                             thickness:
-                            1.5, // Optional: controls the line thickness
+                                1.5, // Optional: controls the line thickness
                           ),
                           Container(
                             padding: EdgeInsets.symmetric(
@@ -573,7 +379,7 @@ class MyTransactionPageState extends State<MyTransactionPage> {
                             child: Column(children: [
                               Row(
                                 mainAxisAlignment:
-                                MainAxisAlignment.spaceBetween,
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Row(
                                     children: [
@@ -605,7 +411,7 @@ class MyTransactionPageState extends State<MyTransactionPage> {
                           Divider(
                             color: Color(0xFFE9EBEB), // Set your desired color
                             thickness:
-                            1.5, // Optional: controls the line thickness
+                                1.5, // Optional: controls the line thickness
                           ),
                           Container(
                             padding: EdgeInsets.symmetric(
@@ -630,11 +436,13 @@ class MyTransactionPageState extends State<MyTransactionPage> {
                                     children: [
                                       Image.asset(
                                         'assets/images/ccard.png',
-                                        width: 17.88,          // optional
-                                        height: 13.75,         // optional
-                                        fit: BoxFit.cover,   // optional
+                                        width: 17.88, // optional
+                                        height: 13.75, // optional
+                                        fit: BoxFit.cover, // optional
                                       ),
-                                      SizedBox(width: 5,),
+                                      SizedBox(
+                                        width: 5,
+                                      ),
                                       Text(
                                         "Credit Card ",
                                         style: GoogleFonts.poppins(
@@ -661,7 +469,9 @@ class MyTransactionPageState extends State<MyTransactionPage> {
                   ],
                 ),
               ),
-              SizedBox(height: 15,),
+              SizedBox(
+                height: 15,
+              ),
               Container(
                 width: double.infinity,
                 child: Column(
@@ -671,7 +481,7 @@ class MyTransactionPageState extends State<MyTransactionPage> {
                           color: Color(0xFFF8F8F8),
                           borderRadius: BorderRadius.circular(15),
                           border:
-                          Border.all(color: Color(0xFFE9EBEB), width: 1)),
+                              Border.all(color: Color(0xFFE9EBEB), width: 1)),
                       child: Column(
                         children: [
                           Container(
@@ -722,7 +532,7 @@ class MyTransactionPageState extends State<MyTransactionPage> {
                           Divider(
                             color: Color(0xFFE9EBEB), // Set your desired color
                             thickness:
-                            1.5, // Optional: controls the line thickness
+                                1.5, // Optional: controls the line thickness
                           ),
                           Container(
                             padding: EdgeInsets.symmetric(
@@ -730,7 +540,7 @@ class MyTransactionPageState extends State<MyTransactionPage> {
                             child: Column(children: [
                               Row(
                                 mainAxisAlignment:
-                                MainAxisAlignment.spaceBetween,
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Row(
                                     children: [
@@ -759,7 +569,7 @@ class MyTransactionPageState extends State<MyTransactionPage> {
                               ),
                               Row(
                                 mainAxisAlignment:
-                                MainAxisAlignment.spaceBetween,
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Row(
                                     children: [
@@ -791,7 +601,7 @@ class MyTransactionPageState extends State<MyTransactionPage> {
                           Divider(
                             color: Color(0xFFE9EBEB), // Set your desired color
                             thickness:
-                            1.5, // Optional: controls the line thickness
+                                1.5, // Optional: controls the line thickness
                           ),
                           Container(
                             padding: EdgeInsets.symmetric(
@@ -799,7 +609,7 @@ class MyTransactionPageState extends State<MyTransactionPage> {
                             child: Column(children: [
                               Row(
                                 mainAxisAlignment:
-                                MainAxisAlignment.spaceBetween,
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Row(
                                     children: [
@@ -831,7 +641,7 @@ class MyTransactionPageState extends State<MyTransactionPage> {
                           Divider(
                             color: Color(0xFFE9EBEB), // Set your desired color
                             thickness:
-                            1.5, // Optional: controls the line thickness
+                                1.5, // Optional: controls the line thickness
                           ),
                           Container(
                             padding: EdgeInsets.symmetric(
@@ -856,11 +666,13 @@ class MyTransactionPageState extends State<MyTransactionPage> {
                                     children: [
                                       Image.asset(
                                         'assets/images/cashc.png',
-                                        width: 23,          // optional
-                                        height: 23,         // optional
-                                        fit: BoxFit.cover,   // optional
+                                        width: 23, // optional
+                                        height: 23, // optional
+                                        fit: BoxFit.cover, // optional
                                       ),
-                                      SizedBox(width: 5,),
+                                      SizedBox(
+                                        width: 5,
+                                      ),
                                       Text(
                                         "Cash ",
                                         style: GoogleFonts.poppins(
@@ -880,7 +692,9 @@ class MyTransactionPageState extends State<MyTransactionPage> {
                   ],
                 ),
               ),
-              SizedBox(height: 15,),
+              SizedBox(
+                height: 15,
+              ),
               Container(
                 width: double.infinity,
                 child: Column(
@@ -890,7 +704,7 @@ class MyTransactionPageState extends State<MyTransactionPage> {
                           color: Color(0xFFF8F8F8),
                           borderRadius: BorderRadius.circular(15),
                           border:
-                          Border.all(color: Color(0xFFE9EBEB), width: 1)),
+                              Border.all(color: Color(0xFFE9EBEB), width: 1)),
                       child: Column(
                         children: [
                           Container(
@@ -941,7 +755,7 @@ class MyTransactionPageState extends State<MyTransactionPage> {
                           Divider(
                             color: Color(0xFFE9EBEB), // Set your desired color
                             thickness:
-                            1.5, // Optional: controls the line thickness
+                                1.5, // Optional: controls the line thickness
                           ),
                           Container(
                             padding: EdgeInsets.symmetric(
@@ -949,7 +763,7 @@ class MyTransactionPageState extends State<MyTransactionPage> {
                             child: Column(children: [
                               Row(
                                 mainAxisAlignment:
-                                MainAxisAlignment.spaceBetween,
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Row(
                                     children: [
@@ -978,7 +792,7 @@ class MyTransactionPageState extends State<MyTransactionPage> {
                               ),
                               Row(
                                 mainAxisAlignment:
-                                MainAxisAlignment.spaceBetween,
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Row(
                                     children: [
@@ -1010,7 +824,7 @@ class MyTransactionPageState extends State<MyTransactionPage> {
                           Divider(
                             color: Color(0xFFE9EBEB), // Set your desired color
                             thickness:
-                            1.5, // Optional: controls the line thickness
+                                1.5, // Optional: controls the line thickness
                           ),
                           Container(
                             padding: EdgeInsets.symmetric(
@@ -1018,7 +832,7 @@ class MyTransactionPageState extends State<MyTransactionPage> {
                             child: Column(children: [
                               Row(
                                 mainAxisAlignment:
-                                MainAxisAlignment.spaceBetween,
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Row(
                                     children: [
@@ -1050,7 +864,7 @@ class MyTransactionPageState extends State<MyTransactionPage> {
                           Divider(
                             color: Color(0xFFE9EBEB), // Set your desired color
                             thickness:
-                            1.5, // Optional: controls the line thickness
+                                1.5, // Optional: controls the line thickness
                           ),
                           Container(
                             padding: EdgeInsets.symmetric(
@@ -1075,11 +889,13 @@ class MyTransactionPageState extends State<MyTransactionPage> {
                                     children: [
                                       Image.asset(
                                         'assets/images/ccard.png',
-                                        width: 17.88,          // optional
-                                        height: 13.75,         // optional
-                                        fit: BoxFit.cover,   // optional
+                                        width: 17.88, // optional
+                                        height: 13.75, // optional
+                                        fit: BoxFit.cover, // optional
                                       ),
-                                      SizedBox(width: 5,),
+                                      SizedBox(
+                                        width: 5,
+                                      ),
                                       Text(
                                         "Credit Card ",
                                         style: GoogleFonts.poppins(

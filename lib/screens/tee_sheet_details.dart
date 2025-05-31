@@ -1,4 +1,4 @@
-// ignore_for_file: deprecated_member_use
+// ignore_for_file: deprecated_member_use, use_build_context_synchronously
 import 'dart:convert';
 
 import 'package:intl/intl.dart';
@@ -1085,7 +1085,8 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
                                       content: Text(
-                                          jsonDecode(response.body)['message']),
+                                        jsonDecode(response.body)['message'],
+                                      ),
                                     ),
                                   );
                                 }
