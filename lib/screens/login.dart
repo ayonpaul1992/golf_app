@@ -92,6 +92,11 @@ class LoginPageState extends State<LoginPage> {
           await secureStorage.write(
               key: 'userName', value: data['data']['fullName']);
           await secureStorage.write(
+              key: 'userEmail', value: data['data']['email']);
+          await secureStorage.write(
+              key: 'userPhone', value: data['data']['phoneNumber']);
+
+          await secureStorage.write(
               key: 'profilePic', value: data['data']['profilePicture']);
           await secureStorage.write(
             key: 'accountNumber',

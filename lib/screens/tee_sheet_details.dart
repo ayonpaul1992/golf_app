@@ -300,6 +300,7 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
       _focusNodes[i].addListener(_onFocusChange);
     }
 
+    print('date: ${DateFormat('MMM dd, yyyy').parse(widget.date)}');
     // _fetchPendingReservation();
 
     _createPendingReservation();
@@ -328,7 +329,7 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
     final payload = {
       "teeSheetId": widget.teesheetPageId,
       "date": DateFormat('yyyy-MM-dd').format(
-        DateFormat('MMMM dd, yyyy').parse(widget.date),
+        DateFormat('MMM dd, yyyy').parse(widget.date),
       ),
       "startingSlot": widget.time,
       "slotCustomer": 5 - widget.players,
@@ -360,7 +361,7 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
     final cancelPayload = {
       "teeSheetId": widget.teesheetPageId,
       "date": DateFormat('yyyy-MM-dd').format(
-        DateFormat('MMMM dd, yyyy').parse(widget.date),
+        DateFormat('MMM dd, yyyy').parse(widget.date),
       ),
       "startingSlot": widget.time,
       "pendingSlotId": pendingSlotId,
@@ -602,7 +603,7 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
                                                       6), // 👈 spacing between icon and text
                                               Text(
                                                 DateFormat('yyyy-MM-dd').format(
-                                                  DateFormat('MMMM dd, yyyy')
+                                                  DateFormat('MMM dd, yyyy')
                                                       .parse(widget.date),
                                                 ),
                                                 style: GoogleFonts.poppins(
@@ -1038,7 +1039,7 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
                                         widget.reservationGroupId,
                                     // "onlineReservationGroupId": null,
                                     "date": DateFormat('yyyy-MM-dd').format(
-                                      DateFormat('MMMM dd, yyyy')
+                                      DateFormat('MMM dd, yyyy')
                                           .parse(widget.date),
                                     ),
                                     "startingSlot": widget.time,

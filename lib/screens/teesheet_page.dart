@@ -674,6 +674,8 @@ class TeesheetPageState extends State<TeesheetPage> {
                               ...allTeeSheetData.map((slot) {
                                 return GestureDetector(
                                   onTap: () {
+                                    print(
+                                        '_dateController.text: ${_dateController.text}');
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(

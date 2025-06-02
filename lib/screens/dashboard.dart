@@ -29,7 +29,7 @@ class DashboardPage extends StatefulWidget {
 
 class DashboardPageState extends State<DashboardPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  final FlutterSecureStorage secureStorage = FlutterSecureStorage();
+  final FlutterSecureStorage secureStorage = const FlutterSecureStorage();
   String activeTile = 'Home';
   String selectedItem = "Select";
   String userName = ""; // Placeholder for user name
@@ -37,7 +37,7 @@ class DashboardPageState extends State<DashboardPage> {
   String accountNumber = ""; // Placeholder for account number
   String membership = ""; // Placeholder for membership type
   String weatherDescription = '';
-  double temperature = 0.0;
+  num temperature = 0.0;
 
   IconData _getWeatherIcon(String description) {
     switch (description.toLowerCase()) {
@@ -132,16 +132,16 @@ class DashboardPageState extends State<DashboardPage> {
         },
       ),
       body: Container(
-        color: Color(0xFFFAFCFA),
+        color: const Color(0xFFFAFCFA),
         width: double.infinity,
         height: double.infinity,
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 0),
+          padding: const EdgeInsets.symmetric(horizontal: 0),
           child: SingleChildScrollView(
               child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              SizedBox(
+              const SizedBox(
                 height: 25,
               ),
               Column(
@@ -153,12 +153,13 @@ class DashboardPageState extends State<DashboardPage> {
                     decoration: BoxDecoration(
                       boxShadow: [
                         BoxShadow(
-                          color: Color(0xFF9ECF9A)
+                          color: const Color(0xFF9ECF9A)
                               .withOpacity(0.15), // make it visible
                           blurRadius: 30, // soft edges
                           spreadRadius:
                               1, // controls how far the shadow spreads
-                          offset: Offset(3, 0), // shift shadow down slightly
+                          offset:
+                              const Offset(3, 0), // shift shadow down slightly
                         ),
                       ],
                     ),
@@ -166,16 +167,16 @@ class DashboardPageState extends State<DashboardPage> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 15.0),
+                          padding: const EdgeInsets.symmetric(horizontal: 15.0),
                           child: GestureDetector(
                             onTap: () {},
                             child: Container(
-                              padding: EdgeInsets.symmetric(
+                              padding: const EdgeInsets.symmetric(
                                   horizontal: 7, vertical: 5),
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(50),
                                 border: Border.all(
-                                  color: Color(0xFF9ECF9A),
+                                  color: const Color(0xFF9ECF9A),
                                   width: 1,
                                 ),
                               ),
@@ -198,7 +199,7 @@ class DashboardPageState extends State<DashboardPage> {
                                         child: Image(
                                           image: profilePic.isNotEmpty
                                               ? NetworkImage(profilePic)
-                                              : AssetImage(
+                                              : const AssetImage(
                                                       'assets/images/bkdu1.png')
                                                   as ImageProvider,
                                           fit: BoxFit.cover,
@@ -206,7 +207,7 @@ class DashboardPageState extends State<DashboardPage> {
                                           height: 50,
                                         ),
                                       ),
-                                      SizedBox(
+                                      const SizedBox(
                                         width: 6,
                                       ),
                                       Column(
@@ -216,23 +217,23 @@ class DashboardPageState extends State<DashboardPage> {
                                           Text(
                                             userName,
                                             style: GoogleFonts.poppins(
-                                              color: Color(0xFF244065),
+                                              color: const Color(0xFF244065),
                                               fontSize: 16,
                                               fontWeight: FontWeight.w600,
                                             ),
                                           ),
-                                          SizedBox(
+                                          const SizedBox(
                                             height: 2,
                                           ),
                                           Row(spacing: 6, children: [
                                             Container(
-                                              padding: EdgeInsets.only(
+                                              padding: const EdgeInsets.only(
                                                   left: 7,
                                                   right: 7,
                                                   top: 5,
                                                   bottom: 5),
                                               decoration: BoxDecoration(
-                                                color: Color(0xFF244065),
+                                                color: const Color(0xFF244065),
                                                 borderRadius:
                                                     BorderRadius.circular(50),
                                               ),
@@ -242,7 +243,7 @@ class DashboardPageState extends State<DashboardPage> {
                                                 children: [
                                                   Image.asset(
                                                       "assets/images/mmbr_arw.png"),
-                                                  SizedBox(
+                                                  const SizedBox(
                                                     width: 5,
                                                   ),
                                                   Text(
@@ -253,8 +254,8 @@ class DashboardPageState extends State<DashboardPage> {
                                                         fontWeight:
                                                             FontWeight.w500,
                                                         fontSize: 11.5,
-                                                        color:
-                                                            Color(0xFFFFFFFF)),
+                                                        color: const Color(
+                                                            0xFFFFFFFF)),
                                                   )
                                                 ],
                                               ),
@@ -263,16 +264,19 @@ class DashboardPageState extends State<DashboardPage> {
                                               decoration: BoxDecoration(
                                                 borderRadius:
                                                     BorderRadius.circular(20),
-                                                color: Color(0xFFF7FAF4),
+                                                color: const Color(0xFFF7FAF4),
                                               ),
-                                              padding: EdgeInsets.symmetric(
-                                                  horizontal: 10, vertical: 5),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 10,
+                                                      vertical: 5),
                                               child: Text(
                                                 accountNumber.isNotEmpty
                                                     ? accountNumber
                                                     : "",
                                                 style: GoogleFonts.poppins(
-                                                    color: Color(0xFF669933),
+                                                    color:
+                                                        const Color(0xFF669933),
                                                     fontSize: 12,
                                                     fontWeight:
                                                         FontWeight.w600),
@@ -288,7 +292,7 @@ class DashboardPageState extends State<DashboardPage> {
                             ),
                           ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 20,
                         ),
                         Row(
@@ -301,7 +305,7 @@ class DashboardPageState extends State<DashboardPage> {
                                   children: [
                                     Icon(
                                       _getWeatherIcon(weatherDescription),
-                                      color: Color(0xFF669933),
+                                      color: const Color(0xFF669933),
                                       size: 40,
                                     )
                                   ],
@@ -312,16 +316,18 @@ class DashboardPageState extends State<DashboardPage> {
                                     Row(
                                       children: [
                                         Text(
-                                          temperature.toStringAsFixed(1),
+                                          temperature % 1 == 0
+                                              ? temperature.toInt().toString()
+                                              : temperature.toStringAsFixed(1),
                                           style: GoogleFonts.poppins(
-                                              color: Color(0xFF244065),
+                                              color: const Color(0xFF244065),
                                               fontSize: 26,
                                               fontWeight: FontWeight.w500),
                                         ),
                                         Text(
                                           "°F",
                                           style: GoogleFonts.poppins(
-                                              color: Color(0xFF244065),
+                                              color: const Color(0xFF244065),
                                               fontSize: 14,
                                               fontWeight: FontWeight.w600),
                                         ),
@@ -332,7 +338,7 @@ class DashboardPageState extends State<DashboardPage> {
                                           ? weatherDescription
                                           : "...",
                                       style: GoogleFonts.poppins(
-                                          color: Color(0xFF6E7373),
+                                          color: const Color(0xFF6E7373),
                                           fontSize: 13,
                                           fontWeight: FontWeight.w400),
                                     ),
@@ -340,13 +346,13 @@ class DashboardPageState extends State<DashboardPage> {
                                 )
                               ],
                             ),
-                            SizedBox(
+                            const SizedBox(
                               width: 30,
                             ),
                             Row(
                               spacing: 5,
                               children: [
-                                Row(
+                                const Row(
                                   children: [
                                     Icon(
                                       Icons.date_range,
@@ -365,7 +371,7 @@ class DashboardPageState extends State<DashboardPage> {
                                             DateTime.now(),
                                           ),
                                           style: GoogleFonts.poppins(
-                                              color: Color(0xFF244065),
+                                              color: const Color(0xFF244065),
                                               fontSize: 16,
                                               fontWeight: FontWeight.w600),
                                         ),
@@ -376,7 +382,7 @@ class DashboardPageState extends State<DashboardPage> {
                                         DateTime.now(),
                                       ),
                                       style: GoogleFonts.poppins(
-                                          color: Color(0xFF6E7373),
+                                          color: const Color(0xFF6E7373),
                                           fontSize: 13,
                                           fontWeight: FontWeight.w400),
                                     ),
@@ -386,7 +392,7 @@ class DashboardPageState extends State<DashboardPage> {
                             ),
                           ],
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 20,
                         ),
                         Wrap(
@@ -400,20 +406,21 @@ class DashboardPageState extends State<DashboardPage> {
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) =>
-                                        SelcetBookingClass(userId: ''),
+                                        const SelcetBookingClass(userId: ''),
                                   ),
                                 );
                               },
                               child: Container(
-                                padding: EdgeInsets.all(20),
+                                padding: const EdgeInsets.all(20),
                                 decoration: BoxDecoration(
-                                  color: Color(0xFFFFFFFF),
+                                  color: const Color(0xFFFFFFFF),
                                   borderRadius: BorderRadius.circular(20),
                                   boxShadow: [
                                     BoxShadow(
                                       color: Colors.black
                                           .withOpacity(0.1), // light shadow
-                                      offset: Offset(1, 1), // x: right, y: down
+                                      offset: const Offset(
+                                          1, 1), // x: right, y: down
                                       blurRadius: 10, // soft blur
                                       spreadRadius: 1, // slight spread
                                     ),
@@ -422,12 +429,12 @@ class DashboardPageState extends State<DashboardPage> {
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Icon(
+                                    const Icon(
                                       Icons.edit_calendar,
                                       color: Color(0xFF669933),
                                       size: 36,
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       height: 10,
                                     ),
                                     SizedBox(
@@ -436,7 +443,7 @@ class DashboardPageState extends State<DashboardPage> {
                                         "Book a New Tee Time",
                                         textAlign: TextAlign.center,
                                         style: GoogleFonts.poppins(
-                                          color: Color(0xFF244065),
+                                          color: const Color(0xFF244065),
                                           fontSize: 14,
                                           fontWeight: FontWeight.w600,
                                         ),
@@ -449,15 +456,16 @@ class DashboardPageState extends State<DashboardPage> {
                             GestureDetector(
                               onTap: () {},
                               child: Container(
-                                padding: EdgeInsets.all(20),
+                                padding: const EdgeInsets.all(20),
                                 decoration: BoxDecoration(
-                                  color: Color(0xFFFFFFFF),
+                                  color: const Color(0xFFFFFFFF),
                                   borderRadius: BorderRadius.circular(20),
                                   boxShadow: [
                                     BoxShadow(
                                       color: Colors.black
                                           .withOpacity(0.1), // light shadow
-                                      offset: Offset(1, 1), // x: right, y: down
+                                      offset: const Offset(
+                                          1, 1), // x: right, y: down
                                       blurRadius: 10, // soft blur
                                       spreadRadius: 1, // slight spread
                                     ),
@@ -466,12 +474,12 @@ class DashboardPageState extends State<DashboardPage> {
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Icon(
+                                    const Icon(
                                       Icons.badge,
                                       color: Color(0xFF669933),
                                       size: 36,
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       height: 10,
                                     ),
                                     SizedBox(
@@ -480,7 +488,7 @@ class DashboardPageState extends State<DashboardPage> {
                                         "Gift Card & Membership",
                                         textAlign: TextAlign.center,
                                         style: GoogleFonts.poppins(
-                                          color: Color(0xFF244065),
+                                          color: const Color(0xFF244065),
                                           fontSize: 14,
                                           fontWeight: FontWeight.w600,
                                         ),
@@ -496,20 +504,21 @@ class DashboardPageState extends State<DashboardPage> {
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) =>
-                                        MyReservationPage(myRsvId: ''),
+                                        const MyReservationPage(myRsvId: ''),
                                   ),
                                 );
                               },
                               child: Container(
-                                padding: EdgeInsets.all(20),
+                                padding: const EdgeInsets.all(20),
                                 decoration: BoxDecoration(
-                                  color: Color(0xFFFFFFFF),
+                                  color: const Color(0xFFFFFFFF),
                                   borderRadius: BorderRadius.circular(20),
                                   boxShadow: [
                                     BoxShadow(
                                       color: Colors.black
                                           .withOpacity(0.1), // light shadow
-                                      offset: Offset(1, 1), // x: right, y: down
+                                      offset: const Offset(
+                                          1, 1), // x: right, y: down
                                       blurRadius: 10, // soft blur
                                       spreadRadius: 1, // slight spread
                                     ),
@@ -518,12 +527,12 @@ class DashboardPageState extends State<DashboardPage> {
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Icon(
+                                    const Icon(
                                       Icons.history,
                                       color: Color(0xFF669933),
                                       size: 36,
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       height: 10,
                                     ),
                                     SizedBox(
@@ -532,7 +541,7 @@ class DashboardPageState extends State<DashboardPage> {
                                         "Booking History",
                                         textAlign: TextAlign.center,
                                         style: GoogleFonts.poppins(
-                                          color: Color(0xFF244065),
+                                          color: const Color(0xFF244065),
                                           fontSize: 14,
                                           fontWeight: FontWeight.w600,
                                         ),
@@ -545,15 +554,16 @@ class DashboardPageState extends State<DashboardPage> {
                             GestureDetector(
                               onTap: () {},
                               child: Container(
-                                padding: EdgeInsets.all(20),
+                                padding: const EdgeInsets.all(20),
                                 decoration: BoxDecoration(
-                                  color: Color(0xFFFFFFFF),
+                                  color: const Color(0xFFFFFFFF),
                                   borderRadius: BorderRadius.circular(20),
                                   boxShadow: [
                                     BoxShadow(
                                       color: Colors.black
                                           .withOpacity(0.1), // light shadow
-                                      offset: Offset(1, 1), // x: right, y: down
+                                      offset: const Offset(
+                                          1, 1), // x: right, y: down
                                       blurRadius: 10, // soft blur
                                       spreadRadius: 1, // slight spread
                                     ),
@@ -562,12 +572,12 @@ class DashboardPageState extends State<DashboardPage> {
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Icon(
+                                    const Icon(
                                       Icons.group_add,
                                       color: Color(0xFF669933),
                                       size: 36,
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       height: 10,
                                     ),
                                     SizedBox(
@@ -576,7 +586,7 @@ class DashboardPageState extends State<DashboardPage> {
                                         "Make a Group",
                                         textAlign: TextAlign.center,
                                         style: GoogleFonts.poppins(
-                                          color: Color(0xFF244065),
+                                          color: const Color(0xFF244065),
                                           fontSize: 14,
                                           fontWeight: FontWeight.w600,
                                         ),
@@ -588,7 +598,7 @@ class DashboardPageState extends State<DashboardPage> {
                             ),
                           ],
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 15,
                         ),
                         SingleChildScrollView(
@@ -599,36 +609,36 @@ class DashboardPageState extends State<DashboardPage> {
                                 Container(
                                   width: 40,
                                   height: 1,
-                                  color: Color(0xFFB2C1C0),
+                                  color: const Color(0xFFB2C1C0),
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   width: 10,
                                 ),
                                 Text(
                                   "Upcoming Tee Time",
                                   style: GoogleFonts.poppins(
-                                      color: Color(0xFF244065),
+                                      color: const Color(0xFF244065),
                                       fontSize: 22,
                                       fontWeight: FontWeight.w600),
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   width: 10,
                                 ),
                                 Container(
                                   width: 40,
                                   height: 1,
-                                  color: Color(0xFFB2C1C0),
+                                  color: const Color(0xFFB2C1C0),
                                 ),
                               ],
                             )),
                         Padding(
-                          padding: EdgeInsets.only(
+                          padding: const EdgeInsets.only(
                               top: 15, left: 20, right: 20, bottom: 20),
                           child: Text(
                             "No tee times coming up — book your next round now!",
                             textAlign: TextAlign.center,
                             style: GoogleFonts.poppins(
-                              color: Color(0xFF6E7373),
+                              color: const Color(0xFF6E7373),
                               fontWeight: FontWeight.w400,
                               fontSize: 14,
                             ),
@@ -638,7 +648,8 @@ class DashboardPageState extends State<DashboardPage> {
                     ),
                   ),
                   Padding(
-                    padding: EdgeInsets.only(bottom: 20, left: 15, right: 15),
+                    padding:
+                        const EdgeInsets.only(bottom: 20, left: 15, right: 15),
                     child: Stack(
                       children: [
                         SizedBox(
@@ -652,15 +663,15 @@ class DashboardPageState extends State<DashboardPage> {
                               // );
                             },
                             style: ElevatedButton.styleFrom(
-                                backgroundColor: Color(0xFF9ECF9A)),
+                                backgroundColor: const Color(0xFF9ECF9A)),
                             child: Padding(
-                              padding: EdgeInsets.symmetric(
+                              padding: const EdgeInsets.symmetric(
                                   horizontal: 15.0, vertical: 10.0),
                               child: Center(
                                 child: Text(
                                   "Contact now",
                                   style: GoogleFonts.poppins(
-                                    color: Color(0xFFFFFFFF),
+                                    color: const Color(0xFFFFFFFF),
                                     fontSize: 16,
                                     fontWeight: FontWeight.w600,
                                   ),
@@ -669,7 +680,7 @@ class DashboardPageState extends State<DashboardPage> {
                             ),
                           ),
                         ),
-                        Positioned(
+                        const Positioned(
                           top: 16.5,
                           right: 15,
                           child: Icon(
@@ -687,7 +698,7 @@ class DashboardPageState extends State<DashboardPage> {
           )),
         ),
       ),
-      bottomNavigationBar: CustomBottomNavBar(selectedIndex: 0),
+      bottomNavigationBar: const CustomBottomNavBar(selectedIndex: 0),
     );
   }
 }

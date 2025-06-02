@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../extras/notification.dart';
-import '../extras/my_profile.dart';
+import '../screens/my_profile.dart';
 
 class DashboardAppBar extends StatelessWidget implements PreferredSizeWidget {
   final GlobalKey<ScaffoldState> scaffoldKey;

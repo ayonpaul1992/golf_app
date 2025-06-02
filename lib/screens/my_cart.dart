@@ -424,7 +424,7 @@ class MyCartPageState extends State<MyCartPage> {
                                             ),
                                           ),
                                           Text(
-                                            "Player:",
+                                            "Players:",
                                             style: GoogleFonts.poppins(
                                                 color: Color(0xFF6E7373),
                                                 fontSize: 13,
