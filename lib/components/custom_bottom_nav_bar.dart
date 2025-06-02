@@ -1,11 +1,11 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:gulf_app/screens/my_setting.dart';
+import 'package:gulf_app/screens/my_reservation.dart';
+import 'package:gulf_app/screens/selcet_booking_class.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:gulf_app/extras/GardenSideTeesheetPage.dart';
-import 'package:gulf_app/extras/history.dart';
-import 'package:gulf_app/extras/self_checking.dart';
-import 'package:gulf_app/extras/store.dart';
-import 'package:gulf_app/extras/myKart.dart';
 
 class CustomBottomNavBar extends StatefulWidget {
   final int selectedIndex;
@@ -47,42 +47,27 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
           {
             'icon': 'assets/images/ftr_teesheet.png',
             'label': 'Tee Sheet',
-            'route': const GardenSideTeesheetPage(
-              userId: '',
-              gsTeeSheetuserId: '',
-            )
+            'route': const SelcetBookingClass(userId: '')
           },
           {
             'icon': 'assets/images/ftr_hstry.png',
             'label': 'History',
-            'route': const HistoryPage(
-              history: '',
-              historyId: '',
-            )
+            'route': const MyReservationPage(myRsvId: '')
           },
           {
             'icon': 'assets/images/self_chkng.png',
             'label': 'Self Checking',
-            'route': const SelfCheckingPage(
-              selfcheck: '',
-              selfChkId: '',
-            )
+            'route': null
           },
           {
             'icon': 'assets/images/ftr_str.png',
             'label': 'Store',
-            'route': const StorePage(
-              storeName: '',
-              storeId: '',
-            )
+            'route': null
           },
           {
             'icon': 'assets/images/ftr_kart.png',
             'label': 'Settings',
-            'route': const MyKartPage(
-              myCart: '',
-              myKartId: '',
-            )
+            'route': const MySettingPage(myStngId: '')
           },
         ];
 
@@ -153,7 +138,7 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
                                 duration: const Duration(milliseconds: 200),
                                 decoration: BoxDecoration(
                                   color: hoverIndex == index
-                                      ? Color(0xFF9ECF9A)
+                                      ? const Color(0xFF9ECF9A)
                                       : Colors.transparent,
                                   shape: BoxShape.circle,
                                 ),
@@ -165,7 +150,7 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
                                   color: hoverIndex == index
                                       ? Colors.white
                                       : (widget.selectedIndex == index
-                                          ? Color(0xFF244065)
+                                          ? const Color(0xFF244065)
                                           : const Color(0xFF244065)),
                                 ),
                               ),
@@ -179,7 +164,7 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
                               items[index]['label']!,
                               style: GoogleFonts.poppins(
                                 color: widget.selectedIndex == index
-                                    ? Color(0xFF648683)
+                                    ? const Color(0xFF648683)
                                     : const Color(0xFF648683),
                                 fontSize: 13,
                                 fontWeight: FontWeight.w400,

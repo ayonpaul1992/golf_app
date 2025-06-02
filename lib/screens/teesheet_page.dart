@@ -35,7 +35,7 @@ class TeesheetPage extends StatefulWidget {
 
 class TeesheetPageState extends State<TeesheetPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  final FlutterSecureStorage secureStorage = FlutterSecureStorage();
+  final FlutterSecureStorage secureStorage = const FlutterSecureStorage();
   final TextEditingController _dateController = TextEditingController();
   bool isLoading = false;
   String? nomineedobError;
@@ -121,7 +121,7 @@ class TeesheetPageState extends State<TeesheetPage> {
       isLoading = true;
     });
     // Always dispose the old one
-    final FlutterSecureStorage secureStorage = FlutterSecureStorage();
+    final FlutterSecureStorage secureStorage = const FlutterSecureStorage();
 
     String token = await secureStorage.read(key: 'accessToken') ?? '';
 
@@ -194,21 +194,21 @@ class TeesheetPageState extends State<TeesheetPage> {
         return Align(
           alignment: const FractionalOffset(0.5, 0.42),
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 15.0),
+            padding: const EdgeInsets.symmetric(horizontal: 15.0),
             child: Container(
               height: 400,
               width: MediaQuery.of(context).size.width,
-              padding: EdgeInsets.all(15),
+              padding: const EdgeInsets.all(15),
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.vertical(
+                borderRadius: const BorderRadius.vertical(
                     top: Radius.circular(20), bottom: Radius.circular(20)),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.2),
                     blurRadius: 10,
                     spreadRadius: 2,
-                    offset: Offset(0, 2),
+                    offset: const Offset(0, 2),
                   ),
                 ],
               ),
@@ -219,8 +219,8 @@ class TeesheetPageState extends State<TeesheetPage> {
                     initialSelectedDate: _selectedDate,
                     selectionMode: DateRangePickerSelectionMode.single,
                     backgroundColor: Colors.white,
-                    selectionColor: Color(0xFF9ECF9A),
-                    todayHighlightColor: Color(0xFF9ECF9A),
+                    selectionColor: const Color(0xFF9ECF9A),
+                    todayHighlightColor: const Color(0xFF9ECF9A),
                     minDate: DateTime.now(), // Set your desired start date
                     maxDate: DateTime.now().add(
                       Duration(days: bookingWindowDays - 1),
@@ -228,7 +228,7 @@ class TeesheetPageState extends State<TeesheetPage> {
                     headerStyle: DateRangePickerHeaderStyle(
                       backgroundColor: Colors.transparent,
                       textStyle: GoogleFonts.poppins(
-                        color: Color(0xFF3F4B4B),
+                        color: const Color(0xFF3F4B4B),
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
                       ),
@@ -248,24 +248,24 @@ class TeesheetPageState extends State<TeesheetPage> {
                           Navigator.pop(context);
                         },
                         style: TextButton.styleFrom(
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 20, vertical: 0),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 0),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20),
-                            side: BorderSide(
+                            side: const BorderSide(
                                 width: 1.5, color: Color(0xFF9ECF9A)),
                           ),
                         ),
                         child: Text(
                           "Cancel",
                           style: GoogleFonts.poppins(
-                            color: Color(0xFF244065),
+                            color: const Color(0xFF244065),
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
                       ),
-                      SizedBox(width: 10),
+                      const SizedBox(width: 10),
                       TextButton(
                         onPressed: () {
                           if (_selectedDate != null) {
@@ -278,12 +278,12 @@ class TeesheetPageState extends State<TeesheetPage> {
                           Navigator.pop(context);
                         },
                         style: TextButton.styleFrom(
-                          backgroundColor: Color(0xFF9ECF9A),
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 20, vertical: 0),
+                          backgroundColor: const Color(0xFF9ECF9A),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 0),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20),
-                            side: BorderSide(
+                            side: const BorderSide(
                                 width: 1.5, color: Color(0xFF9ECF9A)),
                           ),
                         ),
@@ -338,7 +338,7 @@ class TeesheetPageState extends State<TeesheetPage> {
         onTileTap: (selectedTile) {},
       ),
       body: isLoading
-          ? Center(
+          ? const Center(
               child: CircularProgressIndicator(
                 valueColor: AlwaysStoppedAnimation<Color>(
                   Color(0xFF9ECF9A),
@@ -346,16 +346,16 @@ class TeesheetPageState extends State<TeesheetPage> {
               ),
             )
           : Padding(
-              padding: EdgeInsets.symmetric(horizontal: 15),
+              padding: const EdgeInsets.symmetric(horizontal: 15),
               child: Container(
-                color: Color(0xFFFAFCFA),
+                color: const Color(0xFFFAFCFA),
                 width: double.infinity,
                 height: double.infinity,
                 child: SingleChildScrollView(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      SizedBox(
+                      const SizedBox(
                         height: 15,
                       ),
                       SizedBox(
@@ -369,7 +369,7 @@ class TeesheetPageState extends State<TeesheetPage> {
                                 Text(
                                   "Date",
                                   style: GoogleFonts.poppins(
-                                    color: Color(0xFF6E7373),
+                                    color: const Color(0xFF6E7373),
                                     fontSize: 13,
                                     fontWeight: FontWeight.w500,
                                   ),
@@ -379,17 +379,17 @@ class TeesheetPageState extends State<TeesheetPage> {
                                     Text(
                                       "Custom Date",
                                       style: GoogleFonts.poppins(
-                                        color: Color(0xFF6E7373),
+                                        color: const Color(0xFF6E7373),
                                         fontSize: 13,
                                         fontWeight: FontWeight.w500,
                                       ),
                                     ),
-                                    SizedBox(width: 7),
+                                    const SizedBox(width: 7),
                                     GestureDetector(
                                       onTap: editingIndex == null
                                           ? () => _showDatePicker(context)
                                           : null,
-                                      child: Row(
+                                      child: const Row(
                                         children: [
                                           Icon(
                                             Icons.calendar_month_outlined,
@@ -451,7 +451,7 @@ class TeesheetPageState extends State<TeesheetPage> {
                                   child: Container(
                                     decoration: BoxDecoration(
                                       color: isSelected
-                                          ? Color(0xFF9ECF9A)
+                                          ? const Color(0xFF9ECF9A)
                                           : Colors.white,
                                       borderRadius: BorderRadius.circular(10),
                                       boxShadow: [
@@ -459,11 +459,11 @@ class TeesheetPageState extends State<TeesheetPage> {
                                           color: Colors.black.withOpacity(0.1),
                                           blurRadius: 3,
                                           spreadRadius: 1,
-                                          offset: Offset(0, 0),
+                                          offset: const Offset(0, 0),
                                         ),
                                       ],
                                     ),
-                                    padding: EdgeInsets.symmetric(
+                                    padding: const EdgeInsets.symmetric(
                                         horizontal: 15, vertical: 10),
                                     child: Column(
                                       children: [
@@ -472,7 +472,7 @@ class TeesheetPageState extends State<TeesheetPage> {
                                           style: GoogleFonts.poppins(
                                             color: isSelected
                                                 ? Colors.white
-                                                : Color(0xFF6E7373),
+                                                : const Color(0xFF6E7373),
                                             fontSize: 13,
                                             fontWeight: FontWeight.w500,
                                           ),
@@ -482,7 +482,7 @@ class TeesheetPageState extends State<TeesheetPage> {
                                           style: GoogleFonts.poppins(
                                             color: isSelected
                                                 ? Colors.white
-                                                : Color(0xFF244065),
+                                                : const Color(0xFF244065),
                                             fontSize: 13,
                                             fontWeight: FontWeight.w600,
                                           ),
@@ -498,7 +498,7 @@ class TeesheetPageState extends State<TeesheetPage> {
                       ),
                       Container(
                         width: double.infinity,
-                        padding: EdgeInsets.symmetric(horizontal: 0),
+                        padding: const EdgeInsets.symmetric(horizontal: 0),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -509,7 +509,7 @@ class TeesheetPageState extends State<TeesheetPage> {
                                 Text(
                                   "Players",
                                   style: GoogleFonts.poppins(
-                                    color: Color(0xFF6E7373),
+                                    color: const Color(0xFF6E7373),
                                     fontSize: 13,
                                     fontWeight: FontWeight.w500,
                                   ),
@@ -537,7 +537,7 @@ class TeesheetPageState extends State<TeesheetPage> {
                                           );
                                         }),
                                       ),
-                                      SizedBox(
+                                      const SizedBox(
                                         width: 5,
                                       ),
                                     ],
@@ -551,12 +551,12 @@ class TeesheetPageState extends State<TeesheetPage> {
                                 Text(
                                   "Holes",
                                   style: GoogleFonts.poppins(
-                                    color: Color(0xFF6E7373),
+                                    color: const Color(0xFF6E7373),
                                     fontSize: 13,
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   height: 7,
                                 ),
                                 Wrap(
@@ -579,7 +579,7 @@ class TeesheetPageState extends State<TeesheetPage> {
                           ],
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 15,
                       ),
                       SingleChildScrollView(
@@ -590,30 +590,30 @@ class TeesheetPageState extends State<TeesheetPage> {
                             Container(
                               width: 40,
                               height: 1,
-                              color: Color(0xFFB2C1C0),
+                              color: const Color(0xFFB2C1C0),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               width: 10,
                             ),
                             Text(
                               widget.name,
                               style: GoogleFonts.poppins(
-                                  color: Color(0xFF244065),
+                                  color: const Color(0xFF244065),
                                   fontSize: 22,
                                   fontWeight: FontWeight.w600),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               width: 10,
                             ),
                             Container(
                               width: 40,
                               height: 1,
-                              color: Color(0xFFB2C1C0),
+                              color: const Color(0xFFB2C1C0),
                             ),
                           ],
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 15,
                       ),
                       SingleChildScrollView(
@@ -661,7 +661,7 @@ class TeesheetPageState extends State<TeesheetPage> {
                           ],
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 15,
                       ),
                       Column(
@@ -694,19 +694,19 @@ class TeesheetPageState extends State<TeesheetPage> {
                                     );
                                   },
                                   child: Container(
-                                    padding: EdgeInsets.symmetric(
+                                    padding: const EdgeInsets.symmetric(
                                       horizontal: 20,
                                       vertical: 10,
                                     ),
                                     decoration: BoxDecoration(
-                                      color: Color(0xFFFFFFFF),
+                                      color: const Color(0xFFFFFFFF),
                                       borderRadius: BorderRadius.circular(15),
                                       boxShadow: [
                                         BoxShadow(
                                           color: Colors.black.withOpacity(0.1),
                                           blurRadius: 3,
                                           spreadRadius: 1,
-                                          offset: Offset(0, 0),
+                                          offset: const Offset(0, 0),
                                         ),
                                       ],
                                     ),
@@ -714,15 +714,15 @@ class TeesheetPageState extends State<TeesheetPage> {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.center,
                                       children: [
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 6,
                                         ),
                                         Container(
                                           width: 119,
-                                          padding: EdgeInsets.symmetric(
+                                          padding: const EdgeInsets.symmetric(
                                               horizontal: 15, vertical: 7),
                                           decoration: BoxDecoration(
-                                            color: Color(0xFF9ECF9A),
+                                            color: const Color(0xFF9ECF9A),
                                             borderRadius: BorderRadius.circular(
                                                 50), // Optional
                                             boxShadow: [
@@ -731,7 +731,7 @@ class TeesheetPageState extends State<TeesheetPage> {
                                                     .withOpacity(0.1),
                                                 blurRadius: 3,
                                                 spreadRadius: 1,
-                                                offset: Offset(0, 2),
+                                                offset: const Offset(0, 2),
                                               ),
                                             ],
                                           ),
@@ -739,14 +739,14 @@ class TeesheetPageState extends State<TeesheetPage> {
                                             child: Text(
                                               slot['time'] ?? '',
                                               style: GoogleFonts.poppins(
-                                                color: Color(0xFFFFFFFF),
+                                                color: const Color(0xFFFFFFFF),
                                                 fontSize: 13,
                                                 fontWeight: FontWeight.w600,
                                               ),
                                             ),
                                           ),
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 6,
                                         ),
                                         SingleChildScrollView(
@@ -759,7 +759,7 @@ class TeesheetPageState extends State<TeesheetPage> {
                                                 mainAxisAlignment:
                                                     MainAxisAlignment.end,
                                                 children: [
-                                                  Icon(
+                                                  const Icon(
                                                     Icons.flag,
                                                     size: 14,
                                                     color: Color(0xFF6B7280),
@@ -782,8 +782,8 @@ class TeesheetPageState extends State<TeesheetPage> {
                                                             : '',
                                                         style:
                                                             GoogleFonts.poppins(
-                                                          color:
-                                                              Color(0xFF6E7373),
+                                                          color: const Color(
+                                                              0xFF6E7373),
                                                           fontSize: 13,
                                                           fontWeight:
                                                               FontWeight.w400,
@@ -793,14 +793,14 @@ class TeesheetPageState extends State<TeesheetPage> {
                                                   )
                                                 ],
                                               ),
-                                              SizedBox(
+                                              const SizedBox(
                                                 width: 20,
                                               ),
                                               Row(
                                                 mainAxisAlignment:
                                                     MainAxisAlignment.end,
                                                 children: [
-                                                  Icon(
+                                                  const Icon(
                                                     Icons.person,
                                                     size: 14,
                                                     color: Color(0xFF6B7280),
@@ -814,14 +814,13 @@ class TeesheetPageState extends State<TeesheetPage> {
                                                         slot['players']
                                                                 ?.toString() ??
                                                             '',
-                                                        style:
-                                                            GoogleFonts.poppins(
-                                                                color: Color(
-                                                                    0xFF6E7373),
-                                                                fontSize: 13,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w400),
+                                                        style: GoogleFonts.poppins(
+                                                            color: const Color(
+                                                                0xFF6E7373),
+                                                            fontSize: 13,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .w400),
                                                       ),
                                                     ],
                                                   )
@@ -991,7 +990,7 @@ class TeesheetPageState extends State<TeesheetPage> {
                           )
                         ],
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 20,
                       ),
                     ],
@@ -999,7 +998,7 @@ class TeesheetPageState extends State<TeesheetPage> {
                 ),
               ),
             ),
-      bottomNavigationBar: CustomBottomNavBar(selectedIndex: 0),
+      bottomNavigationBar: const CustomBottomNavBar(selectedIndex: 0),
     );
   }
 
@@ -1010,10 +1009,10 @@ class TeesheetPageState extends State<TeesheetPage> {
         width: 30,
         height: 30,
         decoration: BoxDecoration(
-          color: isSelected ? Color(0xFF9ECF9A) : Colors.white,
+          color: isSelected ? const Color(0xFF9ECF9A) : Colors.white,
           shape: BoxShape.circle,
           border: Border.all(
-            color: Color(0xFF9ECF9A),
+            color: const Color(0xFF9ECF9A),
             width: 1,
           ),
         ),
@@ -1021,8 +1020,9 @@ class TeesheetPageState extends State<TeesheetPage> {
         child: Text(
           label,
           style: GoogleFonts.poppins(
-            color:
-                isSelected ? Colors.white : Color(0xFF244065), // 👈 Change here
+            color: isSelected
+                ? Colors.white
+                : const Color(0xFF244065), // 👈 Change here
             fontWeight: FontWeight.w600,
             fontSize: 13,
           ),
@@ -1043,18 +1043,19 @@ class TeesheetPageState extends State<TeesheetPage> {
       onTap: onTap,
       child: Container(
         width: 85,
-        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
         decoration: BoxDecoration(
-          color:
-              isSelected ? Color(0xFF9ECF9A) : Colors.white, // Red for active
-          border: Border.all(color: Color(0xFF9ECF9A), width: 1),
+          color: isSelected
+              ? const Color(0xFF9ECF9A)
+              : Colors.white, // Red for active
+          border: Border.all(color: const Color(0xFF9ECF9A), width: 1),
           borderRadius: BorderRadius.circular(50),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.1),
               blurRadius: 3,
               spreadRadius: 1,
-              offset: Offset(0, 0),
+              offset: const Offset(0, 0),
             ),
           ],
         ),
@@ -1062,7 +1063,7 @@ class TeesheetPageState extends State<TeesheetPage> {
           child: Text(
             label,
             style: GoogleFonts.poppins(
-              color: isSelected ? Colors.white : Color(0xFF244065),
+              color: isSelected ? Colors.white : const Color(0xFF244065),
               fontWeight: FontWeight.w600,
               fontSize: 13,
             ),

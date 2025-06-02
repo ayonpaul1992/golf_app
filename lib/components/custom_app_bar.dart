@@ -23,7 +23,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    final storage = FlutterSecureStorage();
+    final storage = const FlutterSecureStorage();
 
     return FutureBuilder<List<String?>>(
       future: Future.wait([
@@ -58,7 +58,8 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => SelcetBookingClass(userId: userId),
+                      builder: (context) =>
+                          const SelcetBookingClass(userId: ''),
                     ),
                   );
                 },
@@ -103,7 +104,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => NotificationPage(myNtfId: ''),
+                      builder: (context) => const NotificationPage(myNtfId: ''),
                     ));
               },
               style: TextButton.styleFrom(
@@ -121,7 +122,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => MyProfilePage(myPfId: ''),
+                      builder: (context) => const MyProfilePage(myPfId: ''),
                     ));
               },
               style: TextButton.styleFrom(

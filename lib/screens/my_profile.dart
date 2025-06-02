@@ -9,7 +9,7 @@ import 'package:gulf_app/components/custom_drawer.dart';
 import 'package:gulf_app/components/custom_bottom_nav_bar.dart';
 import 'my_reservation.dart';
 import 'my_transaction.dart';
-import '../extras/my_setting.dart';
+import 'my_setting.dart';
 import '../extras/edit_profile.dart';
 
 class MyProfilePage extends StatefulWidget {
@@ -207,7 +207,7 @@ class MyProfilePageState extends State<MyProfilePage> {
                               image: userProfileImage.isNotEmpty
                                   ? NetworkImage(userProfileImage)
                                   : const AssetImage(
-                                          "assets/images/profile_pic.png")
+                                          "assets/images/profile_prsn.jpg")
                                       as ImageProvider,
                               width: 80,
                               height: 80,
@@ -808,7 +808,7 @@ class MyProfilePageState extends State<MyProfilePage> {
           ),
         ),
       ),
-      bottomNavigationBar: const CustomBottomNavBar(selectedIndex: 0),
+      bottomNavigationBar: const CustomBottomNavBar(selectedIndex: -1),
     );
   }
 }

@@ -19,7 +19,7 @@ class SelcetBookingClass extends StatefulWidget {
 
 class SelcetBookingClassState extends State<SelcetBookingClass> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  final FlutterSecureStorage secureStorage = FlutterSecureStorage();
+  final FlutterSecureStorage secureStorage = const FlutterSecureStorage();
   final TextEditingController holdingNtrText = TextEditingController();
   String activeTile = 'Home';
   bool isDropdownOpen = false;
@@ -135,7 +135,7 @@ class SelcetBookingClassState extends State<SelcetBookingClass> {
                         item,
                         style: GoogleFonts.poppins(
                           fontSize: 14,
-                          color: Color(0xFF244065),
+                          color: const Color(0xFF244065),
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -232,20 +232,20 @@ class SelcetBookingClassState extends State<SelcetBookingClass> {
         },
       ),
       body: isLoading
-          ? Center(
+          ? const Center(
               child: CircularProgressIndicator(
                 color: Color(0xFF9ECF9A),
               ),
             )
           : Container(
-              color: Color(0xFFFAFCFA),
+              color: const Color(0xFFFAFCFA),
               width: double.infinity,
               height: double.infinity,
               child: SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    SizedBox(
+                    const SizedBox(
                       height: 30,
                     ),
                     SingleChildScrollView(
@@ -256,36 +256,36 @@ class SelcetBookingClassState extends State<SelcetBookingClass> {
                             Container(
                               width: 40,
                               height: 1,
-                              color: Color(0xFFB2C1C0),
+                              color: const Color(0xFFB2C1C0),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               width: 10,
                             ),
                             Text(
                               "Select a Tee sheet",
                               style: GoogleFonts.poppins(
-                                  color: Color(0xFF244065),
+                                  color: const Color(0xFF244065),
                                   fontSize: 22,
                                   fontWeight: FontWeight.w600),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               width: 10,
                             ),
                             Container(
                               width: 40,
                               height: 1,
-                              color: Color(0xFFB2C1C0),
+                              color: const Color(0xFFB2C1C0),
                             ),
                           ],
                         )),
                     Padding(
-                      padding: EdgeInsets.only(
+                      padding: const EdgeInsets.only(
                           top: 15, left: 20, right: 20, bottom: 20),
                       child: Text(
                         "Select a tee sheet to book a tee time or enjoy other activities.",
                         textAlign: TextAlign.center,
                         style: GoogleFonts.poppins(
-                          color: Color(0xFF6E7373),
+                          color: const Color(0xFF6E7373),
                           fontWeight: FontWeight.w400,
                           fontSize: 13,
                         ),
@@ -294,13 +294,13 @@ class SelcetBookingClassState extends State<SelcetBookingClass> {
                     Image(
                       image: profilePic.isNotEmpty
                           ? NetworkImage(profilePic)
-                          : AssetImage('assets/images/golf_ground.png')
+                          : const AssetImage('assets/images/golf_ground.png')
                               as ImageProvider,
                       fit: BoxFit.cover,
                       width: 100,
                       height: 100,
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 10,
                     ),
                     Column(
@@ -350,7 +350,7 @@ class SelcetBookingClassState extends State<SelcetBookingClass> {
                                               selectedItem,
                                               style: GoogleFonts.poppins(
                                                 fontSize: 14,
-                                                color: Color(0xFF244065),
+                                                color: const Color(0xFF244065),
                                                 fontWeight: FontWeight.w600,
                                               ),
                                             ),
@@ -380,7 +380,7 @@ class SelcetBookingClassState extends State<SelcetBookingClass> {
                               ),
                           ],
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 15,
                         ),
                         Column(

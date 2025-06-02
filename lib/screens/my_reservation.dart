@@ -20,7 +20,7 @@ class MyReservationPage extends StatefulWidget {
 
 class MyReservationPageState extends State<MyReservationPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  final FlutterSecureStorage secureStorage = FlutterSecureStorage();
+  final FlutterSecureStorage secureStorage = const FlutterSecureStorage();
   final TextEditingController _dateController = TextEditingController();
   final searchBarText = TextEditingController();
   bool isLoading = true;
@@ -107,16 +107,16 @@ class MyReservationPageState extends State<MyReservationPage> {
           child: CompositedTransformFollower(
             link: _layerLink,
             showWhenUnlinked: false,
-            offset: Offset(0, 30),
+            offset: const Offset(0, 30),
             child: Material(
               elevation: 4,
               borderRadius: BorderRadius.circular(8),
               child: Container(
-                margin: EdgeInsets.symmetric(
+                margin: const EdgeInsets.symmetric(
                     horizontal: 0), // Adjust horizontal padding
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  border: Border.all(color: Color(0xFFB2C1C0)),
+                  border: Border.all(color: const Color(0xFFB2C1C0)),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Column(
@@ -137,8 +137,8 @@ class MyReservationPageState extends State<MyReservationPage> {
                           style: GoogleFonts.poppins(
                             fontSize: 13,
                             color: option == _selectedFilter
-                                ? Color(0xFF669933)
-                                : Color(0xFF244065),
+                                ? const Color(0xFF669933)
+                                : const Color(0xFF244065),
                             fontWeight: option == _selectedFilter
                                 ? FontWeight.w600
                                 : FontWeight.w500,
@@ -194,7 +194,7 @@ class MyReservationPageState extends State<MyReservationPage> {
         },
       ),
       body: isLoading
-          ? Center(
+          ? const Center(
               child: CircularProgressIndicator(
                 color: Color(0xFF9ECF9A),
               ),
@@ -211,16 +211,16 @@ class MyReservationPageState extends State<MyReservationPage> {
           //         ),
           //       )
           : Container(
-              color: Color(0xFFFAFCFA),
+              color: const Color(0xFFFAFCFA),
               width: double.infinity,
               height: double.infinity,
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 15),
+                padding: const EdgeInsets.symmetric(horizontal: 15),
                 child: SingleChildScrollView(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      SizedBox(
+                      const SizedBox(
                         height: 15,
                       ),
                       CompositedTransformTarget(
@@ -233,7 +233,7 @@ class MyReservationPageState extends State<MyReservationPage> {
                               Text(
                                 "My Reservation",
                                 style: GoogleFonts.poppins(
-                                    color: Color(0xFF244065),
+                                    color: const Color(0xFF244065),
                                     fontSize: 17,
                                     fontWeight: FontWeight.w600),
                               ),
@@ -246,22 +246,22 @@ class MyReservationPageState extends State<MyReservationPage> {
                                       style: GoogleFonts.poppins(
                                           fontSize: 13,
                                           fontWeight: FontWeight.w500,
-                                          color: Color(0xFF6E7373)),
+                                          color: const Color(0xFF6E7373)),
                                     ),
-                                    SizedBox(width: 5),
+                                    const SizedBox(width: 5),
                                     Text(
                                       _selectedFilter,
                                       style: GoogleFonts.poppins(
                                           fontSize: 13,
                                           fontWeight: FontWeight.w600,
-                                          color: Color(0xFF244065)),
+                                          color: const Color(0xFF244065)),
                                     ),
                                     Icon(
                                       _dropdownOverlay == null
                                           ? Icons.keyboard_arrow_down_rounded
                                           : Icons.keyboard_arrow_up_rounded,
                                       size: 22,
-                                      color: Color(0xFF669933),
+                                      color: const Color(0xFF669933),
                                     )
                                   ],
                                 ),
@@ -270,15 +270,15 @@ class MyReservationPageState extends State<MyReservationPage> {
                           ),
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 15,
                       ),
                       Container(
                         width: double.infinity,
                         decoration: BoxDecoration(
-                          border:
-                              Border.all(color: Color(0xFF9ECF9A), width: 1),
-                          borderRadius: BorderRadius.all(
+                          border: Border.all(
+                              color: const Color(0xFF9ECF9A), width: 1),
+                          borderRadius: const BorderRadius.all(
                             Radius.circular(10), // Correct usage
                           ),
                         ),
@@ -287,19 +287,19 @@ class MyReservationPageState extends State<MyReservationPage> {
                           children: [
                             Container(
                               width: double.infinity,
-                              decoration: BoxDecoration(
+                              decoration: const BoxDecoration(
                                 color: Color(0xFFF8F8F8),
                                 borderRadius: BorderRadius.only(
                                   topLeft: Radius.circular(10),
                                   topRight: Radius.circular(10),
                                 ),
                               ),
-                              padding: EdgeInsets.all(10),
+                              padding: const EdgeInsets.all(10),
                               child: Text(
                                 "My Booking Summary",
                                 textAlign: TextAlign.center,
                                 style: GoogleFonts.poppins(
-                                  color: Color(0xFF244065),
+                                  color: const Color(0xFF244065),
                                   fontWeight: FontWeight.w600,
                                   fontSize: 13,
                                 ),
@@ -345,8 +345,9 @@ class MyReservationPageState extends State<MyReservationPage> {
                               }
 
                               return Container(
-                                padding: EdgeInsets.only(bottom: 5, top: 5),
-                                decoration: BoxDecoration(
+                                padding:
+                                    const EdgeInsets.only(bottom: 5, top: 5),
+                                decoration: const BoxDecoration(
                                   border: Border(
                                     bottom: BorderSide(
                                       color: Color(
@@ -358,7 +359,7 @@ class MyReservationPageState extends State<MyReservationPage> {
                                 child: Column(
                                   children: [
                                     Padding(
-                                      padding: EdgeInsets.all(10),
+                                      padding: const EdgeInsets.all(10),
                                       child: Column(
                                         children: [
                                           Row(
@@ -369,10 +370,12 @@ class MyReservationPageState extends State<MyReservationPage> {
                                                 width: 75,
                                                 height: 75,
                                                 decoration: BoxDecoration(
-                                                  color: Color(0xFFFFFFFF),
+                                                  color:
+                                                      const Color(0xFFFFFFFF),
                                                   border: Border.all(
                                                       width: 1.2,
-                                                      color: Color(0xFFE8E8E8)),
+                                                      color: const Color(
+                                                          0xFFE8E8E8)),
                                                   borderRadius:
                                                       BorderRadius.circular(10),
                                                 ),
@@ -382,13 +385,13 @@ class MyReservationPageState extends State<MyReservationPage> {
                                                         ? NetworkImage(
                                                             courseLogo,
                                                           )
-                                                        : AssetImage(
+                                                        : const AssetImage(
                                                             "assets/images/bkdu2.png",
                                                           ) as ImageProvider,
                                                   ),
                                                 ),
                                               ),
-                                              SizedBox(
+                                              const SizedBox(
                                                   width:
                                                       10), // 👈 Space between items
                                               SizedBox(
@@ -406,15 +409,16 @@ class MyReservationPageState extends State<MyReservationPage> {
                                                         Container(
                                                           decoration:
                                                               BoxDecoration(
-                                                            color: Color(
+                                                            color: const Color(
                                                                 0xFFF7FAF4),
                                                             borderRadius:
                                                                 BorderRadius
                                                                     .circular(
                                                                         50),
                                                           ),
-                                                          padding: EdgeInsets
-                                                              .symmetric(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .symmetric(
                                                                   horizontal:
                                                                       10,
                                                                   vertical: 5),
@@ -440,14 +444,15 @@ class MyReservationPageState extends State<MyReservationPage> {
                                                                 height: 25,
                                                                 decoration:
                                                                     BoxDecoration(
-                                                                  color: Color(
+                                                                  color: const Color(
                                                                       0xFFF8F8F8),
                                                                   borderRadius:
                                                                       BorderRadius
                                                                           .circular(
                                                                               50),
                                                                 ),
-                                                                child: Center(
+                                                                child:
+                                                                    const Center(
                                                                   child: Icon(
                                                                     Icons.edit,
                                                                     size: 16,
@@ -457,7 +462,8 @@ class MyReservationPageState extends State<MyReservationPage> {
                                                                 ),
                                                               ),
                                                             ),
-                                                            SizedBox(width: 6),
+                                                            const SizedBox(
+                                                                width: 6),
 
                                                             reservation['checkedIn'] ==
                                                                         false &&
@@ -477,21 +483,21 @@ class MyReservationPageState extends State<MyReservationPage> {
                                                                           builder:
                                                                               (BuildContext context) {
                                                                             return AlertDialog(
-                                                                              title: Text('Confirm Cancellation'),
-                                                                              content: Text('Are you sure you want to cancel this tee time?'),
+                                                                              title: const Text('Confirm Cancellation'),
+                                                                              content: const Text('Are you sure you want to cancel this tee time?'),
                                                                               actions: [
                                                                                 TextButton(
                                                                                   onPressed: () {
                                                                                     Navigator.of(context).pop(); // Close the dialog
                                                                                   },
-                                                                                  child: Text('No'),
+                                                                                  child: const Text('No'),
                                                                                 ),
                                                                                 TextButton(
                                                                                   onPressed: () async {
                                                                                     Navigator.of(context).pop(); // Close the dialog
                                                                                     // await _cancelTeeTime(slotId);
                                                                                     try {
-                                                                                      final secureStorage = FlutterSecureStorage();
+                                                                                      final secureStorage = const FlutterSecureStorage();
                                                                                       final token = await secureStorage.read(key: 'accessToken');
 
                                                                                       if (token == null) {
@@ -524,7 +530,7 @@ class MyReservationPageState extends State<MyReservationPage> {
                                                                                         Navigator.pushReplacement(
                                                                                           context,
                                                                                           MaterialPageRoute(
-                                                                                            builder: (context) => MyReservationPage(
+                                                                                            builder: (context) => const MyReservationPage(
                                                                                               myRsvId: '',
                                                                                             ),
                                                                                           ), // Replace with your screen widget
@@ -538,7 +544,7 @@ class MyReservationPageState extends State<MyReservationPage> {
                                                                                       // Optionally show a snackbar or alert
                                                                                     }
                                                                                   },
-                                                                                  child: Text('Yes'),
+                                                                                  child: const Text('Yes'),
                                                                                 ),
                                                                               ],
                                                                             );
@@ -548,18 +554,19 @@ class MyReservationPageState extends State<MyReservationPage> {
                                                                     style: ElevatedButton
                                                                         .styleFrom(
                                                                       backgroundColor:
-                                                                          Color(
+                                                                          const Color(
                                                                               0xFF9ECF9A),
                                                                       foregroundColor:
                                                                           Colors
                                                                               .white,
-                                                                      padding: EdgeInsets.symmetric(
+                                                                      padding: const EdgeInsets
+                                                                          .symmetric(
                                                                           horizontal:
                                                                               10,
                                                                           vertical:
                                                                               5), // vertical padding
                                                                       minimumSize:
-                                                                          Size(
+                                                                          const Size(
                                                                               0,
                                                                               0), // disables default min height
                                                                       shape:
@@ -568,7 +575,8 @@ class MyReservationPageState extends State<MyReservationPage> {
                                                                             BorderRadius.circular(8),
                                                                       ),
                                                                     ),
-                                                                    child: Text(
+                                                                    child:
+                                                                        const Text(
                                                                       "Cancel",
                                                                       style: TextStyle(
                                                                           fontSize:
@@ -577,7 +585,7 @@ class MyReservationPageState extends State<MyReservationPage> {
                                                                               FontWeight.w600),
                                                                     ),
                                                                   )
-                                                                : SizedBox
+                                                                : const SizedBox
                                                                     .shrink(),
 
                                                             // InkWell(
@@ -609,23 +617,23 @@ class MyReservationPageState extends State<MyReservationPage> {
                                                         ),
                                                       ],
                                                     ),
-                                                    SizedBox(height: 5),
+                                                    const SizedBox(height: 5),
                                                     Text(
                                                       courseName,
                                                       style:
                                                           GoogleFonts.poppins(
-                                                        color:
-                                                            Color(0xFF244065),
+                                                        color: const Color(
+                                                            0xFF244065),
                                                         fontSize: 13,
                                                         fontWeight:
                                                             FontWeight.w600,
                                                       ),
                                                     ),
-                                                    SizedBox(height: 5),
+                                                    const SizedBox(height: 5),
                                                     Row(
                                                       spacing: 6,
                                                       children: [
-                                                        Icon(
+                                                        const Icon(
                                                           Icons
                                                               .calendar_month_outlined,
                                                           color:
@@ -634,18 +642,17 @@ class MyReservationPageState extends State<MyReservationPage> {
                                                         ),
                                                         Text(
                                                           bookingTime,
-                                                          style: GoogleFonts
-                                                              .poppins(
-                                                                  color: Color(
-                                                                      0xFF6E7373),
-                                                                  fontSize: 13,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w500),
+                                                          style: GoogleFonts.poppins(
+                                                              color: const Color(
+                                                                  0xFF6E7373),
+                                                              fontSize: 13,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500),
                                                         ),
                                                         Container(
-                                                          color:
-                                                              Color(0xFF6E7373),
+                                                          color: const Color(
+                                                              0xFF6E7373),
                                                           width: 1,
                                                           height: 15,
                                                         ),
@@ -657,14 +664,13 @@ class MyReservationPageState extends State<MyReservationPage> {
                                                                       .parse(
                                                                           bookingDateRaw))
                                                               : "Unknown Date",
-                                                          style: GoogleFonts
-                                                              .poppins(
-                                                                  color: Color(
-                                                                      0xFF6E7373),
-                                                                  fontSize: 13,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w500),
+                                                          style: GoogleFonts.poppins(
+                                                              color: const Color(
+                                                                  0xFF6E7373),
+                                                              fontSize: 13,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500),
                                                         ),
                                                       ],
                                                     )
@@ -673,11 +679,11 @@ class MyReservationPageState extends State<MyReservationPage> {
                                               ),
                                             ],
                                           ),
-                                          SizedBox(
+                                          const SizedBox(
                                             height: 10,
                                           ),
                                           Padding(
-                                            padding: EdgeInsets.only(
+                                            padding: const EdgeInsets.only(
                                               left: 10,
                                               right: 10,
                                             ),
@@ -688,15 +694,16 @@ class MyReservationPageState extends State<MyReservationPage> {
                                               children: [
                                                 Container(
                                                   decoration: BoxDecoration(
-                                                      color: Color(0xFFF7FAF4),
+                                                      color: const Color(
+                                                          0xFFF7FAF4),
                                                       borderRadius:
                                                           BorderRadius.circular(
                                                               50)),
                                                   child: Padding(
-                                                    padding:
-                                                        EdgeInsets.symmetric(
-                                                            horizontal: 15,
-                                                            vertical: 6),
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                        horizontal: 15,
+                                                        vertical: 6),
                                                     child: Center(
                                                       child: Row(
                                                         children: [
@@ -704,7 +711,7 @@ class MyReservationPageState extends State<MyReservationPage> {
                                                             "Holes: ",
                                                             style: GoogleFonts.poppins(
                                                                 fontSize: 14,
-                                                                color: Color(
+                                                                color: const Color(
                                                                     0xFF6E7373),
                                                                 fontWeight:
                                                                     FontWeight
@@ -714,7 +721,7 @@ class MyReservationPageState extends State<MyReservationPage> {
                                                             holes,
                                                             style: GoogleFonts.poppins(
                                                                 fontSize: 14,
-                                                                color: Color(
+                                                                color: const Color(
                                                                     0xFF244065),
                                                                 fontWeight:
                                                                     FontWeight
@@ -727,15 +734,16 @@ class MyReservationPageState extends State<MyReservationPage> {
                                                 ),
                                                 Container(
                                                   decoration: BoxDecoration(
-                                                      color: Color(0xFFF7FAF4),
+                                                      color: const Color(
+                                                          0xFFF7FAF4),
                                                       borderRadius:
                                                           BorderRadius.circular(
                                                               50)),
                                                   child: Padding(
-                                                    padding:
-                                                        EdgeInsets.symmetric(
-                                                            horizontal: 15,
-                                                            vertical: 6),
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                        horizontal: 15,
+                                                        vertical: 6),
                                                     child: Center(
                                                       child: Row(
                                                         children: [
@@ -743,7 +751,7 @@ class MyReservationPageState extends State<MyReservationPage> {
                                                             "Players: ",
                                                             style: GoogleFonts.poppins(
                                                                 fontSize: 14,
-                                                                color: Color(
+                                                                color: const Color(
                                                                     0xFF6E7373),
                                                                 fontWeight:
                                                                     FontWeight
@@ -753,7 +761,7 @@ class MyReservationPageState extends State<MyReservationPage> {
                                                             players,
                                                             style: GoogleFonts.poppins(
                                                                 fontSize: 14,
-                                                                color: Color(
+                                                                color: const Color(
                                                                     0xFF244065),
                                                                 fontWeight:
                                                                     FontWeight
@@ -766,15 +774,16 @@ class MyReservationPageState extends State<MyReservationPage> {
                                                 ),
                                                 Container(
                                                   decoration: BoxDecoration(
-                                                      color: Color(0xFFF7FAF4),
+                                                      color: const Color(
+                                                          0xFFF7FAF4),
                                                       borderRadius:
                                                           BorderRadius.circular(
                                                               50)),
                                                   child: Padding(
-                                                    padding:
-                                                        EdgeInsets.symmetric(
-                                                            horizontal: 15,
-                                                            vertical: 6),
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                        horizontal: 15,
+                                                        vertical: 6),
                                                     child: Center(
                                                       child: Row(
                                                         children: [
@@ -782,7 +791,7 @@ class MyReservationPageState extends State<MyReservationPage> {
                                                             "Carts: ",
                                                             style: GoogleFonts.poppins(
                                                                 fontSize: 14,
-                                                                color: Color(
+                                                                color: const Color(
                                                                     0xFF6E7373),
                                                                 fontWeight:
                                                                     FontWeight
@@ -792,7 +801,7 @@ class MyReservationPageState extends State<MyReservationPage> {
                                                             carts,
                                                             style: GoogleFonts.poppins(
                                                                 fontSize: 14,
-                                                                color: Color(
+                                                                color: const Color(
                                                                     0xFF244065),
                                                                 fontWeight:
                                                                     FontWeight
@@ -1804,7 +1813,7 @@ class MyReservationPageState extends State<MyReservationPage> {
                           ],
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 20,
                       ),
                     ],
@@ -1812,7 +1821,7 @@ class MyReservationPageState extends State<MyReservationPage> {
                 ),
               ),
             ),
-      bottomNavigationBar: CustomBottomNavBar(selectedIndex: 0),
+      bottomNavigationBar: const CustomBottomNavBar(selectedIndex: 1),
     );
   }
 }
