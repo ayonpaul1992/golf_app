@@ -141,9 +141,9 @@ class DashboardPageState extends State<DashboardPage> {
               child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const SizedBox(
-                height: 25,
-              ),
+              // const SizedBox(
+              //   height: 25,
+              // ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 spacing: 10,

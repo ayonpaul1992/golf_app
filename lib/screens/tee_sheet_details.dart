@@ -1,7 +1,6 @@
 // ignore_for_file: deprecated_member_use, use_build_context_synchronously
-import 'dart:convert';
 
-import 'package:intl/intl.dart';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -9,11 +8,13 @@ import 'package:gulf_app/components/custom_app_bar.dart';
 import 'package:gulf_app/components/custom_drawer.dart';
 import 'package:gulf_app/components/custom_bottom_nav_bar.dart';
 import 'package:gulf_app/screens/my_cart.dart';
+import 'package:intl/intl.dart';
 import 'dart:async';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:http/http.dart' as http;
 
 class TeeSheetDtls extends StatefulWidget {
+  // final String TeeSheetDtlsUsrId;
   final String teesheetPageId;
   final String reservationGroupId;
 
@@ -24,7 +25,7 @@ class TeeSheetDtls extends StatefulWidget {
   final bool allowName;
 
   final IO.Socket socket;
-
+  // const TeeSheetDtls({super.key, required this.TeeSheetDtlsUsrId});
   const TeeSheetDtls({
     super.key,
     required this.teesheetPageId,
@@ -40,9 +41,6 @@ class TeeSheetDtls extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() => TeeSheetDtlsState();
-
-  // @override
-  // _CountdownTextState createState() => _CountdownTextState();
 }
 
 class TeeSheetDtlsState extends State<TeeSheetDtls> {
@@ -73,194 +71,12 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
 
   String? pendingSlotId;
 
-  // Separate function for Players dropdown
-  void _togglePlayerDropdown(BuildContext context) {
-    if (_isDropdownVisible) {
-      _dropdownOverlay?.remove();
-      _dropdownOverlay = null;
-      setState(() {
-        _isDropdownVisible = false;
-      });
-      return;
-    }
-
-    final RenderBox renderBox =
-        _iconKey.currentContext!.findRenderObject() as RenderBox;
-    final Offset offset = renderBox.localToGlobal(Offset.zero);
-    final Size size = renderBox.size;
-
-    _dropdownOverlay = OverlayEntry(
-      builder: (context) => Positioned(
-        left: offset.dx,
-        top: offset.dy,
-        width: size.width,
-        child: Material(
-          color: Colors.transparent,
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              border: Border.all(color: const Color(0xFF9ECF9A), width: 1),
-              borderRadius: BorderRadius.circular(50),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                IconButton(
-                  icon: const Icon(Icons.keyboard_arrow_up,
-                      size: 20, color: Color(0xFF244065)),
-                  onPressed: () => _togglePlayerDropdown(context),
-                ),
-                ...List.generate(0, (index) {
-                  int playerNum = index + 5;
-                  return GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        selectedPlayer = playerNum;
-                      });
-                      _togglePlayerDropdown(context);
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 8, horizontal: 10),
-                      child: Text(
-                        "$playerNum",
-                        style: GoogleFonts.poppins(
-                          color: selectedPlayer == playerNum
-                              ? const Color(0xFF9ECF9A)
-                              : const Color(0xFF244065),
-                          fontWeight: FontWeight.w600,
-                          fontSize: 13,
-                        ),
-                      ),
-                    ),
-                  );
-                }),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-
-    Overlay.of(context).insert(_dropdownOverlay!);
-    setState(() {
-      _isDropdownVisible = true;
-    });
-  }
-
-  // Separate function for Riders dropdown
-  void _toggleRiderDropdown(BuildContext context) {
-    if (_isDropdownRideVisible) {
-      _dropdownRideOverlay?.remove();
-      _dropdownRideOverlay = null;
-      setState(() {
-        _isDropdownRideVisible = false;
-      });
-      return;
-    }
-
-    final RenderBox renderRiderBox =
-        _iconKeySecond.currentContext!.findRenderObject() as RenderBox;
-    final Offset offsetRide = renderRiderBox.localToGlobal(Offset.zero);
-    final Size sizeRide = renderRiderBox.size;
-
-    _dropdownRideOverlay = OverlayEntry(
-      builder: (context) => Positioned(
-        left: offsetRide.dx,
-        top: offsetRide.dy,
-        width: sizeRide.width,
-        child: Material(
-          color: Colors.transparent,
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              border: Border.all(color: const Color(0xFF9ECF9A), width: 1),
-              borderRadius: BorderRadius.circular(50),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                IconButton(
-                  icon: const Icon(Icons.keyboard_arrow_up,
-                      size: 20, color: Color(0xFF244065)),
-                  onPressed: () => _toggleRiderDropdown(context),
-                ),
-                ...List.generate(0, (index) {
-                  int riderNum = index + 5;
-                  return GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        selectedRidePlayer = riderNum;
-                      });
-                      _toggleRiderDropdown(context);
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 8, horizontal: 10),
-                      child: Text(
-                        "$riderNum",
-                        style: GoogleFonts.poppins(
-                          color: selectedRidePlayer == riderNum
-                              ? const Color(0xFF9ECF9A)
-                              : const Color(0xFF244065),
-                          fontWeight: FontWeight.w600,
-                          fontSize: 13,
-                        ),
-                      ),
-                    ),
-                  );
-                }),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-
-    Overlay.of(context).insert(_dropdownRideOverlay!);
-    setState(() {
-      _isDropdownRideVisible = true;
-    });
-  }
-
-  @override
-  void dispose() {
-    _dropdownOverlay?.remove();
-    _dropdownRideOverlay?.remove();
-    // Dispose the second overlay as well
-    for (var controller in _controllers) {
-      controller.dispose();
-    }
-
-    for (var focusNode in _focusNodes) {
-      focusNode.removeListener(_onFocusChange);
-      focusNode.dispose();
-    }
-    _timer.cancel();
-
-    // socket?.clearListeners();
-    // socket?.disconnect();
-    // socket?.destroy();
-    // socket = null;
-
-    widget.socket.off("/pendingReservation");
-
-    super.dispose();
-  }
-
-  // Added FocusNode List
-  late List<FocusNode> _focusNodes;
-
-  late List<TextEditingController> _controllers;
-
   void _startCountdown() {
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (_remaining.inSeconds == 0) {
         timer.cancel();
         cancelPendingReservation();
-        // Navigator.pop(context);
+        Navigator.pop(context);
       } else {
         setState(() {
           _remaining = _remaining - const Duration(seconds: 1);
@@ -275,14 +91,40 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
   }
 
   @override
+  void dispose() {
+    _dropdownOverlay?.remove();
+    _dropdownRideOverlay?.remove(); // Dispose the second overlay as well
+    for (var focusNode in _focusNodes) {
+      focusNode.removeListener(_onFocusChange);
+      focusNode.dispose();
+    }
+
+    _timer.cancel();
+
+    widget.socket.off("/pendingReservation");
+
+    super.dispose();
+  }
+
+  // Added FocusNode List
+  // List<FocusNode> _focusNodes = List.generate(
+  //   3,
+  //   (index) => FocusNode(),
+  // );
+  late List<FocusNode> _focusNodes;
+  late List<TextEditingController> _controllers;
+
+  late List<LayerLink> _layerLinks;
+
+  // List<TextEditingController> _controllers = List.generate(
+  //   3,
+  //   (index) => TextEditingController(text: index == 0 ? 'Koushik Datta' : ''),
+  // );
+  @override
   void initState() {
     super.initState();
     _startCountdown();
-
-    // Fetch userName asynchronously
     _loadUserName();
-
-    print('reservationGroupId: ${widget.reservationGroupId}');
 
     _controllers = List.generate(
       selectedPlayerCount,
@@ -294,14 +136,14 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
       (index) => FocusNode(),
     );
 
-    // print('controllers length: ${_controllers.length}');
+    _layerLinks = List.generate(
+      selectedPlayerCount,
+      (index) => LayerLink(),
+    );
     // Attach listener to each FocusNode
     for (var i = 0; i < _focusNodes.length; i++) {
       _focusNodes[i].addListener(_onFocusChange);
     }
-
-    print('date: ${DateFormat('MMM dd, yyyy').parse(widget.date)}');
-    // _fetchPendingReservation();
 
     _createPendingReservation();
   }
@@ -412,36 +254,38 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
               const SizedBox(
                 height: 15,
               ),
-              SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        width: 40,
-                        height: 1.1,
-                        color: const Color(0xFFB2C1C0),
-                      ),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      Text(
-                        "Tee Booking",
-                        style: GoogleFonts.poppins(
-                            color: const Color(0xFF244065),
-                            fontSize: 22,
-                            fontWeight: FontWeight.w600),
-                      ),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      Container(
-                        width: 40,
-                        height: 1.1,
-                        color: const Color(0xFFB2C1C0),
-                      ),
-                    ],
-                  )),
+              Container(
+                child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          width: 40,
+                          height: 1.1,
+                          color: const Color(0xFFB2C1C0),
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Text(
+                          "Tee Booking",
+                          style: GoogleFonts.poppins(
+                              color: const Color(0xFF244065),
+                              fontSize: 22,
+                              fontWeight: FontWeight.w600),
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Container(
+                          width: 40,
+                          height: 1.1,
+                          color: const Color(0xFFB2C1C0),
+                        ),
+                      ],
+                    )),
+              ),
               const SizedBox(
                 height: 10,
               ),
@@ -673,6 +517,24 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.center,
                                           children: [
+                                            // Wrap(
+                                            //   spacing: 8,
+                                            //   children:
+                                            //       List.generate(4, (index) {
+                                            //     int playerNum = index + 1;
+                                            //     return playerCircle(
+                                            //       "$playerNum",
+                                            //       selectedPlayer == playerNum,
+                                            //       () {
+                                            //         setState(() {
+                                            //           selectedPlayer =
+                                            //               playerNum;
+                                            //         });
+                                            //       },
+                                            //     );
+                                            //   }),
+                                            // ),
+
                                             Wrap(
                                               spacing: 8,
                                               children: List.generate(
@@ -710,27 +572,38 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
                                                                 index] // reuse existing focus nodes if possible
                                                             : FocusNode(),
                                                       );
+                                                      _layerLinks =
+                                                          List.generate(
+                                                        selectedPlayerCount,
+                                                        (index) => index <
+                                                                _layerLinks
+                                                                    .length
+                                                            ? _layerLinks[
+                                                                index] // reuse existing layer links if possible
+                                                            : LayerLink(),
+                                                      );
                                                     });
                                                   },
                                                 );
                                               }),
                                             ),
+
                                             const SizedBox(
                                               width: 5,
                                             ),
                                             Column(
                                               mainAxisSize: MainAxisSize.min,
                                               children: [
-                                                IconButton(
-                                                  key: _iconKey,
-                                                  onPressed: () =>
-                                                      _togglePlayerDropdown(
-                                                    context,
-                                                  ),
-                                                  icon: const Icon(
-                                                    Icons.keyboard_arrow_down,
-                                                    color: Color(0xFF244065),
-                                                    size: 20,
+                                                Opacity(
+                                                  opacity: 0.0,
+                                                  child: IconButton(
+                                                    key: _iconKey,
+                                                    onPressed: null,
+                                                    icon: const Icon(
+                                                      Icons.keyboard_arrow_down,
+                                                      color: Color(0xFF244065),
+                                                      size: 20,
+                                                    ),
                                                   ),
                                                 ),
                                               ],
@@ -760,22 +633,17 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
                                       ),
                                       Wrap(
                                         spacing: 8,
-                                        children: List.generate(
-                                          widget.holes.length,
-                                          (index) {
-                                            final hole = widget.holes[index];
-                                            return playerCircle(
-                                              hole.toString(),
-                                              selectedHole == hole.toString(),
-                                              () {
-                                                setState(() {
-                                                  selectedHole =
-                                                      hole.toString();
-                                                });
-                                              },
-                                            );
-                                          },
-                                        ),
+                                        children: ["9", "18"].map((hole) {
+                                          return playerCircle(
+                                            hole,
+                                            selectedHole == hole,
+                                            () {
+                                              setState(() {
+                                                selectedHole = hole;
+                                              });
+                                            },
+                                          );
+                                        }).toList(),
                                       ),
                                     ],
                                   ),
@@ -837,16 +705,16 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
                                             Column(
                                               mainAxisSize: MainAxisSize.min,
                                               children: [
-                                                IconButton(
-                                                  key: _iconKeySecond,
-                                                  onPressed: () =>
-                                                      _toggleRiderDropdown(
-                                                    context,
-                                                  ),
-                                                  icon: const Icon(
-                                                    Icons.keyboard_arrow_down,
-                                                    color: Color(0xFF244065),
-                                                    size: 20,
+                                                Opacity(
+                                                  opacity: 0.0,
+                                                  child: IconButton(
+                                                    key: _iconKeySecond,
+                                                    onPressed: null,
+                                                    icon: const Icon(
+                                                      Icons.keyboard_arrow_down,
+                                                      color: Color(0xFF244065),
+                                                      size: 20,
+                                                    ),
                                                   ),
                                                 ),
                                               ],
@@ -964,12 +832,16 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
                           const SizedBox(
                             height: 10,
                           ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                          Stack(
                             children: [
-                              // ... other UI elements
-                              _buildPlayerNameFields(), //call the function
-                              // ... other UI elements
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  // ... other UI elements
+                                  _buildPlayerNameFields(), //call the function
+                                  // ... other UI elements
+                                ],
+                              ),
                             ],
                           ),
                           const SizedBox(
@@ -1020,6 +892,16 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
                             ),
                           ),
                           GestureDetector(
+                            // onTap: () {
+                            //   Navigator.push(
+                            //     context,
+                            //     MaterialPageRoute(
+                            //       builder: (context) => const MyCartPage(
+                            //           myCartId:
+                            //               ''), // Replace with your target widget
+                            //     ),
+                            //   );
+                            // },
                             onTap: () async {
                               cancelPendingReservation();
                               try {
@@ -1040,7 +922,6 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
                                     "teeSheetId": widget.teesheetPageId,
                                     "onlineReservationGroupId":
                                         widget.reservationGroupId,
-                                    // "onlineReservationGroupId": null,
                                     "date": DateFormat('yyyy-MM-dd').format(
                                       DateFormat('MMM dd, yyyy')
                                           .parse(widget.date),
@@ -1051,9 +932,7 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
                                     "carts": selectedRidePlayer,
                                     "rentalClubs": isYes,
                                     "customers": [
-                                      // {
-                                      //     "customerId": "679a415aadc084bea8ebb0e0"
-                                      // }
+                                      // {"customerId": "679a415aadc084bea8ebb0e0"}
                                     ]
                                   }),
                                 );
@@ -1104,17 +983,6 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
                               }
                             },
 
-                            // {
-                            //   print('Api call');
-                            //   // Navigator.push(
-                            //   //   context,
-                            //   //   MaterialPageRoute(
-                            //   //     builder: (context) => MyCartPage(
-                            //   //         myCartId:
-                            //   //             ''), // Replace with your target widget
-                            //   //   ),
-                            //   // );
-                            // },
                             child: Container(
                               decoration: BoxDecoration(
                                 color: const Color(0xFF9ECF9A),
@@ -1154,7 +1022,7 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
           )),
         ),
       ),
-      bottomNavigationBar: const CustomBottomNavBar(selectedIndex: -1),
+      bottomNavigationBar: const CustomBottomNavBar(selectedIndex: 0),
     );
   }
 
@@ -1188,12 +1056,57 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
   }
 
   Widget _buildPlayerNameFields() {
+    // Suggestions will be fetched dynamically from API
+    List<String> suggestions = [
+      "John Doe",
+      "Jane Smith",
+      "Alice Johnson",
+      "Bob Brown",
+      "Charlie Davis",
+      // Add more static suggestions or fetch from API
+    ];
+
+    // Helper to fetch suggestions from API
+    // Future<void> fetchSuggestions(String query, int index) async {
+    //   if (query.isEmpty) {
+    //   setState(() {
+    //     suggestions = [];
+    //   });
+    //   return;
+    //   }
+    //   try {
+    //   String token = await secureStorage.read(key: 'accessToken') ?? '';
+    //   final response = await http.get(
+    //     Uri.parse('https://api.dev.driverpos.io/api/v1/customer/search?search=$query'),
+    //     headers: {
+    //     'Content-Type': 'application/json',
+    //     'Authorization': 'Bearer $token',
+    //     },
+    //   );
+    //   if (response.statusCode == 200) {
+    //     final data = jsonDecode(response.body);
+    //     setState(() {
+    //     suggestions = List<String>.from(
+    //       (data['customers'] ?? []).map((c) => c['name'] ?? '').where((n) => n != ''),
+    //     );
+    //     });
+    //   } else {
+    //     setState(() {
+    //     suggestions = [];
+    //     });
+    //   }
+    //   } catch (e) {
+    //   setState(() {
+    //     suggestions = [];
+    //   });
+    //   }
+    // }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding:
-              const EdgeInsets.only(left: 12.0, right: 12.0, bottom: 8, top: 0),
+          padding: const EdgeInsets.only(left: 12.0, right: 12.0, bottom: 8),
           child: Text(
             "Player's Name",
             style: GoogleFonts.poppins(
@@ -1203,136 +1116,182 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
             ),
           ),
         ),
-        // ...List.generate(_controllers.length, (index) {
-        //   return Container(
-        //     margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-        //     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-        //     decoration: BoxDecoration(
-        //       color: const Color(0xFFF8F8F8),
-        //       borderRadius: BorderRadius.circular(30),
-        //       border: Border.all(
-        //         color: _focusNodes[index].hasFocus
-        //             ? Color(0xFF9ECF9A)
-        //             : Colors.transparent, // Use focus to change color
-        //         width: 1,
-        //       ),
-        //     ),
-        //     child: Row(
-        //       children: [
-        //         Container(
-        //           width: 26,
-        //           height: 26,
-        //           decoration: BoxDecoration(
-        //             color: Colors.white,
-        //             borderRadius: BorderRadius.circular(13),
-        //             border:
-        //                 Border.all(color: const Color(0xFF80C783), width: 1),
-        //           ),
-        //           alignment: Alignment.center,
-        //           child: Text(
-        //             '${index + 1}',
-        //             style: GoogleFonts.poppins(
-        //               fontSize: 13,
-        //               fontWeight: FontWeight.w700,
-        //               color: const Color(0xFF669933),
-        //             ),
-        //           ),
-        //         ),
-        //         const SizedBox(width: 12),
-        //         Expanded(
-        //           child: TextField(
-        //             controller: _controllers[index],
-        //             focusNode: _focusNodes[index], // Assign FocusNode
-        //             readOnly: index == 0,
-        //             style: GoogleFonts.poppins(
-        //               fontSize: 13,
-        //               fontWeight: FontWeight.w600,
-        //               color: const Color(0xFF1E3552),
-        //             ),
-        //             decoration: const InputDecoration(
-        //               isDense: true,
-        //               border: InputBorder.none,
-        //               contentPadding: EdgeInsets.zero,
-        //               hintText: 'Guest Customer',
-        //               hintStyle: TextStyle(
-        //                 fontSize: 13,
-        //                 fontWeight: FontWeight.w500,
-        //                 color: Colors.grey,
-        //               ),
-        //             ),
-        //           ),
-        //         ),
-        //       ],
-        //     ),
-        //   );
-        // }),
-
         ...List.generate(_controllers.length, (index) {
-          if (index == 0 || widget.allowName) {
-            return Container(
-              margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              decoration: BoxDecoration(
-                color: const Color(0xFFF8F8F8),
-                borderRadius: BorderRadius.circular(30),
-                border: Border.all(
-                  color: _focusNodes[index].hasFocus
-                      ? const Color(0xFF9ECF9A)
-                      : Colors.transparent,
-                  width: 1,
+          final isSuggestionField = index != 0;
+
+          return Container(
+            margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF8F8F8),
+              borderRadius: BorderRadius.circular(30),
+              border: Border.all(
+                color: _focusNodes[index].hasFocus
+                    ? const Color(0xFF9ECF9A)
+                    : Colors.transparent,
+                width: 1,
+              ),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: 26,
+                  height: 26,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(13),
+                    border:
+                        Border.all(color: const Color(0xFF80C783), width: 1),
+                  ),
+                  alignment: Alignment.center,
+                  child: Text(
+                    '${index + 1}',
+                    style: GoogleFonts.poppins(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                      color: const Color(0xFF669933),
+                    ),
+                  ),
                 ),
-              ),
-              child: Row(
-                children: [
-                  Container(
-                    width: 26,
-                    height: 26,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(13),
-                      border:
-                          Border.all(color: const Color(0xFF80C783), width: 1),
-                    ),
-                    alignment: Alignment.center,
-                    child: Text(
-                      '${index + 1}',
-                      style: GoogleFonts.poppins(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w700,
-                        color: const Color(0xFF669933),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: TextField(
-                      controller: _controllers[index],
-                      focusNode: _focusNodes[index],
-                      readOnly: index == 0,
-                      style: GoogleFonts.poppins(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                        color: const Color(0xFF1E3552),
-                      ),
-                      decoration: const InputDecoration(
-                        isDense: true,
-                        border: InputBorder.none,
-                        contentPadding: EdgeInsets.zero,
-                        hintText: 'Guest Customer',
-                        hintStyle: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.grey,
+                const SizedBox(width: 12),
+                Expanded(
+                  child: isSuggestionField
+                      ? Stack(
+                          children: [
+                            CompositedTransformTarget(
+                              link: _layerLinks[index],
+                              child: TextField(
+                                controller: _controllers[index],
+                                focusNode: _focusNodes[index],
+                                decoration: const InputDecoration(
+                                  isDense: true,
+                                  border: InputBorder.none,
+                                  contentPadding: EdgeInsets.zero,
+                                  hintText: 'Guest Customer',
+                                  hintStyle: TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                                style: GoogleFonts.poppins(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w600,
+                                  color: const Color(0xFF1E3552),
+                                ),
+                              ),
+                            ),
+                            RawAutocomplete<String>(
+                              textEditingController: _controllers[index],
+                              focusNode: _focusNodes[index],
+
+                              // ✅ Show suggestions only when input is not empty
+                              optionsBuilder:
+                                  (TextEditingValue textEditingValue) {
+                                if (textEditingValue.text.isEmpty) {
+                                  return const Iterable<String>.empty();
+                                }
+                                return suggestions.where((String option) {
+                                  return option.toLowerCase().contains(
+                                      textEditingValue.text.toLowerCase());
+                                });
+                              },
+
+                              fieldViewBuilder: (context, controller, focusNode,
+                                  onFieldSubmitted) {
+                                return const SizedBox
+                                    .shrink(); // Already rendered TextField above
+                              },
+
+                              // ✅ This stays exactly as you already have it
+                              optionsViewBuilder:
+                                  (context, onSelected, options) {
+                                return Align(
+                                  alignment: Alignment.topLeft,
+                                  child: CompositedTransformFollower(
+                                    link: _layerLinks[index],
+                                    showWhenUnlinked: false,
+                                    offset: const Offset(
+                                        -50, 31), // Match TextField height
+                                    child: Container(
+                                      margin: const EdgeInsets.only(right: 10),
+                                      width: MediaQuery.of(context).size.width -
+                                          71,
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(8),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color:
+                                                Colors.black.withOpacity(0.2),
+                                            offset: const Offset(0, 3),
+                                            blurRadius: 6,
+                                            spreadRadius: 1,
+                                          ),
+                                        ],
+                                      ),
+                                      child: Material(
+                                        color: Colors.transparent,
+                                        elevation: 0,
+                                        borderRadius: BorderRadius.circular(8),
+                                        child: ConstrainedBox(
+                                          constraints: const BoxConstraints(
+                                            maxHeight: 72,
+                                          ),
+                                          child: ListView.builder(
+                                            padding: EdgeInsets.zero,
+                                            shrinkWrap: true,
+                                            itemCount: options.length,
+                                            itemBuilder: (context, i) {
+                                              final option =
+                                                  options.elementAt(i);
+                                              return ListTile(
+                                                dense: true,
+                                                title: Text(
+                                                  option,
+                                                  style: GoogleFonts.poppins(
+                                                    fontSize: 13,
+                                                    fontWeight: FontWeight.w500,
+                                                    color: Colors.grey[800],
+                                                  ),
+                                                ),
+                                                onTap: () => onSelected(option),
+                                              );
+                                            },
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
+                        )
+                      : TextField(
+                          controller: _controllers[index],
+                          focusNode: _focusNodes[index],
+                          style: GoogleFonts.poppins(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                            color: const Color(0xFF1E3552),
+                          ),
+                          decoration: const InputDecoration(
+                            isDense: true,
+                            border: InputBorder.none,
+                            contentPadding: EdgeInsets.zero,
+                            hintText: 'Guest Customer',
+                            hintStyle: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.grey,
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            );
-          } else {
-            return const SizedBox.shrink(); // hides the widget
-          }
+                ),
+              ],
+            ),
+          );
         }),
       ],
     );

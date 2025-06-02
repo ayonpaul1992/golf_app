@@ -150,7 +150,7 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
                                   color: hoverIndex == index
                                       ? Colors.white
                                       : (widget.selectedIndex == index
-                                          ? const Color(0xFF244065)
+                                          ? const Color(0xFF9ECF9A)
                                           : const Color(0xFF244065)),
                                 ),
                               ),
@@ -164,7 +164,7 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
                               items[index]['label']!,
                               style: GoogleFonts.poppins(
                                 color: widget.selectedIndex == index
-                                    ? const Color(0xFF648683)
+                                    ? const Color(0xFF9ECF9A)
                                     : const Color(0xFF648683),
                                 fontSize: 13,
                                 fontWeight: FontWeight.w400,
