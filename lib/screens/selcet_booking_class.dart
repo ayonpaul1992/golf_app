@@ -69,6 +69,7 @@ class SelcetBookingClassState extends State<SelcetBookingClass> {
         if (data is Map<String, dynamic> && data['data'] is List) {
           setState(() {
             _fetchedTeesheets = data['data'];
+            print("Fetched Teesheets: $_fetchedTeesheets");
             dropdownItems = _fetchedTeesheets
                 .map<String>((t) => t['name']?.toString() ?? 'Unnamed Teesheet')
                 .toList();
@@ -126,6 +127,7 @@ class SelcetBookingClassState extends State<SelcetBookingClass> {
                         holdingNtrText.text = item;
                         closeDropdown();
                       });
+                      print("Selected item: $item");
                       navigateToDynamicPage(item);
                     },
                     child: Padding(

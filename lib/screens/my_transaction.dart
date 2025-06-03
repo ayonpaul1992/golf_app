@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
@@ -7,7 +6,6 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:gulf_app/components/custom_app_bar.dart';
 import 'package:gulf_app/components/custom_drawer.dart';
 import 'package:gulf_app/components/custom_bottom_nav_bar.dart';
-import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:intl/intl.dart';
 
 class MyTransactionPage extends StatefulWidget {
@@ -20,12 +18,14 @@ class MyTransactionPage extends StatefulWidget {
 
 class MyTransactionPageState extends State<MyTransactionPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  final FlutterSecureStorage secureStorage = FlutterSecureStorage();
+  final FlutterSecureStorage secureStorage = const FlutterSecureStorage();
   final TextEditingController _dateController = TextEditingController();
   final searchBarText = TextEditingController();
   bool isLoading = false;
   String? nomineedobError;
   final LayerLink _layerLink = LayerLink();
+
+  List<Map<String, dynamic>> transactions = [];
 
   OverlayEntry? _dropdownOverlay;
   String _selectedFilter = "This month";
@@ -41,20 +41,46 @@ class MyTransactionPageState extends State<MyTransactionPage> {
     super.initState();
     final now = DateTime.now();
     _dateController.text = DateFormat("MMM dd, yyyy").format(now);
+
+    fetchTransactions(); // Fetch transactions when the page loads
   }
 
-  void _showMessage(String message) {
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text(message)));
+  Future<void> fetchTransactions() async {
+    setState(() {
+      isLoading = true;
+    });
+    try {
+      final token = await secureStorage.read(key: 'accessToken');
+      final response = await http.get(
+        Uri.parse('https://api.dev.driverpos.io/api/v1/report/myTransactions'),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+      );
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+
+        setState(() {
+          transactions = List<Map<String, dynamic>>.from(data['data'] ?? []);
+        });
+        // return data['transactions'] ?? [];
+        // return data['data'] ?? []; // Replace with actual data when ready
+      } else {
+        throw Exception('Failed to load transactions');
+      }
+    } catch (e) {
+      // Handle error as needed
+      print('Error fetching transactions: $e');
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   int? editingIndex;
   int selectedIndex = 0; // index 0 is "All"
-
-  double _getDropdownOffset() {
-    final renderBox = context.findRenderObject() as RenderBox?;
-    return renderBox?.localToGlobal(Offset.zero).dy ?? 100;
-  }
 
   void _toggleDropdown() {
     if (_dropdownOverlay == null) {
@@ -66,16 +92,16 @@ class MyTransactionPageState extends State<MyTransactionPage> {
           child: CompositedTransformFollower(
             link: _layerLink,
             showWhenUnlinked: false,
-            offset: Offset(0, 30),
+            offset: const Offset(0, 30),
             child: Material(
               elevation: 4,
               borderRadius: BorderRadius.circular(8),
               child: Container(
-                margin: EdgeInsets.symmetric(
+                margin: const EdgeInsets.symmetric(
                     horizontal: 0), // Adjust horizontal padding
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  border: Border.all(color: Color(0xFFB2C1C0)),
+                  border: Border.all(color: const Color(0xFFB2C1C0)),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Column(
@@ -96,8 +122,8 @@ class MyTransactionPageState extends State<MyTransactionPage> {
                           style: GoogleFonts.poppins(
                             fontSize: 13,
                             color: option == _selectedFilter
-                                ? Color(0xFF669933)
-                                : Color(0xFF244065),
+                                ? const Color(0xFF669933)
+                                : const Color(0xFF244065),
                             fontWeight: option == _selectedFilter
                                 ? FontWeight.w600
                                 : FontWeight.w500,
@@ -144,841 +170,422 @@ class MyTransactionPageState extends State<MyTransactionPage> {
           // Handle navigation logic
         },
       ),
-      body: Container(
-        color: Color(0xFFFAFCFA),
-        width: double.infinity,
-        height: double.infinity,
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 15),
-          child: SingleChildScrollView(
-              child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              SizedBox(
-                height: 15,
+      body: isLoading
+          ? const Center(
+              child: CircularProgressIndicator(
+                color: Color(0xFF9ECF9A),
               ),
-              // Container(
-              //   child: SingleChildScrollView(
-              //       scrollDirection: Axis.horizontal,
-              //       child: Row(
-              //         mainAxisAlignment: MainAxisAlignment.center,
-              //         children: [
-              //           Container(
-              //             width: 40,
-              //             height: 1,
-              //             color: Color(0xFFB2C1C0),
-              //           ),
-              //           SizedBox(
-              //             width: 10,
-              //           ),
-              //           Text(
-              //             "My Transaction",
-              //             style: GoogleFonts.poppins(
-              //                 color: Color(0xFF244065),
-              //                 fontSize: 22,
-              //                 fontWeight: FontWeight.w600),
-              //           ),
-              //           SizedBox(
-              //             width: 10,
-              //           ),
-              //           Container(
-              //             width: 40,
-              //             height: 1,
-              //             color: Color(0xFFB2C1C0),
-              //           ),
-              //         ],
-              //       )),
-              // ),
-              // SizedBox(
-              //   height: 15,
-              // ),
-              CompositedTransformTarget(
-                link: _layerLink,
-                child: Container(
+            )
+          : transactions.isEmpty
+              ? Center(
+                  child: Text(
+                    'No transactions found',
+                    style: GoogleFonts.poppins(
+                      fontSize: 16,
+                      color: const Color(0xFF244065),
+                    ),
+                  ),
+                )
+              : Container(
+                  color: const Color(0xFFFAFCFA),
                   width: double.infinity,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "My Transactions",
-                        style: GoogleFonts.poppins(
-                            color: Color(0xFF244065),
-                            fontSize: 17,
-                            fontWeight: FontWeight.w600),
-                      ),
-                      GestureDetector(
-                        onTap: _toggleDropdown,
-                        child: Row(
-                          children: [
-                            Text(
-                              "Filter by:",
-                              style: GoogleFonts.poppins(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w500,
-                                  color: Color(0xFF6E7373)),
-                            ),
-                            SizedBox(width: 5),
-                            Text(
-                              _selectedFilter,
-                              style: GoogleFonts.poppins(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w600,
-                                  color: Color(0xFF244065)),
-                            ),
-                            Icon(
-                              _dropdownOverlay == null
-                                  ? Icons.keyboard_arrow_down_rounded
-                                  : Icons.keyboard_arrow_up_rounded,
-                              size: 22,
-                              color: Color(0xFF669933),
-                            )
-                          ],
+                  height: double.infinity,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                    child: SingleChildScrollView(
+                        child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const SizedBox(
+                          height: 15,
                         ),
-                      ),
-                    ],
+                        CompositedTransformTarget(
+                          link: _layerLink,
+                          child: SizedBox(
+                            width: double.infinity,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "My Transactions",
+                                  style: GoogleFonts.poppins(
+                                      color: const Color(0xFF244065),
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.w600),
+                                ),
+                                GestureDetector(
+                                  onTap: _toggleDropdown,
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        "Filter by:",
+                                        style: GoogleFonts.poppins(
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.w500,
+                                            color: const Color(0xFF6E7373)),
+                                      ),
+                                      const SizedBox(width: 5),
+                                      Text(
+                                        _selectedFilter,
+                                        style: GoogleFonts.poppins(
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.w600,
+                                            color: const Color(0xFF244065)),
+                                      ),
+                                      Icon(
+                                        _dropdownOverlay == null
+                                            ? Icons.keyboard_arrow_down_rounded
+                                            : Icons.keyboard_arrow_up_rounded,
+                                        size: 22,
+                                        color: const Color(0xFF669933),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 15,
+                        ),
+                        ...transactions.map((transaction) {
+                          final orderId = transaction['orderId'] ?? '';
+                          final createdAt = transaction['createdAt'] ?? '';
+                          final orderItems = List<Map<String, dynamic>>.from(
+                              transaction['orderItems'] ?? []);
+                          final paymentDetails =
+                              transaction['paymentDetails'] ?? {};
+                          final paymentType =
+                              paymentDetails['paymentType'] ?? '';
+                          final lastFour =
+                              paymentDetails['lastFour']?.toString() ?? '';
+                          final totalAmount = transaction['totalAmount'] ?? 0.0;
+
+                          // Find Green Fees and Products
+                          orderItems.firstWhere(
+                            (item) => (item['name'] ?? '')
+                                .toString()
+                                .toLowerCase()
+                                .contains('green'),
+                            orElse: () => {},
+                          );
+                          final products = orderItems.firstWhere(
+                            (item) => (item['name'] ?? '')
+                                .toString()
+                                .toLowerCase()
+                                .contains('product'),
+                            orElse: () => {},
+                          );
+
+                          // Find Tips and Fees
+                          final tipsAndFees = orderItems.firstWhere(
+                            (item) =>
+                                (item['name'] ?? '')
+                                    .toString()
+                                    .toLowerCase()
+                                    .contains('tip') ||
+                                (item['name'] ?? '')
+                                    .toString()
+                                    .toLowerCase()
+                                    .contains('fee'),
+                            orElse: () => {},
+                          );
+
+                          // Payment icon and label
+                          String paymentIcon = 'assets/images/cashc.png';
+                          String paymentLabel = 'Cash';
+                          String paymentExtra = '';
+                          if (paymentType.toString().toLowerCase() == 'card') {
+                            paymentIcon = 'assets/images/ccard.png';
+                            paymentLabel = 'Credit Card';
+                            paymentExtra = lastFour.isNotEmpty
+                                ? 'ending in $lastFour'
+                                : '';
+                          }
+
+                          // Format date
+                          String formattedDate = createdAt;
+                          try {
+                            final dt =
+                                DateFormat('MM-dd-yyyy').parse(createdAt);
+                            formattedDate =
+                                DateFormat('MMM dd, yyyy').format(dt);
+                          } catch (_) {}
+
+                          return Column(
+                            children: [
+                              SizedBox(
+                                width: double.infinity,
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        color: const Color(0xFFF8F8F8),
+                                        borderRadius: BorderRadius.circular(15),
+                                        border: Border.all(
+                                          color: const Color(0xFFE9EBEB),
+                                          width: 1,
+                                        ),
+                                      ),
+                                      child: Column(
+                                        children: [
+                                          Container(
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 7, horizontal: 12),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Row(
+                                                  children: [
+                                                    const Icon(
+                                                      Icons
+                                                          .calendar_month_outlined,
+                                                      color: Color(0xFF648683),
+                                                      size: 20,
+                                                    ),
+                                                    const SizedBox(width: 6),
+                                                    Text(
+                                                      formattedDate,
+                                                      style:
+                                                          GoogleFonts.poppins(
+                                                        fontSize: 13,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        color: const Color(
+                                                            0xFF6E7373),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                Row(
+                                                  children: [
+                                                    Text(
+                                                      "Sale ID: ",
+                                                      style:
+                                                          GoogleFonts.poppins(
+                                                        color: const Color(
+                                                            0xFF244065),
+                                                        fontSize: 13,
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                      orderId,
+                                                      style:
+                                                          GoogleFonts.poppins(
+                                                        color: const Color(
+                                                            0xFF244065),
+                                                        fontSize: 13,
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          const Divider(
+                                            color: Color(0xFFE9EBEB),
+                                            thickness: 1.5,
+                                          ),
+                                          Container(
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 7, horizontal: 12),
+                                            child: Column(
+                                              children: [
+                                                if (products.isNotEmpty)
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      Text(
+                                                        "${products['name'] ?? 'Products'}${products['quantity'] != null ? ' (${products['quantity']})' : ''}",
+                                                        style:
+                                                            GoogleFonts.poppins(
+                                                          fontSize: 13,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          color: const Color(
+                                                              0xFF244065),
+                                                        ),
+                                                      ),
+                                                      Text(
+                                                        "\$${(products['amount'] ?? 0).toStringAsFixed(2)}",
+                                                        style:
+                                                            GoogleFonts.poppins(
+                                                          color: const Color(
+                                                              0xFF669933),
+                                                          fontSize: 13,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                if (tipsAndFees.isNotEmpty)
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      Text(
+                                                        tipsAndFees['name'] ??
+                                                            'Tips and Fees',
+                                                        style:
+                                                            GoogleFonts.poppins(
+                                                          fontSize: 13,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          color: const Color(
+                                                              0xFF244065),
+                                                        ),
+                                                      ),
+                                                      Text(
+                                                        "\$${(tipsAndFees['amount'] ?? 0).toStringAsFixed(2)}",
+                                                        style:
+                                                            GoogleFonts.poppins(
+                                                          color: const Color(
+                                                              0xFF669933),
+                                                          fontSize: 13,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                              ],
+                                            ),
+                                          ),
+                                          const Divider(
+                                            color: Color(0xFFE9EBEB),
+                                            thickness: 1.5,
+                                          ),
+                                          Container(
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 7, horizontal: 12),
+                                            child: Column(
+                                              children: [
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    Text(
+                                                      "Total",
+                                                      style:
+                                                          GoogleFonts.poppins(
+                                                        fontSize: 13,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        color: const Color(
+                                                            0xFF244065),
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                      "\$${totalAmount.toStringAsFixed(2)}",
+                                                      style:
+                                                          GoogleFonts.poppins(
+                                                        color: const Color(
+                                                            0xFF669933),
+                                                        fontSize: 13,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          const Divider(
+                                            color: Color(0xFFE9EBEB),
+                                            thickness: 1.5,
+                                          ),
+                                          Container(
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 7, horizontal: 12),
+                                            child: Column(
+                                              children: [
+                                                Row(
+                                                  children: [
+                                                    Text(
+                                                      "Payment type: ",
+                                                      style:
+                                                          GoogleFonts.poppins(
+                                                        fontSize: 13,
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        color: const Color(
+                                                            0xFF6E7373),
+                                                      ),
+                                                    ),
+                                                    const SizedBox(width: 5),
+                                                    Image.asset(
+                                                      paymentIcon,
+                                                      width: paymentType
+                                                                  .toString()
+                                                                  .toLowerCase() ==
+                                                              'card'
+                                                          ? 17.88
+                                                          : 23,
+                                                      height: paymentType
+                                                                  .toString()
+                                                                  .toLowerCase() ==
+                                                              'card'
+                                                          ? 13.75
+                                                          : 23,
+                                                      fit: BoxFit.cover,
+                                                    ),
+                                                    const SizedBox(width: 5),
+                                                    Text(
+                                                      paymentLabel,
+                                                      style:
+                                                          GoogleFonts.poppins(
+                                                        color: const Color(
+                                                            0xFF244065),
+                                                        fontSize: 13,
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                      ),
+                                                    ),
+                                                    if (paymentExtra.isNotEmpty)
+                                                      Text(
+                                                        " $paymentExtra",
+                                                        style:
+                                                            GoogleFonts.poppins(
+                                                          color: const Color(
+                                                              0xFF6E7373),
+                                                          fontSize: 13,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                        ),
+                                                      ),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(height: 15),
+                            ],
+                          );
+                        }),
+                      ],
+                    )),
                   ),
                 ),
-              ),
-              SizedBox(
-                height: 15,
-              ),
-              Container(
-                width: double.infinity,
-                child: Column(
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                          color: Color(0xFFF8F8F8),
-                          borderRadius: BorderRadius.circular(15),
-                          border:
-                              Border.all(color: Color(0xFFE9EBEB), width: 1)),
-                      child: Column(
-                        children: [
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                                vertical: 7, horizontal: 12),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Row(
-                                  spacing: 6,
-                                  children: [
-                                    Icon(
-                                      Icons.calendar_month_outlined,
-                                      color: Color(0xFF648683),
-                                      size: 20,
-                                    ),
-                                    Text(
-                                      _dateController.text,
-                                      style: GoogleFonts.poppins(
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.w500,
-                                        color: Color(0xFF6E7373),
-                                      ),
-                                    )
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    Text(
-                                      "Sale ID: ",
-                                      style: GoogleFonts.poppins(
-                                          color: Color(0xFF244065),
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.w600),
-                                    ),
-                                    Text(
-                                      "PO-503",
-                                      style: GoogleFonts.poppins(
-                                          color: Color(0xFF244065),
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.w600),
-                                    ),
-                                  ],
-                                )
-                              ],
-                            ),
-                          ),
-                          Divider(
-                            color: Color(0xFFE9EBEB), // Set your desired color
-                            thickness:
-                                1.5, // Optional: controls the line thickness
-                          ),
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                                vertical: 7, horizontal: 12),
-                            child: Column(children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Text(
-                                        "Green Fees",
-                                        style: GoogleFonts.poppins(
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.w500,
-                                          color: Color(0xFF244065),
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                  Row(
-                                    children: [
-                                      Text(
-                                        "\$119.00",
-                                        style: GoogleFonts.poppins(
-                                            color: Color(0xFF669933),
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.w500),
-                                      ),
-                                    ],
-                                  )
-                                ],
-                              ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Text(
-                                        "Products (10)",
-                                        style: GoogleFonts.poppins(
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.w500,
-                                          color: Color(0xFF244065),
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                  Row(
-                                    children: [
-                                      Text(
-                                        "\$29.00",
-                                        style: GoogleFonts.poppins(
-                                            color: Color(0xFF669933),
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.w500),
-                                      ),
-                                    ],
-                                  )
-                                ],
-                              ),
-                            ]),
-                          ),
-                          Divider(
-                            color: Color(0xFFE9EBEB), // Set your desired color
-                            thickness:
-                                1.5, // Optional: controls the line thickness
-                          ),
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                                vertical: 7, horizontal: 12),
-                            child: Column(children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Text(
-                                        "Total",
-                                        style: GoogleFonts.poppins(
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.w500,
-                                          color: Color(0xFF244065),
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                  Row(
-                                    children: [
-                                      Text(
-                                        "\$148.00",
-                                        style: GoogleFonts.poppins(
-                                            color: Color(0xFF669933),
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.w500),
-                                      ),
-                                    ],
-                                  )
-                                ],
-                              ),
-                            ]),
-                          ),
-                          Divider(
-                            color: Color(0xFFE9EBEB), // Set your desired color
-                            thickness:
-                                1.5, // Optional: controls the line thickness
-                          ),
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                                vertical: 7, horizontal: 12),
-                            child: Column(children: [
-                              Row(
-                                spacing: 5,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Text(
-                                        "Payment type: ",
-                                        style: GoogleFonts.poppins(
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.w600,
-                                          color: Color(0xFF6E7373),
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                  Row(
-                                    children: [
-                                      Image.asset(
-                                        'assets/images/ccard.png',
-                                        width: 17.88, // optional
-                                        height: 13.75, // optional
-                                        fit: BoxFit.cover, // optional
-                                      ),
-                                      SizedBox(
-                                        width: 5,
-                                      ),
-                                      Text(
-                                        "Credit Card ",
-                                        style: GoogleFonts.poppins(
-                                            color: Color(0xFF244065),
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.w600),
-                                      ),
-                                      Text(
-                                        "ending in 5858",
-                                        style: GoogleFonts.poppins(
-                                            color: Color(0xFF6E7373),
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.w600),
-                                      ),
-                                    ],
-                                  )
-                                ],
-                              ),
-                            ]),
-                          ),
-                        ],
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              SizedBox(
-                height: 15,
-              ),
-              Container(
-                width: double.infinity,
-                child: Column(
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                          color: Color(0xFFF8F8F8),
-                          borderRadius: BorderRadius.circular(15),
-                          border:
-                              Border.all(color: Color(0xFFE9EBEB), width: 1)),
-                      child: Column(
-                        children: [
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                                vertical: 7, horizontal: 12),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Row(
-                                  spacing: 6,
-                                  children: [
-                                    Icon(
-                                      Icons.calendar_month_outlined,
-                                      color: Color(0xFF648683),
-                                      size: 20,
-                                    ),
-                                    Text(
-                                      _dateController.text,
-                                      style: GoogleFonts.poppins(
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.w500,
-                                        color: Color(0xFF6E7373),
-                                      ),
-                                    )
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    Text(
-                                      "Sale ID: ",
-                                      style: GoogleFonts.poppins(
-                                          color: Color(0xFF244065),
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.w600),
-                                    ),
-                                    Text(
-                                      "PO-503",
-                                      style: GoogleFonts.poppins(
-                                          color: Color(0xFF244065),
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.w600),
-                                    ),
-                                  ],
-                                )
-                              ],
-                            ),
-                          ),
-                          Divider(
-                            color: Color(0xFFE9EBEB), // Set your desired color
-                            thickness:
-                                1.5, // Optional: controls the line thickness
-                          ),
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                                vertical: 7, horizontal: 12),
-                            child: Column(children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Text(
-                                        "Green Fees",
-                                        style: GoogleFonts.poppins(
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.w500,
-                                          color: Color(0xFF244065),
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                  Row(
-                                    children: [
-                                      Text(
-                                        "\$119.00",
-                                        style: GoogleFonts.poppins(
-                                            color: Color(0xFF669933),
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.w500),
-                                      ),
-                                    ],
-                                  )
-                                ],
-                              ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Text(
-                                        "Products (10)",
-                                        style: GoogleFonts.poppins(
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.w500,
-                                          color: Color(0xFF244065),
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                  Row(
-                                    children: [
-                                      Text(
-                                        "\$29.00",
-                                        style: GoogleFonts.poppins(
-                                            color: Color(0xFF669933),
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.w500),
-                                      ),
-                                    ],
-                                  )
-                                ],
-                              ),
-                            ]),
-                          ),
-                          Divider(
-                            color: Color(0xFFE9EBEB), // Set your desired color
-                            thickness:
-                                1.5, // Optional: controls the line thickness
-                          ),
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                                vertical: 7, horizontal: 12),
-                            child: Column(children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Text(
-                                        "Total",
-                                        style: GoogleFonts.poppins(
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.w500,
-                                          color: Color(0xFF244065),
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                  Row(
-                                    children: [
-                                      Text(
-                                        "\$148.00",
-                                        style: GoogleFonts.poppins(
-                                            color: Color(0xFF669933),
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.w500),
-                                      ),
-                                    ],
-                                  )
-                                ],
-                              ),
-                            ]),
-                          ),
-                          Divider(
-                            color: Color(0xFFE9EBEB), // Set your desired color
-                            thickness:
-                                1.5, // Optional: controls the line thickness
-                          ),
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                                vertical: 7, horizontal: 12),
-                            child: Column(children: [
-                              Row(
-                                spacing: 5,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Text(
-                                        "Payment type: ",
-                                        style: GoogleFonts.poppins(
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.w600,
-                                          color: Color(0xFF6E7373),
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                  Row(
-                                    children: [
-                                      Image.asset(
-                                        'assets/images/cashc.png',
-                                        width: 23, // optional
-                                        height: 23, // optional
-                                        fit: BoxFit.cover, // optional
-                                      ),
-                                      SizedBox(
-                                        width: 5,
-                                      ),
-                                      Text(
-                                        "Cash ",
-                                        style: GoogleFonts.poppins(
-                                            color: Color(0xFF244065),
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.w600),
-                                      ),
-                                    ],
-                                  )
-                                ],
-                              ),
-                            ]),
-                          ),
-                        ],
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              SizedBox(
-                height: 15,
-              ),
-              Container(
-                width: double.infinity,
-                child: Column(
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                          color: Color(0xFFF8F8F8),
-                          borderRadius: BorderRadius.circular(15),
-                          border:
-                              Border.all(color: Color(0xFFE9EBEB), width: 1)),
-                      child: Column(
-                        children: [
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                                vertical: 7, horizontal: 12),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Row(
-                                  spacing: 6,
-                                  children: [
-                                    Icon(
-                                      Icons.calendar_month_outlined,
-                                      color: Color(0xFF648683),
-                                      size: 20,
-                                    ),
-                                    Text(
-                                      _dateController.text,
-                                      style: GoogleFonts.poppins(
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.w500,
-                                        color: Color(0xFF6E7373),
-                                      ),
-                                    )
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    Text(
-                                      "Sale ID: ",
-                                      style: GoogleFonts.poppins(
-                                          color: Color(0xFF244065),
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.w600),
-                                    ),
-                                    Text(
-                                      "PO-503",
-                                      style: GoogleFonts.poppins(
-                                          color: Color(0xFF244065),
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.w600),
-                                    ),
-                                  ],
-                                )
-                              ],
-                            ),
-                          ),
-                          Divider(
-                            color: Color(0xFFE9EBEB), // Set your desired color
-                            thickness:
-                                1.5, // Optional: controls the line thickness
-                          ),
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                                vertical: 7, horizontal: 12),
-                            child: Column(children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Text(
-                                        "Green Fees",
-                                        style: GoogleFonts.poppins(
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.w500,
-                                          color: Color(0xFF244065),
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                  Row(
-                                    children: [
-                                      Text(
-                                        "\$119.00",
-                                        style: GoogleFonts.poppins(
-                                            color: Color(0xFF669933),
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.w500),
-                                      ),
-                                    ],
-                                  )
-                                ],
-                              ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Text(
-                                        "Products (10)",
-                                        style: GoogleFonts.poppins(
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.w500,
-                                          color: Color(0xFF244065),
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                  Row(
-                                    children: [
-                                      Text(
-                                        "\$29.00",
-                                        style: GoogleFonts.poppins(
-                                            color: Color(0xFF669933),
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.w500),
-                                      ),
-                                    ],
-                                  )
-                                ],
-                              ),
-                            ]),
-                          ),
-                          Divider(
-                            color: Color(0xFFE9EBEB), // Set your desired color
-                            thickness:
-                                1.5, // Optional: controls the line thickness
-                          ),
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                                vertical: 7, horizontal: 12),
-                            child: Column(children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Text(
-                                        "Total",
-                                        style: GoogleFonts.poppins(
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.w500,
-                                          color: Color(0xFF244065),
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                  Row(
-                                    children: [
-                                      Text(
-                                        "\$148.00",
-                                        style: GoogleFonts.poppins(
-                                            color: Color(0xFF669933),
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.w500),
-                                      ),
-                                    ],
-                                  )
-                                ],
-                              ),
-                            ]),
-                          ),
-                          Divider(
-                            color: Color(0xFFE9EBEB), // Set your desired color
-                            thickness:
-                                1.5, // Optional: controls the line thickness
-                          ),
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                                vertical: 7, horizontal: 12),
-                            child: Column(children: [
-                              Row(
-                                spacing: 5,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Text(
-                                        "Payment type: ",
-                                        style: GoogleFonts.poppins(
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.w600,
-                                          color: Color(0xFF6E7373),
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                  Row(
-                                    children: [
-                                      Image.asset(
-                                        'assets/images/ccard.png',
-                                        width: 17.88, // optional
-                                        height: 13.75, // optional
-                                        fit: BoxFit.cover, // optional
-                                      ),
-                                      SizedBox(
-                                        width: 5,
-                                      ),
-                                      Text(
-                                        "Credit Card ",
-                                        style: GoogleFonts.poppins(
-                                            color: Color(0xFF244065),
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.w600),
-                                      ),
-                                      Text(
-                                        "ending in 5858",
-                                        style: GoogleFonts.poppins(
-                                            color: Color(0xFF6E7373),
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.w600),
-                                      ),
-                                    ],
-                                  )
-                                ],
-                              ),
-                            ]),
-                          ),
-                        ],
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              SizedBox(
-                height: 20,
-              ),
-            ],
-          )),
-        ),
-      ),
-      bottomNavigationBar: CustomBottomNavBar(selectedIndex: 0),
-    );
-  }
-
-  InputDecoration _inputDecoration(String hintText) {
-    return InputDecoration(
-      filled: true,
-      fillColor: Colors.white,
-      contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(50),
-        borderSide: const BorderSide(
-          color: Color(0xFF9ECF9A),
-          width: 1,
-        ),
-      ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(50),
-        borderSide: const BorderSide(
-          color: Colors.white,
-          width: 1,
-        ),
-      ),
-      hintText: hintText,
-      hintStyle: GoogleFonts.poppins(
-        color: const Color(0xFF6E7373),
-        fontSize: 14,
-      ),
-    );
-  }
-
-  Widget _buildFilterButton(String label) {
-    return InkWell(
-      onTap: () {},
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: Color(0xFF9ECF9A), width: 1),
-        ),
-        padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-        child: Text(
-          label,
-          style: GoogleFonts.poppins(
-            color: Color(0xFF244065),
-            fontWeight: FontWeight.w600,
-            fontSize: 13,
-          ),
-        ),
-      ),
+      bottomNavigationBar: const CustomBottomNavBar(selectedIndex: 0),
     );
   }
 }
