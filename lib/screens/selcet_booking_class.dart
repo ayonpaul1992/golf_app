@@ -67,7 +67,6 @@ class SelcetBookingClassState extends State<SelcetBookingClass> {
         if (data is Map<String, dynamic> && data['data'] is List) {
           setState(() {
             _fetchedTeesheets = data['data'];
-            print("Fetched Teesheets: $_fetchedTeesheets");
             dropdownItems = _fetchedTeesheets
                 .map<String>((t) => t['name']?.toString() ?? 'Unnamed Teesheet')
                 .toList();
@@ -124,12 +123,10 @@ class SelcetBookingClassState extends State<SelcetBookingClass> {
                         holdingNtrText.text = item;
                         closeDropdown();
                       });
-                      print("Selected item: $item");
                       final selectedObject = _fetchedTeesheets.firstWhere(
                         (element) => element['name'] == item,
                         orElse: () => null,
                       );
-                      print(selectedObject["golfCourseLogo"]);
                       //change sec to the selected teesheet logo
                       secureStorage.write(
                           key: 'golfCourseLogo',
@@ -189,7 +186,6 @@ class SelcetBookingClassState extends State<SelcetBookingClass> {
     });
 
     final String teeSheetId = selected['_id'];
-    print(_selectedTeesheet?['_id']);
     _fetchReservationGroups(teeSheetId);
   }
 

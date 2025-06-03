@@ -1056,51 +1056,13 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
   }
 
   Widget _buildPlayerNameFields() {
-    // Suggestions will be fetched dynamically from API
     List<String> suggestions = [
       "John Doe",
       "Jane Smith",
       "Alice Johnson",
       "Bob Brown",
       "Charlie Davis",
-      // Add more static suggestions or fetch from API
     ];
-
-    // Helper to fetch suggestions from API
-    // Future<void> fetchSuggestions(String query, int index) async {
-    //   if (query.isEmpty) {
-    //   setState(() {
-    //     suggestions = [];
-    //   });
-    //   return;
-    //   }
-    //   try {
-    //   String token = await secureStorage.read(key: 'accessToken') ?? '';
-    //   final response = await http.get(
-    //     Uri.parse('https://api.dev.driverpos.io/api/v1/customer/search?search=$query'),
-    //     headers: {
-    //     'Content-Type': 'application/json',
-    //     'Authorization': 'Bearer $token',
-    //     },
-    //   );
-    //   if (response.statusCode == 200) {
-    //     final data = jsonDecode(response.body);
-    //     setState(() {
-    //     suggestions = List<String>.from(
-    //       (data['customers'] ?? []).map((c) => c['name'] ?? '').where((n) => n != ''),
-    //     );
-    //     });
-    //   } else {
-    //     setState(() {
-    //     suggestions = [];
-    //     });
-    //   }
-    //   } catch (e) {
-    //   setState(() {
-    //     suggestions = [];
-    //   });
-    //   }
-    // }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

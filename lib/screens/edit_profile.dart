@@ -1,9 +1,9 @@
+// ignore_for_file: deprecated_member_use
+
 import 'dart:convert';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:gulf_app/screens/login.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:gulf_app/components/custom_app_bar.dart';
@@ -22,14 +22,13 @@ class MyEditPage extends StatefulWidget {
 
 class MyEditPageState extends State<MyEditPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  final FlutterSecureStorage secureStorage = FlutterSecureStorage();
+  final FlutterSecureStorage secureStorage = const FlutterSecureStorage();
   final TextEditingController _dateController = TextEditingController();
   bool isLoading = false;
   bool isDateFieldFocused = false; // Rename from isLoading for clarity
   String? dobError;
   DateTime? _selectedDate;
   bool _isExpanded = true;
-  bool _isLoginInfo = true;
   final customerIdText = TextEditingController();
   final fullNmText = TextEditingController();
   final lastNmText = TextEditingController();
@@ -41,7 +40,6 @@ class MyEditPageState extends State<MyEditPage> {
   final stateController = TextEditingController();
   final zipController = TextEditingController();
   final passText = TextEditingController();
-  bool _isPassVisible = false;
   String? passError;
   String? emailError;
   String? lgnemailError;
@@ -65,11 +63,61 @@ class MyEditPageState extends State<MyEditPage> {
     final now = DateTime.now();
     _selectedDate = now;
     _dateController.text = DateFormat("MMM dd, yyyy").format(now);
+    fetchUserProfile();
   }
 
-  void _showMessage(String message) {
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text(message)));
+  Future<void> fetchUserProfile() async {
+    setState(() {
+      isLoading = true;
+    });
+    try {
+      final token = await secureStorage.read(key: 'accessToken');
+      final response = await http.get(
+        Uri.parse('https://api.dev.driverpos.io/api/v1/customer/myProfile'),
+        headers: {
+          'Content-Type': 'application/json',
+          if (token != null) 'Authorization': 'Bearer $token',
+        },
+      );
+      if (response.statusCode == 200) {
+        final dataJson = json.decode(response.body);
+        final data = dataJson['data'] as Map<String, dynamic>;
+        setState(() {
+          customerIdText.text = data['accountNumber'] ?? '';
+          fullNmText.text = data['fname'] ?? '';
+          lastNmText.text = data['lname'] ?? '';
+          emailIdText.text = data['email'] ?? '';
+          lgnemailIdText.text = data['email'] ?? '';
+          phoneNoText.text = data['phoneNumber'] ?? '';
+          addressController.text =
+              data['personalInfo']['address']['streetAddress'] ?? '';
+          cityController.text = data['personalInfo']['address']['city'] ?? '';
+          stateController.text = data['personalInfo']['address']['state'] ?? '';
+          zipController.text = data['personalInfo']['address']['zipCode'] ?? '';
+          passText.text = ''; // Do not prefill password for security
+          if (data['personalInfo']['dateOfBirth'] != null &&
+              data['personalInfo']['dateOfBirth'].isNotEmpty) {
+            try {
+              final parsedDate =
+                  DateTime.parse(data['personalInfo']['dateOfBirth']);
+              _selectedDate = parsedDate;
+              _dateController.text =
+                  DateFormat("MMM dd, yyyy").format(parsedDate);
+            } catch (_) {
+              _dateController.text = '';
+            }
+          }
+        });
+      } else {
+        // Handle error
+      }
+    } catch (e) {
+      // Handle error
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   void _showDatePicker(BuildContext context) {
@@ -122,7 +170,7 @@ class MyEditPageState extends State<MyEditPage> {
                     headerStyle: DateRangePickerHeaderStyle(
                       backgroundColor: Colors.transparent,
                       textStyle: GoogleFonts.poppins(
-                        color: Color(0xFF3F4B4B),
+                        color: const Color(0xFF3F4B4B),
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
                       ),
@@ -223,694 +271,704 @@ class MyEditPageState extends State<MyEditPage> {
           // Handle navigation logic
         },
       ),
-      body: Container(
-        color: Color(0xFFFAFCFA),
-        width: double.infinity,
-        height: double.infinity,
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 15),
-          child: SingleChildScrollView(
-              child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              SizedBox(
-                height: 15,
+      body: isLoading
+          ? const Center(
+              child: CircularProgressIndicator(
+                color: Color(0xFF9ECF9A),
               ),
-              Container(
+            )
+          : Container(
+              color: const Color(0xFFFAFCFA),
+              width: double.infinity,
+              height: double.infinity,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 15),
                 child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          width: 40,
-                          height: 1,
-                          color: Color(0xFFB2C1C0),
-                        ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        Text(
-                          "Edit Profile",
-                          style: GoogleFonts.poppins(
-                              color: Color(0xFF244065),
-                              fontSize: 22,
-                              fontWeight: FontWeight.w600),
-                        ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        Container(
-                          width: 40,
-                          height: 1,
-                          color: Color(0xFFB2C1C0),
-                        ),
-                      ],
-                    )),
-              ),
-              SizedBox(
-                height: 15,
-              ),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 15),
-                child: Column(
+                    child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
-                  spacing: 10,
                   children: [
-                    GestureDetector(
-                      onTap: () {},
-                      child: Container(
-                        clipBehavior: Clip.none, // allow overflow
-                        width: 162,
-                        height: 162, // slightly larger to allow overflow
-                        child: Stack(
-                          clipBehavior: Clip
-                              .none, // important for visibility outside the stack
+                    const SizedBox(
+                      height: 15,
+                    ),
+                    SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Container(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 7, vertical: 5),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(100),
-                                child: Image.asset(
-                                  "assets/images/profile_prsn.jpg",
-                                  width: 162,
-                                  height: 162,
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
+                              width: 40,
+                              height: 1,
+                              color: const Color(0xFFB2C1C0),
                             ),
-                            Positioned(
-                              bottom: -10,
-                              left: 65,
-                              child: Container(
-                                width: 40,
-                                height: 40,
-                                decoration: BoxDecoration(
-                                  color: Color(0xFF9ECF9A),
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(100)),
-                                ),
-                                child: Center(
-                                  child: Icon(
-                                    Icons.edit,
-                                    size: 17,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
+                            const SizedBox(
+                              width: 10,
                             ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              Container(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    // Header Row with Toggle Arrow
-                    GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          _isExpanded = !_isExpanded;
-                        });
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 8),
-                        decoration: const BoxDecoration(
-                          border: Border(
-                            bottom: BorderSide(
-                              color: Color(0xFFB2C1C0),
-                              width: 1,
-                            ),
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
                             Text(
-                              "Account information",
+                              "Edit Profile",
                               style: GoogleFonts.poppins(
-                                color: const Color(0xFF244065),
-                                fontWeight: FontWeight.w600,
-                                fontSize: 14,
-                              ),
+                                  color: const Color(0xFF244065),
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.w600),
                             ),
-                            Icon(
-                              _isExpanded
-                                  ? Icons.keyboard_arrow_up
-                                  : Icons.keyboard_arrow_down,
-                              size: 22,
-                              color: const Color(0xFF669933),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            Container(
+                              width: 40,
+                              height: 1,
+                              color: const Color(0xFFB2C1C0),
                             ),
                           ],
-                        ),
-                      ),
+                        )),
+                    const SizedBox(
+                      height: 15,
                     ),
-                    const SizedBox(height: 15),
-
-                    // Expandable Fields
-                    if (_isExpanded) ...[
-                      _buildLabel("Customer ID"),
-                      SizedBox(height: 10),
-                      _buildTextField(customerIdText),
-                      if (customerIdError != null)
-                        Padding(
-                          padding: const EdgeInsets.only(left: 12.0, top: 5),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  customerIdError!,
-                                  style: const TextStyle(
-                                      color: Colors.red, fontSize: 12),
-                                  textAlign: TextAlign.start,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      const SizedBox(height: 15),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 15),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        spacing: 10,
                         children: [
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.44,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                _buildHalfField("First Name", fullNmText),
-                                if (firstNameError != null)
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 12.0, top: 5),
-                                    child: Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Expanded(
-                                          child: Text(
-                                            firstNameError!,
-                                            style: const TextStyle(
-                                                color: Colors.red,
-                                                fontSize: 12),
-                                            textAlign: TextAlign.start,
-                                          ),
-                                        ),
-                                      ],
+                          GestureDetector(
+                            onTap: () {},
+                            child: Container(
+                              clipBehavior: Clip.none, // allow overflow
+                              width: 162,
+                              height: 162, // slightly larger to allow overflow
+                              child: Stack(
+                                clipBehavior: Clip
+                                    .none, // important for visibility outside the stack
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 7, vertical: 5),
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(100),
+                                      child: Image.asset(
+                                        "assets/images/profile_prsn.jpg",
+                                        width: 162,
+                                        height: 162,
+                                        fit: BoxFit.cover,
+                                      ),
                                     ),
                                   ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(
-                            width: 4,
-                          ),
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.44,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                _buildHalfField("Last Name", lastNmText),
-                                if (lastNameError != null)
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 12.0, top: 5),
-                                    child: Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Expanded(
-                                          child: Text(
-                                            lastNameError!,
-                                            style: const TextStyle(
-                                                color: Colors.red,
-                                                fontSize: 12),
-                                            textAlign: TextAlign.start,
-                                          ),
+                                  Positioned(
+                                    bottom: -10,
+                                    left: 65,
+                                    child: Container(
+                                      width: 40,
+                                      height: 40,
+                                      decoration: const BoxDecoration(
+                                        color: Color(0xFF9ECF9A),
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(100)),
+                                      ),
+                                      child: const Center(
+                                        child: Icon(
+                                          Icons.edit,
+                                          size: 17,
+                                          color: Colors.white,
                                         ),
-                                      ],
+                                      ),
                                     ),
                                   ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 15),
-                      _buildLabel("Email"),
-                      SizedBox(height: 10),
-                      _buildTextField(emailIdText, isEmail: true),
-                      if (emailError != null)
-                        Padding(
-                          padding: const EdgeInsets.only(left: 12.0, top: 5),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  emailError!,
-                                  style: const TextStyle(
-                                      color: Colors.red, fontSize: 12),
-                                  textAlign: TextAlign.start,
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        // Header Row with Toggle Arrow
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              _isExpanded = !_isExpanded;
+                            });
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 8),
+                            decoration: const BoxDecoration(
+                              border: Border(
+                                bottom: BorderSide(
+                                  color: Color(0xFFB2C1C0),
+                                  width: 1,
                                 ),
                               ),
-                            ],
-                          ),
-                        ),
-                      const SizedBox(height: 15),
-                      _buildLabel("Phone Number"),
-                      SizedBox(height: 10),
-                      _buildTextField(phoneNoText, isPhone: true),
-                      if (phoneError != null)
-                        Padding(
-                          padding: const EdgeInsets.only(left: 12.0, top: 5),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  phoneError!,
-                                  style: const TextStyle(
-                                      color: Colors.red, fontSize: 12),
-                                  textAlign: TextAlign.start,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      const SizedBox(height: 15),
-                      _buildLabel("Date of brith"),
-                      SizedBox(height: 10),
-                      Container(
-                        margin: EdgeInsets.symmetric(horizontal: 5),
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(50),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
-                              blurRadius: 6,
-                              offset: const Offset(0, 3),
                             ),
-                          ],
-                          border: Border.all(
-                            color: isDateFieldFocused
-                                ? Color(0xFF9ECF9A)
-                                : const Color(0xFFB2C1C0),
-                            width: 1,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "Account information",
+                                  style: GoogleFonts.poppins(
+                                    color: const Color(0xFF244065),
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                                Icon(
+                                  _isExpanded
+                                      ? Icons.keyboard_arrow_up
+                                      : Icons.keyboard_arrow_down,
+                                  size: 22,
+                                  color: const Color(0xFF669933),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
-                        child: SizedBox(
-                          width: double.infinity,
-                          child: GestureDetector(
+                        const SizedBox(height: 15),
+
+                        // Expandable Fields
+                        if (_isExpanded) ...[
+                          _buildLabel("Customer ID"),
+                          const SizedBox(height: 10),
+                          _buildTextField(customerIdText),
+                          if (customerIdError != null)
+                            Padding(
+                              padding:
+                                  const EdgeInsets.only(left: 12.0, top: 5),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      customerIdError!,
+                                      style: const TextStyle(
+                                          color: Colors.red, fontSize: 12),
+                                      textAlign: TextAlign.start,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          const SizedBox(height: 15),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width * 0.44,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    _buildHalfField("First Name", fullNmText),
+                                    if (firstNameError != null)
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                            left: 12.0, top: 5),
+                                        child: Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Expanded(
+                                              child: Text(
+                                                firstNameError!,
+                                                style: const TextStyle(
+                                                    color: Colors.red,
+                                                    fontSize: 12),
+                                                textAlign: TextAlign.start,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(
+                                width: 4,
+                              ),
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width * 0.44,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    _buildHalfField("Last Name", lastNmText),
+                                    if (lastNameError != null)
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                            left: 12.0, top: 5),
+                                        child: Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Expanded(
+                                              child: Text(
+                                                lastNameError!,
+                                                style: const TextStyle(
+                                                    color: Colors.red,
+                                                    fontSize: 12),
+                                                textAlign: TextAlign.start,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 15),
+                          _buildLabel("Email"),
+                          const SizedBox(height: 10),
+                          _buildTextField(emailIdText, isEmail: true),
+                          if (emailError != null)
+                            Padding(
+                              padding:
+                                  const EdgeInsets.only(left: 12.0, top: 5),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      emailError!,
+                                      style: const TextStyle(
+                                          color: Colors.red, fontSize: 12),
+                                      textAlign: TextAlign.start,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          const SizedBox(height: 15),
+                          _buildLabel("Phone Number"),
+                          const SizedBox(height: 10),
+                          _buildTextField(phoneNoText, isPhone: true),
+                          if (phoneError != null)
+                            Padding(
+                              padding:
+                                  const EdgeInsets.only(left: 12.0, top: 5),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      phoneError!,
+                                      style: const TextStyle(
+                                          color: Colors.red, fontSize: 12),
+                                      textAlign: TextAlign.start,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          const SizedBox(height: 15),
+                          _buildLabel("Date of brith"),
+                          const SizedBox(height: 10),
+                          Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 5),
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(50),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.1),
+                                  blurRadius: 6,
+                                  offset: const Offset(0, 3),
+                                ),
+                              ],
+                              border: Border.all(
+                                color: isDateFieldFocused
+                                    ? const Color(0xFF9ECF9A)
+                                    : const Color(0xFFB2C1C0),
+                                width: 1,
+                              ),
+                            ),
+                            child: SizedBox(
+                              width: double.infinity,
+                              child: GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    isDateFieldFocused = true;
+                                  });
+                                  _showDatePicker(context);
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 15, vertical: 12.8),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(50),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.1),
+                                        blurRadius: 5,
+                                      )
+                                    ],
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        _dateController.text.isNotEmpty
+                                            ? _dateController.text
+                                            : "Select Date",
+                                        style: GoogleFonts.poppins(
+                                            color: const Color(0xFF244065),
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w600),
+                                      ),
+                                      const Icon(
+                                        Icons.calendar_month_outlined,
+                                        color: Color(0xFF648683),
+                                        size: 20,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          if (dobError != null)
+                            Padding(
+                              padding:
+                                  const EdgeInsets.only(left: 12.0, top: 5),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      dobError!,
+                                      style: const TextStyle(
+                                          color: Colors.red, fontSize: 12),
+                                      textAlign: TextAlign.start,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          const SizedBox(height: 15),
+                          _buildLabel("Address"),
+                          const SizedBox(height: 10),
+                          _buildTextField(addressController, maxLines: 1),
+                          if (addressError != null)
+                            Padding(
+                              padding:
+                                  const EdgeInsets.only(left: 12.0, top: 5),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      addressError!,
+                                      style: const TextStyle(
+                                          color: Colors.red, fontSize: 12),
+                                      textAlign: TextAlign.start,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          const SizedBox(height: 15),
+                          Wrap(
+                            alignment: WrapAlignment.spaceBetween,
+                            spacing: 10,
+                            runSpacing: 15,
+                            children: [
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width * 0.44,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    _buildHalfField("City", cityController),
+                                    if (cityError != null)
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                            left: 12.0, top: 5),
+                                        child: Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Expanded(
+                                              child: Text(
+                                                cityError!,
+                                                style: const TextStyle(
+                                                    color: Colors.red,
+                                                    fontSize: 12),
+                                                textAlign: TextAlign.start,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                              ),
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width * 0.44,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    _buildHalfField("State", stateController),
+                                    if (stateError != null)
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                            left: 12.0, top: 5),
+                                        child: Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Expanded(
+                                              child: Text(
+                                                stateError!,
+                                                style: const TextStyle(
+                                                    color: Colors.red,
+                                                    fontSize: 12),
+                                                textAlign: TextAlign.start,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                              ),
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width * 0.44,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    _buildHalfField("Zip", zipController),
+                                    if (zipError != null)
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                            left: 12.0, top: 5),
+                                        child: Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Expanded(
+                                              child: Text(
+                                                zipError!,
+                                                style: const TextStyle(
+                                                    color: Colors.red,
+                                                    fontSize: 12),
+                                                textAlign: TextAlign.start,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 15),
+                        ],
+                      ],
+                    ),
+                    Container(
+                      padding: const EdgeInsets.only(bottom: 10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        spacing: 7,
+                        children: [
+                          GestureDetector(
                             onTap: () {
+                              print(
+                                  "Clear button tapped!"); // Your onTap action here
+                              // You might want to call a function to clear form fields, etc.
                               setState(() {
-                                isDateFieldFocused = true;
+                                customerIdText.clear();
+                                fullNmText.clear();
+                                lastNmText.clear();
+                                emailIdText.clear();
+                                lgnemailIdText.clear();
+                                phoneNoText.clear();
+                                _dateController.clear();
+                                addressController.clear();
+                                cityController.clear();
+                                stateController.clear();
+                                zipController.clear();
+                                passText.clear();
+
+                                customerIdError = null;
+                                firstNameError = null;
+                                lastNameError = null;
+                                emailError = null;
+                                lgnemailError = null;
+                                phoneError = null;
+                                dobError = null;
+                                addressError = null;
+                                cityError = null;
+                                stateError = null;
+                                zipError = null;
+                                passError = null;
                               });
-                              _showDatePicker(context);
                             },
                             child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 15, vertical: 12.8),
                               decoration: BoxDecoration(
-                                color: Colors.white,
+                                color: const Color(0xFFFFFFFF),
                                 borderRadius: BorderRadius.circular(50),
+                                border: Border.all(
+                                    color: const Color(0xFF9ECF9A), width: 1),
                                 boxShadow: [
                                   BoxShadow(
                                     color: Colors.black.withOpacity(0.1),
-                                    blurRadius: 5,
-                                  )
-                                ],
-                              ),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    _dateController.text.isNotEmpty
-                                        ? _dateController.text
-                                        : "Select Date",
-                                    style: GoogleFonts.poppins(
-                                        color: Color(0xFF244065),
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w600),
-                                  ),
-                                  const Icon(
-                                    Icons.calendar_month_outlined,
-                                    color: Color(0xFF648683),
-                                    size: 20,
+                                    blurRadius: 3,
+                                    spreadRadius: 1,
+                                    offset: const Offset(0, 2),
                                   ),
                                 ],
                               ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      if (dobError != null)
-                        Padding(
-                          padding: const EdgeInsets.only(left: 12.0, top: 5),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Expanded(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 15, vertical: 7),
+                              child: Center(
                                 child: Text(
-                                  dobError!,
-                                  style: const TextStyle(
-                                      color: Colors.red, fontSize: 12),
-                                  textAlign: TextAlign.start,
+                                  "Clear",
+                                  style: GoogleFonts.poppins(
+                                    color: const Color(0xFF244065),
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w600,
+                                  ),
                                 ),
                               ),
-                            ],
+                            ),
                           ),
-                        ),
-                      const SizedBox(height: 15),
-                      _buildLabel("Address"),
-                      SizedBox(height: 10),
-                      _buildTextField(addressController, maxLines: 1),
-                      if (addressError != null)
-                        Padding(
-                          padding: const EdgeInsets.only(left: 12.0, top: 5),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Expanded(
+                          GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                // Reset all errors
+                                emailError = lgnemailError = phoneError =
+                                    passError = dobError = firstNameError =
+                                        lastNameError = customerIdError =
+                                            addressError = cityError =
+                                                stateError = zipError = null;
+
+                                // Validation
+                                if (customerIdText.text.isEmpty) {
+                                  customerIdError = "Customer ID is required";
+                                }
+                                if (fullNmText.text.isEmpty) {
+                                  firstNameError = "First Name is required";
+                                }
+                                if (lastNmText.text.isEmpty) {
+                                  lastNameError = "Last Name is required";
+                                }
+                                if (cityController.text.isEmpty) {
+                                  cityError = "City Name is required";
+                                }
+                                if (stateController.text.isEmpty) {
+                                  stateError = "State Name is required";
+                                }
+                                if (addressController.text.isEmpty) {
+                                  addressError = "Address is required";
+                                }
+                                if (zipController.text.isEmpty) {
+                                  zipError = "Zip code is required";
+                                }
+
+                                // Email validation (lowercase, must have '@' and domain like '.com')
+                                if (emailIdText.text.isEmpty) {
+                                  emailError = "Email is required";
+                                } else if (!RegExp(
+                                        r'^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$')
+                                    .hasMatch(emailIdText.text)) {
+                                  emailError = "Enter a valid email address";
+                                }
+
+                                if (lgnemailIdText.text.isEmpty) {
+                                  lgnemailError = "Email is required";
+                                } else if (!RegExp(
+                                        r'^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$')
+                                    .hasMatch(lgnemailIdText.text)) {
+                                  lgnemailError = "Enter a valid email address";
+                                }
+
+                                // Phone validation
+                                if (phoneNoText.text.isEmpty) {
+                                  phoneError = "Phone number is required";
+                                } else if (phoneNoText.text.length < 10) {
+                                  phoneError =
+                                      "Phone number must be at least 10 digits";
+                                } else if (phoneNoText.text.length > 10) {
+                                  phoneError =
+                                      "Phone number cannot be more than 10 digits";
+                                }
+
+                                // Date of birth validation
+                                if (_dateController.text.isEmpty) {
+                                  dobError = "Date of birth is required";
+                                }
+
+                                // Password validation
+                                if (passText.text.isEmpty) {
+                                  passError = "Password is required";
+                                } else if (passText.text.length < 6) {
+                                  passError =
+                                      "Password must be at least 6 characters";
+                                }
+
+                                // Proceed if no errors
+                                if (emailError == null &&
+                                    lgnemailError == null &&
+                                    phoneError == null &&
+                                    passError == null &&
+                                    dobError == null &&
+                                    firstNameError == null &&
+                                    lastNameError == null &&
+                                    customerIdError == null &&
+                                    cityError == null &&
+                                    stateError == null &&
+                                    zipError == null &&
+                                    addressError == null) {
+                                  // Proceed to next screen or save data
+                                  // Navigator.push(context, MaterialPageRoute(builder: (context) => MyCartPage(myCartId: '')));
+                                }
+                              });
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF9ECF9A),
+                                borderRadius: BorderRadius.circular(50),
+                                border: Border.all(
+                                    color: const Color(0xFF9ECF9A), width: 1),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.1),
+                                    blurRadius: 3,
+                                    spreadRadius: 1,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 15, vertical: 7),
+                              child: Center(
                                 child: Text(
-                                  addressError!,
-                                  style: const TextStyle(
-                                      color: Colors.red, fontSize: 12),
-                                  textAlign: TextAlign.start,
+                                  "Save",
+                                  style: GoogleFonts.poppins(
+                                    color: Colors.white,
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w600,
+                                  ),
                                 ),
                               ),
-                            ],
-                          ),
-                        ),
-                      const SizedBox(height: 15),
-                      Wrap(
-                        alignment: WrapAlignment.spaceBetween,
-                        spacing: 10,
-                        runSpacing: 15,
-                        children: [
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.44,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                _buildHalfField("City", cityController),
-                                if (cityError != null)
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 12.0, top: 5),
-                                    child: Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Expanded(
-                                          child: Text(
-                                            cityError!,
-                                            style: const TextStyle(
-                                                color: Colors.red,
-                                                fontSize: 12),
-                                            textAlign: TextAlign.start,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.44,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                _buildHalfField("State", stateController),
-                                if (stateError != null)
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 12.0, top: 5),
-                                    child: Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Expanded(
-                                          child: Text(
-                                            stateError!,
-                                            style: const TextStyle(
-                                                color: Colors.red,
-                                                fontSize: 12),
-                                            textAlign: TextAlign.start,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.44,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                _buildHalfField("Zip", zipController),
-                                if (zipError != null)
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 12.0, top: 5),
-                                    child: Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Expanded(
-                                          child: Text(
-                                            zipError!,
-                                            style: const TextStyle(
-                                                color: Colors.red,
-                                                fontSize: 12),
-                                            textAlign: TextAlign.start,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                              ],
                             ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 15),
-                    ],
-                  ],
-                ),
-              ),
-              Container(
-                padding: EdgeInsets.only(bottom: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  spacing: 7,
-                  children: [
-                    Container(
-                      child: GestureDetector(
-                        onTap: () {
-                          print(
-                              "Clear button tapped!"); // Your onTap action here
-                          // You might want to call a function to clear form fields, etc.
-                          setState(() {
-                            customerIdText.clear();
-                            fullNmText.clear();
-                            lastNmText.clear();
-                            emailIdText.clear();
-                            lgnemailIdText.clear();
-                            phoneNoText.clear();
-                            _dateController.clear();
-                            addressController.clear();
-                            cityController.clear();
-                            stateController.clear();
-                            zipController.clear();
-                            passText.clear();
-
-                            customerIdError = null;
-                            firstNameError = null;
-                            lastNameError = null;
-                            emailError = null;
-                            lgnemailError = null;
-                            phoneError = null;
-                            dobError = null;
-                            addressError = null;
-                            cityError = null;
-                            stateError = null;
-                            zipError = null;
-                            passError = null;
-                          });
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Color(0xFFFFFFFF),
-                            borderRadius: BorderRadius.circular(50),
-                            border:
-                                Border.all(color: Color(0xFF9ECF9A), width: 1),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.1),
-                                blurRadius: 3,
-                                spreadRadius: 1,
-                                offset: Offset(0, 2),
-                              ),
-                            ],
-                          ),
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 15, vertical: 7),
-                          child: Center(
-                            child: Text(
-                              "Clear",
-                              style: GoogleFonts.poppins(
-                                color: Color(0xFF244065),
-                                fontSize: 13,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
                     ),
-                    Container(
-                      child: GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            // Reset all errors
-                            emailError = lgnemailError = phoneError =
-                                passError = dobError = firstNameError =
-                                    lastNameError = customerIdError =
-                                        addressError = cityError =
-                                            stateError = zipError = null;
-
-                            // Validation
-                            if (customerIdText.text.isEmpty)
-                              customerIdError = "Customer ID is required";
-                            if (fullNmText.text.isEmpty)
-                              firstNameError = "First Name is required";
-                            if (lastNmText.text.isEmpty)
-                              lastNameError = "Last Name is required";
-                            if (cityController.text.isEmpty)
-                              cityError = "City Name is required";
-                            if (stateController.text.isEmpty)
-                              stateError = "State Name is required";
-                            if (addressController.text.isEmpty)
-                              addressError = "Address is required";
-                            if (zipController.text.isEmpty)
-                              zipError = "Zip code is required";
-
-                            // Email validation (lowercase, must have '@' and domain like '.com')
-                            if (emailIdText.text.isEmpty) {
-                              emailError = "Email is required";
-                            } else if (!RegExp(
-                                    r'^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$')
-                                .hasMatch(emailIdText.text)) {
-                              emailError = "Enter a valid email address";
-                            }
-
-                            if (lgnemailIdText.text.isEmpty) {
-                              lgnemailError = "Email is required";
-                            } else if (!RegExp(
-                                    r'^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$')
-                                .hasMatch(lgnemailIdText.text)) {
-                              lgnemailError = "Enter a valid email address";
-                            }
-
-                            // Phone validation
-                            if (phoneNoText.text.isEmpty) {
-                              phoneError = "Phone number is required";
-                            } else if (phoneNoText.text.length < 10) {
-                              phoneError =
-                                  "Phone number must be at least 10 digits";
-                            } else if (phoneNoText.text.length > 10) {
-                              phoneError =
-                                  "Phone number cannot be more than 10 digits";
-                            }
-
-                            // Date of birth validation
-                            if (_dateController.text.isEmpty) {
-                              dobError = "Date of birth is required";
-                            }
-
-                            // Password validation
-                            if (passText.text.isEmpty) {
-                              passError = "Password is required";
-                            } else if (passText.text.length < 6) {
-                              passError =
-                                  "Password must be at least 6 characters";
-                            }
-
-                            // Proceed if no errors
-                            if (emailError == null &&
-                                lgnemailError == null &&
-                                phoneError == null &&
-                                passError == null &&
-                                dobError == null &&
-                                firstNameError == null &&
-                                lastNameError == null &&
-                                customerIdError == null &&
-                                cityError == null &&
-                                stateError == null &&
-                                zipError == null &&
-                                addressError == null) {
-                              // Proceed to next screen or save data
-                              // Navigator.push(context, MaterialPageRoute(builder: (context) => MyCartPage(myCartId: '')));
-                            }
-                          });
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Color(0xFF9ECF9A),
-                            borderRadius: BorderRadius.circular(50),
-                            border:
-                                Border.all(color: Color(0xFF9ECF9A), width: 1),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.1),
-                                blurRadius: 3,
-                                spreadRadius: 1,
-                                offset: Offset(0, 2),
-                              ),
-                            ],
-                          ),
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 15, vertical: 7),
-                          child: Center(
-                            child: Text(
-                              "Save",
-                              style: GoogleFonts.poppins(
-                                color: Colors.white,
-                                fontSize: 13,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
+                    const SizedBox(
+                      height: 20,
                     ),
                   ],
-                ),
+                )),
               ),
-              SizedBox(
-                height: 20,
-              ),
-            ],
-          )),
-        ),
-      ),
-      bottomNavigationBar: CustomBottomNavBar(selectedIndex: 0),
+            ),
+      bottomNavigationBar: const CustomBottomNavBar(selectedIndex: -1),
     );
   }
 
