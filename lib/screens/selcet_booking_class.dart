@@ -31,7 +31,6 @@ class SelcetBookingClassState extends State<SelcetBookingClass> {
   bool isLoading = false; // For loading the dropdown items
   List<dynamic> _fetchedTeesheets = []; // Store the raw fetched data
   Map<String, dynamic>? _selectedTeesheet;
-  String profilePic = ""; // Placeholder for profile picture URL
 
   @override
   void initState() {
@@ -64,7 +63,6 @@ class SelcetBookingClassState extends State<SelcetBookingClass> {
 
       if (response.statusCode == 200) {
         final dynamic data = jsonDecode(response.body);
-        String? storedPic = await secureStorage.read(key: 'golfCourseLogo');
 
         if (data is Map<String, dynamic> && data['data'] is List) {
           setState(() {
@@ -73,7 +71,6 @@ class SelcetBookingClassState extends State<SelcetBookingClass> {
             dropdownItems = _fetchedTeesheets
                 .map<String>((t) => t['name']?.toString() ?? 'Unnamed Teesheet')
                 .toList();
-            profilePic = storedPic ?? '';
           });
         } else {
           _showMessage('Invalid response structure');
@@ -128,6 +125,22 @@ class SelcetBookingClassState extends State<SelcetBookingClass> {
                         closeDropdown();
                       });
                       print("Selected item: $item");
+                      final selectedObject = _fetchedTeesheets.firstWhere(
+                        (element) => element['name'] == item,
+                        orElse: () => null,
+                      );
+                      print(selectedObject["golfCourseLogo"]);
+                      //change sec to the selected teesheet logo
+                      secureStorage.write(
+                          key: 'golfCourseLogo',
+                          value: selectedObject?['golfCourseLogo'] ?? '');
+                      secureStorage.write(
+                          key: 'golfCourseName',
+                          value: selectedObject?['name'] ?? '');
+                      secureStorage.write(
+                          key: 'golfCourseSmallLogo',
+                          value: selectedObject?['golfCourseSmallLogo'] ?? '');
+
                       navigateToDynamicPage(item);
                     },
                     child: Padding(
@@ -293,14 +306,26 @@ class SelcetBookingClassState extends State<SelcetBookingClass> {
                         ),
                       ),
                     ),
-                    Image(
-                      image: profilePic.isNotEmpty
-                          ? NetworkImage(profilePic)
-                          : const AssetImage('assets/images/golf_ground.png')
-                              as ImageProvider,
-                      fit: BoxFit.cover,
-                      width: 100,
-                      height: 100,
+                    FutureBuilder<String?>(
+                      future: secureStorage.read(key: 'golfCourseLogo'),
+                      builder: (context, snapshot) {
+                        final url = snapshot.data ?? '';
+                        if (url.isNotEmpty) {
+                          return Image.network(
+                            url,
+                            fit: BoxFit.cover,
+                            width: 100,
+                            height: 100,
+                          );
+                        } else {
+                          return Image.asset(
+                            'assets/images/golf_ground.png',
+                            fit: BoxFit.cover,
+                            width: 100,
+                            height: 100,
+                          );
+                        }
+                      },
                     ),
                     const SizedBox(
                       height: 10,

@@ -58,6 +58,7 @@ class MyEditPageState extends State<MyEditPage> {
     phoneNoText.dispose();
     super.dispose();
   }
+
   @override
   void initState() {
     super.initState();
@@ -65,10 +66,12 @@ class MyEditPageState extends State<MyEditPage> {
     _selectedDate = now;
     _dateController.text = DateFormat("MMM dd, yyyy").format(now);
   }
+
   void _showMessage(String message) {
     ScaffoldMessenger.of(context)
         .showSnackBar(SnackBar(content: Text(message)));
   }
+
   void _showDatePicker(BuildContext context) {
     showGeneralDialog(
       context: context,
@@ -80,7 +83,8 @@ class MyEditPageState extends State<MyEditPage> {
         const begin = Offset(0.0, -1.0);
         const end = Offset.zero;
         const curve = Curves.easeInOut;
-        var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+        var tween =
+            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
         return SlideTransition(position: animation.drive(tween), child: child);
       },
       pageBuilder: (BuildContext buildContext, Animation<double> animation,
@@ -118,7 +122,7 @@ class MyEditPageState extends State<MyEditPage> {
                     headerStyle: DateRangePickerHeaderStyle(
                       backgroundColor: Colors.transparent,
                       textStyle: GoogleFonts.poppins(
-                        color:  Color(0xFF3F4B4B),
+                        color: Color(0xFF3F4B4B),
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
                       ),
@@ -135,12 +139,13 @@ class MyEditPageState extends State<MyEditPage> {
                     children: [
                       TextButton(
                         onPressed: () {
-                          setState(() => isDateFieldFocused = false); // Reset border
+                          setState(
+                              () => isDateFieldFocused = false); // Reset border
                           Navigator.pop(context);
                         },
                         style: TextButton.styleFrom(
-                          padding:
-                          const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 0),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20),
                             side: const BorderSide(
@@ -160,8 +165,8 @@ class MyEditPageState extends State<MyEditPage> {
                       TextButton(
                         onPressed: () {
                           if (_selectedDate != null) {
-                            final formattedDate =
-                            DateFormat("MMM dd, yyyy").format(_selectedDate!);
+                            final formattedDate = DateFormat("MMM dd, yyyy")
+                                .format(_selectedDate!);
                             setState(() {
                               _dateController.text = formattedDate;
                               isDateFieldFocused = false; // Reset border
@@ -171,8 +176,8 @@ class MyEditPageState extends State<MyEditPage> {
                         },
                         style: TextButton.styleFrom(
                           backgroundColor: const Color(0xFF9ECF9A),
-                          padding:
-                          const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 0),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20),
                             side: const BorderSide(
@@ -337,7 +342,8 @@ class MyEditPageState extends State<MyEditPage> {
                         });
                       },
                       child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 8),
                         decoration: const BoxDecoration(
                           border: Border(
                             bottom: BorderSide(
@@ -358,7 +364,9 @@ class MyEditPageState extends State<MyEditPage> {
                               ),
                             ),
                             Icon(
-                              _isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+                              _isExpanded
+                                  ? Icons.keyboard_arrow_up
+                                  : Icons.keyboard_arrow_down,
                               size: 22,
                               color: const Color(0xFF669933),
                             ),
@@ -382,7 +390,8 @@ class MyEditPageState extends State<MyEditPage> {
                               Expanded(
                                 child: Text(
                                   customerIdError!,
-                                  style: const TextStyle(color: Colors.red, fontSize: 12),
+                                  style: const TextStyle(
+                                      color: Colors.red, fontSize: 12),
                                   textAlign: TextAlign.start,
                                 ),
                               ),
@@ -401,14 +410,18 @@ class MyEditPageState extends State<MyEditPage> {
                                 _buildHalfField("First Name", fullNmText),
                                 if (firstNameError != null)
                                   Padding(
-                                    padding: const EdgeInsets.only(left: 12.0, top: 5),
+                                    padding: const EdgeInsets.only(
+                                        left: 12.0, top: 5),
                                     child: Row(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Expanded(
                                           child: Text(
                                             firstNameError!,
-                                            style: const TextStyle(color: Colors.red, fontSize: 12),
+                                            style: const TextStyle(
+                                                color: Colors.red,
+                                                fontSize: 12),
                                             textAlign: TextAlign.start,
                                           ),
                                         ),
@@ -418,7 +431,9 @@ class MyEditPageState extends State<MyEditPage> {
                               ],
                             ),
                           ),
-                          SizedBox(width: 4,),
+                          SizedBox(
+                            width: 4,
+                          ),
                           SizedBox(
                             width: MediaQuery.of(context).size.width * 0.44,
                             child: Column(
@@ -427,14 +442,18 @@ class MyEditPageState extends State<MyEditPage> {
                                 _buildHalfField("Last Name", lastNmText),
                                 if (lastNameError != null)
                                   Padding(
-                                    padding: const EdgeInsets.only(left: 12.0, top: 5),
+                                    padding: const EdgeInsets.only(
+                                        left: 12.0, top: 5),
                                     child: Row(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Expanded(
                                           child: Text(
                                             lastNameError!,
-                                            style: const TextStyle(color: Colors.red, fontSize: 12),
+                                            style: const TextStyle(
+                                                color: Colors.red,
+                                                fontSize: 12),
                                             textAlign: TextAlign.start,
                                           ),
                                         ),
@@ -459,7 +478,8 @@ class MyEditPageState extends State<MyEditPage> {
                               Expanded(
                                 child: Text(
                                   emailError!,
-                                  style: const TextStyle(color: Colors.red, fontSize: 12),
+                                  style: const TextStyle(
+                                      color: Colors.red, fontSize: 12),
                                   textAlign: TextAlign.start,
                                 ),
                               ),
@@ -479,7 +499,8 @@ class MyEditPageState extends State<MyEditPage> {
                               Expanded(
                                 child: Text(
                                   phoneError!,
-                                  style: const TextStyle(color: Colors.red, fontSize: 12),
+                                  style: const TextStyle(
+                                      color: Colors.red, fontSize: 12),
                                   textAlign: TextAlign.start,
                                 ),
                               ),
@@ -503,7 +524,9 @@ class MyEditPageState extends State<MyEditPage> {
                             ),
                           ],
                           border: Border.all(
-                            color: isDateFieldFocused ? Color(0xFF9ECF9A) : const Color(0xFFB2C1C0),
+                            color: isDateFieldFocused
+                                ? Color(0xFF9ECF9A)
+                                : const Color(0xFFB2C1C0),
                             width: 1,
                           ),
                         ),
@@ -517,7 +540,8 @@ class MyEditPageState extends State<MyEditPage> {
                               _showDatePicker(context);
                             },
                             child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 12.8),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 15, vertical: 12.8),
                               decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(50),
@@ -529,17 +553,17 @@ class MyEditPageState extends State<MyEditPage> {
                                 ],
                               ),
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
                                     _dateController.text.isNotEmpty
                                         ? _dateController.text
                                         : "Select Date",
                                     style: GoogleFonts.poppins(
-                                      color: Color(0xFF244065),
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w600
-                                    ),
+                                        color: Color(0xFF244065),
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600),
                                   ),
                                   const Icon(
                                     Icons.calendar_month_outlined,
@@ -561,7 +585,8 @@ class MyEditPageState extends State<MyEditPage> {
                               Expanded(
                                 child: Text(
                                   dobError!,
-                                  style: const TextStyle(color: Colors.red, fontSize: 12),
+                                  style: const TextStyle(
+                                      color: Colors.red, fontSize: 12),
                                   textAlign: TextAlign.start,
                                 ),
                               ),
@@ -581,7 +606,8 @@ class MyEditPageState extends State<MyEditPage> {
                               Expanded(
                                 child: Text(
                                   addressError!,
-                                  style: const TextStyle(color: Colors.red, fontSize: 12),
+                                  style: const TextStyle(
+                                      color: Colors.red, fontSize: 12),
                                   textAlign: TextAlign.start,
                                 ),
                               ),
@@ -602,14 +628,18 @@ class MyEditPageState extends State<MyEditPage> {
                                 _buildHalfField("City", cityController),
                                 if (cityError != null)
                                   Padding(
-                                    padding: const EdgeInsets.only(left: 12.0, top: 5),
+                                    padding: const EdgeInsets.only(
+                                        left: 12.0, top: 5),
                                     child: Row(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Expanded(
                                           child: Text(
                                             cityError!,
-                                            style: const TextStyle(color: Colors.red, fontSize: 12),
+                                            style: const TextStyle(
+                                                color: Colors.red,
+                                                fontSize: 12),
                                             textAlign: TextAlign.start,
                                           ),
                                         ),
@@ -627,14 +657,18 @@ class MyEditPageState extends State<MyEditPage> {
                                 _buildHalfField("State", stateController),
                                 if (stateError != null)
                                   Padding(
-                                    padding: const EdgeInsets.only(left: 12.0, top: 5),
+                                    padding: const EdgeInsets.only(
+                                        left: 12.0, top: 5),
                                     child: Row(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Expanded(
                                           child: Text(
                                             stateError!,
-                                            style: const TextStyle(color: Colors.red, fontSize: 12),
+                                            style: const TextStyle(
+                                                color: Colors.red,
+                                                fontSize: 12),
                                             textAlign: TextAlign.start,
                                           ),
                                         ),
@@ -652,14 +686,18 @@ class MyEditPageState extends State<MyEditPage> {
                                 _buildHalfField("Zip", zipController),
                                 if (zipError != null)
                                   Padding(
-                                    padding: const EdgeInsets.only(left: 12.0, top: 5),
+                                    padding: const EdgeInsets.only(
+                                        left: 12.0, top: 5),
                                     child: Row(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Expanded(
                                           child: Text(
                                             zipError!,
-                                            style: const TextStyle(color: Colors.red, fontSize: 12),
+                                            style: const TextStyle(
+                                                color: Colors.red,
+                                                fontSize: 12),
                                             textAlign: TextAlign.start,
                                           ),
                                         ),
@@ -672,134 +710,10 @@ class MyEditPageState extends State<MyEditPage> {
                         ],
                       ),
                       const SizedBox(height: 15),
-
                     ],
                   ],
                 ),
               ),
-              Container(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          _isLoginInfo = !_isLoginInfo;
-                        });
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                        decoration: const BoxDecoration(
-                          border: Border(
-                            bottom: BorderSide(
-                              color: Color(0xFFB2C1C0),
-                              width: 1,
-                            ),
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              "Login information",
-                              style: GoogleFonts.poppins(
-                                color: const Color(0xFF244065),
-                                fontWeight: FontWeight.w600,
-                                fontSize: 14,
-                              ),
-                            ),
-                            Icon(
-                              _isLoginInfo ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
-                              size: 22,
-                              color: const Color(0xFF669933),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 15),
-                    if(_isLoginInfo) ...[
-                      _buildLabel("Email"),
-                      SizedBox(height: 10),
-                      _buildTextField(lgnemailIdText, isEmail: true),
-                      if (lgnemailError != null)
-                        Padding(
-                          padding: const EdgeInsets.only(left: 12.0, top: 5),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  lgnemailError!,
-                                  style: const TextStyle(color: Colors.red, fontSize: 12),
-                                  textAlign: TextAlign.start,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      const SizedBox(height: 15),
-                      _buildLabel("Password"),
-                      const SizedBox(height: 10),
-                      _buildTextField(
-                        passText,
-                        isPassword: true,
-                        obscureText: !_isPassVisible,
-                        onToggleVisibility: () {
-                          setState(() {
-                            _isPassVisible = !_isPassVisible;
-                          });
-                        },
-
-                      ),
-                      if (passError != null && passText.text.length < 6)
-                        Padding(
-                          padding: const EdgeInsets.only(left: 12.0, top: 5),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  passError!,
-                                  style: const TextStyle(color: Colors.red, fontSize: 12),
-                                  textAlign: TextAlign.start,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      const SizedBox(height: 15),
-                    ],
-                  ],
-                ),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              TextButton(
-                onPressed: () {
-                  // Navigator.push(context,
-                  //     MaterialPageRoute(builder: (context)=> SignupPage()));
-                },
-                style: ButtonStyle(
-                  padding: MaterialStateProperty.all(EdgeInsets.zero),
-                  minimumSize: MaterialStateProperty.all(Size.zero),
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  overlayColor: MaterialStateProperty.all(Colors.transparent),
-                ),
-                child: Text(
-                  "Update your password",
-                  style: GoogleFonts.poppins(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: const Color(0xFF669933),
-                    height: 1.0,
-                    decoration: TextDecoration.underline,
-                    decorationColor: Color(0xFF669933), // underline color same as text
-                  ),
-                ),
-              ),
-              SizedBox(height: 15,),
               Container(
                 padding: EdgeInsets.only(bottom: 10),
                 child: Row(
@@ -809,7 +723,8 @@ class MyEditPageState extends State<MyEditPage> {
                     Container(
                       child: GestureDetector(
                         onTap: () {
-                          print("Clear button tapped!"); // Your onTap action here
+                          print(
+                              "Clear button tapped!"); // Your onTap action here
                           // You might want to call a function to clear form fields, etc.
                           setState(() {
                             customerIdText.clear();
@@ -843,8 +758,8 @@ class MyEditPageState extends State<MyEditPage> {
                           decoration: BoxDecoration(
                             color: Color(0xFFFFFFFF),
                             borderRadius: BorderRadius.circular(50),
-                            border: Border.all(
-                                color: Color(0xFF9ECF9A), width: 1),
+                            border:
+                                Border.all(color: Color(0xFF9ECF9A), width: 1),
                             boxShadow: [
                               BoxShadow(
                                 color: Colors.black.withOpacity(0.1),
@@ -854,8 +769,8 @@ class MyEditPageState extends State<MyEditPage> {
                               ),
                             ],
                           ),
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 15, vertical: 7),
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 15, vertical: 7),
                           child: Center(
                             child: Text(
                               "Clear",
@@ -874,29 +789,42 @@ class MyEditPageState extends State<MyEditPage> {
                         onTap: () {
                           setState(() {
                             // Reset all errors
-                            emailError = lgnemailError = phoneError = passError = dobError =
-                                firstNameError = lastNameError = customerIdError =
-                                addressError = cityError = stateError = zipError = null;
+                            emailError = lgnemailError = phoneError =
+                                passError = dobError = firstNameError =
+                                    lastNameError = customerIdError =
+                                        addressError = cityError =
+                                            stateError = zipError = null;
 
                             // Validation
-                            if (customerIdText.text.isEmpty) customerIdError = "Customer ID is required";
-                            if (fullNmText.text.isEmpty) firstNameError = "First Name is required";
-                            if (lastNmText.text.isEmpty) lastNameError = "Last Name is required";
-                            if (cityController.text.isEmpty) cityError = "City Name is required";
-                            if (stateController.text.isEmpty) stateError = "State Name is required";
-                            if (addressController.text.isEmpty) addressError = "Address is required";
-                            if (zipController.text.isEmpty) zipError = "Zip code is required";
+                            if (customerIdText.text.isEmpty)
+                              customerIdError = "Customer ID is required";
+                            if (fullNmText.text.isEmpty)
+                              firstNameError = "First Name is required";
+                            if (lastNmText.text.isEmpty)
+                              lastNameError = "Last Name is required";
+                            if (cityController.text.isEmpty)
+                              cityError = "City Name is required";
+                            if (stateController.text.isEmpty)
+                              stateError = "State Name is required";
+                            if (addressController.text.isEmpty)
+                              addressError = "Address is required";
+                            if (zipController.text.isEmpty)
+                              zipError = "Zip code is required";
 
                             // Email validation (lowercase, must have '@' and domain like '.com')
                             if (emailIdText.text.isEmpty) {
                               emailError = "Email is required";
-                            } else if (!RegExp(r'^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$').hasMatch(emailIdText.text)) {
+                            } else if (!RegExp(
+                                    r'^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$')
+                                .hasMatch(emailIdText.text)) {
                               emailError = "Enter a valid email address";
                             }
 
                             if (lgnemailIdText.text.isEmpty) {
                               lgnemailError = "Email is required";
-                            } else if (!RegExp(r'^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$').hasMatch(lgnemailIdText.text)) {
+                            } else if (!RegExp(
+                                    r'^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$')
+                                .hasMatch(lgnemailIdText.text)) {
                               lgnemailError = "Enter a valid email address";
                             }
 
@@ -904,9 +832,11 @@ class MyEditPageState extends State<MyEditPage> {
                             if (phoneNoText.text.isEmpty) {
                               phoneError = "Phone number is required";
                             } else if (phoneNoText.text.length < 10) {
-                              phoneError = "Phone number must be at least 10 digits";
+                              phoneError =
+                                  "Phone number must be at least 10 digits";
                             } else if (phoneNoText.text.length > 10) {
-                              phoneError = "Phone number cannot be more than 10 digits";
+                              phoneError =
+                                  "Phone number cannot be more than 10 digits";
                             }
 
                             // Date of birth validation
@@ -918,13 +848,23 @@ class MyEditPageState extends State<MyEditPage> {
                             if (passText.text.isEmpty) {
                               passError = "Password is required";
                             } else if (passText.text.length < 6) {
-                              passError = "Password must be at least 6 characters";
+                              passError =
+                                  "Password must be at least 6 characters";
                             }
 
                             // Proceed if no errors
-                            if (emailError == null && lgnemailError == null && phoneError == null && passError == null && dobError == null &&
-                                firstNameError == null && lastNameError == null && customerIdError == null &&
-                                cityError == null && stateError == null && zipError == null && addressError == null) {
+                            if (emailError == null &&
+                                lgnemailError == null &&
+                                phoneError == null &&
+                                passError == null &&
+                                dobError == null &&
+                                firstNameError == null &&
+                                lastNameError == null &&
+                                customerIdError == null &&
+                                cityError == null &&
+                                stateError == null &&
+                                zipError == null &&
+                                addressError == null) {
                               // Proceed to next screen or save data
                               // Navigator.push(context, MaterialPageRoute(builder: (context) => MyCartPage(myCartId: '')));
                             }
@@ -934,8 +874,8 @@ class MyEditPageState extends State<MyEditPage> {
                           decoration: BoxDecoration(
                             color: Color(0xFF9ECF9A),
                             borderRadius: BorderRadius.circular(50),
-                            border: Border.all(
-                                color: Color(0xFF9ECF9A), width: 1),
+                            border:
+                                Border.all(color: Color(0xFF9ECF9A), width: 1),
                             boxShadow: [
                               BoxShadow(
                                 color: Colors.black.withOpacity(0.1),
@@ -945,7 +885,8 @@ class MyEditPageState extends State<MyEditPage> {
                               ),
                             ],
                           ),
-                          padding: EdgeInsets.symmetric(horizontal: 15, vertical: 7),
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 15, vertical: 7),
                           child: Center(
                             child: Text(
                               "Save",
@@ -962,7 +903,9 @@ class MyEditPageState extends State<MyEditPage> {
                   ],
                 ),
               ),
-              SizedBox(height: 20,),
+              SizedBox(
+                height: 20,
+              ),
             ],
           )),
         ),
@@ -970,6 +913,7 @@ class MyEditPageState extends State<MyEditPage> {
       bottomNavigationBar: CustomBottomNavBar(selectedIndex: 0),
     );
   }
+
   InputDecoration _inputDecoration(String hintText) {
     return InputDecoration(
       filled: true,
@@ -996,6 +940,7 @@ class MyEditPageState extends State<MyEditPage> {
       ),
     );
   }
+
   Widget _buildLabel(String label) {
     return Container(
       alignment: Alignment.centerLeft,
@@ -1010,17 +955,18 @@ class MyEditPageState extends State<MyEditPage> {
       ),
     );
   }
+
   Widget _buildTextField(
-      TextEditingController controller, {
-        bool isEmail = false,
-        bool isLgEmail = false,
-        bool isPhone = false,
-        bool isPassword = false,
-        bool obscureText = false,
-        VoidCallback? onToggleVisibility,
-        int maxLines = 1,
-        String? errorText,
-      }) {
+    TextEditingController controller, {
+    bool isEmail = false,
+    bool isLgEmail = false,
+    bool isPhone = false,
+    bool isPassword = false,
+    bool obscureText = false,
+    VoidCallback? onToggleVisibility,
+    int maxLines = 1,
+    String? errorText,
+  }) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 5),
       child: Column(
@@ -1048,13 +994,15 @@ class MyEditPageState extends State<MyEditPage> {
               keyboardType: isEmail || isLgEmail
                   ? TextInputType.emailAddress
                   : isPhone
-                  ? TextInputType.phone
-                  : TextInputType.multiline,
+                      ? TextInputType.phone
+                      : TextInputType.multiline,
               textInputAction: TextInputAction.done,
               inputFormatters: [
                 if (isPhone) FilteringTextInputFormatter.digitsOnly,
                 if (isPhone) LengthLimitingTextInputFormatter(10),
-                if (isEmail || isLgEmail) FilteringTextInputFormatter.deny(RegExp(r'[A-Z]')), // Prevent uppercase
+                if (isEmail || isLgEmail)
+                  FilteringTextInputFormatter.deny(
+                      RegExp(r'[A-Z]')), // Prevent uppercase
               ],
               onChanged: (value) {
                 if (isEmail || isLgEmail) {
@@ -1092,23 +1040,24 @@ class MyEditPageState extends State<MyEditPage> {
                 }
               },
               maxLines: maxLines,
-              decoration: _inputDecoration(isPassword ? '**********' : '').copyWith(
+              decoration:
+                  _inputDecoration(isPassword ? '**********' : '').copyWith(
                 suffixIcon: isPassword
                     ? IconButton(
-                  icon: Icon(
-                    obscureText ? Icons.visibility_off : Icons.visibility,
-                    color: const Color(0xFF648683),
-                  ),
-                  onPressed: onToggleVisibility,
-                )
+                        icon: Icon(
+                          obscureText ? Icons.visibility_off : Icons.visibility,
+                          color: const Color(0xFF648683),
+                        ),
+                        onPressed: onToggleVisibility,
+                      )
                     : const Padding(
-                  padding: EdgeInsets.only(right: 10),
-                  child: Icon(
-                    Icons.edit,
-                    color: Color(0xFF6B7280),
-                    size: 18,
-                  ),
-                ),
+                        padding: EdgeInsets.only(right: 10),
+                        child: Icon(
+                          Icons.edit,
+                          color: Color(0xFF6B7280),
+                          size: 18,
+                        ),
+                      ),
               ),
               style: GoogleFonts.poppins(
                 color: const Color(0xFF244065),
@@ -1131,7 +1080,9 @@ class MyEditPageState extends State<MyEditPage> {
       ),
     );
   }
-  Widget _buildHalfField(String label, TextEditingController controller, {String? errorText}) {
+
+  Widget _buildHalfField(String label, TextEditingController controller,
+      {String? errorText}) {
     return SizedBox(
       width: MediaQuery.of(context).size.width * 0.46,
       child: Column(
@@ -1159,7 +1110,8 @@ class MyEditPageState extends State<MyEditPage> {
               controller: controller,
               textInputAction: TextInputAction.done,
               inputFormatters: [
-                LengthLimitingTextInputFormatter(30), // Add this line for the 30-letter limit
+                LengthLimitingTextInputFormatter(
+                    30), // Add this line for the 30-letter limit
               ],
               style: GoogleFonts.poppins(
                 color: const Color(0xFF244065),

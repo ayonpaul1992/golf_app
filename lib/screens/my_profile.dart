@@ -10,7 +10,7 @@ import 'package:gulf_app/components/custom_bottom_nav_bar.dart';
 import 'my_reservation.dart';
 import 'my_transaction.dart';
 import 'my_setting.dart';
-import '../extras/edit_profile.dart';
+import 'edit_profile.dart';
 
 class MyProfilePage extends StatefulWidget {
   final String myPfId;

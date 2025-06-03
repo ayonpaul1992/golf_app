@@ -85,13 +85,15 @@ class NotificationPageState extends State<NotificationPage> {
                     )),
               ),
               Container(
-                padding: EdgeInsets.only(left: 10, right: 10, top: 15,bottom: 20),
+                padding:
+                    EdgeInsets.only(left: 10, right: 10, top: 15, bottom: 20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   spacing: 10,
                   children: [
                     Container(
-                      padding: EdgeInsets.only(top: 10,left: 10,right: 30,bottom: 10),
+                      padding: EdgeInsets.only(
+                          top: 10, left: 10, right: 30, bottom: 10),
                       width: double.infinity,
                       decoration: BoxDecoration(
                         border:
@@ -123,45 +125,62 @@ class NotificationPageState extends State<NotificationPage> {
                                 borderRadius: BorderRadius.circular(50),
                               ),
                               child: Center(
-                                child: Icon(Icons.campaign,color: Color(0xFFFFFFFF),size: 20,),
+                                child: Icon(
+                                  Icons.campaign,
+                                  color: Color(0xFFFFFFFF),
+                                  size: 20,
+                                ),
                               ),
                             ),
-                            SizedBox(width: 7,),
+                            SizedBox(
+                              width: 7,
+                            ),
                             Column(
                               children: [
                                 SizedBox(
                                   width: 270,
-                                  child: Text("Please complete the reservation process today.",
-                                  style: GoogleFonts.poppins(
-                                    color: Color(0xFF244065),
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w600,
-                                  ),
+                                  child: Text(
+                                    "Please complete the reservation process today.",
+                                    style: GoogleFonts.poppins(
+                                      color: Color(0xFF244065),
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w600,
+                                    ),
                                   ),
                                 ),
-                                SizedBox(height: 5,),
+                                SizedBox(
+                                  height: 5,
+                                ),
                                 SizedBox(
                                   width: 270,
-                                  child: Text("Your time, 6:30AM, will be held for 5 minutes. You have 00:00 remaining.",
+                                  child: Text(
+                                    "Your time, 6:30AM, will be held for 5 minutes. You have 00:00 remaining.",
                                     style: GoogleFonts.poppins(
                                       color: Color(0xFF6E7373),
                                       fontSize: 13,
                                       fontWeight: FontWeight.w400,
                                     ),
+                                  ),
                                 ),
+                                SizedBox(
+                                  height: 5,
                                 ),
-                                SizedBox(height: 5,),
                                 SizedBox(
                                   width: 270,
                                   child: Wrap(
                                     children: [
-                                      Icon(Icons.access_time_sharp,color: Color(0xFF6E7373),size: 17),
-                                      SizedBox(width: 1.5,),
-                                      Text("10 min ago",style: GoogleFonts.poppins(
-                                        color: Color(0xFF6E7373),
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w600
-                                      ),)
+                                      Icon(Icons.access_time_sharp,
+                                          color: Color(0xFF6E7373), size: 17),
+                                      SizedBox(
+                                        width: 1.5,
+                                      ),
+                                      Text(
+                                        "10 min ago",
+                                        style: GoogleFonts.poppins(
+                                            color: Color(0xFF6E7373),
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w600),
+                                      )
                                     ],
                                   ),
                                 )
@@ -172,11 +191,12 @@ class NotificationPageState extends State<NotificationPage> {
                       ),
                     ),
                     Container(
-                      padding: EdgeInsets.only(top: 10,left: 10,right: 30,bottom: 10),
+                      padding: EdgeInsets.only(
+                          top: 10, left: 10, right: 30, bottom: 10),
                       width: double.infinity,
                       decoration: BoxDecoration(
                         border:
-                        Border.all(color: Color(0xFF9ECF9A), width: 1.5),
+                            Border.all(color: Color(0xFF9ECF9A), width: 1.5),
                         borderRadius: BorderRadius.circular(15),
                         boxShadow: [
                           BoxShadow(
@@ -204,15 +224,22 @@ class NotificationPageState extends State<NotificationPage> {
                                 borderRadius: BorderRadius.circular(50),
                               ),
                               child: Center(
-                                child: Icon(Icons.campaign,color: Color(0xFFFFFFFF),size: 20,),
+                                child: Icon(
+                                  Icons.campaign,
+                                  color: Color(0xFFFFFFFF),
+                                  size: 20,
+                                ),
                               ),
                             ),
-                            SizedBox(width: 7,),
+                            SizedBox(
+                              width: 7,
+                            ),
                             Column(
                               children: [
                                 SizedBox(
                                   width: 270,
-                                  child: Text("Please arrive 15 minutes early to check in.",
+                                  child: Text(
+                                    "Please arrive 15 minutes early to check in.",
                                     style: GoogleFonts.poppins(
                                       color: Color(0xFF244065),
                                       fontSize: 13,
@@ -220,10 +247,13 @@ class NotificationPageState extends State<NotificationPage> {
                                     ),
                                   ),
                                 ),
-                                SizedBox(height: 5,),
+                                SizedBox(
+                                  height: 5,
+                                ),
                                 SizedBox(
                                   width: 270,
-                                  child: Text("Cart and range balls are included.",
+                                  child: Text(
+                                    "Cart and range balls are included.",
                                     style: GoogleFonts.poppins(
                                       color: Color(0xFF6E7373),
                                       fontSize: 13,
@@ -231,18 +261,25 @@ class NotificationPageState extends State<NotificationPage> {
                                     ),
                                   ),
                                 ),
-                                SizedBox(height: 5,),
+                                SizedBox(
+                                  height: 5,
+                                ),
                                 SizedBox(
                                   width: 270,
                                   child: Wrap(
                                     children: [
-                                      Icon(Icons.access_time_sharp,color: Color(0xFF6E7373),size: 17),
-                                      SizedBox(width: 1.5,),
-                                      Text("1 hour 15 min ago",style: GoogleFonts.poppins(
-                                          color: Color(0xFF6E7373),
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w600
-                                      ),)
+                                      Icon(Icons.access_time_sharp,
+                                          color: Color(0xFF6E7373), size: 17),
+                                      SizedBox(
+                                        width: 1.5,
+                                      ),
+                                      Text(
+                                        "1 hour 15 min ago",
+                                        style: GoogleFonts.poppins(
+                                            color: Color(0xFF6E7373),
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w600),
+                                      )
                                     ],
                                   ),
                                 )
@@ -253,11 +290,12 @@ class NotificationPageState extends State<NotificationPage> {
                       ),
                     ),
                     Container(
-                      padding: EdgeInsets.only(top: 10,left: 10,right: 30,bottom: 10),
+                      padding: EdgeInsets.only(
+                          top: 10, left: 10, right: 30, bottom: 10),
                       width: double.infinity,
                       decoration: BoxDecoration(
                         border:
-                        Border.all(color: Color(0xFF9ECF9A), width: 1.5),
+                            Border.all(color: Color(0xFF9ECF9A), width: 1.5),
                         borderRadius: BorderRadius.circular(15),
                         boxShadow: [
                           BoxShadow(
@@ -285,15 +323,22 @@ class NotificationPageState extends State<NotificationPage> {
                                 borderRadius: BorderRadius.circular(50),
                               ),
                               child: Center(
-                                child: Icon(Icons.campaign,color: Color(0xFFFFFFFF),size: 20,),
+                                child: Icon(
+                                  Icons.campaign,
+                                  color: Color(0xFFFFFFFF),
+                                  size: 20,
+                                ),
                               ),
                             ),
-                            SizedBox(width: 7,),
+                            SizedBox(
+                              width: 7,
+                            ),
                             Column(
                               children: [
                                 SizedBox(
                                   width: 270,
-                                  child: Text("Please complete the reservation process today.",
+                                  child: Text(
+                                    "Please complete the reservation process today.",
                                     style: GoogleFonts.poppins(
                                       color: Color(0xFF244065),
                                       fontSize: 13,
@@ -301,10 +346,13 @@ class NotificationPageState extends State<NotificationPage> {
                                     ),
                                   ),
                                 ),
-                                SizedBox(height: 5,),
+                                SizedBox(
+                                  height: 5,
+                                ),
                                 SizedBox(
                                   width: 270,
-                                  child: Text("Your time, 6:30AM, will be held for 5 minutes. You have 00:00 remaining.",
+                                  child: Text(
+                                    "Your time, 6:30AM, will be held for 5 minutes. You have 00:00 remaining.",
                                     style: GoogleFonts.poppins(
                                       color: Color(0xFF6E7373),
                                       fontSize: 13,
@@ -312,18 +360,25 @@ class NotificationPageState extends State<NotificationPage> {
                                     ),
                                   ),
                                 ),
-                                SizedBox(height: 5,),
+                                SizedBox(
+                                  height: 5,
+                                ),
                                 SizedBox(
                                   width: 270,
                                   child: Wrap(
                                     children: [
-                                      Icon(Icons.access_time_sharp,color: Color(0xFF6E7373),size: 17),
-                                      SizedBox(width: 1.5,),
-                                      Text("10 min ago",style: GoogleFonts.poppins(
-                                          color: Color(0xFF6E7373),
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w600
-                                      ),)
+                                      Icon(Icons.access_time_sharp,
+                                          color: Color(0xFF6E7373), size: 17),
+                                      SizedBox(
+                                        width: 1.5,
+                                      ),
+                                      Text(
+                                        "10 min ago",
+                                        style: GoogleFonts.poppins(
+                                            color: Color(0xFF6E7373),
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w600),
+                                      )
                                     ],
                                   ),
                                 )
@@ -334,11 +389,12 @@ class NotificationPageState extends State<NotificationPage> {
                       ),
                     ),
                     Container(
-                      padding: EdgeInsets.only(top: 10,left: 10,right: 30,bottom: 10),
+                      padding: EdgeInsets.only(
+                          top: 10, left: 10, right: 30, bottom: 10),
                       width: double.infinity,
                       decoration: BoxDecoration(
                         border:
-                        Border.all(color: Color(0xFF9ECF9A), width: 1.5),
+                            Border.all(color: Color(0xFF9ECF9A), width: 1.5),
                         borderRadius: BorderRadius.circular(15),
                         boxShadow: [
                           BoxShadow(
@@ -366,15 +422,22 @@ class NotificationPageState extends State<NotificationPage> {
                                 borderRadius: BorderRadius.circular(50),
                               ),
                               child: Center(
-                                child: Icon(Icons.campaign,color: Color(0xFFFFFFFF),size: 20,),
+                                child: Icon(
+                                  Icons.campaign,
+                                  color: Color(0xFFFFFFFF),
+                                  size: 20,
+                                ),
                               ),
                             ),
-                            SizedBox(width: 7,),
+                            SizedBox(
+                              width: 7,
+                            ),
                             Column(
                               children: [
                                 SizedBox(
                                   width: 270,
-                                  child: Text("Please arrive 15 minutes early to check in.",
+                                  child: Text(
+                                    "Please arrive 15 minutes early to check in.",
                                     style: GoogleFonts.poppins(
                                       color: Color(0xFF244065),
                                       fontSize: 13,
@@ -382,10 +445,13 @@ class NotificationPageState extends State<NotificationPage> {
                                     ),
                                   ),
                                 ),
-                                SizedBox(height: 5,),
+                                SizedBox(
+                                  height: 5,
+                                ),
                                 SizedBox(
                                   width: 270,
-                                  child: Text("Cart and range balls are included.",
+                                  child: Text(
+                                    "Cart and range balls are included.",
                                     style: GoogleFonts.poppins(
                                       color: Color(0xFF6E7373),
                                       fontSize: 13,
@@ -393,18 +459,25 @@ class NotificationPageState extends State<NotificationPage> {
                                     ),
                                   ),
                                 ),
-                                SizedBox(height: 5,),
+                                SizedBox(
+                                  height: 5,
+                                ),
                                 SizedBox(
                                   width: 270,
                                   child: Wrap(
                                     children: [
-                                      Icon(Icons.access_time_sharp,color: Color(0xFF6E7373),size: 17),
-                                      SizedBox(width: 1.5,),
-                                      Text("1 hour 15 min ago",style: GoogleFonts.poppins(
-                                          color: Color(0xFF6E7373),
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w600
-                                      ),)
+                                      Icon(Icons.access_time_sharp,
+                                          color: Color(0xFF6E7373), size: 17),
+                                      SizedBox(
+                                        width: 1.5,
+                                      ),
+                                      Text(
+                                        "1 hour 15 min ago",
+                                        style: GoogleFonts.poppins(
+                                            color: Color(0xFF6E7373),
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w600),
+                                      )
                                     ],
                                   ),
                                 )
@@ -415,11 +488,12 @@ class NotificationPageState extends State<NotificationPage> {
                       ),
                     ),
                     Container(
-                      padding: EdgeInsets.only(top: 10,left: 10,right: 30,bottom: 10),
+                      padding: EdgeInsets.only(
+                          top: 10, left: 10, right: 30, bottom: 10),
                       width: double.infinity,
                       decoration: BoxDecoration(
                         border:
-                        Border.all(color: Color(0xFF9ECF9A), width: 1.5),
+                            Border.all(color: Color(0xFF9ECF9A), width: 1.5),
                         borderRadius: BorderRadius.circular(15),
                         boxShadow: [
                           BoxShadow(
@@ -447,15 +521,22 @@ class NotificationPageState extends State<NotificationPage> {
                                 borderRadius: BorderRadius.circular(50),
                               ),
                               child: Center(
-                                child: Icon(Icons.campaign,color: Color(0xFFFFFFFF),size: 20,),
+                                child: Icon(
+                                  Icons.campaign,
+                                  color: Color(0xFFFFFFFF),
+                                  size: 20,
+                                ),
                               ),
                             ),
-                            SizedBox(width: 7,),
+                            SizedBox(
+                              width: 7,
+                            ),
                             Column(
                               children: [
                                 SizedBox(
                                   width: 270,
-                                  child: Text("Please complete the reservation process today.",
+                                  child: Text(
+                                    "Please complete the reservation process today.",
                                     style: GoogleFonts.poppins(
                                       color: Color(0xFF244065),
                                       fontSize: 13,
@@ -463,10 +544,13 @@ class NotificationPageState extends State<NotificationPage> {
                                     ),
                                   ),
                                 ),
-                                SizedBox(height: 5,),
+                                SizedBox(
+                                  height: 5,
+                                ),
                                 SizedBox(
                                   width: 270,
-                                  child: Text("Your time, 6:30AM, will be held for 5 minutes. You have 00:00 remaining.",
+                                  child: Text(
+                                    "Your time, 6:30AM, will be held for 5 minutes. You have 00:00 remaining.",
                                     style: GoogleFonts.poppins(
                                       color: Color(0xFF6E7373),
                                       fontSize: 13,
@@ -474,18 +558,25 @@ class NotificationPageState extends State<NotificationPage> {
                                     ),
                                   ),
                                 ),
-                                SizedBox(height: 5,),
+                                SizedBox(
+                                  height: 5,
+                                ),
                                 SizedBox(
                                   width: 270,
                                   child: Wrap(
                                     children: [
-                                      Icon(Icons.access_time_sharp,color: Color(0xFF6E7373),size: 17),
-                                      SizedBox(width: 1.5,),
-                                      Text("10 min ago",style: GoogleFonts.poppins(
-                                          color: Color(0xFF6E7373),
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w600
-                                      ),)
+                                      Icon(Icons.access_time_sharp,
+                                          color: Color(0xFF6E7373), size: 17),
+                                      SizedBox(
+                                        width: 1.5,
+                                      ),
+                                      Text(
+                                        "10 min ago",
+                                        style: GoogleFonts.poppins(
+                                            color: Color(0xFF6E7373),
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w600),
+                                      )
                                     ],
                                   ),
                                 )
@@ -502,7 +593,7 @@ class NotificationPageState extends State<NotificationPage> {
           ),
         ),
       ),
-      bottomNavigationBar: CustomBottomNavBar(selectedIndex: 0),
+      bottomNavigationBar: CustomBottomNavBar(selectedIndex: -1),
     );
   }
 }

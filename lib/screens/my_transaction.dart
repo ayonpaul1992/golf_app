@@ -165,10 +165,7 @@ class MyTransactionPageState extends State<MyTransactionPage> {
       ),
       drawer: CustomDrawer(
         activeTile: 'Home',
-        onTileTap: (selectedTile) {
-          //print("Navigating to $selectedTile");
-          // Handle navigation logic
-        },
+        onTileTap: (selectedTile) {},
       ),
       body: isLoading
           ? const Center(
@@ -585,7 +582,7 @@ class MyTransactionPageState extends State<MyTransactionPage> {
                     )),
                   ),
                 ),
-      bottomNavigationBar: const CustomBottomNavBar(selectedIndex: 0),
+      bottomNavigationBar: const CustomBottomNavBar(selectedIndex: -1),
     );
   }
 }
