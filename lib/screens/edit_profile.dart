@@ -342,13 +342,64 @@ class MyEditPageState extends State<MyEditPage> {
                                   Container(
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 7, vertical: 5),
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(100),
-                                      child: Image.asset(
-                                        "assets/images/profile_prsn.jpg",
-                                        width: 162,
-                                        height: 162,
-                                        fit: BoxFit.cover,
+                                    child: ClipOval(
+                                      // Use ClipOval instead of ClipRRect for perfect circle
+                                      child: FutureBuilder<String?>(
+                                        future: secureStorage.read(
+                                            key: 'profilePic'),
+                                        builder: (context, snapshot) {
+                                          if (snapshot.connectionState ==
+                                              ConnectionState.waiting) {
+                                            return const SizedBox(
+                                              width: 162,
+                                              height: 162,
+                                              child: Center(
+                                                  child:
+                                                      CircularProgressIndicator()),
+                                            );
+                                          }
+
+                                          final imageData = snapshot.data;
+
+                                          if (imageData != null &&
+                                              imageData.isNotEmpty) {
+                                            return Image.network(
+                                              imageData,
+                                              width: 162,
+                                              height: 162,
+                                              fit: BoxFit.cover,
+                                              errorBuilder:
+                                                  (context, error, stackTrace) {
+                                                return Image.asset(
+                                                  "assets/images/profile_prsn.jpg",
+                                                  width: 162,
+                                                  height: 162,
+                                                  fit: BoxFit.cover,
+                                                );
+                                              },
+                                              loadingBuilder: (context, child,
+                                                  loadingProgress) {
+                                                if (loadingProgress == null) {
+                                                  return child;
+                                                }
+                                                return const SizedBox(
+                                                  width: 162,
+                                                  height: 162,
+                                                  child: Center(
+                                                      child:
+                                                          CircularProgressIndicator()),
+                                                );
+                                              },
+                                            );
+                                          } else {
+                                            return Image.asset(
+                                              "assets/images/profile_prsn.jpg",
+                                              width: 162,
+                                              height: 162,
+                                              fit: BoxFit.cover,
+                                            );
+                                          }
+                                        },
                                       ),
                                     ),
                                   ),
@@ -777,68 +828,6 @@ class MyEditPageState extends State<MyEditPage> {
                         children: [
                           GestureDetector(
                             onTap: () {
-                              print(
-                                  "Clear button tapped!"); // Your onTap action here
-                              // You might want to call a function to clear form fields, etc.
-                              setState(() {
-                                customerIdText.clear();
-                                fullNmText.clear();
-                                lastNmText.clear();
-                                emailIdText.clear();
-                                lgnemailIdText.clear();
-                                phoneNoText.clear();
-                                _dateController.clear();
-                                addressController.clear();
-                                cityController.clear();
-                                stateController.clear();
-                                zipController.clear();
-                                passText.clear();
-
-                                customerIdError = null;
-                                firstNameError = null;
-                                lastNameError = null;
-                                emailError = null;
-                                lgnemailError = null;
-                                phoneError = null;
-                                dobError = null;
-                                addressError = null;
-                                cityError = null;
-                                stateError = null;
-                                zipError = null;
-                                passError = null;
-                              });
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: const Color(0xFFFFFFFF),
-                                borderRadius: BorderRadius.circular(50),
-                                border: Border.all(
-                                    color: const Color(0xFF9ECF9A), width: 1),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.1),
-                                    blurRadius: 3,
-                                    spreadRadius: 1,
-                                    offset: const Offset(0, 2),
-                                  ),
-                                ],
-                              ),
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 15, vertical: 7),
-                              child: Center(
-                                child: Text(
-                                  "Clear",
-                                  style: GoogleFonts.poppins(
-                                    color: const Color(0xFF244065),
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          GestureDetector(
-                            onTap: () {
                               setState(() {
                                 // Reset all errors
                                 emailError = lgnemailError = phoneError =
@@ -1048,6 +1037,9 @@ class MyEditPageState extends State<MyEditPage> {
             ),
             child: TextField(
               controller: controller,
+              //read only if it is Customer ID
+
+              readOnly: controller == customerIdText ? true : false,
               obscureText: isPassword ? obscureText : false,
               keyboardType: isEmail || isLgEmail
                   ? TextInputType.emailAddress
@@ -1108,13 +1100,22 @@ class MyEditPageState extends State<MyEditPage> {
                         ),
                         onPressed: onToggleVisibility,
                       )
-                    : const Padding(
-                        padding: EdgeInsets.only(right: 10),
-                        child: Icon(
-                          Icons.edit,
-                          color: Color(0xFF6B7280),
-                          size: 18,
-                        ),
+                    : Padding(
+                        padding: const EdgeInsets.only(right: 10),
+
+                        child: controller == customerIdText
+                            ? null
+                            : const Icon(
+                                Icons.edit,
+                                color: Color(0xFF6B7280),
+                                size: 18,
+                              ),
+
+                        // child: Icon(
+                        //   Icons.edit,
+                        //   color: Color(0xFF6B7280),
+                        //   size: 18,
+                        // ),
                       ),
               ),
               style: GoogleFonts.poppins(
