@@ -121,32 +121,6 @@ class MyCartPageState extends State<MyCartPage> {
         setState(() {
           isLoading = false;
         });
-        print('✅ Booking API Response: $data');
-
-        // print('bookingDate: $fomattedBookingDate');
-        // print('bookingTime: $bookingTime');
-        // print('golfCourseName: $golfCourseName');
-        // print('rotation: $rotation');
-        // print('holes: $holes');
-        // print('players: $players');
-        // print('carts: $carts');
-        // print('totalCartAmount: $totalCartAmount');
-        // print('totalTaxAmount: $totalTaxAmount');
-        // print('customers: $customers');
-
-        // if (data['success'] == true) {
-        //   // Handle success
-        //   // print('✅ Booking successful');
-
-        // } else {
-        //   // Handle error
-        //   print('❌ Booking failed: ${data['message']}');
-        //   ScaffoldMessenger.of(context).showSnackBar(
-        //     SnackBar(
-        //       content: Text('Booking failed'),
-        //     ),
-        //   );
-        // }
       } else {
         // Handle API error
         print('❌ API Error: ${response.body}');

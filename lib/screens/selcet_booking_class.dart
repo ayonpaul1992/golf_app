@@ -133,7 +133,7 @@ class SelcetBookingClassState extends State<SelcetBookingClass> {
                           value: selectedObject?['golfCourseLogo'] ?? '');
                       secureStorage.write(
                           key: 'golfCourseName',
-                          value: selectedObject?['name'] ?? '');
+                          value: selectedObject?['golfCourse'] ?? '');
                       secureStorage.write(
                           key: 'golfCourseSmallLogo',
                           value: selectedObject?['golfCourseSmallLogo'] ?? '');

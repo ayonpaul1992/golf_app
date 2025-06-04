@@ -60,12 +60,19 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
   bool showRideDropdown = false; // Added state for Riders dropdown visibility
   OverlayEntry? _dropdownOverlay;
   OverlayEntry? _dropdownRideOverlay;
-  bool _isDropdownVisible = false;
-  bool _isDropdownRideVisible = false;
+
   final GlobalKey _iconKey = GlobalKey(); // Key for Players dropdown
   final GlobalKey _iconKeySecond = GlobalKey(); // Key for Riders dropdown
   String userName = '';
   int selectedPlayerCount = 1;
+
+  //need array of objects for suggestions
+
+  List<Map<String, dynamic>> playerSuggestions = [];
+
+  // List<String> suggestions = []; // Holds your fetched suggestions
+  // List<String> suggestionsEmail = []; // Holds your fetched suggestions
+  Future<void>? fetchSuggestionsFuture; // To ensure fetch runs once
 
   IO.Socket? socket;
 
@@ -146,6 +153,59 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
     }
 
     _createPendingReservation();
+
+    fetchSuggestionsFuture = fetchSuggestions();
+  }
+
+  Future<void> fetchSuggestions() async {
+    try {
+      print('Fetching suggestions from API...');
+      String token = await secureStorage.read(key: 'accessToken') ?? '';
+      // golfCourse, date, and time will come from secure storage or widget properties
+
+      String golfCourse = await secureStorage.read(key: 'golfCourseName') ??
+          ''; // Replace with actual value
+      String date = DateFormat("yyyy-MM-dd").format(DateFormat("MMM dd, yyyy")
+          .parse(widget.date)); // Replace with actual value
+
+      String time = widget.time; // Replace with actual value
+
+      print(
+          'Fetching suggestions for golfCourse: $golfCourse, date: $date, time: $time');
+
+      final response = await http.get(
+        Uri.parse(
+          'https://api.dev.driverpos.io/api/v1/customer/players?golfCourse=$golfCourse&date=$date&time=$time',
+        ),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        if (data['data'] is List) {
+          if (mounted) {
+            setState(() {
+              playerSuggestions = (data['data'] as List)
+                  .map((item) => {
+                        'id': item['_id']?.toString() ?? '',
+                        'fullName': item['fullName']?.toString() ?? '',
+                        'email': item['email']?.toString() ?? '',
+                      })
+                  .where((item) =>
+                      item['fullName']!.isNotEmpty && item['email']!.isNotEmpty)
+                  .toList();
+            });
+          }
+
+          // print('✅ Suggestions fetched: $suggestions');
+          // print('✅ Email suggestions fetched: $suggestionsEmail');
+        }
+      }
+    } catch (e) {
+      print('❌ Error fetching suggestions: $e');
+    }
   }
 
   Future<void> _loadUserName() async {
@@ -905,6 +965,29 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
                             onTap: () async {
                               cancelPendingReservation();
                               try {
+                                List<String> playerNames = _controllers
+                                    .skip(1)
+                                    .map((controller) => controller.text)
+                                    .toList();
+
+                                List<String> selectedPlayerIds =
+                                    playerSuggestions
+                                        .where((player) => playerNames
+                                            .contains(player['fullName']))
+                                        .map((player) => player['id'] as String)
+                                        .toList();
+
+                                List<Map<String, String>>
+                                    selectedPlayersIdsObjects = [];
+                                for (int i = 0;
+                                    i < selectedPlayerIds.length;
+                                    i++) {
+                                  if (selectedPlayerIds[i].isNotEmpty) {
+                                    selectedPlayersIdsObjects.add(
+                                        {"customerId": selectedPlayerIds[i]});
+                                  }
+                                }
+
                                 String token = await secureStorage.read(
                                         key: 'accessToken') ??
                                     '';
@@ -931,9 +1014,7 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
                                     "holes": selectedHole,
                                     "carts": selectedRidePlayer,
                                     "rentalClubs": isYes,
-                                    "customers": [
-                                      // {"customerId": "679a415aadc084bea8ebb0e0"}
-                                    ]
+                                    "customers": selectedPlayersIdsObjects,
                                   }),
                                 );
 
@@ -963,7 +1044,6 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
                                     );
                                   }
                                 } else {
-                                  // Handle API error
                                   print('❌ API Error: ${response.body}');
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
@@ -1056,14 +1136,6 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
   }
 
   Widget _buildPlayerNameFields() {
-    List<String> suggestions = [
-      "John Doe",
-      "Jane Smith",
-      "Alice Johnson",
-      "Bob Brown",
-      "Charlie Davis",
-    ];
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1150,13 +1222,20 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
                               // ✅ Show suggestions only when input is not empty
                               optionsBuilder:
                                   (TextEditingValue textEditingValue) {
+                                print(
+                                    'OptionsBuilder called with: ${textEditingValue.text}');
+
                                 if (textEditingValue.text.isEmpty) {
                                   return const Iterable<String>.empty();
                                 }
-                                return suggestions.where((String option) {
-                                  return option.toLowerCase().contains(
-                                      textEditingValue.text.toLowerCase());
-                                });
+                                return playerSuggestions
+                                    .where((option) => option['fullName']
+                                        .toLowerCase()
+                                        .contains(
+                                          textEditingValue.text.toLowerCase(),
+                                        ))
+                                    .map((option) =>
+                                        option['fullName'] as String);
                               },
 
                               fieldViewBuilder: (context, controller, focusNode,
