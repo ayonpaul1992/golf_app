@@ -253,51 +253,97 @@ class MyProfilePageState extends State<MyProfilePage> {
                         const SizedBox(
                           height: 10,
                         ),
+                        // GestureDetector(
+                        //   onTap: () {},
+                        //   child: Container(
+                        //     width: 175,
+                        //     padding: const EdgeInsets.only(
+                        //         left: 7, right: 7, top: 5, bottom: 5),
+                        //     decoration: BoxDecoration(
+                        //       color: const Color(0xFF244065),
+                        //       borderRadius: BorderRadius.circular(50),
+                        //     ),
+                        //     child: Row(
+                        //       mainAxisAlignment: MainAxisAlignment
+                        //           .spaceBetween, // Center along the horizontal axis (for Row)
+                        //       crossAxisAlignment: CrossAxisAlignment.center,
+                        //       children: [
+                        //         Stack(
+                        //           alignment: Alignment
+                        //               .centerLeft, // Align Stack content to the left
+                        //           children: [
+                        //             Row(
+                        //               children: [
+                        //                 Image.asset(
+                        //                   "assets/images/mmbr_arw.png",
+                        //                   width: 25.5,
+                        //                   height: 25.5,
+                        //                 ),
+                        //                 const SizedBox(
+                        //                   width: 4,
+                        //                 ),
+                        //                 Text(
+                        //                   userMembership,
+                        //                   style: GoogleFonts.poppins(
+                        //                     fontWeight: FontWeight.w500,
+                        //                     fontSize: 14,
+                        //                     color: const Color(0xFFFFFFFF),
+                        //                   ),
+                        //                 )
+                        //               ],
+                        //             ),
+                        //           ],
+                        //         ),
+                        //         const Icon(
+                        //           // Moved Icon outside the Stack and removed Container
+                        //           Icons.arrow_forward_ios_outlined,
+                        //           color: Color(0xFFFFFFFF),
+                        //           size: 13,
+                        //         ),
+                        //       ],
+                        //     ),
+                        //   ),
+                        // )
+
                         GestureDetector(
                           onTap: () {},
                           child: Container(
-                            width: 175,
-                            padding: const EdgeInsets.only(
-                                left: 7, right: 7, top: 5, bottom: 5),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 7, vertical: 5),
                             decoration: BoxDecoration(
                               color: const Color(0xFF244065),
                               borderRadius: BorderRadius.circular(50),
                             ),
                             child: Row(
-                              mainAxisAlignment: MainAxisAlignment
-                                  .spaceBetween, // Center along the horizontal axis (for Row)
+                              mainAxisSize: MainAxisSize
+                                  .min, // <-- important: make Row size wrap content
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                Stack(
-                                  alignment: Alignment
-                                      .centerLeft, // Align Stack content to the left
+                                Row(
                                   children: [
-                                    Row(
-                                      children: [
-                                        Image.asset(
-                                          "assets/images/mmbr_arw.png",
-                                          width: 25.5,
-                                          height: 25.5,
-                                        ),
-                                        const SizedBox(
-                                          width: 4,
-                                        ),
-                                        Text(
-                                          userMembership,
-                                          style: GoogleFonts.poppins(
-                                            fontWeight: FontWeight.w500,
-                                            fontSize: 14,
-                                            color: const Color(0xFFFFFFFF),
-                                          ),
-                                        )
-                                      ],
+                                    Image.asset(
+                                      "assets/images/mmbr_arw.png",
+                                      width: 25.5,
+                                      height: 25.5,
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      userMembership,
+                                      style: GoogleFonts.poppins(
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 14,
+                                        color: Colors.white,
+                                      ),
                                     ),
                                   ],
                                 ),
+                                const SizedBox(
+                                  width: 8,
+                                ), // spacing between text and arrow icon
                                 const Icon(
-                                  // Moved Icon outside the Stack and removed Container
                                   Icons.arrow_forward_ios_outlined,
-                                  color: Color(0xFFFFFFFF),
+                                  color: Colors.white,
                                   size: 13,
                                 ),
                               ],
