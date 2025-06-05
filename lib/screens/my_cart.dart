@@ -45,6 +45,8 @@ class MyCartPageState extends State<MyCartPage> {
 
   bool isLoading = false;
 
+  int playerCount = 0;
+
   @override
   void initState() {
     super.initState();
@@ -118,6 +120,18 @@ class MyCartPageState extends State<MyCartPage> {
         customers = List<Map<String, dynamic>>.from(
             responseData['teesheet']['customers']);
 
+        int count = 1;
+        customers = customers.map((customer) {
+          if (customer['isCart'] == false) {
+            return {
+              ...customer,
+              'playerCount': count++,
+            };
+          }
+          return customer;
+        }).toList();
+
+        // print('✅ Cart fetched successfully: $customers');
         setState(() {
           isLoading = false;
         });
@@ -522,6 +536,8 @@ class MyCartPageState extends State<MyCartPage> {
                                   final qty = 1;
                                   final amt = customer['amount'] ?? price * qty;
                                   final tax = customer['taxAmount'] ?? 0.0;
+
+                                  // print('Customer: $customer');
                                   // Initialize playerIndex to 0
                                   return Column(
                                     children: [
@@ -569,7 +585,7 @@ class MyCartPageState extends State<MyCartPage> {
                                                                     0xFFFFFFFF)),
                                                           ),
                                                           Text(
-                                                            '${customers.indexOf(customer) == 0 ? '1' : customers.indexOf(customer)}',
+                                                            '${customer['playerCount']}',
                                                             style: GoogleFonts.poppins(
                                                                 fontWeight:
                                                                     FontWeight
@@ -966,10 +982,10 @@ class MyCartPageState extends State<MyCartPage> {
 
                                       if (response.statusCode == 200) {
                                         final data = jsonDecode(response.body);
-                                        print('✅ Booking API Response: $data');
+                                        // print('✅ Booking API Response: $data');
 
                                         if (data['success'] == true) {
-                                          print('✅ Booking successful: $data');
+                                          // print('✅ Booking successful: $data');
                                           setState(() {
                                             isBookButtonDisabled =
                                                 true; // ✅ Disable button

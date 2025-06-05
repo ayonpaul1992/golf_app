@@ -1,4 +1,4 @@
-// ignore_for_file: deprecated_member_use
+// ignore_for_file: deprecated_member_use, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -810,12 +810,49 @@ class MyProfilePageState extends State<MyProfilePage> {
                           SizedBox(
                             width: double.infinity,
                             child: ElevatedButton(
-                              onPressed: () {
-                                Navigator.push(
+                              onPressed: () async {
+                                // Implement logout functionality here
+                                bool? confirm = await showDialog<bool>(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: const Text('Confirm Logout'),
+                                      content: const Text(
+                                          'Are you sure you want to logout?'),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () =>
+                                              Navigator.of(context).pop(false),
+                                          child: const Text('Cancel'),
+                                        ),
+                                        TextButton(
+                                          onPressed: () =>
+                                              Navigator.of(context).pop(true),
+                                          child: const Text('Logout'),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+
+                                if (confirm != true) {
+                                  return;
+                                }
+                                await secureStorage.deleteAll();
+                                if (!mounted) return;
+                                Navigator.pushAndRemoveUntil(
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) => const LoginPage()),
+                                  (route) => false,
                                 );
+                                // Here you can call your logout function
+                                // logout();
+                                // Navigator.push(
+                                //   context,
+                                //   MaterialPageRoute(
+                                //       builder: (context) => const LoginPage()),
+                                // );
                               },
                               style: ElevatedButton.styleFrom(
                                   backgroundColor: const Color(0xFF9ECF9A)),
