@@ -16,11 +16,11 @@ import '../services/weather_service.dart';
 import 'package:intl/intl.dart';
 
 class DashboardPage extends StatefulWidget {
-  final String dshbId;
+  // final String dshbId;
 
   const DashboardPage({
     super.key,
-    required this.dshbId,
+    // required this.dshbId,
   });
 
   @override
@@ -30,6 +30,7 @@ class DashboardPage extends StatefulWidget {
 class DashboardPageState extends State<DashboardPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final FlutterSecureStorage secureStorage = const FlutterSecureStorage();
+  bool isLoading = true;
   String activeTile = 'Home';
   String selectedItem = "Select";
   String userName = ""; // Placeholder for user name
@@ -91,6 +92,7 @@ class DashboardPageState extends State<DashboardPage> {
         profilePic = storedPic!;
         accountNumber = storedAccountNumber ?? '';
         membership = storedMembership ?? '';
+        isLoading = false;
       });
     }
   }
@@ -106,6 +108,7 @@ class DashboardPageState extends State<DashboardPage> {
       setState(() {
         weatherDescription = toTitleCase(weather['weather'][0]['description']);
         temperature = weather['main']['temp'];
+        isLoading = false;
       });
     } catch (e) {
       print("❗ Error: $e");
@@ -118,7 +121,7 @@ class DashboardPageState extends State<DashboardPage> {
       key: _scaffoldKey,
       appBar: DashboardAppBar(
         scaffoldKey: _scaffoldKey,
-        dshbId: widget.dshbId, // ✅ Pass the correct userId
+        // dshbId: widget.dshbId, // ✅ Pass the correct userId
         showLeading: false, // ✅ Set to true to show the back button
         onBackPressed: () {
           Navigator.pop(context); // Optional: customize back behavior if needed
@@ -131,573 +134,606 @@ class DashboardPageState extends State<DashboardPage> {
           // Handle navigation logic
         },
       ),
-      body: Container(
-        color: const Color(0xFFFAFCFA),
-        width: double.infinity,
-        height: double.infinity,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 0),
-          child: SingleChildScrollView(
-              child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              // const SizedBox(
-              //   height: 25,
-              // ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                spacing: 10,
-                children: [
-                  Container(
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      boxShadow: [
-                        BoxShadow(
-                          color: const Color(0xFF9ECF9A)
-                              .withOpacity(0.15), // make it visible
-                          blurRadius: 30, // soft edges
-                          spreadRadius:
-                              1, // controls how far the shadow spreads
-                          offset:
-                              const Offset(3, 0), // shift shadow down slightly
-                        ),
-                      ],
-                    ),
+      body: isLoading
+          ? const Center(
+              child: CircularProgressIndicator(
+                color: Color(0xFF9ECF9A),
+              ),
+            )
+          : Container(
+              color: const Color(0xFFFAFCFA),
+              width: double.infinity,
+              height: double.infinity,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 0),
+                child: SingleChildScrollView(
                     child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    // const SizedBox(
+                    //   height: 25,
+                    // ),
+                    Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
+                      spacing: 10,
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                          child: GestureDetector(
-                            onTap: () {},
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 7, vertical: 5),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(50),
-                                border: Border.all(
-                                  color: const Color(0xFF9ECF9A),
-                                  width: 1,
+                        Container(
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            boxShadow: [
+                              BoxShadow(
+                                color: const Color(0xFF9ECF9A)
+                                    .withOpacity(0.15), // make it visible
+                                blurRadius: 30, // soft edges
+                                spreadRadius:
+                                    1, // controls how far the shadow spreads
+                                offset: const Offset(
+                                    3, 0), // shift shadow down slightly
+                              ),
+                            ],
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 15.0),
+                                child: GestureDetector(
+                                  onTap: () {},
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 7, vertical: 5),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(50),
+                                      border: Border.all(
+                                        color: const Color(0xFF9ECF9A),
+                                        width: 1,
+                                      ),
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(100),
+                                              // child: Image.asset(
+                                              //   "assets/images/profile_prsn.jpg",
+                                              //   width: 50,
+                                              //   height: 50,
+                                              //   fit: BoxFit.cover,
+                                              // ),
+                                              child: Image(
+                                                image: profilePic.isNotEmpty
+                                                    ? NetworkImage(profilePic)
+                                                    : const AssetImage(
+                                                            'assets/images/bkdu1.png')
+                                                        as ImageProvider,
+                                                fit: BoxFit.cover,
+                                                width: 50,
+                                                height: 50,
+                                              ),
+                                            ),
+                                            const SizedBox(
+                                              width: 6,
+                                            ),
+                                            Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  userName,
+                                                  style: GoogleFonts.poppins(
+                                                    color:
+                                                        const Color(0xFF244065),
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.w600,
+                                                  ),
+                                                ),
+                                                const SizedBox(
+                                                  height: 2,
+                                                ),
+                                                Row(spacing: 6, children: [
+                                                  Container(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            left: 7,
+                                                            right: 7,
+                                                            top: 5,
+                                                            bottom: 5),
+                                                    decoration: BoxDecoration(
+                                                      color: const Color(
+                                                          0xFF244065),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              50),
+                                                    ),
+                                                    child: Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      children: [
+                                                        Image.asset(
+                                                            "assets/images/mmbr_arw.png"),
+                                                        const SizedBox(
+                                                          width: 5,
+                                                        ),
+                                                        Text(
+                                                          membership.isNotEmpty
+                                                              ? membership
+                                                              : "Membership",
+                                                          style: GoogleFonts.poppins(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500,
+                                                              fontSize: 11.5,
+                                                              color: const Color(
+                                                                  0xFFFFFFFF)),
+                                                        )
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  Container(
+                                                    decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              20),
+                                                      color: const Color(
+                                                          0xFFF7FAF4),
+                                                    ),
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                        horizontal: 10,
+                                                        vertical: 5),
+                                                    child: Text(
+                                                      accountNumber.isNotEmpty
+                                                          ? accountNumber
+                                                          : "",
+                                                      style: GoogleFonts.poppins(
+                                                          color: const Color(
+                                                              0xFF669933),
+                                                          fontSize: 12,
+                                                          fontWeight:
+                                                              FontWeight.w600),
+                                                    ),
+                                                  )
+                                                ]),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
                                 ),
                               ),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                              const SizedBox(
+                                height: 20,
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    spacing: 25,
                                     children: [
-                                      ClipRRect(
-                                        borderRadius:
-                                            BorderRadius.circular(100),
-                                        // child: Image.asset(
-                                        //   "assets/images/profile_prsn.jpg",
-                                        //   width: 50,
-                                        //   height: 50,
-                                        //   fit: BoxFit.cover,
-                                        // ),
-                                        child: Image(
-                                          image: profilePic.isNotEmpty
-                                              ? NetworkImage(profilePic)
-                                              : const AssetImage(
-                                                      'assets/images/bkdu1.png')
-                                                  as ImageProvider,
-                                          fit: BoxFit.cover,
-                                          width: 50,
-                                          height: 50,
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                        width: 6,
+                                      Row(
+                                        children: [
+                                          Icon(
+                                            _getWeatherIcon(weatherDescription),
+                                            color: const Color(0xFF669933),
+                                            size: 40,
+                                          )
+                                        ],
                                       ),
                                       Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
-                                          Text(
-                                            userName,
-                                            style: GoogleFonts.poppins(
-                                              color: const Color(0xFF244065),
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          ),
-                                          const SizedBox(
-                                            height: 2,
-                                          ),
-                                          Row(spacing: 6, children: [
-                                            Container(
-                                              padding: const EdgeInsets.only(
-                                                  left: 7,
-                                                  right: 7,
-                                                  top: 5,
-                                                  bottom: 5),
-                                              decoration: BoxDecoration(
-                                                color: const Color(0xFF244065),
-                                                borderRadius:
-                                                    BorderRadius.circular(50),
-                                              ),
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: [
-                                                  Image.asset(
-                                                      "assets/images/mmbr_arw.png"),
-                                                  const SizedBox(
-                                                    width: 5,
-                                                  ),
-                                                  Text(
-                                                    membership.isNotEmpty
-                                                        ? membership
-                                                        : "Membership",
-                                                    style: GoogleFonts.poppins(
-                                                        fontWeight:
-                                                            FontWeight.w500,
-                                                        fontSize: 11.5,
-                                                        color: const Color(
-                                                            0xFFFFFFFF)),
-                                                  )
-                                                ],
-                                              ),
-                                            ),
-                                            Container(
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(20),
-                                                color: const Color(0xFFF7FAF4),
-                                              ),
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 10,
-                                                      vertical: 5),
-                                              child: Text(
-                                                accountNumber.isNotEmpty
-                                                    ? accountNumber
-                                                    : "",
+                                          Row(
+                                            children: [
+                                              Text(
+                                                temperature % 1 == 0
+                                                    ? temperature
+                                                        .toInt()
+                                                        .toString()
+                                                    : temperature
+                                                        .toStringAsFixed(1),
                                                 style: GoogleFonts.poppins(
                                                     color:
-                                                        const Color(0xFF669933),
-                                                    fontSize: 12,
+                                                        const Color(0xFF244065),
+                                                    fontSize: 26,
+                                                    fontWeight:
+                                                        FontWeight.w500),
+                                              ),
+                                              Text(
+                                                "°F",
+                                                style: GoogleFonts.poppins(
+                                                    color:
+                                                        const Color(0xFF244065),
+                                                    fontSize: 14,
                                                     fontWeight:
                                                         FontWeight.w600),
                                               ),
-                                            )
-                                          ]),
+                                            ],
+                                          ),
+                                          Text(
+                                            weatherDescription.isNotEmpty
+                                                ? weatherDescription
+                                                : "...",
+                                            style: GoogleFonts.poppins(
+                                                color: const Color(0xFF6E7373),
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.w400),
+                                          ),
+                                        ],
+                                      )
+                                    ],
+                                  ),
+                                  const SizedBox(
+                                    width: 30,
+                                  ),
+                                  Row(
+                                    spacing: 5,
+                                    children: [
+                                      const Row(
+                                        children: [
+                                          Icon(
+                                            Icons.date_range,
+                                            color: Color(0xFF669933),
+                                            size: 40,
+                                          )
                                         ],
                                       ),
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            children: [
+                                              Text(
+                                                DateFormat('MMMM d').format(
+                                                  DateTime.now(),
+                                                ),
+                                                style: GoogleFonts.poppins(
+                                                    color:
+                                                        const Color(0xFF244065),
+                                                    fontSize: 16,
+                                                    fontWeight:
+                                                        FontWeight.w600),
+                                              ),
+                                            ],
+                                          ),
+                                          Text(
+                                            DateFormat('EEEE').format(
+                                              DateTime.now(),
+                                            ),
+                                            style: GoogleFonts.poppins(
+                                                color: const Color(0xFF6E7373),
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.w400),
+                                          ),
+                                        ],
+                                      )
                                     ],
                                   ),
                                 ],
                               ),
-                            ),
+                              const SizedBox(
+                                height: 20,
+                              ),
+                              Wrap(
+                                spacing: 15,
+                                runSpacing: 15,
+                                children: [
+                                  GestureDetector(
+                                    onTap: () {
+                                      // print("Book a New Tee Time tapped");
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              const SelcetBookingClass(
+                                                  userId: ''),
+                                        ),
+                                      );
+                                    },
+                                    child: Container(
+                                      padding: const EdgeInsets.all(20),
+                                      decoration: BoxDecoration(
+                                        color: const Color(0xFFFFFFFF),
+                                        borderRadius: BorderRadius.circular(20),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.black.withOpacity(
+                                                0.1), // light shadow
+                                            offset: const Offset(
+                                                1, 1), // x: right, y: down
+                                            blurRadius: 10, // soft blur
+                                            spreadRadius: 1, // slight spread
+                                          ),
+                                        ],
+                                      ),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          const Icon(
+                                            Icons.edit_calendar,
+                                            color: Color(0xFF669933),
+                                            size: 36,
+                                          ),
+                                          const SizedBox(
+                                            height: 10,
+                                          ),
+                                          SizedBox(
+                                            width: 100,
+                                            child: Text(
+                                              "Book a New Tee Time",
+                                              textAlign: TextAlign.center,
+                                              style: GoogleFonts.poppins(
+                                                color: const Color(0xFF244065),
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  GestureDetector(
+                                    onTap: () {},
+                                    child: Container(
+                                      padding: const EdgeInsets.all(20),
+                                      decoration: BoxDecoration(
+                                        color: const Color(0xFFFFFFFF),
+                                        borderRadius: BorderRadius.circular(20),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.black.withOpacity(
+                                                0.1), // light shadow
+                                            offset: const Offset(
+                                                1, 1), // x: right, y: down
+                                            blurRadius: 10, // soft blur
+                                            spreadRadius: 1, // slight spread
+                                          ),
+                                        ],
+                                      ),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          const Icon(
+                                            Icons.badge,
+                                            color: Color(0xFF669933),
+                                            size: 36,
+                                          ),
+                                          const SizedBox(
+                                            height: 10,
+                                          ),
+                                          SizedBox(
+                                            width: 100,
+                                            child: Text(
+                                              "Gift Card & Membership",
+                                              textAlign: TextAlign.center,
+                                              style: GoogleFonts.poppins(
+                                                color: const Color(0xFF244065),
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              const MyReservationPage(
+                                                  myRsvId: ''),
+                                        ),
+                                      );
+                                    },
+                                    child: Container(
+                                      padding: const EdgeInsets.all(20),
+                                      decoration: BoxDecoration(
+                                        color: const Color(0xFFFFFFFF),
+                                        borderRadius: BorderRadius.circular(20),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.black.withOpacity(
+                                                0.1), // light shadow
+                                            offset: const Offset(
+                                                1, 1), // x: right, y: down
+                                            blurRadius: 10, // soft blur
+                                            spreadRadius: 1, // slight spread
+                                          ),
+                                        ],
+                                      ),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          const Icon(
+                                            Icons.history,
+                                            color: Color(0xFF669933),
+                                            size: 36,
+                                          ),
+                                          const SizedBox(
+                                            height: 10,
+                                          ),
+                                          SizedBox(
+                                            width: 100,
+                                            child: Text(
+                                              "Booking History",
+                                              textAlign: TextAlign.center,
+                                              style: GoogleFonts.poppins(
+                                                color: const Color(0xFF244065),
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  GestureDetector(
+                                    onTap: () {},
+                                    child: Container(
+                                      padding: const EdgeInsets.all(20),
+                                      decoration: BoxDecoration(
+                                        color: const Color(0xFFFFFFFF),
+                                        borderRadius: BorderRadius.circular(20),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.black.withOpacity(
+                                                0.1), // light shadow
+                                            offset: const Offset(
+                                                1, 1), // x: right, y: down
+                                            blurRadius: 10, // soft blur
+                                            spreadRadius: 1, // slight spread
+                                          ),
+                                        ],
+                                      ),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          const Icon(
+                                            Icons.group_add,
+                                            color: Color(0xFF669933),
+                                            size: 36,
+                                          ),
+                                          const SizedBox(
+                                            height: 10,
+                                          ),
+                                          SizedBox(
+                                            width: 100,
+                                            child: Text(
+                                              "Make a Group",
+                                              textAlign: TextAlign.center,
+                                              style: GoogleFonts.poppins(
+                                                color: const Color(0xFF244065),
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(
+                                height: 15,
+                              ),
+                              SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Container(
+                                        width: 40,
+                                        height: 1,
+                                        color: const Color(0xFFB2C1C0),
+                                      ),
+                                      const SizedBox(
+                                        width: 10,
+                                      ),
+                                      Text(
+                                        "Upcoming Tee Time",
+                                        style: GoogleFonts.poppins(
+                                            color: const Color(0xFF244065),
+                                            fontSize: 22,
+                                            fontWeight: FontWeight.w600),
+                                      ),
+                                      const SizedBox(
+                                        width: 10,
+                                      ),
+                                      Container(
+                                        width: 40,
+                                        height: 1,
+                                        color: const Color(0xFFB2C1C0),
+                                      ),
+                                    ],
+                                  )),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    top: 15, left: 20, right: 20, bottom: 20),
+                                child: Text(
+                                  "No tee times coming up — book your next round now!",
+                                  textAlign: TextAlign.center,
+                                  style: GoogleFonts.poppins(
+                                    color: const Color(0xFF6E7373),
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Row(
-                              spacing: 25,
-                              children: [
-                                Row(
-                                  children: [
-                                    Icon(
-                                      _getWeatherIcon(weatherDescription),
-                                      color: const Color(0xFF669933),
-                                      size: 40,
-                                    )
-                                  ],
-                                ),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Text(
-                                          temperature % 1 == 0
-                                              ? temperature.toInt().toString()
-                                              : temperature.toStringAsFixed(1),
-                                          style: GoogleFonts.poppins(
-                                              color: const Color(0xFF244065),
-                                              fontSize: 26,
-                                              fontWeight: FontWeight.w500),
-                                        ),
-                                        Text(
-                                          "°F",
-                                          style: GoogleFonts.poppins(
-                                              color: const Color(0xFF244065),
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w600),
-                                        ),
-                                      ],
-                                    ),
-                                    Text(
-                                      weatherDescription.isNotEmpty
-                                          ? weatherDescription
-                                          : "...",
-                                      style: GoogleFonts.poppins(
-                                          color: const Color(0xFF6E7373),
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.w400),
-                                    ),
-                                  ],
-                                )
-                              ],
-                            ),
-                            const SizedBox(
-                              width: 30,
-                            ),
-                            Row(
-                              spacing: 5,
-                              children: [
-                                const Row(
-                                  children: [
-                                    Icon(
-                                      Icons.date_range,
-                                      color: Color(0xFF669933),
-                                      size: 40,
-                                    )
-                                  ],
-                                ),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Text(
-                                          DateFormat('MMMM d').format(
-                                            DateTime.now(),
-                                          ),
-                                          style: GoogleFonts.poppins(
-                                              color: const Color(0xFF244065),
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w600),
-                                        ),
-                                      ],
-                                    ),
-                                    Text(
-                                      DateFormat('EEEE').format(
-                                        DateTime.now(),
-                                      ),
-                                      style: GoogleFonts.poppins(
-                                          color: const Color(0xFF6E7373),
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.w400),
-                                    ),
-                                  ],
-                                )
-                              ],
-                            ),
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        Wrap(
-                          spacing: 15,
-                          runSpacing: 15,
-                          children: [
-                            GestureDetector(
-                              onTap: () {
-                                // print("Book a New Tee Time tapped");
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        const SelcetBookingClass(userId: ''),
-                                  ),
-                                );
-                              },
-                              child: Container(
-                                padding: const EdgeInsets.all(20),
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFFFFFFFF),
-                                  borderRadius: BorderRadius.circular(20),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black
-                                          .withOpacity(0.1), // light shadow
-                                      offset: const Offset(
-                                          1, 1), // x: right, y: down
-                                      blurRadius: 10, // soft blur
-                                      spreadRadius: 1, // slight spread
-                                    ),
-                                  ],
-                                ),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    const Icon(
-                                      Icons.edit_calendar,
-                                      color: Color(0xFF669933),
-                                      size: 36,
-                                    ),
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                    SizedBox(
-                                      width: 100,
-                                      child: Text(
-                                        "Book a New Tee Time",
-                                        textAlign: TextAlign.center,
-                                        style: GoogleFonts.poppins(
-                                          color: const Color(0xFF244065),
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ),
-                            GestureDetector(
-                              onTap: () {},
-                              child: Container(
-                                padding: const EdgeInsets.all(20),
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFFFFFFFF),
-                                  borderRadius: BorderRadius.circular(20),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black
-                                          .withOpacity(0.1), // light shadow
-                                      offset: const Offset(
-                                          1, 1), // x: right, y: down
-                                      blurRadius: 10, // soft blur
-                                      spreadRadius: 1, // slight spread
-                                    ),
-                                  ],
-                                ),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    const Icon(
-                                      Icons.badge,
-                                      color: Color(0xFF669933),
-                                      size: 36,
-                                    ),
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                    SizedBox(
-                                      width: 100,
-                                      child: Text(
-                                        "Gift Card & Membership",
-                                        textAlign: TextAlign.center,
-                                        style: GoogleFonts.poppins(
-                                          color: const Color(0xFF244065),
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        const MyReservationPage(myRsvId: ''),
-                                  ),
-                                );
-                              },
-                              child: Container(
-                                padding: const EdgeInsets.all(20),
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFFFFFFFF),
-                                  borderRadius: BorderRadius.circular(20),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black
-                                          .withOpacity(0.1), // light shadow
-                                      offset: const Offset(
-                                          1, 1), // x: right, y: down
-                                      blurRadius: 10, // soft blur
-                                      spreadRadius: 1, // slight spread
-                                    ),
-                                  ],
-                                ),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    const Icon(
-                                      Icons.history,
-                                      color: Color(0xFF669933),
-                                      size: 36,
-                                    ),
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                    SizedBox(
-                                      width: 100,
-                                      child: Text(
-                                        "Booking History",
-                                        textAlign: TextAlign.center,
-                                        style: GoogleFonts.poppins(
-                                          color: const Color(0xFF244065),
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ),
-                            GestureDetector(
-                              onTap: () {},
-                              child: Container(
-                                padding: const EdgeInsets.all(20),
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFFFFFFFF),
-                                  borderRadius: BorderRadius.circular(20),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black
-                                          .withOpacity(0.1), // light shadow
-                                      offset: const Offset(
-                                          1, 1), // x: right, y: down
-                                      blurRadius: 10, // soft blur
-                                      spreadRadius: 1, // slight spread
-                                    ),
-                                  ],
-                                ),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    const Icon(
-                                      Icons.group_add,
-                                      color: Color(0xFF669933),
-                                      size: 36,
-                                    ),
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                    SizedBox(
-                                      width: 100,
-                                      child: Text(
-                                        "Make a Group",
-                                        textAlign: TextAlign.center,
-                                        style: GoogleFonts.poppins(
-                                          color: const Color(0xFF244065),
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 15,
-                        ),
-                        SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Container(
-                                  width: 40,
-                                  height: 1,
-                                  color: const Color(0xFFB2C1C0),
-                                ),
-                                const SizedBox(
-                                  width: 10,
-                                ),
-                                Text(
-                                  "Upcoming Tee Time",
-                                  style: GoogleFonts.poppins(
-                                      color: const Color(0xFF244065),
-                                      fontSize: 22,
-                                      fontWeight: FontWeight.w600),
-                                ),
-                                const SizedBox(
-                                  width: 10,
-                                ),
-                                Container(
-                                  width: 40,
-                                  height: 1,
-                                  color: const Color(0xFFB2C1C0),
-                                ),
-                              ],
-                            )),
                         Padding(
                           padding: const EdgeInsets.only(
-                              top: 15, left: 20, right: 20, bottom: 20),
-                          child: Text(
-                            "No tee times coming up — book your next round now!",
-                            textAlign: TextAlign.center,
-                            style: GoogleFonts.poppins(
-                              color: const Color(0xFF6E7373),
-                              fontWeight: FontWeight.w400,
-                              fontSize: 14,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding:
-                        const EdgeInsets.only(bottom: 20, left: 15, right: 15),
-                    child: Stack(
-                      children: [
-                        SizedBox(
-                          width: double.infinity,
-                          child: ElevatedButton(
-                            onPressed: () {
-                              // Navigator.push(
-                              //   context,
-                              //   MaterialPageRoute(
-                              //       builder: (context) => LoginPage()),
-                              // );
-                            },
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFF9ECF9A)),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 15.0, vertical: 10.0),
-                              child: Center(
-                                child: Text(
-                                  "Contact now",
-                                  style: GoogleFonts.poppins(
-                                    color: const Color(0xFFFFFFFF),
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
+                              bottom: 20, left: 15, right: 15),
+                          child: Stack(
+                            children: [
+                              SizedBox(
+                                width: double.infinity,
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    // Navigator.push(
+                                    //   context,
+                                    //   MaterialPageRoute(
+                                    //       builder: (context) => LoginPage()),
+                                    // );
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                      backgroundColor: const Color(0xFF9ECF9A)),
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 15.0, vertical: 10.0),
+                                    child: Center(
+                                      child: Text(
+                                        "Contact now",
+                                        style: GoogleFonts.poppins(
+                                          color: const Color(0xFFFFFFFF),
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
+                              const Positioned(
+                                top: 16.5,
+                                right: 15,
+                                child: Icon(
+                                  Icons.arrow_forward,
+                                  color: Color(0xFFFFFFFF),
+                                  size: 18,
+                                ),
+                              )
+                            ],
                           ),
                         ),
-                        const Positioned(
-                          top: 16.5,
-                          right: 15,
-                          child: Icon(
-                            Icons.arrow_forward,
-                            color: Color(0xFFFFFFFF),
-                            size: 18,
-                          ),
-                        )
                       ],
                     ),
-                  ),
-                ],
+                  ],
+                )),
               ),
-            ],
-          )),
-        ),
-      ),
+            ),
       bottomNavigationBar: const CustomBottomNavBar(selectedIndex: -1),
     );
   }
