@@ -1012,7 +1012,8 @@ class MyCartPageState extends State<MyCartPage> {
                                                     child: const Text("OK"),
                                                     onPressed: () {
                                                       //go to reservation screen
-                                                      Navigator.pushReplacement(
+                                                      Navigator
+                                                          .pushAndRemoveUntil(
                                                         context,
                                                         MaterialPageRoute(
                                                           builder: (context) =>
@@ -1020,7 +1021,20 @@ class MyCartPageState extends State<MyCartPage> {
                                                             myRsvId: '',
                                                           ),
                                                         ),
+                                                        (route) => route
+                                                            .isFirst, // This keeps only the first screen in the stack (e.g., home/dashboard)
                                                       );
+
+                                                      // Navigator.pushReplacement(
+                                                      //   context,
+                                                      //   MaterialPageRoute(
+                                                      //     builder: (context) =>
+                                                      //         const MyReservationPage(
+                                                      //       myRsvId: '',
+                                                      //     ),
+
+                                                      //   ),
+                                                      // );
                                                       // int count = 0;
                                                       // Navigator.popUntil(
                                                       //   context,
