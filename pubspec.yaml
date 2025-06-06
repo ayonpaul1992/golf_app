@@ -44,10 +44,15 @@ dependencies:
   geolocator: ^10.1.0
   weather_icons: ^3.0.0
   flutter_lints: ^5.0.0
+  flutter_launcher_icons: ^0.14.3
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
+flutter_launcher_icons:
+  ios: true
+  image_path: "assets/images/main_logo.png"
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
