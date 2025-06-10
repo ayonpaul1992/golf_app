@@ -22,7 +22,8 @@ class MyApp extends StatelessWidget {
     if (isLoggedIn == 'true' && token != null) {
       return const DashboardPage(); // replace with your main/home screen
     } else {
-      return const LoginPage(); // replace with your login screen
+      // return const LoginPage(); // replace with your login screen
+      return const SplashScreen(); // Show splash screen first
     }
   }
 

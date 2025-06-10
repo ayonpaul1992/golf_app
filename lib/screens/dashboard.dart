@@ -49,6 +49,8 @@ class DashboardPageState extends State<DashboardPage> {
       case 'scattered clouds':
       case 'broken clouds':
         return WeatherIcons.cloud;
+      case 'overcast clouds':
+        return WeatherIcons.cloudy;
       case 'shower rain':
       case 'light rain':
       case 'moderate rain':
