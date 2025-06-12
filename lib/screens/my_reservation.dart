@@ -312,9 +312,6 @@ class MyReservationPageState extends State<MyReservationPage> {
                               final bookingTimeRaw =
                                   reservation['startingSlot'];
 
-                              final amount = reservation['customer']['amount']
-                                      ?.toString() ??
-                                  '-';
                               final holes =
                                   reservation['holes']?.toString() ?? '-';
                               final players =
