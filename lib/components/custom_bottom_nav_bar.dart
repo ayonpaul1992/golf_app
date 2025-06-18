@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:gulf_app/screens/dashboard.dart';
 import 'package:gulf_app/screens/my_setting.dart';
 import 'package:gulf_app/screens/my_reservation.dart';
 import 'package:gulf_app/screens/selcet_booking_class.dart';
@@ -55,15 +56,20 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
             'route': const MyReservationPage(myRsvId: '')
           },
           {
+            'icon': 'assets/images/ftr_str.png',
+            'label': 'Home',
+            'route': const DashboardPage()
+          },
+          {
             'icon': 'assets/images/self_chkng.png',
             'label': 'Self Checking',
             'route': null
           },
-          {
-            'icon': 'assets/images/ftr_str.png',
-            'label': 'Store',
-            'route': null
-          },
+          // {
+          //   'icon': 'assets/images/ftr_str.png',
+          //   'label': 'Store',
+          //   'route': null
+          // },
           {
             'icon': 'assets/images/ftr_kart.png',
             'label': 'Settings',
@@ -116,7 +122,7 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
                             ),
                           );
                         } else {
-                          Navigator.push(
+                          Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
                               builder: (context) => items[index]['route']!,

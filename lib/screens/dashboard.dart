@@ -1178,7 +1178,7 @@ class DashboardPageState extends State<DashboardPage> {
                 )),
               ),
             ),
-      bottomNavigationBar: const CustomBottomNavBar(selectedIndex: -1),
+      bottomNavigationBar: const CustomBottomNavBar(selectedIndex: 2),
     );
   }
 }
