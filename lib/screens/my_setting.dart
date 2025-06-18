@@ -1,15 +1,12 @@
-import 'dart:convert';
-import 'package:flutter/cupertino.dart';
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:gulf_app/screens/login.dart';
-import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:gulf_app/components/custom_app_bar.dart';
 import 'package:gulf_app/components/custom_drawer.dart';
 import 'package:gulf_app/components/custom_bottom_nav_bar.dart';
-import 'package:syncfusion_flutter_datepicker/datepicker.dart';
-import 'package:intl/intl.dart';
 
 class MySettingPage extends StatefulWidget {
   final String myStngId;
@@ -22,11 +19,6 @@ class MySettingPage extends StatefulWidget {
 class MySettingPageState extends State<MySettingPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final FlutterSecureStorage secureStorage = const FlutterSecureStorage();
-
-  void _showMessage(String message) {
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text(message)));
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,910 +52,894 @@ class MySettingPageState extends State<MySettingPage> {
               const SizedBox(
                 height: 15,
               ),
-              Container(
-                child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          width: 40,
-                          height: 1,
-                          color: const Color(0xFFB2C1C0),
-                        ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        Text(
-                          "Settings",
-                          style: GoogleFonts.poppins(
-                              color: const Color(0xFF244065),
-                              fontSize: 22,
-                              fontWeight: FontWeight.w600),
-                        ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        Container(
-                          width: 40,
-                          height: 1,
-                          color: const Color(0xFFB2C1C0),
-                        ),
-                      ],
-                    )),
-              ),
+              SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        width: 40,
+                        height: 1,
+                        color: const Color(0xFFB2C1C0),
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Text(
+                        "Settings",
+                        style: GoogleFonts.poppins(
+                            color: const Color(0xFF244065),
+                            fontSize: 22,
+                            fontWeight: FontWeight.w600),
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Container(
+                        width: 40,
+                        height: 1,
+                        color: const Color(0xFFB2C1C0),
+                      ),
+                    ],
+                  )),
               const SizedBox(
                 height: 15,
               ),
-              Container(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  spacing: 10,
-                  children: [
-                    Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        boxShadow: [
-                          BoxShadow(
-                            color: const Color(0xFF9ECF9A)
-                                .withOpacity(0.15), // make it visible
-                            blurRadius: 30, // soft edges
-                            spreadRadius:
-                                1, // controls how far the shadow spreads
-                            offset: const Offset(
-                                3, 0), // shift shadow down slightly
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          GestureDetector(
-                            onTap: () {},
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 7, vertical: 5),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(50),
-                                border: Border.all(
-                                  color: const Color(0xFF9ECF9A),
-                                  width: 1,
-                                ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                spacing: 10,
+                children: [
+                  Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xFF9ECF9A)
+                              .withOpacity(0.15), // make it visible
+                          blurRadius: 30, // soft edges
+                          spreadRadius:
+                              1, // controls how far the shadow spreads
+                          offset:
+                              const Offset(3, 0), // shift shadow down slightly
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        GestureDetector(
+                          onTap: () {},
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 7, vertical: 5),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(50),
+                              border: Border.all(
+                                color: const Color(0xFF9ECF9A),
+                                width: 1,
                               ),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      ClipRRect(
-                                        borderRadius:
-                                            BorderRadius.circular(100),
-                                        child: Image.asset(
-                                          "assets/images/profile_prsn.jpg",
-                                          width: 50,
-                                          height: 50,
-                                          fit: BoxFit.cover,
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(100),
+                                      child: Image.asset(
+                                        "assets/images/profile_prsn.jpg",
+                                        width: 50,
+                                        height: 50,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      width: 6,
+                                    ),
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          "Koushik Datta",
+                                          style: GoogleFonts.poppins(
+                                            color: const Color(0xFF244065),
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w600,
+                                          ),
                                         ),
-                                      ),
-                                      const SizedBox(
-                                        width: 6,
-                                      ),
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            "Koushik Datta",
+                                        Container(
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(20),
+                                            color: const Color(0xFFF7FAF4),
+                                          ),
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 10, vertical: 5),
+                                          child: Text(
+                                            "C7980",
                                             style: GoogleFonts.poppins(
-                                              color: const Color(0xFF244065),
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w600,
-                                            ),
+                                                color: const Color(0xFF669933),
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.w600),
                                           ),
-                                          Container(
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(20),
-                                              color: const Color(0xFFF7FAF4),
-                                            ),
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 10, vertical: 5),
-                                            child: Text(
-                                              "C7980",
-                                              style: GoogleFonts.poppins(
-                                                  color:
-                                                      const Color(0xFF669933),
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.w600),
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                  Container(
-                                    width: 40,
-                                    height: 40,
-                                    decoration: const BoxDecoration(
-                                      color: Color(0xFF9ECF9A),
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(
-                                              100)), // Use Radius.circular
+                                        )
+                                      ],
                                     ),
-                                    child: const Center(
-                                      child: Icon(
-                                        Icons.edit,
-                                        size: 17,
-                                        color: Color(0xFFFFFFFF),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        boxShadow: [
-                          BoxShadow(
-                            color: const Color(0xFF9ECF9A)
-                                .withOpacity(0.15), // make it visible
-                            blurRadius: 30, // soft edges
-                            spreadRadius:
-                                1, // controls how far the shadow spreads
-                            offset: const Offset(
-                                3, 0), // shift shadow down slightly
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          GestureDetector(
-                            onTap: () {},
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 7, vertical: 5),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(50),
-                                border: Border.all(
-                                  color: const Color(0xFF9ECF9A),
-                                  width: 1,
+                                  ],
                                 ),
-                              ),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Container(
-                                        width: 40,
-                                        height: 40,
-                                        decoration: const BoxDecoration(
-                                          color: Color(0xFFF8F8F8),
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(
-                                                  100)), // Use Radius.circular
-                                        ),
-                                        child: const Center(
-                                          child: Icon(
-                                            Icons.edit,
-                                            size: 17,
-                                            color: Color(0xFF6B7280),
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                        width: 6,
-                                      ),
-                                      Text(
-                                        "Change Password",
-                                        style: GoogleFonts.poppins(
-                                          color: const Color(0xFF244065),
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const Icon(
-                                    Icons.arrow_forward_ios_outlined,
-                                    size: 13,
+                                Container(
+                                  width: 40,
+                                  height: 40,
+                                  decoration: const BoxDecoration(
                                     color: Color(0xFF9ECF9A),
-                                  )
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        boxShadow: [
-                          BoxShadow(
-                            color: const Color(0xFF9ECF9A)
-                                .withOpacity(0.15), // make it visible
-                            blurRadius: 30, // soft edges
-                            spreadRadius:
-                                1, // controls how far the shadow spreads
-                            offset: const Offset(
-                                3, 0), // shift shadow down slightly
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          GestureDetector(
-                            onTap: () {},
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 7, vertical: 5),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(50),
-                                border: Border.all(
-                                  color: const Color(0xFF9ECF9A),
-                                  width: 1,
-                                ),
-                              ),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Container(
-                                        width: 40,
-                                        height: 40,
-                                        decoration: const BoxDecoration(
-                                          color: Color(0xFFF8F8F8),
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(
-                                                  100)), // Use Radius.circular
-                                        ),
-                                        child: const Center(
-                                          child: Icon(
-                                            Icons.card_giftcard,
-                                            size: 17,
-                                            color: Color(0xFF6B7280),
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                        width: 6,
-                                      ),
-                                      Text(
-                                        "Notification",
-                                        style: GoogleFonts.poppins(
-                                          color: const Color(0xFF244065),
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    ],
+                                    borderRadius: BorderRadius.all(
+                                        Radius.circular(
+                                            100)), // Use Radius.circular
                                   ),
-                                  const Icon(
-                                    Icons.arrow_forward_ios_outlined,
-                                    size: 13,
-                                    color: Color(0xFF9ECF9A),
-                                  )
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        boxShadow: [
-                          BoxShadow(
-                            color: const Color(0xFF9ECF9A)
-                                .withOpacity(0.15), // make it visible
-                            blurRadius: 30, // soft edges
-                            spreadRadius:
-                                1, // controls how far the shadow spreads
-                            offset: const Offset(
-                                3, 0), // shift shadow down slightly
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          GestureDetector(
-                            onTap: () {},
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 7, vertical: 5),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(50),
-                                border: Border.all(
-                                  color: const Color(0xFF9ECF9A),
-                                  width: 1,
-                                ),
-                              ),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Container(
-                                        width: 40,
-                                        height: 40,
-                                        decoration: const BoxDecoration(
-                                          color: Color(0xFFF8F8F8),
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(
-                                                  100)), // Use Radius.circular
-                                        ),
-                                        child: const Center(
-                                          child: Icon(
-                                            Icons.fact_check,
-                                            size: 17,
-                                            color: Color(0xFF6B7280),
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                        width: 6,
-                                      ),
-                                      Text(
-                                        "Membership",
-                                        style: GoogleFonts.poppins(
-                                          color: const Color(0xFF244065),
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const Icon(
-                                    Icons.arrow_forward_ios_outlined,
-                                    size: 13,
-                                    color: Color(0xFF9ECF9A),
-                                  )
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        boxShadow: [
-                          BoxShadow(
-                            color: const Color(0xFF9ECF9A)
-                                .withOpacity(0.15), // make it visible
-                            blurRadius: 30, // soft edges
-                            spreadRadius:
-                                1, // controls how far the shadow spreads
-                            offset: const Offset(
-                                3, 0), // shift shadow down slightly
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          GestureDetector(
-                            onTap: () {},
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 7, vertical: 5),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(50),
-                                border: Border.all(
-                                  color: const Color(0xFF9ECF9A),
-                                  width: 1,
-                                ),
-                              ),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Container(
-                                        width: 40,
-                                        height: 40,
-                                        decoration: const BoxDecoration(
-                                          color: Color(0xFFF8F8F8),
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(
-                                                  100)), // Use Radius.circular
-                                        ),
-                                        child: const Center(
-                                          child: Icon(
-                                            Icons.card_giftcard,
-                                            size: 17,
-                                            color: Color(0xFF6B7280),
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                        width: 6,
-                                      ),
-                                      Text(
-                                        "My Wallet",
-                                        style: GoogleFonts.poppins(
-                                          color: const Color(0xFF244065),
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const Icon(
-                                    Icons.arrow_forward_ios_outlined,
-                                    size: 13,
-                                    color: Color(0xFF9ECF9A),
-                                  )
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        boxShadow: [
-                          BoxShadow(
-                            color: const Color(0xFF9ECF9A)
-                                .withOpacity(0.15), // make it visible
-                            blurRadius: 30, // soft edges
-                            spreadRadius:
-                                1, // controls how far the shadow spreads
-                            offset: const Offset(
-                                3, 0), // shift shadow down slightly
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          GestureDetector(
-                            onTap: () {},
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 7, vertical: 5),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(50),
-                                border: Border.all(
-                                  color: const Color(0xFF9ECF9A),
-                                  width: 1,
-                                ),
-                              ),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Container(
-                                        width: 40,
-                                        height: 40,
-                                        decoration: const BoxDecoration(
-                                          color: Color(0xFFF8F8F8),
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(
-                                                  100)), // Use Radius.circular
-                                        ),
-                                        child: const Center(
-                                          child: Icon(
-                                            Icons.fact_check,
-                                            size: 17,
-                                            color: Color(0xFF6B7280),
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                        width: 6,
-                                      ),
-                                      Text(
-                                        "My Order",
-                                        style: GoogleFonts.poppins(
-                                          color: const Color(0xFF244065),
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const Icon(
-                                    Icons.arrow_forward_ios_outlined,
-                                    size: 13,
-                                    color: Color(0xFF9ECF9A),
-                                  )
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        boxShadow: [
-                          BoxShadow(
-                            color: const Color(0xFF9ECF9A)
-                                .withOpacity(0.15), // make it visible
-                            blurRadius: 30, // soft edges
-                            spreadRadius:
-                                1, // controls how far the shadow spreads
-                            offset: const Offset(
-                                3, 0), // shift shadow down slightly
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          GestureDetector(
-                            onTap: () {},
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 7, vertical: 5),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(50),
-                                border: Border.all(
-                                  color: const Color(0xFF9ECF9A),
-                                  width: 1,
-                                ),
-                              ),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Container(
-                                        width: 40,
-                                        height: 40,
-                                        decoration: const BoxDecoration(
-                                          color: Color(0xFFF8F8F8),
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(
-                                                  100)), // Use Radius.circular
-                                        ),
-                                        child: const Center(
-                                          child: Icon(
-                                            Icons.fact_check,
-                                            size: 17,
-                                            color: Color(0xFF6B7280),
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                        width: 6,
-                                      ),
-                                      Text(
-                                        "My Gift Cards",
-                                        style: GoogleFonts.poppins(
-                                          color: const Color(0xFF244065),
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const Icon(
-                                    Icons.arrow_forward_ios_outlined,
-                                    size: 13,
-                                    color: Color(0xFF9ECF9A),
-                                  )
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        boxShadow: [
-                          BoxShadow(
-                            color: const Color(0xFF9ECF9A)
-                                .withOpacity(0.15), // make it visible
-                            blurRadius: 30, // soft edges
-                            spreadRadius:
-                                1, // controls how far the shadow spreads
-                            offset: const Offset(
-                                3, 0), // shift shadow down slightly
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          GestureDetector(
-                            onTap: () {},
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 7, vertical: 5),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(50),
-                                border: Border.all(
-                                  color: const Color(0xFF9ECF9A),
-                                  width: 1,
-                                ),
-                              ),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Container(
-                                        width: 40,
-                                        height: 40,
-                                        decoration: const BoxDecoration(
-                                          color: Color(0xFFF8F8F8),
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(
-                                                  100)), // Use Radius.circular
-                                        ),
-                                        child: const Center(
-                                          child: Icon(
-                                            Icons.date_range_outlined,
-                                            size: 17,
-                                            color: Color(0xFF6B7280),
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                        width: 6,
-                                      ),
-                                      Text(
-                                        "FAQs",
-                                        style: GoogleFonts.poppins(
-                                          color: const Color(0xFF244065),
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const Icon(
-                                    Icons.arrow_forward_ios_outlined,
-                                    size: 13,
-                                    color: Color(0xFF9ECF9A),
-                                  )
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        boxShadow: [
-                          BoxShadow(
-                            color: const Color(0xFF9ECF9A)
-                                .withOpacity(0.15), // make it visible
-                            blurRadius: 30, // soft edges
-                            spreadRadius:
-                                1, // controls how far the shadow spreads
-                            offset: const Offset(
-                                3, 0), // shift shadow down slightly
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          GestureDetector(
-                            onTap: () {},
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 7, vertical: 5),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(50),
-                                border: Border.all(
-                                  color: const Color(0xFF9ECF9A),
-                                  width: 1,
-                                ),
-                              ),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Container(
-                                        width: 40,
-                                        height: 40,
-                                        decoration: const BoxDecoration(
-                                          color: Color(0xFFF8F8F8),
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(
-                                                  100)), // Use Radius.circular
-                                        ),
-                                        child: const Center(
-                                          child: Icon(
-                                            Icons.settings,
-                                            size: 17,
-                                            color: Color(0xFF6B7280),
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                        width: 6,
-                                      ),
-                                      Text(
-                                        "Term and Conditions",
-                                        style: GoogleFonts.poppins(
-                                          color: const Color(0xFF244065),
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const Icon(
-                                    Icons.arrow_forward_ios_outlined,
-                                    size: 13,
-                                    color: Color(0xFF9ECF9A),
-                                  )
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        boxShadow: [
-                          BoxShadow(
-                            color: const Color(0xFF9ECF9A)
-                                .withOpacity(0.15), // make it visible
-                            blurRadius: 30, // soft edges
-                            spreadRadius:
-                                1, // controls how far the shadow spreads
-                            offset: const Offset(
-                                3, 0), // shift shadow down slightly
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          GestureDetector(
-                            onTap: () {},
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 7, vertical: 5),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(50),
-                                border: Border.all(
-                                  color: const Color(0xFF9ECF9A),
-                                  width: 1,
-                                ),
-                              ),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Container(
-                                        width: 40,
-                                        height: 40,
-                                        decoration: const BoxDecoration(
-                                          color: Color(0xFFF8F8F8),
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(
-                                                  100)), // Use Radius.circular
-                                        ),
-                                        child: const Center(
-                                          child: Icon(
-                                            Icons.settings,
-                                            size: 17,
-                                            color: Color(0xFF6B7280),
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                        width: 6,
-                                      ),
-                                      Text(
-                                        "Help and Support",
-                                        style: GoogleFonts.poppins(
-                                          color: const Color(0xFF244065),
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const Icon(
-                                    Icons.arrow_forward_ios_outlined,
-                                    size: 13,
-                                    color: Color(0xFF9ECF9A),
-                                  )
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 20),
-                      child: Stack(
-                        children: [
-                          Container(
-                            width: double.infinity,
-                            child: ElevatedButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => const LoginPage()),
-                                );
-                              },
-                              style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color(0xFF9ECF9A)),
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 15.0, vertical: 10.0),
-                                child: Center(
-                                  child: Text(
-                                    "Logout",
-                                    style: GoogleFonts.poppins(
-                                      color: const Color(0xFFFFFFFF),
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600,
+                                  child: const Center(
+                                    child: Icon(
+                                      Icons.edit,
+                                      size: 17,
+                                      color: Color(0xFFFFFFFF),
                                     ),
                                   ),
                                 ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xFF9ECF9A)
+                              .withOpacity(0.15), // make it visible
+                          blurRadius: 30, // soft edges
+                          spreadRadius:
+                              1, // controls how far the shadow spreads
+                          offset:
+                              const Offset(3, 0), // shift shadow down slightly
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        GestureDetector(
+                          onTap: () {},
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 7, vertical: 5),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(50),
+                              border: Border.all(
+                                color: const Color(0xFF9ECF9A),
+                                width: 1,
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Container(
+                                      width: 40,
+                                      height: 40,
+                                      decoration: const BoxDecoration(
+                                        color: Color(0xFFF8F8F8),
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(
+                                                100)), // Use Radius.circular
+                                      ),
+                                      child: const Center(
+                                        child: Icon(
+                                          Icons.edit,
+                                          size: 17,
+                                          color: Color(0xFF6B7280),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      width: 6,
+                                    ),
+                                    Text(
+                                      "Change Password",
+                                      style: GoogleFonts.poppins(
+                                        color: const Color(0xFF244065),
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const Icon(
+                                  Icons.arrow_forward_ios_outlined,
+                                  size: 13,
+                                  color: Color(0xFF9ECF9A),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xFF9ECF9A)
+                              .withOpacity(0.15), // make it visible
+                          blurRadius: 30, // soft edges
+                          spreadRadius:
+                              1, // controls how far the shadow spreads
+                          offset:
+                              const Offset(3, 0), // shift shadow down slightly
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        GestureDetector(
+                          onTap: () {},
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 7, vertical: 5),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(50),
+                              border: Border.all(
+                                color: const Color(0xFF9ECF9A),
+                                width: 1,
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Container(
+                                      width: 40,
+                                      height: 40,
+                                      decoration: const BoxDecoration(
+                                        color: Color(0xFFF8F8F8),
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(
+                                                100)), // Use Radius.circular
+                                      ),
+                                      child: const Center(
+                                        child: Icon(
+                                          Icons.card_giftcard,
+                                          size: 17,
+                                          color: Color(0xFF6B7280),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      width: 6,
+                                    ),
+                                    Text(
+                                      "Notification",
+                                      style: GoogleFonts.poppins(
+                                        color: const Color(0xFF244065),
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const Icon(
+                                  Icons.arrow_forward_ios_outlined,
+                                  size: 13,
+                                  color: Color(0xFF9ECF9A),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xFF9ECF9A)
+                              .withOpacity(0.15), // make it visible
+                          blurRadius: 30, // soft edges
+                          spreadRadius:
+                              1, // controls how far the shadow spreads
+                          offset:
+                              const Offset(3, 0), // shift shadow down slightly
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        GestureDetector(
+                          onTap: () {},
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 7, vertical: 5),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(50),
+                              border: Border.all(
+                                color: const Color(0xFF9ECF9A),
+                                width: 1,
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Container(
+                                      width: 40,
+                                      height: 40,
+                                      decoration: const BoxDecoration(
+                                        color: Color(0xFFF8F8F8),
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(
+                                                100)), // Use Radius.circular
+                                      ),
+                                      child: const Center(
+                                        child: Icon(
+                                          Icons.fact_check,
+                                          size: 17,
+                                          color: Color(0xFF6B7280),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      width: 6,
+                                    ),
+                                    Text(
+                                      "Membership",
+                                      style: GoogleFonts.poppins(
+                                        color: const Color(0xFF244065),
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const Icon(
+                                  Icons.arrow_forward_ios_outlined,
+                                  size: 13,
+                                  color: Color(0xFF9ECF9A),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xFF9ECF9A)
+                              .withOpacity(0.15), // make it visible
+                          blurRadius: 30, // soft edges
+                          spreadRadius:
+                              1, // controls how far the shadow spreads
+                          offset:
+                              const Offset(3, 0), // shift shadow down slightly
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        GestureDetector(
+                          onTap: () {},
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 7, vertical: 5),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(50),
+                              border: Border.all(
+                                color: const Color(0xFF9ECF9A),
+                                width: 1,
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Container(
+                                      width: 40,
+                                      height: 40,
+                                      decoration: const BoxDecoration(
+                                        color: Color(0xFFF8F8F8),
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(
+                                                100)), // Use Radius.circular
+                                      ),
+                                      child: const Center(
+                                        child: Icon(
+                                          Icons.card_giftcard,
+                                          size: 17,
+                                          color: Color(0xFF6B7280),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      width: 6,
+                                    ),
+                                    Text(
+                                      "My Wallet",
+                                      style: GoogleFonts.poppins(
+                                        color: const Color(0xFF244065),
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const Icon(
+                                  Icons.arrow_forward_ios_outlined,
+                                  size: 13,
+                                  color: Color(0xFF9ECF9A),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xFF9ECF9A)
+                              .withOpacity(0.15), // make it visible
+                          blurRadius: 30, // soft edges
+                          spreadRadius:
+                              1, // controls how far the shadow spreads
+                          offset:
+                              const Offset(3, 0), // shift shadow down slightly
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        GestureDetector(
+                          onTap: () {},
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 7, vertical: 5),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(50),
+                              border: Border.all(
+                                color: const Color(0xFF9ECF9A),
+                                width: 1,
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Container(
+                                      width: 40,
+                                      height: 40,
+                                      decoration: const BoxDecoration(
+                                        color: Color(0xFFF8F8F8),
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(
+                                                100)), // Use Radius.circular
+                                      ),
+                                      child: const Center(
+                                        child: Icon(
+                                          Icons.fact_check,
+                                          size: 17,
+                                          color: Color(0xFF6B7280),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      width: 6,
+                                    ),
+                                    Text(
+                                      "My Order",
+                                      style: GoogleFonts.poppins(
+                                        color: const Color(0xFF244065),
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const Icon(
+                                  Icons.arrow_forward_ios_outlined,
+                                  size: 13,
+                                  color: Color(0xFF9ECF9A),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xFF9ECF9A)
+                              .withOpacity(0.15), // make it visible
+                          blurRadius: 30, // soft edges
+                          spreadRadius:
+                              1, // controls how far the shadow spreads
+                          offset:
+                              const Offset(3, 0), // shift shadow down slightly
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        GestureDetector(
+                          onTap: () {},
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 7, vertical: 5),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(50),
+                              border: Border.all(
+                                color: const Color(0xFF9ECF9A),
+                                width: 1,
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Container(
+                                      width: 40,
+                                      height: 40,
+                                      decoration: const BoxDecoration(
+                                        color: Color(0xFFF8F8F8),
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(
+                                                100)), // Use Radius.circular
+                                      ),
+                                      child: const Center(
+                                        child: Icon(
+                                          Icons.fact_check,
+                                          size: 17,
+                                          color: Color(0xFF6B7280),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      width: 6,
+                                    ),
+                                    Text(
+                                      "My Gift Cards",
+                                      style: GoogleFonts.poppins(
+                                        color: const Color(0xFF244065),
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const Icon(
+                                  Icons.arrow_forward_ios_outlined,
+                                  size: 13,
+                                  color: Color(0xFF9ECF9A),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xFF9ECF9A)
+                              .withOpacity(0.15), // make it visible
+                          blurRadius: 30, // soft edges
+                          spreadRadius:
+                              1, // controls how far the shadow spreads
+                          offset:
+                              const Offset(3, 0), // shift shadow down slightly
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        GestureDetector(
+                          onTap: () {},
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 7, vertical: 5),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(50),
+                              border: Border.all(
+                                color: const Color(0xFF9ECF9A),
+                                width: 1,
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Container(
+                                      width: 40,
+                                      height: 40,
+                                      decoration: const BoxDecoration(
+                                        color: Color(0xFFF8F8F8),
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(
+                                                100)), // Use Radius.circular
+                                      ),
+                                      child: const Center(
+                                        child: Icon(
+                                          Icons.date_range_outlined,
+                                          size: 17,
+                                          color: Color(0xFF6B7280),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      width: 6,
+                                    ),
+                                    Text(
+                                      "FAQs",
+                                      style: GoogleFonts.poppins(
+                                        color: const Color(0xFF244065),
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const Icon(
+                                  Icons.arrow_forward_ios_outlined,
+                                  size: 13,
+                                  color: Color(0xFF9ECF9A),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xFF9ECF9A)
+                              .withOpacity(0.15), // make it visible
+                          blurRadius: 30, // soft edges
+                          spreadRadius:
+                              1, // controls how far the shadow spreads
+                          offset:
+                              const Offset(3, 0), // shift shadow down slightly
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        GestureDetector(
+                          onTap: () {},
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 7, vertical: 5),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(50),
+                              border: Border.all(
+                                color: const Color(0xFF9ECF9A),
+                                width: 1,
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Container(
+                                      width: 40,
+                                      height: 40,
+                                      decoration: const BoxDecoration(
+                                        color: Color(0xFFF8F8F8),
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(
+                                                100)), // Use Radius.circular
+                                      ),
+                                      child: const Center(
+                                        child: Icon(
+                                          Icons.settings,
+                                          size: 17,
+                                          color: Color(0xFF6B7280),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      width: 6,
+                                    ),
+                                    Text(
+                                      "Term and Conditions",
+                                      style: GoogleFonts.poppins(
+                                        color: const Color(0xFF244065),
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const Icon(
+                                  Icons.arrow_forward_ios_outlined,
+                                  size: 13,
+                                  color: Color(0xFF9ECF9A),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xFF9ECF9A)
+                              .withOpacity(0.15), // make it visible
+                          blurRadius: 30, // soft edges
+                          spreadRadius:
+                              1, // controls how far the shadow spreads
+                          offset:
+                              const Offset(3, 0), // shift shadow down slightly
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        GestureDetector(
+                          onTap: () {},
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 7, vertical: 5),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(50),
+                              border: Border.all(
+                                color: const Color(0xFF9ECF9A),
+                                width: 1,
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Container(
+                                      width: 40,
+                                      height: 40,
+                                      decoration: const BoxDecoration(
+                                        color: Color(0xFFF8F8F8),
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(
+                                                100)), // Use Radius.circular
+                                      ),
+                                      child: const Center(
+                                        child: Icon(
+                                          Icons.settings,
+                                          size: 17,
+                                          color: Color(0xFF6B7280),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      width: 6,
+                                    ),
+                                    Text(
+                                      "Help and Support",
+                                      style: GoogleFonts.poppins(
+                                        color: const Color(0xFF244065),
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const Icon(
+                                  Icons.arrow_forward_ios_outlined,
+                                  size: 13,
+                                  color: Color(0xFF9ECF9A),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 20),
+                    child: Stack(
+                      children: [
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => const LoginPage()),
+                              );
+                            },
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFF9ECF9A)),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 15.0, vertical: 10.0),
+                              child: Center(
+                                child: Text(
+                                  "Logout",
+                                  style: GoogleFonts.poppins(
+                                    color: const Color(0xFFFFFFFF),
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
                               ),
                             ),
                           ),
-                          const Positioned(
-                            top: 16.5,
-                            right: 15,
-                            child: Icon(
-                              Icons.arrow_forward,
-                              color: Color(0xFFFFFFFF),
-                              size: 18,
-                            ),
-                          )
-                        ],
-                      ),
+                        ),
+                        const Positioned(
+                          top: 16.5,
+                          right: 15,
+                          child: Icon(
+                            Icons.arrow_forward,
+                            color: Color(0xFFFFFFFF),
+                            size: 18,
+                          ),
+                        )
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ],
           )),

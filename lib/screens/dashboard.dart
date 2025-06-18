@@ -861,9 +861,6 @@ class DashboardPageState extends State<DashboardPage> {
                                                                               12,
                                                                           color:
                                                                               hexToColor(upcomingTeeTime!['booking']['bgColor']),
-                                                                          // upcomingTeeTime!['booking']['bgColor'],
-
-                                                                          // const Color(0xFF244065),
                                                                           fontWeight:
                                                                               FontWeight.w600,
                                                                         ),
