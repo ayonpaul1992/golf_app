@@ -119,6 +119,7 @@ class DashboardPageState extends State<DashboardPage> {
   @override
   void initState() {
     super.initState();
+    isLoading = true; // Set loading state to true initially
     _loadUserName();
     _loadWeather();
     fetchUpcomingTeeTime().then((teeTime) {
@@ -126,6 +127,7 @@ class DashboardPageState extends State<DashboardPage> {
         // Handle the fetched tee time if needed
         setState(() {
           upcomingTeeTime = teeTime;
+          isLoading = false; // Set loading state to false after fetching
         });
         print("Upcoming Tee Time: $teeTime");
       } else {
@@ -147,7 +149,6 @@ class DashboardPageState extends State<DashboardPage> {
         profilePic = storedPic!;
         accountNumber = storedAccountNumber ?? '';
         membership = storedMembership ?? '';
-        isLoading = false;
       });
     }
   }
@@ -163,7 +164,6 @@ class DashboardPageState extends State<DashboardPage> {
       setState(() {
         weatherDescription = toTitleCase(weather['weather'][0]['description']);
         temperature = weather['main']['temp'];
-        isLoading = false;
       });
     } catch (e) {
       print("❗ Error: $e");
