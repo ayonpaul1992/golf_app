@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:gulf_app/screens/edit_profile.dart';
 import 'package:gulf_app/screens/login.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:gulf_app/components/custom_app_bar.dart';
@@ -19,6 +20,30 @@ class MySettingPage extends StatefulWidget {
 class MySettingPageState extends State<MySettingPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final FlutterSecureStorage secureStorage = const FlutterSecureStorage();
+  String? userName = '';
+  String? accountNumber = '';
+  String? userProfileImage = '';
+
+  //get user name from secure storage
+  Future<void> getUserName() async {
+    String? fetchedUserName = await secureStorage.read(key: 'userName');
+    String? fetchedAccountNumber =
+        await secureStorage.read(key: 'accountNumber');
+    String? storedUserProfileImage =
+        await secureStorage.read(key: 'profilePic');
+    setState(() {
+      userName = fetchedUserName ?? 'Guest'; // Default to 'Guest' if not found
+      accountNumber =
+          fetchedAccountNumber ?? 'N/A'; // Default to 'N/A' if not found
+      userProfileImage = storedUserProfileImage ?? '';
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getUserName();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -127,8 +152,18 @@ class MySettingPageState extends State<MySettingPage> {
                                   children: [
                                     ClipRRect(
                                       borderRadius: BorderRadius.circular(100),
-                                      child: Image.asset(
-                                        "assets/images/profile_prsn.jpg",
+                                      // child: Image.asset(
+                                      //   "assets/images/profile_prsn.jpg",
+                                      //   width: 50,
+                                      //   height: 50,
+                                      //   fit: BoxFit.cover,
+                                      // ),
+                                      child: Image(
+                                        image: userProfileImage!.isNotEmpty
+                                            ? NetworkImage(userProfileImage!)
+                                            : const AssetImage(
+                                                    "assets/images/profile_prsn.jpg")
+                                                as ImageProvider,
                                         width: 50,
                                         height: 50,
                                         fit: BoxFit.cover,
@@ -142,7 +177,10 @@ class MySettingPageState extends State<MySettingPage> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          "Koushik Datta",
+                                          (userName != null &&
+                                                  userName!.isNotEmpty)
+                                              ? userName!
+                                              : "Guest User",
                                           style: GoogleFonts.poppins(
                                             color: const Color(0xFF244065),
                                             fontSize: 16,
@@ -158,7 +196,10 @@ class MySettingPageState extends State<MySettingPage> {
                                           padding: const EdgeInsets.symmetric(
                                               horizontal: 10, vertical: 5),
                                           child: Text(
-                                            "C7980",
+                                            accountNumber != null &&
+                                                    accountNumber!.isNotEmpty
+                                                ? "$accountNumber"
+                                                : "Account: N/A",
                                             style: GoogleFonts.poppins(
                                                 color: const Color(0xFF669933),
                                                 fontSize: 12,
@@ -169,20 +210,33 @@ class MySettingPageState extends State<MySettingPage> {
                                     ),
                                   ],
                                 ),
-                                Container(
-                                  width: 40,
-                                  height: 40,
-                                  decoration: const BoxDecoration(
-                                    color: Color(0xFF9ECF9A),
-                                    borderRadius: BorderRadius.all(
-                                        Radius.circular(
-                                            100)), // Use Radius.circular
-                                  ),
-                                  child: const Center(
-                                    child: Icon(
-                                      Icons.edit,
-                                      size: 17,
-                                      color: Color(0xFFFFFFFF),
+                                GestureDetector(
+                                  onTap: () {
+                                    // print("Edit Profile Tapped");
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => const MyEditPage(
+                                          myEdId: '',
+                                        ), // Replace with your target widget
+                                      ),
+                                    );
+                                  },
+                                  child: Container(
+                                    width: 40,
+                                    height: 40,
+                                    decoration: const BoxDecoration(
+                                      color: Color(0xFF9ECF9A),
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(
+                                              100)), // Use Radius.circular
+                                    ),
+                                    child: const Center(
+                                      child: Icon(
+                                        Icons.edit,
+                                        size: 17,
+                                        color: Color(0xFFFFFFFF),
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -902,11 +956,40 @@ class MySettingPageState extends State<MySettingPage> {
                         SizedBox(
                           width: double.infinity,
                           child: ElevatedButton(
-                            onPressed: () {
-                              Navigator.push(
+                            onPressed: () async {
+                              bool? confirm = await showDialog<bool>(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: const Text('Confirm Logout'),
+                                    content: const Text(
+                                        'Are you sure you want to logout?'),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () =>
+                                            Navigator.of(context).pop(false),
+                                        child: const Text('Cancel'),
+                                      ),
+                                      TextButton(
+                                        onPressed: () =>
+                                            Navigator.of(context).pop(true),
+                                        child: const Text('Logout'),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+
+                              if (confirm != true) {
+                                return;
+                              }
+                              await secureStorage.deleteAll();
+                              if (!mounted) return;
+                              Navigator.pushAndRemoveUntil(
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => const LoginPage()),
+                                (route) => false,
                               );
                             },
                             style: ElevatedButton.styleFrom(
