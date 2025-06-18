@@ -37,6 +37,8 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
 
   @override
   Widget build(BuildContext context) {
+    final double bottomSystemPadding = MediaQuery.of(context).padding.bottom;
+
     return FutureBuilder(
       future: SharedPreferences.getInstance(),
       builder: (context, snapshot) {
@@ -77,114 +79,118 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
           },
         ];
 
-        return SafeArea(
-          child: Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 9),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.4),
-                  blurRadius: 10,
-                  spreadRadius: 2,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(20.0),
-                topRight: Radius.circular(20.0),
+        return Container(
+          // child: Container(
+          width: double.infinity,
+          // padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 9),
+          padding: EdgeInsets.fromLTRB(9, 4, 9, 4 + bottomSystemPadding),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.4),
+                blurRadius: 10,
+                spreadRadius: 2,
+                offset: const Offset(0, 4),
               ),
+            ],
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(20.0),
+              topRight: Radius.circular(20.0),
             ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: List.generate(items.length, (index) {
-                return MouseRegion(
-                  onEnter: (_) {
-                    setState(() {
-                      hoverIndex = index;
-                    });
-                  },
-                  onExit: (_) {
-                    setState(() {
-                      hoverIndex = null;
-                    });
-                  },
-                  child: InkWell(
-                    onTap: () {
-                      if (widget.selectedIndex != index) {
-                        if (items[index]['route'] == null) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                "${items[index]['label']} screen is under development!",
-                              ),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: List.generate(items.length, (index) {
+              return MouseRegion(
+                onEnter: (_) {
+                  setState(() {
+                    hoverIndex = index;
+                  });
+                },
+                onExit: (_) {
+                  setState(() {
+                    hoverIndex = null;
+                  });
+                },
+                child: InkWell(
+                  onTap: () {
+                    if (widget.selectedIndex != index) {
+                      if (items[index]['route'] == null) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              "${items[index]['label']} screen is under development!",
                             ),
-                          );
-                        } else {
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => items[index]['route']!,
-                            ),
-                          );
-                        }
-                      }
-                    },
-                    child: SizedBox(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              AnimatedContainer(
-                                // Use AnimatedContainer for background and icon
-                                duration: const Duration(milliseconds: 200),
-                                decoration: BoxDecoration(
-                                  color: hoverIndex == index
-                                      ? const Color(0xFF9ECF9A)
-                                      : Colors.transparent,
-                                  shape: BoxShape.circle,
-                                ),
-                                padding: const EdgeInsets.all(8.0),
-                                child: Image.asset(
-                                  items[index]['icon']!,
-                                  fit: BoxFit.contain,
-                                  width: 17,
-                                  color: hoverIndex == index
-                                      ? Colors.white
-                                      : (widget.selectedIndex == index
-                                          ? const Color(0xFF9ECF9A)
-                                          : const Color(0xFF244065)),
-                                ),
-                              ),
-                            ],
                           ),
-                          AnimatedOpacity(
+                        );
+                      } else {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => items[index]['route']!,
+                          ),
+                        );
+                      }
+                    }
+                  },
+                  child: SizedBox(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            AnimatedContainer(
+                              // Use AnimatedContainer for background and icon
+                              duration: const Duration(milliseconds: 200),
+                              decoration: BoxDecoration(
+                                color: hoverIndex == index
+                                    ? const Color(0xFF9ECF9A)
+                                    : Colors.transparent,
+                                shape: BoxShape.circle,
+                              ),
+                              padding: const EdgeInsets.all(8.0),
+                              child: Image.asset(
+                                items[index]['icon']!,
+                                fit: BoxFit.contain,
+                                width: 17,
+                                color: hoverIndex == index
+                                    ? Colors.white
+                                    : (widget.selectedIndex == index
+                                        ? const Color(0xFF9ECF9A)
+                                        : const Color(0xFF244065)),
+                              ),
+                            ),
+                          ],
+                        ),
+                        AnimatedOpacity(
                             // Use AnimatedOpacity for text fade
                             duration: const Duration(milliseconds: 200),
                             opacity: hoverIndex == index ? 0.0 : 1.0,
-                            child: Text(
-                              items[index]['label']!,
-                              style: GoogleFonts.poppins(
-                                color: widget.selectedIndex == index
-                                    ? const Color(0xFF9ECF9A)
-                                    : const Color(0xFF648683),
-                                fontSize: 13,
-                                fontWeight: FontWeight.w400,
+                            child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              alignment: Alignment.center,
+                              child: Text(
+                                items[index]['label']!,
+                                style: GoogleFonts.poppins(
+                                  color: widget.selectedIndex == index
+                                      ? const Color(0xFF9ECF9A)
+                                      : const Color(0xFF648683),
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w400,
+                                ),
                               ),
-                            ),
-                          ),
-                        ],
-                      ),
+                            )),
+                      ],
                     ),
                   ),
-                );
-              }),
-            ),
+                ),
+              );
+            }),
           ),
+          // ),
         );
       },
     );
