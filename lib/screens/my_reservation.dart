@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -68,7 +70,7 @@ class MyReservationPageState extends State<MyReservationPage> {
               .toList();
           isLoading = false; // Set loading to false after fetching
         });
-        // print('📦 Bookings data: $reservations');
+        print('📦 Bookings data: $reservations');
       } else {
         print('❌ Failed to fetch bookings: ${response.statusCode}');
         // Optionally show an error message to the user
@@ -87,13 +89,15 @@ class MyReservationPageState extends State<MyReservationPage> {
     fetchMyBookings();
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    fetchMyBookings(); // Safe place to trigger load
+  }
+
   int? editingIndex;
   int selectedIndex = 0;
   // index 0 is "All"
-  double _getDropdownOffset() {
-    final renderBox = context.findRenderObject() as RenderBox?;
-    return renderBox?.localToGlobal(Offset.zero).dy ?? 100;
-  }
 
   void _toggleDropdown() {
     if (_dropdownOverlay == null) {
@@ -111,10 +115,13 @@ class MyReservationPageState extends State<MyReservationPage> {
               borderRadius: BorderRadius.circular(8),
               child: Container(
                 margin: const EdgeInsets.symmetric(
-                    horizontal: 0), // Adjust horizontal padding
+                  horizontal: 0,
+                ), // Adjust horizontal padding
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  border: Border.all(color: const Color(0xFFB2C1C0)),
+                  border: Border.all(
+                    color: const Color(0xFFB2C1C0),
+                  ),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Column(
@@ -488,9 +495,119 @@ class MyReservationPageState extends State<MyReservationPage> {
                                                                                   child: const Text('No'),
                                                                                 ),
                                                                                 TextButton(
+//                                                                                   onPressed: () async {
+//                                                                                     Navigator.of(context).pop(); // Close the dialog
+//                                                                                     // await _cancelTeeTime(slotId);
+//                                                                                     try {
+//                                                                                       final secureStorage = const FlutterSecureStorage();
+//                                                                                       final token = await secureStorage.read(key: 'accessToken');
+
+//                                                                                       if (token == null) {
+//                                                                                         throw Exception('Access token not found');
+//                                                                                       }
+
+//                                                                                       // Replace this with your dynamic slot ID
+//                                                                                       // String slotId =
+//                                                                                       //     "20250423630AM9958"; // Example; should be dynamic
+
+//                                                                                       final uri = Uri.parse(
+//                                                                                         'https://api.dev.driverpos.io/api/v1/teesheet/myBookings/cancel/$slotId',
+//                                                                                       );
+
+//                                                                                       final response = await http.delete(
+//                                                                                         uri,
+//                                                                                         headers: {
+//                                                                                           'Authorization': 'Bearer $token',
+//                                                                                           'Content-Type': 'application/json',
+//                                                                                         },
+//                                                                                         body: jsonEncode({
+//                                                                                           "process": "Cancel",
+//                                                                                         }),
+//                                                                                       );
+
+//                                                                                       if (response.statusCode == 200) {
+//                                                                                         if (!mounted) return;
+
+//                                                                                         final messenger = ScaffoldMessenger.of(context);
+
+// // ✅ Show snackbar first using a stored reference
+//                                                                                         messenger.showSnackBar(
+//                                                                                           const SnackBar(
+//                                                                                             content: Text('Tee time cancelled successfully'),
+//                                                                                             backgroundColor: Color(0xFF9ECF9A),
+//                                                                                           ),
+//                                                                                         );
+
+// // ✅ Delay navigation slightly
+//                                                                                         await Future.delayed(const Duration(milliseconds: 300));
+
+// // ✅ Then navigate
+//                                                                                         if (mounted) {
+//                                                                                           Navigator.pushReplacement(
+//                                                                                             context,
+//                                                                                             MaterialPageRoute(
+//                                                                                               builder: (context) => const MyReservationPage(myRsvId: ''),
+//                                                                                             ),
+//                                                                                           );
+//                                                                                         }
+
+// //                                                                                         print('✅ Tee time cancelled successfully');
+
+// // // Show snackbar first
+// //                                                                                         ScaffoldMessenger.of(context).showSnackBar(
+// //                                                                                           const SnackBar(
+// //                                                                                             content: Text('Tee time cancelled successfully'),
+// //                                                                                             backgroundColor: Color(0xFF9ECF9A),
+// //                                                                                           ),
+// //                                                                                         );
+
+// // // Then navigate (use a short delay to ensure the snackbar shows up)
+// //                                                                                         Future.delayed(const Duration(milliseconds: 100), () {
+// //                                                                                           Navigator.pushReplacement(
+// //                                                                                             context,
+// //                                                                                             MaterialPageRoute(
+// //                                                                                               builder: (context) => const MyReservationPage(
+// //                                                                                                 myRsvId: '',
+// //                                                                                               ),
+// //                                                                                             ),
+// //                                                                                           );
+// //                                                                                         });
+
+//                                                                                         // print('✅ Tee time cancelled successfully');
+
+//                                                                                         // // Reload the screen
+//                                                                                         // Navigator.pushReplacement(
+//                                                                                         //   context,
+//                                                                                         //   MaterialPageRoute(
+//                                                                                         //     builder: (context) => const MyReservationPage(
+//                                                                                         //       myRsvId: '',
+//                                                                                         //     ),
+//                                                                                         //   ), // Replace with your screen widget
+//                                                                                         // );
+
+//                                                                                         // // Optionally show a snackbar or alert
+//                                                                                         // ScaffoldMessenger.of(context).showSnackBar(
+//                                                                                         //   const SnackBar(
+//                                                                                         //     content: Text('Tee time cancelled successfully'),
+//                                                                                         //     backgroundColor: Color(0xFF9ECF9A),
+//                                                                                         //   ),
+//                                                                                         // );
+//                                                                                       } else {
+//                                                                                         print('❌ Failed to cancel tee time: ${response.statusCode}');
+//                                                                                         // Optionally show a snackbar or alert
+//                                                                                       }
+//                                                                                     } catch (e) {
+//                                                                                       print('❗ Error cancelling tee time: $e');
+//                                                                                       // Optionally show a snackbar or alert
+//                                                                                     }
+//                                                                                   },
+
                                                                                   onPressed: () async {
-                                                                                    Navigator.of(context).pop(); // Close the dialog
-                                                                                    // await _cancelTeeTime(slotId);
+                                                                                    // ✅ Save a valid context reference BEFORE popping
+                                                                                    final messenger = ScaffoldMessenger.of(context);
+
+                                                                                    Navigator.of(context).pop(); // Now safe to close the dialog
+
                                                                                     try {
                                                                                       final secureStorage = const FlutterSecureStorage();
                                                                                       final token = await secureStorage.read(key: 'accessToken');
@@ -498,10 +615,6 @@ class MyReservationPageState extends State<MyReservationPage> {
                                                                                       if (token == null) {
                                                                                         throw Exception('Access token not found');
                                                                                       }
-
-                                                                                      // Replace this with your dynamic slot ID
-                                                                                      // String slotId =
-                                                                                      //     "20250423630AM9958"; // Example; should be dynamic
 
                                                                                       final uri = Uri.parse(
                                                                                         'https://api.dev.driverpos.io/api/v1/teesheet/myBookings/cancel/$slotId',
@@ -519,26 +632,34 @@ class MyReservationPageState extends State<MyReservationPage> {
                                                                                       );
 
                                                                                       if (response.statusCode == 200) {
-                                                                                        print('✅ Tee time cancelled successfully');
-
-                                                                                        // Reload the screen
-                                                                                        Navigator.pushReplacement(
-                                                                                          context,
-                                                                                          MaterialPageRoute(
-                                                                                            builder: (context) => const MyReservationPage(
-                                                                                              myRsvId: '',
-                                                                                            ),
-                                                                                          ), // Replace with your screen widget
+                                                                                        // ✅ Use the stored reference — not ScaffoldMessenger.of(context)
+                                                                                        messenger.showSnackBar(
+                                                                                          const SnackBar(
+                                                                                            content: Text('Tee time cancelled successfully'),
+                                                                                            backgroundColor: Color(0xFF9ECF9A),
+                                                                                          ),
                                                                                         );
+
+                                                                                        await Future.delayed(const Duration(milliseconds: 300));
+
+                                                                                        if (context.mounted) {
+                                                                                          Navigator.pushReplacement(
+                                                                                            context,
+                                                                                            MaterialPageRoute(
+                                                                                              builder: (context) => MyReservationPage(
+                                                                                                  key: UniqueKey(), // Ensure a new key to rebuild the widget
+                                                                                                  myRsvId: ''),
+                                                                                            ),
+                                                                                          );
+                                                                                        }
                                                                                       } else {
                                                                                         print('❌ Failed to cancel tee time: ${response.statusCode}');
-                                                                                        // Optionally show a snackbar or alert
                                                                                       }
                                                                                     } catch (e) {
                                                                                       print('❗ Error cancelling tee time: $e');
-                                                                                      // Optionally show a snackbar or alert
                                                                                     }
                                                                                   },
+
                                                                                   child: const Text('Yes'),
                                                                                 ),
                                                                               ],

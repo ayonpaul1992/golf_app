@@ -1,4 +1,4 @@
-// ignore_for_file: deprecated_member_use
+// ignore_for_file: deprecated_member_use, use_build_context_synchronously
 
 import 'dart:convert';
 
@@ -16,6 +16,7 @@ import 'package:weather_icons/weather_icons.dart';
 import '../services/location_service.dart';
 import '../services/weather_service.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class DashboardPage extends StatefulWidget {
   // final String dshbId;
@@ -85,7 +86,7 @@ class DashboardPageState extends State<DashboardPage> {
       // Example using http package:
       final response = await http.get(
         Uri.parse(
-            'https://api.dev.driverpos.io/api/v1/teesheet/myBookings?bookingStatus=Booked&page=1&limit=1'),
+            'https://api.dev.driverpos.io/api/v1/teesheet/myBookings?bookingStatus=Booked&page=1&limit=1&isDashboard=true'),
         headers: {
           'Authorization':
               'Bearer ${await secureStorage.read(key: "accessToken")}'
@@ -127,12 +128,15 @@ class DashboardPageState extends State<DashboardPage> {
         // Handle the fetched tee time if needed
         setState(() {
           upcomingTeeTime = teeTime;
-          isLoading = false; // Set loading state to false after fetching
         });
         print("Upcoming Tee Time: $teeTime");
       } else {
         print("No upcoming tee time found.");
       }
+
+      setState(() {
+        isLoading = false; // Set loading state to false after fetching
+      });
     });
   }
 
@@ -540,52 +544,54 @@ class DashboardPageState extends State<DashboardPage> {
                                       ),
                                     ),
                                   ),
-                                  GestureDetector(
-                                    onTap: () {},
-                                    child: Container(
-                                      padding: const EdgeInsets.all(20),
-                                      decoration: BoxDecoration(
-                                        color: const Color(0xFFFFFFFF),
-                                        borderRadius: BorderRadius.circular(20),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Colors.black.withOpacity(
-                                                0.1), // light shadow
-                                            offset: const Offset(
-                                                1, 1), // x: right, y: down
-                                            blurRadius: 10, // soft blur
-                                            spreadRadius: 1, // slight spread
-                                          ),
-                                        ],
-                                      ),
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          const Icon(
-                                            Icons.badge,
-                                            color: Color(0xFF669933),
-                                            size: 36,
-                                          ),
-                                          const SizedBox(
-                                            height: 10,
-                                          ),
-                                          SizedBox(
-                                            width: 100,
-                                            child: Text(
-                                              "Gift Card & Membership",
-                                              textAlign: TextAlign.center,
-                                              style: GoogleFonts.poppins(
-                                                color: const Color(0xFF244065),
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w600,
-                                              ),
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                  ),
+
+                                  // GestureDetector(
+                                  //   onTap: () {},
+                                  //   child: Container(
+                                  //     padding: const EdgeInsets.all(20),
+                                  //     decoration: BoxDecoration(
+                                  //       color: const Color(0xFFFFFFFF),
+                                  //       borderRadius: BorderRadius.circular(20),
+                                  //       boxShadow: [
+                                  //         BoxShadow(
+                                  //           color: Colors.black.withOpacity(
+                                  //               0.1), // light shadow
+                                  //           offset: const Offset(
+                                  //               1, 1), // x: right, y: down
+                                  //           blurRadius: 10, // soft blur
+                                  //           spreadRadius: 1, // slight spread
+                                  //         ),
+                                  //       ],
+                                  //     ),
+                                  //     child: Column(
+                                  //       mainAxisAlignment:
+                                  //           MainAxisAlignment.center,
+                                  //       children: [
+                                  //         const Icon(
+                                  //           Icons.badge,
+                                  //           color: Color(0xFF669933),
+                                  //           size: 36,
+                                  //         ),
+                                  //         const SizedBox(
+                                  //           height: 10,
+                                  //         ),
+                                  //         SizedBox(
+                                  //           width: 100,
+                                  //           child: Text(
+                                  //             "Gift Card & Membership",
+                                  //             textAlign: TextAlign.center,
+                                  //             style: GoogleFonts.poppins(
+                                  //               color: const Color(0xFF244065),
+                                  //               fontSize: 14,
+                                  //               fontWeight: FontWeight.w600,
+                                  //             ),
+                                  //           ),
+                                  //         )
+                                  //       ],
+                                  //     ),
+                                  //   ),
+                                  // ),
+
                                   GestureDetector(
                                     onTap: () {
                                       Navigator.push(
@@ -641,52 +647,53 @@ class DashboardPageState extends State<DashboardPage> {
                                       ),
                                     ),
                                   ),
-                                  GestureDetector(
-                                    onTap: () {},
-                                    child: Container(
-                                      padding: const EdgeInsets.all(20),
-                                      decoration: BoxDecoration(
-                                        color: const Color(0xFFFFFFFF),
-                                        borderRadius: BorderRadius.circular(20),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Colors.black.withOpacity(
-                                                0.1), // light shadow
-                                            offset: const Offset(
-                                                1, 1), // x: right, y: down
-                                            blurRadius: 10, // soft blur
-                                            spreadRadius: 1, // slight spread
-                                          ),
-                                        ],
-                                      ),
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          const Icon(
-                                            Icons.group_add,
-                                            color: Color(0xFF669933),
-                                            size: 36,
-                                          ),
-                                          const SizedBox(
-                                            height: 10,
-                                          ),
-                                          SizedBox(
-                                            width: 100,
-                                            child: Text(
-                                              "Make a Group",
-                                              textAlign: TextAlign.center,
-                                              style: GoogleFonts.poppins(
-                                                color: const Color(0xFF244065),
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w600,
-                                              ),
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                  ),
+
+                                  // GestureDetector(
+                                  //   onTap: () {},
+                                  //   child: Container(
+                                  //     padding: const EdgeInsets.all(20),
+                                  //     decoration: BoxDecoration(
+                                  //       color: const Color(0xFFFFFFFF),
+                                  //       borderRadius: BorderRadius.circular(20),
+                                  //       boxShadow: [
+                                  //         BoxShadow(
+                                  //           color: Colors.black.withOpacity(
+                                  //               0.1), // light shadow
+                                  //           offset: const Offset(
+                                  //               1, 1), // x: right, y: down
+                                  //           blurRadius: 10, // soft blur
+                                  //           spreadRadius: 1, // slight spread
+                                  //         ),
+                                  //       ],
+                                  //     ),
+                                  //     child: Column(
+                                  //       mainAxisAlignment:
+                                  //           MainAxisAlignment.center,
+                                  //       children: [
+                                  //         const Icon(
+                                  //           Icons.group_add,
+                                  //           color: Color(0xFF669933),
+                                  //           size: 36,
+                                  //         ),
+                                  //         const SizedBox(
+                                  //           height: 10,
+                                  //         ),
+                                  //         SizedBox(
+                                  //           width: 100,
+                                  //           child: Text(
+                                  //             "Make a Group",
+                                  //             textAlign: TextAlign.center,
+                                  //             style: GoogleFonts.poppins(
+                                  //               color: const Color(0xFF244065),
+                                  //               fontSize: 14,
+                                  //               fontWeight: FontWeight.w600,
+                                  //             ),
+                                  //           ),
+                                  //         )
+                                  //       ],
+                                  //     ),
+                                  //   ),
+                                  // ),
                                 ],
                               ),
                               const SizedBox(
@@ -1142,13 +1149,91 @@ class DashboardPageState extends State<DashboardPage> {
                               SizedBox(
                                 width: double.infinity,
                                 child: ElevatedButton(
-                                  onPressed: () {
-                                    // Navigator.push(
-                                    //   context,
-                                    //   MaterialPageRoute(
-                                    //       builder: (context) => LoginPage()),
-                                    // );
+                                  // onPressed: () {
+                                  //   // make it email to functionality to support@driverpos.io
+
+                                  // },
+
+                                  // onPressed: () async {
+                                  //   final Uri emailUri = Uri(
+                                  //     scheme: 'mailto',
+                                  //     path: 'support@driverpos.io',
+                                  //     query: Uri.encodeFull(
+                                  //         'subject=Support Request&body=Please describe your issue here.'),
+                                  //   );
+
+                                  //   if (await canLaunchUrl(emailUri)) {
+                                  //     // await launchUrl(emailUri);
+                                  //     try {
+                                  //       await launchUrl(emailUri);
+                                  //     } catch (e) {
+                                  //       ScaffoldMessenger.of(context)
+                                  //           .showSnackBar(
+                                  //         const SnackBar(
+                                  //             content: Text(
+                                  //                 'Could not open email app')),
+                                  //       );
+                                  //     }
+                                  //   } else {
+                                  //     // Optionally show an error message
+                                  //     ScaffoldMessenger.of(context)
+                                  //         .showSnackBar(
+                                  //       const SnackBar(
+                                  //         content:
+                                  //             Text('Could not open email app'),
+                                  //       ),
+                                  //     );
+                                  //   }
+                                  // },
+
+                                  onPressed: () async {
+                                    final Uri emailUri = Uri(
+                                      scheme: 'mailto',
+                                      path: 'support@driverpos.io',
+                                      query: Uri.encodeFull(
+                                        'subject=Support Request&body=Please describe your issue here.',
+                                      ),
+                                    );
+
+                                    // try {
+                                    //   bool launched = await launchUrl(emailUri);
+                                    //   if (!launched) {
+                                    //     throw 'Could not launch';
+                                    //   }
+                                    // } catch (e) {
+                                    //   // Optionally show an error message
+                                    //   print('Error launching email app: $e');
+                                    //   ScaffoldMessenger.of(context)
+                                    //       .showSnackBar(
+                                    //     const SnackBar(
+                                    //       content:
+                                    //           Text('Could not open email app'),
+                                    //     ),
+                                    //   );
+                                    // }
+
+                                    try {
+                                      // Try launching with external application mode
+                                      final bool launched = await launchUrl(
+                                          emailUri,
+                                          mode: LaunchMode.externalApplication);
+
+                                      if (!launched) {
+                                        throw 'Could not launch email client.';
+                                      }
+                                    } catch (e) {
+                                      // Show fallback UI or error message
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        const SnackBar(
+                                          content: Text(
+                                              'No email app found. Please configure one first.'),
+                                          backgroundColor: Colors.redAccent,
+                                        ),
+                                      );
+                                    }
                                   },
+
                                   style: ElevatedButton.styleFrom(
                                       backgroundColor: const Color(0xFF9ECF9A)),
                                   child: Padding(

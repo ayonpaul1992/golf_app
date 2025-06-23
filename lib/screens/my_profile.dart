@@ -891,7 +891,7 @@ class MyProfilePageState extends State<MyProfilePage> {
           ),
         ),
       ),
-      bottomNavigationBar: const CustomBottomNavBar(selectedIndex: -1),
+      bottomNavigationBar: const CustomBottomNavBar(selectedIndex: 4),
     );
   }
 }

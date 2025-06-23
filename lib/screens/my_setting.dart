@@ -8,6 +8,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:gulf_app/components/custom_app_bar.dart';
 import 'package:gulf_app/components/custom_drawer.dart';
 import 'package:gulf_app/components/custom_bottom_nav_bar.dart';
+import 'package:gulf_app/screens/my_transaction.dart';
 
 class MySettingPage extends StatefulWidget {
   final String myStngId;
@@ -578,7 +579,16 @@ class MySettingPageState extends State<MySettingPage> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         GestureDetector(
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const MyTransactionPage(
+                                  myTransId: '',
+                                ), // Replace with your target widget
+                              ),
+                            );
+                          },
                           child: Container(
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 7, vertical: 5),
@@ -616,7 +626,7 @@ class MySettingPageState extends State<MySettingPage> {
                                       width: 6,
                                     ),
                                     Text(
-                                      "My Order",
+                                      "My Transactions",
                                       style: GoogleFonts.poppins(
                                         color: const Color(0xFF244065),
                                         fontSize: 14,
