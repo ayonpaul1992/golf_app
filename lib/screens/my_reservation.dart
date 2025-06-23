@@ -655,7 +655,8 @@ class MyReservationPageState extends State<MyReservationPage> {
                                                           bookingDateRaw != null
                                                               ? DateFormat(
                                                                       'EEE, MMM d')
-                                                                  .format(DateTime
+                                                                  .format(DateFormat(
+                                                                          'EEEE dd, MMMM, yyyy')
                                                                       .parse(
                                                                           bookingDateRaw))
                                                               : "Unknown Date",

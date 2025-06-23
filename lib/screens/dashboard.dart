@@ -947,8 +947,15 @@ class DashboardPageState extends State<DashboardPage> {
                                                                       upcomingTeeTime!['date'] !=
                                                                               null
                                                                           ? DateFormat('EEE, MMM d')
-                                                                              .format(DateTime.parse(upcomingTeeTime!['date']))
-                                                                          : "Unknown Date",
+                                                                              .format(DateFormat('EEEE dd, MMMM, yyyy').parse(upcomingTeeTime!['date']))
+
+                                                                          // upcomingTeeTime!['date']
+                                                                          //     .toString()
+                                                                          : 'Unknown Date',
+
+                                                                      // DateFormat('EEE, MMM d')
+                                                                      //     .format(DateTime.parse(upcomingTeeTime!['date']))
+                                                                      // : "Unknown Date",
                                                                       style: GoogleFonts.poppins(
                                                                           color: const Color(
                                                                               0xFF6E7373),
