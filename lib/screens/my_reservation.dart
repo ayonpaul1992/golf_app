@@ -170,14 +170,9 @@ class MyReservationPageState extends State<MyReservationPage> {
                     return InkWell(
                       onTap: () {
                         setState(() {
-                          isLoading =
-                              true; // Set loading to true when changing filter
                           _selectedFilter = option;
-
                           // Call fetchMyBookings with the selected date range
                           fetchMyBookings();
-                          isLoading =
-                              false; // Set loading to false after fetching
                         });
                         _removeDropdown();
                       },

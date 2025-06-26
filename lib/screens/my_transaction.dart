@@ -45,6 +45,46 @@ class MyTransactionPageState extends State<MyTransactionPage> {
     fetchTransactions(); // Fetch transactions when the page loads
   }
 
+  Map<String, String> getDateRange(String filter) {
+    final now = DateTime.now();
+    late DateTime startDate;
+    late DateTime endDate;
+
+    switch (filter) {
+      case 'Today':
+        startDate = DateTime(now.year, now.month, now.day);
+        endDate = startDate;
+        break;
+
+      case 'This week':
+        final int weekday = now.weekday; // Monday = 1, Sunday = 7
+        startDate = now.subtract(Duration(days: weekday - 1));
+        endDate = now.add(Duration(days: 7 - weekday));
+        break;
+
+      case 'This month':
+        startDate = DateTime(now.year, now.month, 1);
+        endDate =
+            DateTime(now.year, now.month + 1, 0); // Last day of this month
+        break;
+
+      case 'This year':
+        startDate = DateTime(now.year, 1, 1);
+        endDate = DateTime(now.year, 12, 31);
+        break;
+
+      default:
+        startDate = now;
+        endDate = now;
+    }
+
+    final formatter = DateFormat('yyyy-MM-dd');
+    return {
+      'startDate': formatter.format(startDate),
+      'endDate': formatter.format(endDate),
+    };
+  }
+
   Future<void> fetchTransactions() async {
     setState(() {
       isLoading = true;
@@ -52,7 +92,8 @@ class MyTransactionPageState extends State<MyTransactionPage> {
     try {
       final token = await secureStorage.read(key: 'accessToken');
       final response = await http.get(
-        Uri.parse('https://api.dev.driverpos.io/api/v1/report/myTransactions'),
+        Uri.parse(
+            'https://api.dev.driverpos.io/api/v1/report/myTransactions?startDate=${getDateRange(_selectedFilter)['startDate']}&endDate=${getDateRange(_selectedFilter)['endDate']}'),
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',
@@ -111,6 +152,8 @@ class MyTransactionPageState extends State<MyTransactionPage> {
                       onTap: () {
                         setState(() {
                           _selectedFilter = option;
+                          print("Selected filter: $_selectedFilter");
+                          fetchTransactions(); // Fetch transactions with the new filter
                         });
                         _removeDropdown();
                       },
