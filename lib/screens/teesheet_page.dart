@@ -1,5 +1,7 @@
 // ignore_for_file: deprecated_member_use, library_prefixes, unnecessary_string_interpolations
 
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -52,6 +54,8 @@ class TeesheetPageState extends State<TeesheetPage> {
   int bookingsPerDay = 0;
   bool limitExistingGroup = false;
 
+  String timeOfDay = 'all'; // Default time slot
+
   // List<String> teeSheetConfigHoles = [];
 
   IO.Socket? socket;
@@ -64,7 +68,7 @@ class TeesheetPageState extends State<TeesheetPage> {
     _dateController.text = DateFormat("MMM dd, yyyy").format(now);
 
     final queryParameters = {
-      'timeOfDay': 'all', // Assuming timeSlot is based on selectedIndex
+      'timeOfDay': timeOfDay, // Assuming timeSlot is based on selectedIndex
       'teeSheet': widget.teesheetPageId,
       'reservationGroup': widget.reservationGroupId,
       'date': _selectedDate != null
@@ -116,51 +120,120 @@ class TeesheetPageState extends State<TeesheetPage> {
     }
   }
 
+  // Future<void> _fetchCustomerTeesheets(Map<String, dynamic> params) async {
+  //   // setState(() {
+  //   //   isLoading = true;
+  //   // });
+  //   // Always dispose the old one
+  //   final FlutterSecureStorage secureStorage = const FlutterSecureStorage();
+
+  //   String token = await secureStorage.read(key: 'accessToken') ?? '';
+
+  //   socket?.clearListeners(); // ✅ clear all previous .on() handlers
+  //   socket?.disconnect();
+  //   socket?.destroy();
+  //   socket = null;
+
+  //   socket?.dispose();
+
+  //   socket = IO.io('https://api.dev.driverpos.io', <String, dynamic>{
+  //     'transports': ['websocket'],
+  //     'timeout': 5000,
+  //     'reconnection': true,
+  //     'reconnectionAttempts': 5,
+  //     'auth': {
+  //       'token': token, // ✅ this matches the React structure
+  //     },
+  //   });
+
+  //   socket!.onConnect((_) {
+  //     socket!.emit("/customerTeesheet", params);
+  //   });
+
+  //   socket!.off("/customerTeesheet");
+
+  //   socket!.on(
+  //       "/customerTeesheet?teesheetId=${widget.teesheetPageId}&date=${DateFormat("yyyy-MM-dd").format(_selectedDate!)}",
+  //       (data) {
+  //     final innerData = data['data']; // Extract the inner 'data' object
+  //     final teeSheetConfig = data['teeSheetConfig']; // Get config
+
+  //     print("📦 Received data: $data");
+  //     setState(() {
+  //       teesheetData = innerData;
+  //       setTeeSheetConfig(teeSheetConfig);
+  //       setTeeSheetData();
+  //       isLoading = false;
+  //     });
+  //   });
+
+  //   socket!.onConnectError((err) => print('❌ Connect error: $err'));
+  //   socket!.onError((err) => print('❌ General error: $err'));
+  //   socket!.onDisconnect((_) => print('🔌 Socket disconnected'));
+
+  //   socket!.connect();
+  // }
+
   Future<void> _fetchCustomerTeesheets(Map<String, dynamic> params) async {
     setState(() {
       isLoading = true;
     });
-    // Always dispose the old one
-    final FlutterSecureStorage secureStorage = const FlutterSecureStorage();
 
+    // Get token
+    final FlutterSecureStorage secureStorage = const FlutterSecureStorage();
     String token = await secureStorage.read(key: 'accessToken') ?? '';
 
-    socket?.clearListeners(); // ✅ clear all previous .on() handlers
-    socket?.disconnect();
-    socket?.destroy();
-    socket = null;
+    // Clean up old socket if exists
+    if (socket != null) {
+      socket!.clearListeners();
+      socket!.disconnect();
+      socket!.destroy();
+      socket = null;
+    }
 
-    socket?.dispose();
-
-    socket = IO.io('https://api.dev.driverpos.io', <String, dynamic>{
-      'transports': ['websocket'],
-      'timeout': 5000,
-      'reconnection': true,
-      'reconnectionAttempts': 5,
-      'auth': {
-        'token': token, // ✅ this matches the React structure
+    // Create new socket instance
+    socket = IO.io(
+      'https://api.dev.driverpos.io',
+      <String, dynamic>{
+        'transports': ['websocket'],
+        'timeout': 5000,
+        'reconnection': true,
+        'reconnectionAttempts': 5,
+        'auth': {'token': token},
       },
-    });
+    );
 
+    // Extract dynamic event key from params
+    final String teesheetId = params['teeSheet'];
+    final String date = params['date']; // should be in "yyyy-MM-dd" format
+    final String eventName =
+        "/customerTeesheet?teesheetId=$teesheetId&date=$date";
+
+    // Setup socket event listeners
     socket!.onConnect((_) {
-      socket!.emit("/customerTeesheet", params);
-    });
+      print("✅ Socket connected");
+      // Remove any old listener for the same event
+      socket!.off(eventName);
 
-    socket!.off("/customerTeesheet");
+      // Listen for the new data
+      socket!.on(eventName, (data) {
+        print("📦 Received data: $data");
 
-    socket!.on(
-        "/customerTeesheet?teesheetId=${widget.teesheetPageId}&date=${DateFormat("yyyy-MM-dd").format(_selectedDate!)}",
-        (data) {
-      final innerData = data['data']; // Extract the inner 'data' object
-      final teeSheetConfig = data['teeSheetConfig']; // Get config
+        final innerData = data['data'];
+        final teeSheetConfig = data['teeSheetConfig'];
 
-      // print("📦 Received data: $data");
-      setState(() {
-        teesheetData = innerData;
-        setTeeSheetConfig(teeSheetConfig);
-        setTeeSheetData();
-        isLoading = false;
+        setState(() {
+          teesheetData = innerData;
+          setTeeSheetConfig(teeSheetConfig);
+          setTeeSheetData();
+          // selectedIndex = 0; // Reset selectedIndex to 0 (All)
+          timeOfDay = "all"; // Reset timeOfDay to 'all'
+          isLoading = false;
+        });
       });
+
+      // Emit after listener is set
+      socket!.emit("/customerTeesheet", params);
     });
 
     socket!.onConnectError((err) => print('❌ Connect error: $err'));
@@ -237,6 +310,7 @@ class TeesheetPageState extends State<TeesheetPage> {
                         (DateRangePickerSelectionChangedArgs args) {
                       setState(() {
                         _selectedDate = args.value;
+                        // print('_selectedDate: ${_selectedDate.toString()}');
                       });
                     },
                   ),
@@ -273,6 +347,23 @@ class TeesheetPageState extends State<TeesheetPage> {
                                 .format(_selectedDate!);
                             setState(() {
                               _dateController.text = formattedDate;
+                              selectedIndex =
+                                  0; // Reset selectedIndex to 0 (All)
+                              selectedHole = ""; // Reset selectedHole
+                              selectedPlayer = 0;
+                              print(
+                                  '_dateController.text: ${_dateController.text}');
+                              timeOfDay = 'all'; // Reset timeOfDay to 'all'
+                              final queryParameters = {
+                                'timeOfDay': timeOfDay,
+                                'teeSheet': widget.teesheetPageId,
+                                'reservationGroup': widget.reservationGroupId,
+                                'date': DateFormat("yyyy-MM-dd")
+                                    .format(_selectedDate!),
+                                // 'holes': selectedHole,
+                                // 'players': selectedPlayer.toString(),
+                              };
+                              _fetchCustomerTeesheets(queryParameters);
                             });
                           }
                           Navigator.pop(context);
@@ -308,8 +399,8 @@ class TeesheetPageState extends State<TeesheetPage> {
   }
 
   int? editingIndex;
-  int selectedPlayer = 1;
-  String selectedHole = "9";
+  int selectedPlayer = 0;
+  String selectedHole = "";
   int selectedIndex = 0; // index 0 is "All"
   bool showDropdown = false;
   OverlayEntry? _dropdownOverlay;
@@ -389,6 +480,14 @@ class TeesheetPageState extends State<TeesheetPage> {
                                       onTap: editingIndex == null
                                           ? () => _showDatePicker(context)
                                           : null,
+
+                                      // () {
+                                      //   // print(
+                                      //   //     '_dateController.text: ${_dateController.text}');
+                                      //   editingIndex == null
+                                      //       ? () => _showDatePicker(context)
+                                      //       : null;
+                                      // },
                                       child: const Row(
                                         children: [
                                           Icon(
@@ -440,10 +539,29 @@ class TeesheetPageState extends State<TeesheetPage> {
                               return GestureDetector(
                                 onTap: () {
                                   setState(() {
+                                    timeOfDay =
+                                        'all'; // Reset timeOfDay to 'all'
+                                    selectedIndex =
+                                        0; // Reset selectedIndex to 0 (All)
+                                    selectedHole = ""; // Reset selectedHole
+                                    selectedPlayer = 0; // Reset selectedPlayer
                                     _selectedDate = date;
                                     _dateController.text =
                                         DateFormat("MMM dd, yyyy").format(date);
+                                    _fetchCustomerTeesheets({
+                                      'timeOfDay': timeOfDay,
+                                      'teeSheet': widget.teesheetPageId,
+                                      'reservationGroup':
+                                          widget.reservationGroupId,
+                                      'date':
+                                          DateFormat("yyyy-MM-dd").format(date),
+                                      // 'holes': selectedHole,
+                                      // 'players': selectedPlayer.toString(),
+                                    });
                                   });
+
+                                  print(
+                                      '_dateController.text: ${_dateController.text}');
                                 },
                                 child: Padding(
                                   padding: const EdgeInsets.only(
@@ -530,8 +648,25 @@ class TeesheetPageState extends State<TeesheetPage> {
                                             "$playerNum",
                                             selectedPlayer == playerNum,
                                             () {
+                                              print(
+                                                  'Selected player: $playerNum');
                                               setState(() {
                                                 selectedPlayer = playerNum;
+                                                final queryParameters = {
+                                                  'timeOfDay': timeOfDay,
+                                                  'teeSheet':
+                                                      widget.teesheetPageId,
+                                                  'reservationGroup':
+                                                      widget.reservationGroupId,
+                                                  'date': DateFormat(
+                                                          "yyyy-MM-dd")
+                                                      .format(_selectedDate!),
+                                                  'players':
+                                                      selectedPlayer.toString(),
+                                                  // 'holes': selectedHole,
+                                                };
+                                                _fetchCustomerTeesheets(
+                                                    queryParameters);
                                               });
                                             },
                                           );
@@ -565,10 +700,23 @@ class TeesheetPageState extends State<TeesheetPage> {
                                     return playerCircle(
                                       hole.toString(),
                                       // ignore: unrelated_type_equality_checks
-                                      selectedHole == hole,
+                                      selectedHole == hole.toString(),
                                       () {
                                         setState(() {
                                           selectedHole = hole.toString();
+                                          final queryParameters = {
+                                            'timeOfDay': timeOfDay,
+                                            'teeSheet': widget.teesheetPageId,
+                                            'reservationGroup':
+                                                widget.reservationGroupId,
+                                            'date': DateFormat("yyyy-MM-dd")
+                                                .format(_selectedDate!),
+                                            'holes': selectedHole,
+                                            // 'players':
+                                            //     selectedPlayer.toString(),
+                                          };
+                                          _fetchCustomerTeesheets(
+                                              queryParameters);
                                         });
                                       },
                                     );
@@ -629,6 +777,20 @@ class TeesheetPageState extends State<TeesheetPage> {
                                 onTap: () {
                                   setState(() {
                                     selectedIndex = 0;
+                                    // Reset timeOfDay to 'all'
+                                    timeOfDay = 'all';
+                                    final queryParameters = {
+                                      'timeOfDay': timeOfDay,
+                                      'teeSheet': widget.teesheetPageId,
+                                      'reservationGroup':
+                                          widget.reservationGroupId,
+                                      'date': DateFormat("yyyy-MM-dd")
+                                          .format(_selectedDate!),
+                                      // 'holes': selectedHole,
+                                      // 'players': selectedPlayer.toString(),
+                                    };
+                                    print('queryParameters: $queryParameters');
+                                    _fetchCustomerTeesheets(queryParameters);
                                   });
                                 }),
                             _buildButton(
@@ -638,6 +800,19 @@ class TeesheetPageState extends State<TeesheetPage> {
                                 onTap: () {
                                   setState(() {
                                     selectedIndex = 1;
+                                    timeOfDay = 'morning';
+
+                                    final queryParameters = {
+                                      'timeOfDay': timeOfDay,
+                                      'teeSheet': widget.teesheetPageId,
+                                      'reservationGroup':
+                                          widget.reservationGroupId,
+                                      'date': DateFormat("yyyy-MM-dd")
+                                          .format(_selectedDate!),
+                                      // 'holes': selectedHole,
+                                      // 'players': selectedPlayer.toString(),
+                                    };
+                                    _fetchCustomerTeesheets(queryParameters);
                                   });
                                 }),
                             _buildButton(
@@ -647,6 +822,18 @@ class TeesheetPageState extends State<TeesheetPage> {
                                 onTap: () {
                                   setState(() {
                                     selectedIndex = 2;
+                                    timeOfDay = 'midday';
+                                    final queryParameters = {
+                                      'timeOfDay': timeOfDay,
+                                      'teeSheet': widget.teesheetPageId,
+                                      'reservationGroup':
+                                          widget.reservationGroupId,
+                                      'date': DateFormat("yyyy-MM-dd")
+                                          .format(_selectedDate!),
+                                      // 'holes': selectedHole,
+                                      // 'players': selectedPlayer.toString(),
+                                    };
+                                    _fetchCustomerTeesheets(queryParameters);
                                   });
                                 }),
                             _buildButton(
@@ -656,6 +843,18 @@ class TeesheetPageState extends State<TeesheetPage> {
                                 onTap: () {
                                   setState(() {
                                     selectedIndex = 3;
+                                    timeOfDay = 'evening';
+                                    final queryParameters = {
+                                      'timeOfDay': timeOfDay,
+                                      'teeSheet': widget.teesheetPageId,
+                                      'reservationGroup':
+                                          widget.reservationGroupId,
+                                      'date': DateFormat("yyyy-MM-dd")
+                                          .format(_selectedDate!),
+                                      // 'holes': selectedHole,
+                                      // 'players': selectedPlayer.toString(),
+                                    };
+                                    _fetchCustomerTeesheets(queryParameters);
                                   });
                                 }),
                           ],

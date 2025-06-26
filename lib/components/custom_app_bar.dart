@@ -11,6 +11,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback? onTitleTapped;
   final String userId;
   final bool showLeading;
+  final bool isOnProfilePage; // Add this if you want to check the current page
 
   const CustomAppBar({
     super.key,
@@ -19,6 +20,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.onBackPressed,
     this.onTitleTapped,
     this.showLeading = true,
+    this.isOnProfilePage = false, // Default to false
   });
 
   @override
@@ -117,22 +119,53 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             ),
             const SizedBox(width: 10),
             // Profile Icon
+            // TextButton(
+            //   onPressed: () {
+            //     Navigator.push(
+            //       context,
+            //       MaterialPageRoute(
+            //         builder: (context) => const MyProfilePage(myPfId: ''),
+            //       ),
+            //     );
+            //   },
+            //   style: TextButton.styleFrom(
+            //     padding: EdgeInsets.zero,
+            //     minimumSize: const Size(20, 20),
+            //     tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            //   ),
+            //   child: Image.asset('assets/images/user-svgrepo-com.png',
+            //       height: 20, width: 20),
+            // ),
+
             TextButton(
               onPressed: () {
-                Navigator.push(
+                // Check if current widget is already MyProfilePage
+                // final isOnProfilePage =
+                //     context.widget.runtimeType == MyProfilePage;
+
+                // print(context.widget.runtimeType);
+
+                if (!isOnProfilePage) {
+                  Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => const MyProfilePage(myPfId: ''),
-                    ));
+                    ),
+                  );
+                }
               },
               style: TextButton.styleFrom(
                 padding: EdgeInsets.zero,
                 minimumSize: const Size(20, 20),
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),
-              child: Image.asset('assets/images/user-svgrepo-com.png',
-                  height: 20, width: 20),
+              child: Image.asset(
+                'assets/images/user-svgrepo-com.png',
+                height: 20,
+                width: 20,
+              ),
             ),
+
             const SizedBox(width: 20),
           ],
         );

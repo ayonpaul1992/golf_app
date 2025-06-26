@@ -66,6 +66,7 @@ class MyProfilePageState extends State<MyProfilePage> {
         scaffoldKey: _scaffoldKey,
         userId: widget.myPfId, // ✅ Pass the correct userId
         showLeading: true, // ✅ Set to true to show the back button
+        isOnProfilePage: true,
         onBackPressed: () {
           Navigator.pop(context); // Optional: customize back behavior if needed
         },
