@@ -93,7 +93,7 @@ class MyTransactionPageState extends State<MyTransactionPage> {
       final token = await secureStorage.read(key: 'accessToken');
       final response = await http.get(
         Uri.parse(
-            'https://api.dev.driverpos.io/api/v1/report/myTransactions?startDate=${getDateRange(_selectedFilter)['startDate']}&endDate=${getDateRange(_selectedFilter)['endDate']}'),
+            'https://api.dev.driverpos.io/api/v1/report/myTransactions?limit=50&startDate=${getDateRange(_selectedFilter)['startDate']}&endDate=${getDateRange(_selectedFilter)['endDate']}'),
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',

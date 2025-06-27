@@ -88,7 +88,7 @@ class MyReservationPageState extends State<MyReservationPage> {
 
       // Construct the URL
       final Uri uri = Uri.parse(
-          'https://api.dev.driverpos.io/api/v1/teesheet/myBookings?startDate=${getDateRange(_selectedFilter)['startDate']}&endDate=${getDateRange(_selectedFilter)['endDate']}');
+          'https://api.dev.driverpos.io/api/v1/teesheet/myBookings?limit=50&startDate=${getDateRange(_selectedFilter)['startDate']}&endDate=${getDateRange(_selectedFilter)['endDate']}');
 
       // Send GET request with Authorization header
       final response = await http.get(
@@ -897,7 +897,6 @@ class MyReservationPageState extends State<MyReservationPage> {
                   height: MediaQuery.of(context).size.height -
                       15, // A bit of padding
                 ),
-              
               ],
             ),
           ),
