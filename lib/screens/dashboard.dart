@@ -242,6 +242,7 @@ class DashboardPageState extends State<DashboardPage> {
                                         CrossAxisAlignment.center,
                                     spacing: 10,
                                     children: [
+                                      
                                       Container(
                                         width: double.infinity,
                                         decoration: BoxDecoration(
@@ -1068,6 +1069,8 @@ class DashboardPageState extends State<DashboardPage> {
                                           ],
                                         ),
                                       ),
+                                    
+                                    
                                     ],
                                   ),
                                 ],
@@ -1075,23 +1078,6 @@ class DashboardPageState extends State<DashboardPage> {
                             ),
                           ),
                         ),
-
-                        // Container(
-                        //   padding: const EdgeInsets.all(16),
-                        //   child: Column(
-                        //     crossAxisAlignment: CrossAxisAlignment.start,
-                        //     children: [
-                        //       isLoading
-                        //           ? const Center(
-                        //               child: CircularProgressIndicator(
-                        //                 color: Color(0xFF9ECF9A),
-                        //               ),
-                        //             )
-                        //           :
-
-                        //     ],
-                        //   ),
-                        // ),
                       ],
                     ),
                   ),
