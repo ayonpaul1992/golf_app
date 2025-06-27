@@ -82,6 +82,23 @@ class TeesheetPageState extends State<TeesheetPage> {
     // _fetchPendingReservation();
   }
 
+  Future<void> _handleRefresh() async {
+    final now = DateTime.now();
+    _selectedDate = now;
+    _dateController.text = DateFormat("MMM dd, yyyy").format(now);
+    timeOfDay = 'all'; // Reset timeOfDay to 'all'
+    selectedIndex = 0; // Reset selectedIndex to 0 (All)
+    final queryParameters = {
+      'timeOfDay': timeOfDay, // Reset to 'all' time slot
+      'teeSheet': widget.teesheetPageId,
+      'reservationGroup': widget.reservationGroupId,
+      'date': DateFormat("yyyy-MM-dd").format(_selectedDate!),
+      // 'holes': selectedHole,
+      // 'players': selectedPlayer.toString(),
+    };
+    await _fetchCustomerTeesheets(queryParameters);
+  }
+
   void setTeeSheetConfig(Map<String, dynamic> config) {
     setState(() {
       teeSheetConfigHoles = List<int>.from(config['holes']);
@@ -436,766 +453,731 @@ class TeesheetPageState extends State<TeesheetPage> {
                 ),
               ),
             )
-          : Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 15),
-              child: Container(
-                color: const Color(0xFFFAFCFA),
-                width: double.infinity,
-                height: double.infinity,
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      const SizedBox(
-                        height: 15,
+          : LayoutBuilder(
+              builder: (context, constraints) {
+                return RefreshIndicator(
+                  onRefresh: _handleRefresh,
+                  child: SingleChildScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        minHeight: constraints.maxHeight,
                       ),
-                      SizedBox(
+                      child: Container(
+                        color: const Color(0xFFFAFCFA),
                         width: double.infinity,
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  "Date",
-                                  style: GoogleFonts.poppins(
-                                    color: const Color(0xFF6E7373),
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                                Row(
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 15),
+                              child: Container(
+                                color: const Color(0xFFFAFCFA),
+                                width: double.infinity,
+                                // Remove the inner SingleChildScrollView to avoid nested scroll views
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
-                                    Text(
-                                      "Custom Date",
-                                      style: GoogleFonts.poppins(
-                                        color: const Color(0xFF6E7373),
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.w500,
+                                    const SizedBox(
+                                      height: 15,
+                                    ),
+                                    SizedBox(
+                                      width: double.infinity,
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(
+                                                "Date",
+                                                style: GoogleFonts.poppins(
+                                                  color:
+                                                      const Color(0xFF6E7373),
+                                                  fontSize: 13,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                              ),
+                                              Row(
+                                                children: [
+                                                  Text(
+                                                    "Custom Date",
+                                                    style: GoogleFonts.poppins(
+                                                      color: const Color(
+                                                          0xFF6E7373),
+                                                      fontSize: 13,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(width: 7),
+                                                  GestureDetector(
+                                                    onTap: editingIndex == null
+                                                        ? () => _showDatePicker(
+                                                            context)
+                                                        : null,
+                                                    child: const Row(
+                                                      children: [
+                                                        Icon(
+                                                          Icons
+                                                              .calendar_month_outlined,
+                                                          color:
+                                                              Color(0xFF648683),
+                                                          size: 20,
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                          if (nomineedobError != null)
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  top: 6.0, left: 12),
+                                              child: Text(
+                                                nomineedobError!,
+                                                style: const TextStyle(
+                                                  color: Colors.red,
+                                                  fontSize: 12,
+                                                ),
+                                              ),
+                                            ),
+                                        ],
                                       ),
                                     ),
-                                    const SizedBox(width: 7),
-                                    GestureDetector(
-                                      onTap: editingIndex == null
-                                          ? () => _showDatePicker(context)
-                                          : null,
+                                    SizedBox(
+                                      width: double.infinity,
+                                      child: SingleChildScrollView(
+                                        scrollDirection: Axis.horizontal,
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: List.generate(
+                                              bookingWindowDays, (index) {
+                                            DateTime date = DateTime.now()
+                                                .add(Duration(days: index));
+                                            String label = index == 0
+                                                ? "Today"
+                                                : DateFormat("EEEE").format(
+                                                    date); // "Today", "Tue", etc.
+                                            String formattedDate =
+                                                DateFormat("MMM dd").format(
+                                                    date); // e.g., Apr 21
 
-                                      // () {
-                                      //   // print(
-                                      //   //     '_dateController.text: ${_dateController.text}');
-                                      //   editingIndex == null
-                                      //       ? () => _showDatePicker(context)
-                                      //       : null;
-                                      // },
-                                      child: const Row(
+                                            bool isSelected =
+                                                _dateController.text ==
+                                                    DateFormat("MMM dd, yyyy")
+                                                        .format(date);
+
+                                            return GestureDetector(
+                                              onTap: () {
+                                                setState(() {
+                                                  timeOfDay =
+                                                      'all'; // Reset timeOfDay to 'all'
+                                                  selectedIndex =
+                                                      0; // Reset selectedIndex to 0 (All)
+                                                  selectedHole =
+                                                      ""; // Reset selectedHole
+                                                  selectedPlayer =
+                                                      0; // Reset selectedPlayer
+                                                  _selectedDate = date;
+                                                  _dateController.text =
+                                                      DateFormat("MMM dd, yyyy")
+                                                          .format(date);
+                                                  _fetchCustomerTeesheets({
+                                                    'timeOfDay': timeOfDay,
+                                                    'teeSheet':
+                                                        widget.teesheetPageId,
+                                                    'reservationGroup': widget
+                                                        .reservationGroupId,
+                                                    'date':
+                                                        DateFormat("yyyy-MM-dd")
+                                                            .format(date),
+                                                    // 'holes': selectedHole,
+                                                    // 'players': selectedPlayer.toString(),
+                                                  });
+                                                });
+
+                                                print(
+                                                    '_dateController.text: ${_dateController.text}');
+                                              },
+                                              child: Padding(
+                                                padding: const EdgeInsets.only(
+                                                    top: 10,
+                                                    bottom: 15,
+                                                    left: 6,
+                                                    right: 6),
+                                                child: Container(
+                                                  decoration: BoxDecoration(
+                                                    color: isSelected
+                                                        ? const Color(
+                                                            0xFF9ECF9A)
+                                                        : Colors.white,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10),
+                                                    boxShadow: [
+                                                      BoxShadow(
+                                                        color: Colors.black
+                                                            .withOpacity(0.1),
+                                                        blurRadius: 3,
+                                                        spreadRadius: 1,
+                                                        offset:
+                                                            const Offset(0, 0),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      horizontal: 15,
+                                                      vertical: 10),
+                                                  child: Column(
+                                                    children: [
+                                                      Text(
+                                                        label,
+                                                        style:
+                                                            GoogleFonts.poppins(
+                                                          color: isSelected
+                                                              ? Colors.white
+                                                              : const Color(
+                                                                  0xFF6E7373),
+                                                          fontSize: 13,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                        ),
+                                                      ),
+                                                      Text(
+                                                        formattedDate,
+                                                        style:
+                                                            GoogleFonts.poppins(
+                                                          color: isSelected
+                                                              ? Colors.white
+                                                              : const Color(
+                                                                  0xFF244065),
+                                                          fontSize: 13,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                          }),
+                                        ),
+                                      ),
+                                    ),
+                                    Container(
+                                      width: double.infinity,
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 0),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
-                                          Icon(
-                                            Icons.calendar_month_outlined,
-                                            color: Color(0xFF648683),
-                                            size: 20,
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                "Players",
+                                                style: GoogleFonts.poppins(
+                                                  color:
+                                                      const Color(0xFF6E7373),
+                                                  fontSize: 13,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                              ),
+                                              Center(
+                                                child: Row(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.center,
+                                                  children: [
+                                                    Wrap(
+                                                      spacing: 8,
+                                                      children: List.generate(
+                                                          maxPlayers > 5
+                                                              ? 5
+                                                              : maxPlayers,
+                                                          (index) {
+                                                        int playerNum =
+                                                            index + 1;
+                                                        return playerCircle(
+                                                          "$playerNum",
+                                                          selectedPlayer ==
+                                                              playerNum,
+                                                          () {
+                                                            print(
+                                                                'Selected player: $playerNum');
+                                                            setState(() {
+                                                              selectedPlayer =
+                                                                  playerNum;
+                                                              final queryParameters =
+                                                                  {
+                                                                'timeOfDay':
+                                                                    timeOfDay,
+                                                                'teeSheet': widget
+                                                                    .teesheetPageId,
+                                                                'reservationGroup':
+                                                                    widget
+                                                                        .reservationGroupId,
+                                                                'date': DateFormat(
+                                                                        "yyyy-MM-dd")
+                                                                    .format(
+                                                                        _selectedDate!),
+                                                                'players':
+                                                                    selectedPlayer
+                                                                        .toString(),
+                                                                // 'holes': selectedHole,
+                                                              };
+                                                              _fetchCustomerTeesheets(
+                                                                  queryParameters);
+                                                            });
+                                                          },
+                                                        );
+                                                      }),
+                                                    ),
+                                                    const SizedBox(
+                                                      width: 5,
+                                                    ),
+                                                  ],
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                "Holes",
+                                                style: GoogleFonts.poppins(
+                                                  color:
+                                                      const Color(0xFF6E7373),
+                                                  fontSize: 13,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                              ),
+                                              const SizedBox(
+                                                height: 7,
+                                              ),
+                                              Wrap(
+                                                spacing: 8,
+                                                children: teeSheetConfigHoles
+                                                    .map((hole) {
+                                                  return playerCircle(
+                                                    hole.toString(),
+                                                    // ignore: unrelated_type_equality_checks
+                                                    selectedHole ==
+                                                        hole.toString(),
+                                                    () {
+                                                      setState(() {
+                                                        selectedHole =
+                                                            hole.toString();
+                                                        final queryParameters =
+                                                            {
+                                                          'timeOfDay':
+                                                              timeOfDay,
+                                                          'teeSheet': widget
+                                                              .teesheetPageId,
+                                                          'reservationGroup': widget
+                                                              .reservationGroupId,
+                                                          'date': DateFormat(
+                                                                  "yyyy-MM-dd")
+                                                              .format(
+                                                                  _selectedDate!),
+                                                          'holes': selectedHole,
+                                                          // 'players':
+                                                          //     selectedPlayer.toString(),
+                                                        };
+                                                        _fetchCustomerTeesheets(
+                                                            queryParameters);
+                                                      });
+                                                    },
+                                                  );
+                                                }).toList(),
+                                              ),
+                                            ],
                                           ),
                                         ],
                                       ),
                                     ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                            if (nomineedobError != null)
-                              Padding(
-                                padding:
-                                    const EdgeInsets.only(top: 6.0, left: 12),
-                                child: Text(
-                                  nomineedobError!,
-                                  style: const TextStyle(
-                                    color: Colors.red,
-                                    fontSize: 12,
-                                  ),
-                                ),
-                              ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                        width: double.infinity,
-                        child: SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: List.generate(bookingWindowDays, (index) {
-                              DateTime date =
-                                  DateTime.now().add(Duration(days: index));
-                              String label = index == 0
-                                  ? "Today"
-                                  : DateFormat("EEEE")
-                                      .format(date); // "Today", "Tue", etc.
-                              String formattedDate = DateFormat("MMM dd")
-                                  .format(date); // e.g., Apr 21
-
-                              bool isSelected = _dateController.text ==
-                                  DateFormat("MMM dd, yyyy").format(date);
-
-                              return GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    timeOfDay =
-                                        'all'; // Reset timeOfDay to 'all'
-                                    selectedIndex =
-                                        0; // Reset selectedIndex to 0 (All)
-                                    selectedHole = ""; // Reset selectedHole
-                                    selectedPlayer = 0; // Reset selectedPlayer
-                                    _selectedDate = date;
-                                    _dateController.text =
-                                        DateFormat("MMM dd, yyyy").format(date);
-                                    _fetchCustomerTeesheets({
-                                      'timeOfDay': timeOfDay,
-                                      'teeSheet': widget.teesheetPageId,
-                                      'reservationGroup':
-                                          widget.reservationGroupId,
-                                      'date':
-                                          DateFormat("yyyy-MM-dd").format(date),
-                                      // 'holes': selectedHole,
-                                      // 'players': selectedPlayer.toString(),
-                                    });
-                                  });
-
-                                  print(
-                                      '_dateController.text: ${_dateController.text}');
-                                },
-                                child: Padding(
-                                  padding: const EdgeInsets.only(
-                                      top: 10, bottom: 15, left: 6, right: 6),
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      color: isSelected
-                                          ? const Color(0xFF9ECF9A)
-                                          : Colors.white,
-                                      borderRadius: BorderRadius.circular(10),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.black.withOpacity(0.1),
-                                          blurRadius: 3,
-                                          spreadRadius: 1,
-                                          offset: const Offset(0, 0),
-                                        ),
-                                      ],
+                                    const SizedBox(
+                                      height: 15,
                                     ),
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 15, vertical: 10),
-                                    child: Column(
+                                    SingleChildScrollView(
+                                      scrollDirection: Axis.horizontal,
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Container(
+                                            width: 40,
+                                            height: 1,
+                                            color: const Color(0xFFB2C1C0),
+                                          ),
+                                          const SizedBox(
+                                            width: 10,
+                                          ),
+                                          Text(
+                                            widget.name,
+                                            style: GoogleFonts.poppins(
+                                                color: const Color(0xFF244065),
+                                                fontSize: 22,
+                                                fontWeight: FontWeight.w600),
+                                          ),
+                                          const SizedBox(
+                                            width: 10,
+                                          ),
+                                          Container(
+                                            width: 40,
+                                            height: 1,
+                                            color: const Color(0xFFB2C1C0),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      height: 15,
+                                    ),
+                                    SingleChildScrollView(
+                                      scrollDirection: Axis.horizontal,
+                                      child: Row(
+                                        spacing: 7,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          _buildButton(
+                                              label: "All",
+                                              index: 0,
+                                              selectedIndex: selectedIndex,
+                                              onTap: () {
+                                                setState(() {
+                                                  selectedIndex = 0;
+                                                  // Reset timeOfDay to 'all'
+                                                  timeOfDay = 'all';
+                                                  final queryParameters = {
+                                                    'timeOfDay': timeOfDay,
+                                                    'teeSheet':
+                                                        widget.teesheetPageId,
+                                                    'reservationGroup': widget
+                                                        .reservationGroupId,
+                                                    'date': DateFormat(
+                                                            "yyyy-MM-dd")
+                                                        .format(_selectedDate!),
+                                                    // 'holes': selectedHole,
+                                                    // 'players': selectedPlayer.toString(),
+                                                  };
+                                                  print(
+                                                      'queryParameters: $queryParameters');
+                                                  _fetchCustomerTeesheets(
+                                                      queryParameters);
+                                                });
+                                              }),
+                                          _buildButton(
+                                              label: "Morning",
+                                              index: 1,
+                                              selectedIndex: selectedIndex,
+                                              onTap: () {
+                                                setState(() {
+                                                  selectedIndex = 1;
+                                                  timeOfDay = 'morning';
+
+                                                  final queryParameters = {
+                                                    'timeOfDay': timeOfDay,
+                                                    'teeSheet':
+                                                        widget.teesheetPageId,
+                                                    'reservationGroup': widget
+                                                        .reservationGroupId,
+                                                    'date': DateFormat(
+                                                            "yyyy-MM-dd")
+                                                        .format(_selectedDate!),
+                                                    // 'holes': selectedHole,
+                                                    // 'players': selectedPlayer.toString(),
+                                                  };
+                                                  _fetchCustomerTeesheets(
+                                                      queryParameters);
+                                                });
+                                              }),
+                                          _buildButton(
+                                              label: "Midday",
+                                              index: 2,
+                                              selectedIndex: selectedIndex,
+                                              onTap: () {
+                                                setState(() {
+                                                  selectedIndex = 2;
+                                                  timeOfDay = 'midday';
+                                                  final queryParameters = {
+                                                    'timeOfDay': timeOfDay,
+                                                    'teeSheet':
+                                                        widget.teesheetPageId,
+                                                    'reservationGroup': widget
+                                                        .reservationGroupId,
+                                                    'date': DateFormat(
+                                                            "yyyy-MM-dd")
+                                                        .format(_selectedDate!),
+                                                    // 'holes': selectedHole,
+                                                    // 'players': selectedPlayer.toString(),
+                                                  };
+                                                  _fetchCustomerTeesheets(
+                                                      queryParameters);
+                                                });
+                                              }),
+                                          _buildButton(
+                                              label: "Evening",
+                                              index: 3,
+                                              selectedIndex: selectedIndex,
+                                              onTap: () {
+                                                setState(() {
+                                                  selectedIndex = 3;
+                                                  timeOfDay = 'evening';
+                                                  final queryParameters = {
+                                                    'timeOfDay': timeOfDay,
+                                                    'teeSheet':
+                                                        widget.teesheetPageId,
+                                                    'reservationGroup': widget
+                                                        .reservationGroupId,
+                                                    'date': DateFormat(
+                                                            "yyyy-MM-dd")
+                                                        .format(_selectedDate!),
+                                                    // 'holes': selectedHole,
+                                                    // 'players': selectedPlayer.toString(),
+                                                  };
+                                                  _fetchCustomerTeesheets(
+                                                      queryParameters);
+                                                });
+                                              }),
+                                        ],
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      height: 15,
+                                    ),
+                                    Column(
                                       children: [
-                                        Text(
-                                          label,
-                                          style: GoogleFonts.poppins(
-                                            color: isSelected
-                                                ? Colors.white
-                                                : const Color(0xFF6E7373),
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                        ),
-                                        Text(
-                                          formattedDate,
-                                          style: GoogleFonts.poppins(
-                                            color: isSelected
-                                                ? Colors.white
-                                                : const Color(0xFF244065),
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              );
-                            }),
-                          ),
-                        ),
-                      ),
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.symmetric(horizontal: 0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "Players",
-                                  style: GoogleFonts.poppins(
-                                    color: const Color(0xFF6E7373),
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                                Center(
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Wrap(
-                                        spacing: 8,
-                                        children: List.generate(
-                                            maxPlayers > 5 ? 5 : maxPlayers,
-                                            (index) {
-                                          int playerNum = index + 1;
-                                          return playerCircle(
-                                            "$playerNum",
-                                            selectedPlayer == playerNum,
-                                            () {
-                                              print(
-                                                  'Selected player: $playerNum');
-                                              setState(() {
-                                                selectedPlayer = playerNum;
-                                                final queryParameters = {
-                                                  'timeOfDay': timeOfDay,
-                                                  'teeSheet':
-                                                      widget.teesheetPageId,
-                                                  'reservationGroup':
-                                                      widget.reservationGroupId,
-                                                  'date': DateFormat(
-                                                          "yyyy-MM-dd")
-                                                      .format(_selectedDate!),
-                                                  'players':
-                                                      selectedPlayer.toString(),
-                                                  // 'holes': selectedHole,
-                                                };
-                                                _fetchCustomerTeesheets(
-                                                    queryParameters);
-                                              });
-                                            },
-                                          );
-                                        }),
-                                      ),
-                                      const SizedBox(
-                                        width: 5,
-                                      ),
-                                    ],
-                                  ),
-                                )
-                              ],
-                            ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "Holes",
-                                  style: GoogleFonts.poppins(
-                                    color: const Color(0xFF6E7373),
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                                const SizedBox(
-                                  height: 7,
-                                ),
-                                Wrap(
-                                  spacing: 8,
-                                  children: teeSheetConfigHoles.map((hole) {
-                                    return playerCircle(
-                                      hole.toString(),
-                                      // ignore: unrelated_type_equality_checks
-                                      selectedHole == hole.toString(),
-                                      () {
-                                        setState(() {
-                                          selectedHole = hole.toString();
-                                          final queryParameters = {
-                                            'timeOfDay': timeOfDay,
-                                            'teeSheet': widget.teesheetPageId,
-                                            'reservationGroup':
-                                                widget.reservationGroupId,
-                                            'date': DateFormat("yyyy-MM-dd")
-                                                .format(_selectedDate!),
-                                            'holes': selectedHole,
-                                            // 'players':
-                                            //     selectedPlayer.toString(),
-                                          };
-                                          _fetchCustomerTeesheets(
-                                              queryParameters);
-                                        });
-                                      },
-                                    );
-                                  }).toList(),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 15,
-                      ),
-                      SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Container(
-                              width: 40,
-                              height: 1,
-                              color: const Color(0xFFB2C1C0),
-                            ),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            Text(
-                              widget.name,
-                              style: GoogleFonts.poppins(
-                                  color: const Color(0xFF244065),
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.w600),
-                            ),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            Container(
-                              width: 40,
-                              height: 1,
-                              color: const Color(0xFFB2C1C0),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 15,
-                      ),
-                      SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
-                          spacing: 7,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            _buildButton(
-                                label: "All",
-                                index: 0,
-                                selectedIndex: selectedIndex,
-                                onTap: () {
-                                  setState(() {
-                                    selectedIndex = 0;
-                                    // Reset timeOfDay to 'all'
-                                    timeOfDay = 'all';
-                                    final queryParameters = {
-                                      'timeOfDay': timeOfDay,
-                                      'teeSheet': widget.teesheetPageId,
-                                      'reservationGroup':
-                                          widget.reservationGroupId,
-                                      'date': DateFormat("yyyy-MM-dd")
-                                          .format(_selectedDate!),
-                                      // 'holes': selectedHole,
-                                      // 'players': selectedPlayer.toString(),
-                                    };
-                                    print('queryParameters: $queryParameters');
-                                    _fetchCustomerTeesheets(queryParameters);
-                                  });
-                                }),
-                            _buildButton(
-                                label: "Morning",
-                                index: 1,
-                                selectedIndex: selectedIndex,
-                                onTap: () {
-                                  setState(() {
-                                    selectedIndex = 1;
-                                    timeOfDay = 'morning';
-
-                                    final queryParameters = {
-                                      'timeOfDay': timeOfDay,
-                                      'teeSheet': widget.teesheetPageId,
-                                      'reservationGroup':
-                                          widget.reservationGroupId,
-                                      'date': DateFormat("yyyy-MM-dd")
-                                          .format(_selectedDate!),
-                                      // 'holes': selectedHole,
-                                      // 'players': selectedPlayer.toString(),
-                                    };
-                                    _fetchCustomerTeesheets(queryParameters);
-                                  });
-                                }),
-                            _buildButton(
-                                label: "Midday",
-                                index: 2,
-                                selectedIndex: selectedIndex,
-                                onTap: () {
-                                  setState(() {
-                                    selectedIndex = 2;
-                                    timeOfDay = 'midday';
-                                    final queryParameters = {
-                                      'timeOfDay': timeOfDay,
-                                      'teeSheet': widget.teesheetPageId,
-                                      'reservationGroup':
-                                          widget.reservationGroupId,
-                                      'date': DateFormat("yyyy-MM-dd")
-                                          .format(_selectedDate!),
-                                      // 'holes': selectedHole,
-                                      // 'players': selectedPlayer.toString(),
-                                    };
-                                    _fetchCustomerTeesheets(queryParameters);
-                                  });
-                                }),
-                            _buildButton(
-                                label: "Evening",
-                                index: 3,
-                                selectedIndex: selectedIndex,
-                                onTap: () {
-                                  setState(() {
-                                    selectedIndex = 3;
-                                    timeOfDay = 'evening';
-                                    final queryParameters = {
-                                      'timeOfDay': timeOfDay,
-                                      'teeSheet': widget.teesheetPageId,
-                                      'reservationGroup':
-                                          widget.reservationGroupId,
-                                      'date': DateFormat("yyyy-MM-dd")
-                                          .format(_selectedDate!),
-                                      // 'holes': selectedHole,
-                                      // 'players': selectedPlayer.toString(),
-                                    };
-                                    _fetchCustomerTeesheets(queryParameters);
-                                  });
-                                }),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 15,
-                      ),
-                      Column(
-                        children: [
-                          Wrap(
-                            alignment: WrapAlignment.center,
-                            spacing: 15,
-                            runSpacing: 15,
-                            children: [
-                              ...allTeeSheetData.map((slot) {
-                                return GestureDetector(
-                                  onTap: () {
-                                    print(
-                                        '_dateController.text: ${_dateController.text}');
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => TeeSheetDtls(
-                                          teesheetPageId: widget.teesheetPageId,
-                                          reservationGroupId:
-                                              widget.reservationGroupId,
-                                          date: '${_dateController.text}',
-                                          time: slot['time'],
-                                          players: slot['players'],
-                                          holes: slot['holes'],
-                                          allowName: allowName,
-                                          socket: socket!,
-                                        ), // Replace with your target widget
-                                      ),
-                                    );
-                                  },
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 20,
-                                      vertical: 10,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: const Color(0xFFFFFFFF),
-                                      borderRadius: BorderRadius.circular(15),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.black.withOpacity(0.1),
-                                          blurRadius: 3,
-                                          spreadRadius: 1,
-                                          offset: const Offset(0, 0),
-                                        ),
-                                      ],
-                                    ),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        const SizedBox(
-                                          height: 6,
-                                        ),
-                                        Container(
-                                          width: 119,
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 15, vertical: 7),
-                                          decoration: BoxDecoration(
-                                            color: const Color(0xFF9ECF9A),
-                                            borderRadius: BorderRadius.circular(
-                                                50), // Optional
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: Colors.black
-                                                    .withOpacity(0.1),
-                                                blurRadius: 3,
-                                                spreadRadius: 1,
-                                                offset: const Offset(0, 2),
-                                              ),
-                                            ],
-                                          ),
-                                          child: Center(
-                                            child: Text(
-                                              slot['time'] ?? '',
-                                              style: GoogleFonts.poppins(
-                                                color: const Color(0xFFFFFFFF),
-                                                fontSize: 13,
-                                                fontWeight: FontWeight.w600,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        const SizedBox(
-                                          height: 6,
-                                        ),
-                                        SingleChildScrollView(
-                                          scrollDirection: Axis.horizontal,
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.end,
-                                                children: [
-                                                  const Icon(
-                                                    Icons.flag,
-                                                    size: 14,
-                                                    color: Color(0xFF6B7280),
+                                        Wrap(
+                                          alignment: WrapAlignment.center,
+                                          spacing: 15,
+                                          runSpacing: 15,
+                                          children: [
+                                            ...allTeeSheetData.map((slot) {
+                                              return GestureDetector(
+                                                onTap: () {
+                                                  print(
+                                                      '_dateController.text: ${_dateController.text}');
+                                                  Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          TeeSheetDtls(
+                                                        teesheetPageId: widget
+                                                            .teesheetPageId,
+                                                        reservationGroupId: widget
+                                                            .reservationGroupId,
+                                                        date:
+                                                            '${_dateController.text}',
+                                                        time: slot['time'],
+                                                        players:
+                                                            slot['players'],
+                                                        holes: slot['holes'],
+                                                        allowName: allowName,
+                                                        socket: socket!,
+                                                      ), // Replace with your target widget
+                                                    ),
+                                                  );
+                                                },
+                                                child: Container(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                    horizontal: 20,
+                                                    vertical: 10,
                                                   ),
-                                                  Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
-                                                    children: [
-                                                      Text(
-                                                        (slot['holes'] !=
-                                                                    null &&
-                                                                slot['holes']
-                                                                    is List &&
-                                                                slot['holes']
-                                                                    .isNotEmpty)
-                                                            ? (slot['holes']
-                                                                    as List)
-                                                                .join(' or ')
-                                                            : '',
-                                                        style:
-                                                            GoogleFonts.poppins(
-                                                          color: const Color(
-                                                              0xFF6E7373),
-                                                          fontSize: 13,
-                                                          fontWeight:
-                                                              FontWeight.w400,
-                                                        ),
-                                                      )
-                                                    ],
-                                                  )
-                                                ],
-                                              ),
-                                              const SizedBox(
-                                                width: 20,
-                                              ),
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.end,
-                                                children: [
-                                                  const Icon(
-                                                    Icons.person,
-                                                    size: 14,
-                                                    color: Color(0xFF6B7280),
-                                                  ),
-                                                  Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
-                                                    children: [
-                                                      Text(
-                                                        slot['players']
-                                                                ?.toString() ??
-                                                            '',
-                                                        style: GoogleFonts.poppins(
-                                                            color: const Color(
-                                                                0xFF6E7373),
-                                                            fontSize: 13,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .w400),
+                                                  decoration: BoxDecoration(
+                                                    color:
+                                                        const Color(0xFFFFFFFF),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            15),
+                                                    boxShadow: [
+                                                      BoxShadow(
+                                                        color: Colors.black
+                                                            .withOpacity(0.1),
+                                                        blurRadius: 3,
+                                                        spreadRadius: 1,
+                                                        offset:
+                                                            const Offset(0, 0),
                                                       ),
                                                     ],
-                                                  )
-                                                ],
-                                              )
-                                            ],
-                                          ),
-                                        ),
+                                                  ),
+                                                  child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      const SizedBox(
+                                                        height: 6,
+                                                      ),
+                                                      Container(
+                                                        width: 119,
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .symmetric(
+                                                                horizontal: 15,
+                                                                vertical: 7),
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: const Color(
+                                                              0xFF9ECF9A),
+                                                          borderRadius:
+                                                              BorderRadius.circular(
+                                                                  50), // Optional
+                                                          boxShadow: [
+                                                            BoxShadow(
+                                                              color: Colors
+                                                                  .black
+                                                                  .withOpacity(
+                                                                      0.1),
+                                                              blurRadius: 3,
+                                                              spreadRadius: 1,
+                                                              offset:
+                                                                  const Offset(
+                                                                      0, 2),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        child: Center(
+                                                          child: Text(
+                                                            slot['time'] ?? '',
+                                                            style: GoogleFonts
+                                                                .poppins(
+                                                              color: const Color(
+                                                                  0xFFFFFFFF),
+                                                              fontSize: 13,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      const SizedBox(
+                                                        height: 6,
+                                                      ),
+                                                      SingleChildScrollView(
+                                                        scrollDirection:
+                                                            Axis.horizontal,
+                                                        child: Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .spaceBetween,
+                                                          children: [
+                                                            Row(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .end,
+                                                              children: [
+                                                                const Icon(
+                                                                  Icons.flag,
+                                                                  size: 14,
+                                                                  color: Color(
+                                                                      0xFF6B7280),
+                                                                ),
+                                                                Row(
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .center,
+                                                                  children: [
+                                                                    Text(
+                                                                      (slot['holes'] != null &&
+                                                                              slot['holes'] is List &&
+                                                                              slot['holes'].isNotEmpty)
+                                                                          ? (slot['holes'] as List).join(' or ')
+                                                                          : '',
+                                                                      style: GoogleFonts
+                                                                          .poppins(
+                                                                        color: const Color(
+                                                                            0xFF6E7373),
+                                                                        fontSize:
+                                                                            13,
+                                                                        fontWeight:
+                                                                            FontWeight.w400,
+                                                                      ),
+                                                                    )
+                                                                  ],
+                                                                )
+                                                              ],
+                                                            ),
+                                                            const SizedBox(
+                                                              width: 20,
+                                                            ),
+                                                            Row(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .end,
+                                                              children: [
+                                                                const Icon(
+                                                                  Icons.person,
+                                                                  size: 14,
+                                                                  color: Color(
+                                                                      0xFF6B7280),
+                                                                ),
+                                                                Row(
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .center,
+                                                                  children: [
+                                                                    Text(
+                                                                      slot['players']
+                                                                              ?.toString() ??
+                                                                          '',
+                                                                      style: GoogleFonts.poppins(
+                                                                          color: const Color(
+                                                                              0xFF6E7373),
+                                                                          fontSize:
+                                                                              13,
+                                                                          fontWeight:
+                                                                              FontWeight.w400),
+                                                                    ),
+                                                                  ],
+                                                                )
+                                                              ],
+                                                            )
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              );
+                                            }).toList(),
+                                          ],
+                                        )
                                       ],
                                     ),
-                                  ),
-                                );
-                              }).toList(),
-
-                              // GestureDetector(
-                              //   onTap: () {},
-                              //   child: Container(
-                              //     padding: EdgeInsets.symmetric(
-                              //         horizontal: 20, vertical: 10),
-                              //     decoration: BoxDecoration(
-                              //       color: Color(0xFFFFFFFF),
-                              //       borderRadius: BorderRadius.circular(15),
-                              //       boxShadow: [
-                              //         BoxShadow(
-                              //           color: Colors.black.withOpacity(0.1),
-                              //           blurRadius: 3,
-                              //           spreadRadius: 1,
-                              //           offset: Offset(0, 0),
-                              //         ),
-                              //       ],
-                              //     ),
-                              //     child: Column(
-                              //       crossAxisAlignment: CrossAxisAlignment.center,
-                              //       children: [
-                              //         // Text(
-                              //         //   "Back",
-                              //         //   style: GoogleFonts.poppins(
-                              //         //       color: Color(0xFF244065),
-                              //         //       fontSize: 13,
-                              //         //       fontWeight: FontWeight.w500),
-                              //         // ),
-                              //         SizedBox(
-                              //           height: 6,
-                              //         ),
-                              //         Container(
-                              //             width: 119,
-                              //             padding: EdgeInsets.symmetric(
-                              //                 horizontal: 15, vertical: 7),
-                              //             decoration: BoxDecoration(
-                              //               color: Color(0xFF9ECF9A),
-                              //               borderRadius:
-                              //                   BorderRadius.circular(50), // Optional
-                              //               boxShadow: [
-                              //                 BoxShadow(
-                              //                   color: Colors.black.withOpacity(0.1),
-                              //                   blurRadius: 3,
-                              //                   spreadRadius: 1,
-                              //                   offset: Offset(0, 2),
-                              //                 ),
-                              //               ],
-                              //             ),
-                              //             child: Center(
-                              //               child: Text(
-                              //                 "6:30AM",
-                              //                 style: GoogleFonts.poppins(
-                              //                   color: Color(0xFFFFFFFF),
-                              //                   fontSize: 13,
-                              //                   fontWeight: FontWeight.w600,
-                              //                 ),
-                              //               ),
-                              //             )),
-                              //         SizedBox(
-                              //           height: 6,
-                              //         ),
-                              //         Container(
-                              //             child: SingleChildScrollView(
-                              //           scrollDirection: Axis.horizontal,
-                              //           child: Row(
-                              //             mainAxisAlignment:
-                              //                 MainAxisAlignment.spaceBetween,
-                              //             children: [
-                              //               Container(
-                              //                 child: Row(
-                              //                   mainAxisAlignment:
-                              //                       MainAxisAlignment.end,
-                              //                   spacing: 3,
-                              //                   children: [
-                              //                     Icon(
-                              //                       Icons.flag,
-                              //                       size: 14,
-                              //                       color: Color(0xFF6B7280),
-                              //                     ),
-                              //                     Row(
-                              //                       mainAxisAlignment:
-                              //                           MainAxisAlignment.center,
-                              //                       spacing: 3,
-                              //                       children: [
-                              //                         Text(
-                              //                           "9",
-                              //                           style: GoogleFonts.poppins(
-                              //                               color: Color(0xFF6E7373),
-                              //                               fontSize: 13,
-                              //                               fontWeight:
-                              //                                   FontWeight.w400),
-                              //                         ),
-                              //                         Text(
-                              //                           "or",
-                              //                           style: GoogleFonts.poppins(
-                              //                               color: Color(0xFF6E7373),
-                              //                               fontSize: 13,
-                              //                               fontWeight:
-                              //                                   FontWeight.w400),
-                              //                         ),
-                              //                         Text(
-                              //                           "18",
-                              //                           style: GoogleFonts.poppins(
-                              //                               color: Color(0xFF6E7373),
-                              //                               fontSize: 13,
-                              //                               fontWeight:
-                              //                                   FontWeight.w400),
-                              //                         )
-                              //                       ],
-                              //                     )
-                              //                   ],
-                              //                 ),
-                              //               ),
-                              //               SizedBox(
-                              //                 width: 20,
-                              //               ),
-                              //               Container(
-                              //                 child: Row(
-                              //                   mainAxisAlignment:
-                              //                       MainAxisAlignment.end,
-                              //                   spacing: 3,
-                              //                   children: [
-                              //                     Icon(
-                              //                       Icons.person,
-                              //                       size: 14,
-                              //                       color: Color(0xFF6B7280),
-                              //                     ),
-                              //                     Row(
-                              //                       mainAxisAlignment:
-                              //                           MainAxisAlignment.center,
-                              //                       spacing: 3,
-                              //                       children: [
-                              //                         Text(
-                              //                           "3",
-                              //                           style: GoogleFonts.poppins(
-                              //                               color: Color(0xFF6E7373),
-                              //                               fontSize: 13,
-                              //                               fontWeight:
-                              //                                   FontWeight.w400),
-                              //                         ),
-                              //                       ],
-                              //                     )
-                              //                   ],
-                              //                 ),
-                              //               )
-                              //             ],
-                              //           ),
-                              //         )),
-                              //       ],
-                              //     ),
-                              //   ),
-                              // ),
-                            ],
-                          )
-                        ],
+                                    const SizedBox(
+                                      height: 20,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                    ],
+                    ),
                   ),
-                ),
-              ),
+                );
+              },
             ),
       bottomNavigationBar: const CustomBottomNavBar(selectedIndex: 0),
     );

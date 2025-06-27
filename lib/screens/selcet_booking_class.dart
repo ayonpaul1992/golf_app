@@ -283,35 +283,36 @@ class SelcetBookingClassState extends State<SelcetBookingClass> {
                               height: 30,
                             ),
                             SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Container(
-                                      width: 40,
-                                      height: 1,
-                                      color: const Color(0xFFB2C1C0),
-                                    ),
-                                    const SizedBox(
-                                      width: 10,
-                                    ),
-                                    Text(
-                                      "Select a Tee sheet",
-                                      style: GoogleFonts.poppins(
-                                          color: const Color(0xFF244065),
-                                          fontSize: 22,
-                                          fontWeight: FontWeight.w600),
-                                    ),
-                                    const SizedBox(
-                                      width: 10,
-                                    ),
-                                    Container(
-                                      width: 40,
-                                      height: 1,
-                                      color: const Color(0xFFB2C1C0),
-                                    ),
-                                  ],
-                                )),
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    width: 40,
+                                    height: 1,
+                                    color: const Color(0xFFB2C1C0),
+                                  ),
+                                  const SizedBox(
+                                    width: 10,
+                                  ),
+                                  Text(
+                                    "Select a Tee sheet",
+                                    style: GoogleFonts.poppins(
+                                        color: const Color(0xFF244065),
+                                        fontSize: 22,
+                                        fontWeight: FontWeight.w600),
+                                  ),
+                                  const SizedBox(
+                                    width: 10,
+                                  ),
+                                  Container(
+                                    width: 40,
+                                    height: 1,
+                                    color: const Color(0xFFB2C1C0),
+                                  ),
+                                ],
+                              ),
+                            ),
                             Padding(
                               padding: const EdgeInsets.only(
                                   top: 15, left: 20, right: 20, bottom: 20),
