@@ -252,7 +252,6 @@ class MyReservationPageState extends State<MyReservationPage> {
       body: SafeArea(
         child: RefreshIndicator(
           onRefresh: _handleRefresh,
-
           child: SingleChildScrollView(
             // Use AlwaysScrollableScrollPhysics to ensure the pull-to-refresh
             // gesture is always available, even if the content is not overflowing.
@@ -260,1275 +259,648 @@ class MyReservationPageState extends State<MyReservationPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  color: const Color(0xFFF8F8F8),
-                  width: double.infinity,
-                  // ⚠️ Removed the fixed height to allow the content to determine the height
-                  // and become scrollable.
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 15),
-                    // ⚠️ Removed the nested SingleChildScrollView.
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        const SizedBox(
-                          height: 15,
-                        ),
-                        CompositedTransformTarget(
-                          link: _layerLink,
-                          child: SizedBox(
-                            width: double.infinity,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  "My Reservation",
-                                  style: GoogleFonts.poppins(
-                                      color: const Color(0xFF244065),
-                                      fontSize: 17,
-                                      fontWeight: FontWeight.w600),
-                                ),
-                                GestureDetector(
-                                  onTap: _toggleDropdown,
-                                  child: Row(
-                                    children: [
-                                      Text(
-                                        "Filter by:",
-                                        style: GoogleFonts.poppins(
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.w500,
-                                            color: const Color(0xFF6E7373)),
-                                      ),
-                                      const SizedBox(width: 5),
-                                      Text(
-                                        _selectedFilter,
-                                        style: GoogleFonts.poppins(
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.w600,
-                                            color: const Color(0xFF244065)),
-                                      ),
-                                      Icon(
-                                        _dropdownOverlay == null
-                                            ? Icons.keyboard_arrow_down_rounded
-                                            : Icons.keyboard_arrow_up_rounded,
-                                        size: 22,
-                                        color: const Color(0xFF669933),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
+                isLoading
+                    ? SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.7,
+                        child: const Center(
+                          child: CircularProgressIndicator(
+                            color: Color(0xFF9ECF9A),
                           ),
                         ),
-                        const SizedBox(
-                          height: 15,
-                        ),
-                        Container(
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                                color: const Color(0xFF9ECF9A), width: 1),
-                            borderRadius: const BorderRadius.all(
-                              Radius.circular(10), // Correct usage
-                            ),
-                          ),
+                      )
+                    : Container(
+                        color: const Color(0xFFF8F8F8),
+                        width: double.infinity,
+                        // ⚠️ Removed the fixed height to allow the content to determine the height
+                        // and become scrollable.
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 15),
+                          // ⚠️ Removed the nested SingleChildScrollView.
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              Container(
-                                width: double.infinity,
-                                decoration: const BoxDecoration(
-                                  color: Color(0xFFF8F8F8),
-                                  borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(10),
-                                    topRight: Radius.circular(10),
-                                  ),
-                                ),
-                                padding: const EdgeInsets.all(10),
-                                child: Text(
-                                  "My Booking Summary",
-                                  textAlign: TextAlign.center,
-                                  style: GoogleFonts.poppins(
-                                    color: const Color(0xFF244065),
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 13,
-                                  ),
-                                ),
+                              const SizedBox(
+                                height: 15,
                               ),
-                              ...reservations.map((reservation) {
-                                final courseName = reservation['golfCourse'] ??
-                                    'Unknown Course';
-                                final courseLogo =
-                                    reservation['golfCourseLogo'];
-                                final bookingDateRaw = reservation['date'];
-                                final bookingTimeRaw =
-                                    reservation['startingSlot'];
-
-                                final holes =
-                                    reservation['holes']?.toString() ?? '-';
-                                final players =
-                                    reservation['persons']?.toString() ?? '-';
-                                final carts =
-                                    reservation['carts']?.toString() ?? '-';
-                                final status = reservation['booking']
-                                        ['status'] ??
-                                    'Booked';
-                                final slotId =
-                                    reservation['slotId']?.toString() ?? '';
-
-                                Color statusColor = hexToColor(
-                                  reservation['booking']['bgColor'] ??
-                                      '#244065',
-                                );
-
-                                String bookingTime = '';
-                                if (bookingTimeRaw != null) {
-                                  try {
-                                    final time = DateFormat('HH:mm:ss')
-                                        .parse(bookingTimeRaw);
-                                    bookingTime =
-                                        DateFormat('h:mma').format(time);
-                                  } catch (_) {
-                                    bookingTime = bookingTimeRaw.toString();
-                                  }
-                                }
-
-                                return Container(
-                                  padding:
-                                      const EdgeInsets.only(bottom: 5, top: 5),
-                                  decoration: const BoxDecoration(
-                                    border: Border(
-                                      bottom: BorderSide(
-                                        color: Color(
-                                            0xFFE8E8E8), // Customize the color
-                                        width: 1.0, // Customize the width
-                                      ),
-                                    ),
-                                  ),
-                                  child: Column(
+                              CompositedTransformTarget(
+                                link: _layerLink,
+                                child: SizedBox(
+                                  width: double.infinity,
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Padding(
-                                        padding: const EdgeInsets.all(10),
-                                        child: Column(
+                                      Text(
+                                        "My Reservation",
+                                        style: GoogleFonts.poppins(
+                                            color: const Color(0xFF244065),
+                                            fontSize: 17,
+                                            fontWeight: FontWeight.w600),
+                                      ),
+                                      GestureDetector(
+                                        onTap: _toggleDropdown,
+                                        child: Row(
                                           children: [
-                                            Row(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Container(
-                                                  width: 75,
-                                                  height: 75,
-                                                  decoration: BoxDecoration(
-                                                    color:
-                                                        const Color(0xFFFFFFFF),
-                                                    border: Border.all(
-                                                        width: 1.2,
-                                                        color: const Color(
-                                                            0xFFE8E8E8)),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10),
-                                                  ),
-                                                  child: Center(
-                                                    child: Image(
-                                                      image: courseLogo != null
-                                                          ? NetworkImage(
-                                                              courseLogo,
-                                                            )
-                                                          : const AssetImage(
-                                                              "assets/images/bkdu2.png",
-                                                            ) as ImageProvider,
-                                                    ),
-                                                  ),
-                                                ),
-                                                const SizedBox(
-                                                    width:
-                                                        10), // 👈 Space between items
-                                                SizedBox(
-                                                  width: 250,
-                                                  // Optional padding
-                                                  child: Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .spaceBetween,
-                                                        children: [
-                                                          Container(
-                                                            decoration:
-                                                                BoxDecoration(
-                                                              color: const Color(
-                                                                  0xFFF7FAF4),
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          50),
-                                                            ),
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .symmetric(
-                                                                    horizontal:
-                                                                        10,
-                                                                    vertical:
-                                                                        5),
-                                                            child: Text(
-                                                              status,
-                                                              style: GoogleFonts
-                                                                  .poppins(
-                                                                fontSize: 12,
-                                                                color:
-                                                                    statusColor,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w600,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          Row(
-                                                            children: [
-                                                              InkWell(
-                                                                onTap: () {},
-                                                                child:
-                                                                    Container(
-                                                                  width: 25,
-                                                                  height: 25,
-                                                                  decoration:
-                                                                      BoxDecoration(
-                                                                    color: const Color(
-                                                                        0xFFF8F8F8),
-                                                                    borderRadius:
-                                                                        BorderRadius.circular(
-                                                                            50),
-                                                                  ),
-                                                                  child:
-                                                                      const Center(
-                                                                    child: Icon(
-                                                                      Icons
-                                                                          .edit,
-                                                                      size: 16,
-                                                                      color: Color(
-                                                                          0xFF669933),
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                              const SizedBox(
-                                                                  width: 6),
-                                                              reservation['checkedIn'] ==
-                                                                          false &&
-                                                                      reservation[
-                                                                              'canceled'] ==
-                                                                          false
-                                                                  ? ElevatedButton(
-                                                                      // onPressed: () {
-                                                                      //   // Add your cancel logic here
-                                                                      // },
-                                                                      onPressed:
-                                                                          () async {
-                                                                        // A pop up dialog to confirm cancellation
-                                                                        showDialog(
-                                                                            context:
-                                                                                context,
-                                                                            builder:
-                                                                                (BuildContext context) {
-                                                                              return AlertDialog(
-                                                                                title: const Text('Confirm Cancellation'),
-                                                                                content: const Text('Are you sure you want to cancel this tee time?'),
-                                                                                actions: [
-                                                                                  TextButton(
-                                                                                    onPressed: () {
-                                                                                      Navigator.of(context).pop(); // Close the dialog
-                                                                                    },
-                                                                                    child: const Text('No'),
-                                                                                  ),
-                                                                                  TextButton(
-                                                                                    onPressed: () async {
-                                                                                      // ✅ Save a valid context reference BEFORE popping
-                                                                                      final messenger = ScaffoldMessenger.of(context);
-
-                                                                                      Navigator.of(context).pop(); // Now safe to close the dialog
-
-                                                                                      try {
-                                                                                        final secureStorage = const FlutterSecureStorage();
-                                                                                        final token = await secureStorage.read(key: 'accessToken');
-
-                                                                                        if (token == null) {
-                                                                                          throw Exception('Access token not found');
-                                                                                        }
-
-                                                                                        final uri = Uri.parse(
-                                                                                          'https://api.dev.driverpos.io/api/v1/teesheet/myBookings/cancel/$slotId',
-                                                                                        );
-
-                                                                                        final response = await http.delete(
-                                                                                          uri,
-                                                                                          headers: {
-                                                                                            'Authorization': 'Bearer $token',
-                                                                                            'Content-Type': 'application/json',
-                                                                                          },
-                                                                                          body: jsonEncode({
-                                                                                            "process": "Cancel",
-                                                                                          }),
-                                                                                        );
-
-                                                                                        if (response.statusCode == 200) {
-                                                                                          // ✅ Use the stored reference — not ScaffoldMessenger.of(context)
-                                                                                          messenger.showSnackBar(
-                                                                                            const SnackBar(
-                                                                                              content: Text('Tee time cancelled successfully'),
-                                                                                              backgroundColor: Color(0xFF9ECF9A),
-                                                                                            ),
-                                                                                          );
-
-                                                                                          await Future.delayed(const Duration(milliseconds: 300));
-
-                                                                                          if (context.mounted) {
-                                                                                            Navigator.pushReplacement(
-                                                                                              context,
-                                                                                              MaterialPageRoute(
-                                                                                                builder: (context) => MyReservationPage(
-                                                                                                    key: UniqueKey(), // Ensure a new key to rebuild the widget
-                                                                                                    myRsvId: ''),
-                                                                                              ),
-                                                                                            );
-                                                                                          }
-                                                                                        } else {
-                                                                                          print('❌ Failed to cancel tee time: ${response.statusCode}');
-                                                                                        }
-                                                                                      } catch (e) {
-                                                                                        print('❗ Error cancelling tee time: $e');
-                                                                                      }
-                                                                                    },
-                                                                                    child: const Text('Yes'),
-                                                                                  ),
-                                                                                ],
-                                                                              );
-                                                                            });
-                                                                      },
-
-                                                                      style: ElevatedButton
-                                                                          .styleFrom(
-                                                                        backgroundColor:
-                                                                            const Color(0xFF9ECF9A),
-                                                                        foregroundColor:
-                                                                            Colors.white,
-                                                                        padding: const EdgeInsets
-                                                                            .symmetric(
-                                                                            horizontal:
-                                                                                10,
-                                                                            vertical:
-                                                                                5), // vertical padding
-                                                                        minimumSize: const Size(
-                                                                            0,
-                                                                            0), // disables default min height
-                                                                        shape:
-                                                                            RoundedRectangleBorder(
-                                                                          borderRadius:
-                                                                              BorderRadius.circular(8),
-                                                                        ),
-                                                                      ),
-                                                                      child:
-                                                                          const Text(
-                                                                        "Cancel",
-                                                                        style: TextStyle(
-                                                                            fontSize:
-                                                                                11,
-                                                                            fontWeight:
-                                                                                FontWeight.w600),
-                                                                      ),
-                                                                    )
-                                                                  : const SizedBox
-                                                                      .shrink(),
-                                                            ],
-                                                          ),
-                                                        ],
-                                                      ),
-                                                      const SizedBox(height: 5),
-                                                      Text(
-                                                        courseName,
-                                                        style:
-                                                            GoogleFonts.poppins(
-                                                          color: const Color(
-                                                              0xFF244065),
-                                                          fontSize: 13,
-                                                          fontWeight:
-                                                              FontWeight.w600,
-                                                        ),
-                                                      ),
-                                                      const SizedBox(height: 5),
-                                                      Row(
-                                                        spacing: 6,
-                                                        children: [
-                                                          const Icon(
-                                                            Icons
-                                                                .calendar_month_outlined,
-                                                            color: Color(
-                                                                0xFF6B7280),
-                                                            size: 18,
-                                                          ),
-                                                          Text(
-                                                            bookingTime,
-                                                            style: GoogleFonts.poppins(
-                                                                color: const Color(
-                                                                    0xFF6E7373),
-                                                                fontSize: 13,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w500),
-                                                          ),
-                                                          Container(
-                                                            color: const Color(
-                                                                0xFF6E7373),
-                                                            width: 1,
-                                                            height: 15,
-                                                          ),
-                                                          Text(
-                                                            bookingDateRaw !=
-                                                                    null
-                                                                ? DateFormat(
-                                                                        'EEE, MMM d')
-                                                                    .format(DateFormat(
-                                                                            'EEEE dd, MMMM, yyyy')
-                                                                        .parse(
-                                                                            bookingDateRaw))
-                                                                : "Unknown Date",
-                                                            style: GoogleFonts.poppins(
-                                                                color: const Color(
-                                                                    0xFF6E7373),
-                                                                fontSize: 13,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w500),
-                                                          ),
-                                                        ],
-                                                      )
-                                                    ],
-                                                  ),
-                                                ),
-                                              ],
+                                            Text(
+                                              "Filter by:",
+                                              style: GoogleFonts.poppins(
+                                                  fontSize: 13,
+                                                  fontWeight: FontWeight.w500,
+                                                  color:
+                                                      const Color(0xFF6E7373)),
                                             ),
-                                            const SizedBox(
-                                              height: 10,
+                                            const SizedBox(width: 5),
+                                            Text(
+                                              _selectedFilter,
+                                              style: GoogleFonts.poppins(
+                                                  fontSize: 13,
+                                                  fontWeight: FontWeight.w600,
+                                                  color:
+                                                      const Color(0xFF244065)),
                                             ),
-                                            Padding(
-                                              padding: const EdgeInsets.only(
-                                                left: 10,
-                                                right: 10,
-                                              ),
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  Container(
-                                                    decoration: BoxDecoration(
-                                                        color: const Color(
-                                                            0xFFF7FAF4),
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(50)),
-                                                    child: Padding(
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                          horizontal: 15,
-                                                          vertical: 6),
-                                                      child: Center(
-                                                        child: Row(
-                                                          children: [
-                                                            Text(
-                                                              "Holes: ",
-                                                              style: GoogleFonts.poppins(
-                                                                  fontSize: 14,
-                                                                  color: const Color(
-                                                                      0xFF6E7373),
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w500),
-                                                            ),
-                                                            Text(
-                                                              holes,
-                                                              style: GoogleFonts.poppins(
-                                                                  fontSize: 14,
-                                                                  color: const Color(
-                                                                      0xFF244065),
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w600),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  Container(
-                                                    decoration: BoxDecoration(
-                                                        color: const Color(
-                                                            0xFFF7FAF4),
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(50)),
-                                                    child: Padding(
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                          horizontal: 15,
-                                                          vertical: 6),
-                                                      child: Center(
-                                                        child: Row(
-                                                          children: [
-                                                            Text(
-                                                              "Players: ",
-                                                              style: GoogleFonts.poppins(
-                                                                  fontSize: 14,
-                                                                  color: const Color(
-                                                                      0xFF6E7373),
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w500),
-                                                            ),
-                                                            Text(
-                                                              players,
-                                                              style: GoogleFonts.poppins(
-                                                                  fontSize: 14,
-                                                                  color: const Color(
-                                                                      0xFF244065),
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w600),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  Container(
-                                                    decoration: BoxDecoration(
-                                                        color: const Color(
-                                                            0xFFF7FAF4),
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(50)),
-                                                    child: Padding(
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                          horizontal: 15,
-                                                          vertical: 6),
-                                                      child: Center(
-                                                        child: Row(
-                                                          children: [
-                                                            Text(
-                                                              "Carts: ",
-                                                              style: GoogleFonts.poppins(
-                                                                  fontSize: 14,
-                                                                  color: const Color(
-                                                                      0xFF6E7373),
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w500),
-                                                            ),
-                                                            Text(
-                                                              carts,
-                                                              style: GoogleFonts.poppins(
-                                                                  fontSize: 14,
-                                                                  color: const Color(
-                                                                      0xFF244065),
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w600),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
+                                            Icon(
+                                              _dropdownOverlay == null
+                                                  ? Icons
+                                                      .keyboard_arrow_down_rounded
+                                                  : Icons
+                                                      .keyboard_arrow_up_rounded,
+                                              size: 22,
+                                              color: const Color(0xFF669933),
+                                            )
                                           ],
                                         ),
                                       ),
                                     ],
                                   ),
-                                );
-                                // Make box dynamic
-                              }),
-                              reservations.isEmpty
-                                  ? Center(
-                                      child: Text(
-                                        "No Reservations Found",
-                                        style: GoogleFonts.poppins(
-                                          color: const Color(0xFF244065),
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 15,
+                              ),
+                              Container(
+                                width: double.infinity,
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                      color: const Color(0xFF9ECF9A), width: 1),
+                                  borderRadius: const BorderRadius.all(
+                                    Radius.circular(10), // Correct usage
+                                  ),
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Container(
+                                      width: double.infinity,
+                                      decoration: const BoxDecoration(
+                                        color: Color(0xFFF8F8F8),
+                                        borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(10),
+                                          topRight: Radius.circular(10),
                                         ),
                                       ),
-                                    )
-                                  : const SizedBox.shrink(),
+                                      padding: const EdgeInsets.all(10),
+                                      child: Text(
+                                        "My Booking Summary",
+                                        textAlign: TextAlign.center,
+                                        style: GoogleFonts.poppins(
+                                          color: const Color(0xFF244065),
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 13,
+                                        ),
+                                      ),
+                                    ),
+                                    if (reservations.isEmpty)
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 20),
+                                        child: Text(
+                                          "No Reservations Found",
+                                          style: GoogleFonts.poppins(
+                                            color: const Color(0xFF244065),
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      )
+                                    else
+                                      ...reservations.map((reservation) {
+                                        final courseName =
+                                            reservation['golfCourse'] ??
+                                                'Unknown Course';
+                                        final courseLogo =
+                                            reservation['golfCourseLogo'];
+                                        final bookingDateRaw =
+                                            reservation['date'];
+                                        final bookingTimeRaw =
+                                            reservation['startingSlot'];
+
+                                        final holes =
+                                            reservation['holes']?.toString() ??
+                                                '-';
+                                        final players = reservation['persons']
+                                                ?.toString() ??
+                                            '-';
+                                        final carts =
+                                            reservation['carts']?.toString() ??
+                                                '-';
+                                        final status = reservation['booking']
+                                                ['status'] ??
+                                            'Booked';
+                                        final slotId =
+                                            reservation['slotId']?.toString() ??
+                                                '';
+
+                                        Color statusColor = hexToColor(
+                                          reservation['booking']['bgColor'] ??
+                                              '#244065',
+                                        );
+
+                                        String bookingTime = '';
+                                        if (bookingTimeRaw != null) {
+                                          try {
+                                            final time = DateFormat('HH:mm:ss')
+                                                .parse(bookingTimeRaw);
+                                            bookingTime = DateFormat('h:mma')
+                                                .format(time);
+                                          } catch (_) {
+                                            bookingTime =
+                                                bookingTimeRaw.toString();
+                                          }
+                                        }
+
+                                        return Container(
+                                          padding: const EdgeInsets.only(
+                                              bottom: 5, top: 5),
+                                          decoration: const BoxDecoration(
+                                            border: Border(
+                                              bottom: BorderSide(
+                                                color: Color(
+                                                    0xFFE8E8E8), // Customize the color
+                                                width:
+                                                    1.0, // Customize the width
+                                              ),
+                                            ),
+                                          ),
+                                          child: Column(
+                                            children: [
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.all(10),
+                                                child: Column(
+                                                  children: [
+                                                    Row(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Container(
+                                                          width: 75,
+                                                          height: 75,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            color: const Color(
+                                                                0xFFFFFFFF),
+                                                            border: Border.all(
+                                                                width: 1.2,
+                                                                color: const Color(
+                                                                    0xFFE8E8E8)),
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        10),
+                                                          ),
+                                                          child: Center(
+                                                            child: Image(
+                                                              image: courseLogo !=
+                                                                      null
+                                                                  ? NetworkImage(
+                                                                      courseLogo,
+                                                                    )
+                                                                  : const AssetImage(
+                                                                      "assets/images/bkdu2.png",
+                                                                    ) as ImageProvider,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        const SizedBox(
+                                                            width:
+                                                                10), // 👈 Space between items
+                                                        SizedBox(
+                                                          width: 250,
+                                                          // Optional padding
+                                                          child: Column(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              Row(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .spaceBetween,
+                                                                children: [
+                                                                  Container(
+                                                                    decoration:
+                                                                        BoxDecoration(
+                                                                      color: const Color(
+                                                                          0xFFF7FAF4),
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              50),
+                                                                    ),
+                                                                    padding: const EdgeInsets
+                                                                        .symmetric(
+                                                                        horizontal:
+                                                                            10,
+                                                                        vertical:
+                                                                            5),
+                                                                    child: Text(
+                                                                      status,
+                                                                      style: GoogleFonts
+                                                                          .poppins(
+                                                                        fontSize:
+                                                                            12,
+                                                                        color:
+                                                                            statusColor,
+                                                                        fontWeight:
+                                                                            FontWeight.w600,
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                  Row(
+                                                                    children: [
+                                                                      InkWell(
+                                                                        onTap:
+                                                                            () {},
+                                                                        child:
+                                                                            Container(
+                                                                          width:
+                                                                              25,
+                                                                          height:
+                                                                              25,
+                                                                          decoration:
+                                                                              BoxDecoration(
+                                                                            color:
+                                                                                const Color(0xFFF8F8F8),
+                                                                            borderRadius:
+                                                                                BorderRadius.circular(50),
+                                                                          ),
+                                                                          child:
+                                                                              const Center(
+                                                                            child:
+                                                                                Icon(
+                                                                              Icons.edit,
+                                                                              size: 16,
+                                                                              color: Color(0xFF669933),
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                      const SizedBox(
+                                                                          width:
+                                                                              6),
+                                                                      reservation['checkedIn'] == false &&
+                                                                              reservation['canceled'] ==
+                                                                                  false
+                                                                          ? ElevatedButton(
+                                                                              // onPressed: () {
+                                                                              //   // Add your cancel logic here
+                                                                              // },
+                                                                              onPressed: () async {
+                                                                                // A pop up dialog to confirm cancellation
+                                                                                showDialog(
+                                                                                    context: context,
+                                                                                    builder: (BuildContext context) {
+                                                                                      return AlertDialog(
+                                                                                        title: const Text('Confirm Cancellation'),
+                                                                                        content: const Text('Are you sure you want to cancel this tee time?'),
+                                                                                        actions: [
+                                                                                          TextButton(
+                                                                                            onPressed: () {
+                                                                                              Navigator.of(context).pop(); // Close the dialog
+                                                                                            },
+                                                                                            child: const Text('No'),
+                                                                                          ),
+                                                                                          TextButton(
+                                                                                            onPressed: () async {
+                                                                                              // ✅ Save a valid context reference BEFORE popping
+                                                                                              final messenger = ScaffoldMessenger.of(context);
+
+                                                                                              Navigator.of(context).pop(); // Now safe to close the dialog
+
+                                                                                              try {
+                                                                                                final secureStorage = const FlutterSecureStorage();
+                                                                                                final token = await secureStorage.read(key: 'accessToken');
+
+                                                                                                if (token == null) {
+                                                                                                  throw Exception('Access token not found');
+                                                                                                }
+
+                                                                                                final uri = Uri.parse(
+                                                                                                  'https://api.dev.driverpos.io/api/v1/teesheet/myBookings/cancel/$slotId',
+                                                                                                );
+
+                                                                                                final response = await http.delete(
+                                                                                                  uri,
+                                                                                                  headers: {
+                                                                                                    'Authorization': 'Bearer $token',
+                                                                                                    'Content-Type': 'application/json',
+                                                                                                  },
+                                                                                                  body: jsonEncode({
+                                                                                                    "process": "Cancel",
+                                                                                                  }),
+                                                                                                );
+
+                                                                                                if (response.statusCode == 200) {
+                                                                                                  // ✅ Use the stored reference — not ScaffoldMessenger.of(context)
+                                                                                                  messenger.showSnackBar(
+                                                                                                    const SnackBar(
+                                                                                                      content: Text('Tee time cancelled successfully'),
+                                                                                                      backgroundColor: Color(0xFF9ECF9A),
+                                                                                                    ),
+                                                                                                  );
+
+                                                                                                  await Future.delayed(const Duration(milliseconds: 300));
+
+                                                                                                  if (context.mounted) {
+                                                                                                    Navigator.pushReplacement(
+                                                                                                      context,
+                                                                                                      MaterialPageRoute(
+                                                                                                        builder: (context) => MyReservationPage(
+                                                                                                            key: UniqueKey(), // Ensure a new key to rebuild the widget
+                                                                                                            myRsvId: ''),
+                                                                                                      ),
+                                                                                                    );
+                                                                                                  }
+                                                                                                } else {
+                                                                                                  print('❌ Failed to cancel tee time: ${response.statusCode}');
+                                                                                                }
+                                                                                              } catch (e) {
+                                                                                                print('❗ Error cancelling tee time: $e');
+                                                                                              }
+                                                                                            },
+                                                                                            child: const Text('Yes'),
+                                                                                          ),
+                                                                                        ],
+                                                                                      );
+                                                                                    });
+                                                                              },
+
+                                                                              style: ElevatedButton.styleFrom(
+                                                                                backgroundColor: const Color(0xFF9ECF9A),
+                                                                                foregroundColor: Colors.white,
+                                                                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5), // vertical padding
+                                                                                minimumSize: const Size(0, 0), // disables default min height
+                                                                                shape: RoundedRectangleBorder(
+                                                                                  borderRadius: BorderRadius.circular(8),
+                                                                                ),
+                                                                              ),
+                                                                              child: const Text(
+                                                                                "Cancel",
+                                                                                style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
+                                                                              ),
+                                                                            )
+                                                                          : const SizedBox
+                                                                              .shrink(),
+                                                                    ],
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                              const SizedBox(
+                                                                  height: 5),
+                                                              Text(
+                                                                courseName,
+                                                                style:
+                                                                    GoogleFonts
+                                                                        .poppins(
+                                                                  color: const Color(
+                                                                      0xFF244065),
+                                                                  fontSize: 13,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w600,
+                                                                ),
+                                                              ),
+                                                              const SizedBox(
+                                                                  height: 5),
+                                                              Row(
+                                                                spacing: 6,
+                                                                children: [
+                                                                  const Icon(
+                                                                    Icons
+                                                                        .calendar_month_outlined,
+                                                                    color: Color(
+                                                                        0xFF6B7280),
+                                                                    size: 18,
+                                                                  ),
+                                                                  Text(
+                                                                    bookingTime,
+                                                                    style: GoogleFonts.poppins(
+                                                                        color: const Color(
+                                                                            0xFF6E7373),
+                                                                        fontSize:
+                                                                            13,
+                                                                        fontWeight:
+                                                                            FontWeight.w500),
+                                                                  ),
+                                                                  Container(
+                                                                    color: const Color(
+                                                                        0xFF6E7373),
+                                                                    width: 1,
+                                                                    height: 15,
+                                                                  ),
+                                                                  Text(
+                                                                    bookingDateRaw !=
+                                                                            null
+                                                                        ? DateFormat('EEE, MMM d')
+                                                                            .format(DateFormat('EEEE dd, MMMM, yyyy').parse(bookingDateRaw))
+                                                                        : "Unknown Date",
+                                                                    style: GoogleFonts.poppins(
+                                                                        color: const Color(
+                                                                            0xFF6E7373),
+                                                                        fontSize:
+                                                                            13,
+                                                                        fontWeight:
+                                                                            FontWeight.w500),
+                                                                  ),
+                                                                ],
+                                                              )
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    const SizedBox(
+                                                      height: 10,
+                                                    ),
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                        left: 10,
+                                                        right: 10,
+                                                      ),
+                                                      child: Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
+                                                        children: [
+                                                          Container(
+                                                            decoration: BoxDecoration(
+                                                                color: const Color(
+                                                                    0xFFF7FAF4),
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            50)),
+                                                            child: Padding(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .symmetric(
+                                                                      horizontal:
+                                                                          15,
+                                                                      vertical:
+                                                                          6),
+                                                              child: Center(
+                                                                child: Row(
+                                                                  children: [
+                                                                    Text(
+                                                                      "Holes: ",
+                                                                      style: GoogleFonts.poppins(
+                                                                          fontSize:
+                                                                              14,
+                                                                          color: const Color(
+                                                                              0xFF6E7373),
+                                                                          fontWeight:
+                                                                              FontWeight.w500),
+                                                                    ),
+                                                                    Text(
+                                                                      holes,
+                                                                      style: GoogleFonts.poppins(
+                                                                          fontSize:
+                                                                              14,
+                                                                          color: const Color(
+                                                                              0xFF244065),
+                                                                          fontWeight:
+                                                                              FontWeight.w600),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          Container(
+                                                            decoration: BoxDecoration(
+                                                                color: const Color(
+                                                                    0xFFF7FAF4),
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            50)),
+                                                            child: Padding(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .symmetric(
+                                                                      horizontal:
+                                                                          15,
+                                                                      vertical:
+                                                                          6),
+                                                              child: Center(
+                                                                child: Row(
+                                                                  children: [
+                                                                    Text(
+                                                                      "Players: ",
+                                                                      style: GoogleFonts.poppins(
+                                                                          fontSize:
+                                                                              14,
+                                                                          color: const Color(
+                                                                              0xFF6E7373),
+                                                                          fontWeight:
+                                                                              FontWeight.w500),
+                                                                    ),
+                                                                    Text(
+                                                                      players,
+                                                                      style: GoogleFonts.poppins(
+                                                                          fontSize:
+                                                                              14,
+                                                                          color: const Color(
+                                                                              0xFF244065),
+                                                                          fontWeight:
+                                                                              FontWeight.w600),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          Container(
+                                                            decoration: BoxDecoration(
+                                                                color: const Color(
+                                                                    0xFFF7FAF4),
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            50)),
+                                                            child: Padding(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .symmetric(
+                                                                      horizontal:
+                                                                          15,
+                                                                      vertical:
+                                                                          6),
+                                                              child: Center(
+                                                                child: Row(
+                                                                  children: [
+                                                                    Text(
+                                                                      "Carts: ",
+                                                                      style: GoogleFonts.poppins(
+                                                                          fontSize:
+                                                                              14,
+                                                                          color: const Color(
+                                                                              0xFF6E7373),
+                                                                          fontWeight:
+                                                                              FontWeight.w500),
+                                                                    ),
+                                                                    Text(
+                                                                      carts,
+                                                                      style: GoogleFonts.poppins(
+                                                                          fontSize:
+                                                                              14,
+                                                                          color: const Color(
+                                                                              0xFF244065),
+                                                                          fontWeight:
+                                                                              FontWeight.w600),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                        // Make box dynamic
+                                      }),
+                                  ],
+                                ),
+                              ),
                             ],
                           ),
                         ),
-                      ],
-                    ),
-                  ),
+                      ),
+                SizedBox(
+                  height: MediaQuery.of(context).size.height -
+                      15, // A bit of padding
                 ),
-                // This sized box is necessary to ensure the RefreshIndicator
-                // has something to "pull down" on if the content is not filling the screen.
-                // SizedBox(
-                //   height: MediaQuery.of(context).size.height -
-                //       15, // A bit of padding
-                // ),
+              
               ],
             ),
           ),
-
-          // child: LayoutBuilder(
-          //   builder: (context, constraints) {
-          //     return SingleChildScrollView(
-          //       physics: const AlwaysScrollableScrollPhysics(),
-          //       child: ConstrainedBox(
-          //         constraints: BoxConstraints(
-          //           minHeight: MediaQuery.of(context).size.height,
-          //         ),
-          //         child: IntrinsicHeight(
-          //           child: Column(
-          //             crossAxisAlignment: CrossAxisAlignment.start,
-          //             children: [
-          //               Container(
-          //                 color: const Color(0xFFF8F8F8),
-          //                 width: double.infinity,
-          //                 height: MediaQuery.of(context).size.height,
-          //                 child: Padding(
-          //                   padding: const EdgeInsets.symmetric(horizontal: 15),
-          //                   child: SingleChildScrollView(
-          //                     child: Column(
-          //                       crossAxisAlignment: CrossAxisAlignment.center,
-          //                       children: [
-          //                         const SizedBox(
-          //                           height: 15,
-          //                         ),
-          //                         CompositedTransformTarget(
-          //                           link: _layerLink,
-          //                           child: SizedBox(
-          //                             width: double.infinity,
-          //                             child: Row(
-          //                               mainAxisAlignment:
-          //                                   MainAxisAlignment.spaceBetween,
-          //                               children: [
-          //                                 Text(
-          //                                   "My Reservation",
-          //                                   style: GoogleFonts.poppins(
-          //                                       color: const Color(0xFF244065),
-          //                                       fontSize: 17,
-          //                                       fontWeight: FontWeight.w600),
-          //                                 ),
-          //                                 GestureDetector(
-          //                                   onTap: _toggleDropdown,
-          //                                   child: Row(
-          //                                     children: [
-          //                                       Text(
-          //                                         "Filter by:",
-          //                                         style: GoogleFonts.poppins(
-          //                                             fontSize: 13,
-          //                                             fontWeight:
-          //                                                 FontWeight.w500,
-          //                                             color: const Color(
-          //                                                 0xFF6E7373)),
-          //                                       ),
-          //                                       const SizedBox(width: 5),
-          //                                       Text(
-          //                                         _selectedFilter,
-          //                                         style: GoogleFonts.poppins(
-          //                                             fontSize: 13,
-          //                                             fontWeight:
-          //                                                 FontWeight.w600,
-          //                                             color: const Color(
-          //                                                 0xFF244065)),
-          //                                       ),
-          //                                       Icon(
-          //                                         _dropdownOverlay == null
-          //                                             ? Icons
-          //                                                 .keyboard_arrow_down_rounded
-          //                                             : Icons
-          //                                                 .keyboard_arrow_up_rounded,
-          //                                         size: 22,
-          //                                         color:
-          //                                             const Color(0xFF669933),
-          //                                       )
-          //                                     ],
-          //                                   ),
-          //                                 ),
-          //                               ],
-          //                             ),
-          //                           ),
-          //                         ),
-          //                         const SizedBox(
-          //                           height: 15,
-          //                         ),
-          //                         Container(
-          //                           width: double.infinity,
-          //                           decoration: BoxDecoration(
-          //                             border: Border.all(
-          //                                 color: const Color(0xFF9ECF9A),
-          //                                 width: 1),
-          //                             borderRadius: const BorderRadius.all(
-          //                               Radius.circular(10), // Correct usage
-          //                             ),
-          //                           ),
-          //                           child: Column(
-          //                             crossAxisAlignment:
-          //                                 CrossAxisAlignment.center,
-          //                             children: [
-          //                               Container(
-          //                                 width: double.infinity,
-          //                                 decoration: const BoxDecoration(
-          //                                   color: Color(0xFFF8F8F8),
-          //                                   borderRadius: BorderRadius.only(
-          //                                     topLeft: Radius.circular(10),
-          //                                     topRight: Radius.circular(10),
-          //                                   ),
-          //                                 ),
-          //                                 padding: const EdgeInsets.all(10),
-          //                                 child: Text(
-          //                                   "My Booking Summary",
-          //                                   textAlign: TextAlign.center,
-          //                                   style: GoogleFonts.poppins(
-          //                                     color: const Color(0xFF244065),
-          //                                     fontWeight: FontWeight.w600,
-          //                                     fontSize: 13,
-          //                                   ),
-          //                                 ),
-          //                               ),
-          //                               ...reservations.map((reservation) {
-          //                                 final courseName =
-          //                                     reservation['golfCourse'] ??
-          //                                         'Unknown Course';
-          //                                 final courseLogo =
-          //                                     reservation['golfCourseLogo'];
-          //                                 final bookingDateRaw =
-          //                                     reservation['date'];
-          //                                 final bookingTimeRaw =
-          //                                     reservation['startingSlot'];
-
-          //                                 final holes = reservation['holes']
-          //                                         ?.toString() ??
-          //                                     '-';
-          //                                 final players = reservation['persons']
-          //                                         ?.toString() ??
-          //                                     '-';
-          //                                 final carts = reservation['carts']
-          //                                         ?.toString() ??
-          //                                     '-';
-          //                                 final status = reservation['booking']
-          //                                         ['status'] ??
-          //                                     'Booked';
-          //                                 final slotId = reservation['slotId']
-          //                                         ?.toString() ??
-          //                                     '';
-
-          //                                 Color statusColor = hexToColor(
-          //                                   reservation['booking']['bgColor'] ??
-          //                                       '#244065',
-          //                                 );
-
-          //                                 String bookingTime = '';
-          //                                 if (bookingTimeRaw != null) {
-          //                                   try {
-          //                                     final time =
-          //                                         DateFormat('HH:mm:ss')
-          //                                             .parse(bookingTimeRaw);
-          //                                     bookingTime = DateFormat('h:mma')
-          //                                         .format(time);
-          //                                   } catch (_) {
-          //                                     bookingTime =
-          //                                         bookingTimeRaw.toString();
-          //                                   }
-          //                                 }
-
-          //                                 return Container(
-          //                                   padding: const EdgeInsets.only(
-          //                                       bottom: 5, top: 5),
-          //                                   decoration: const BoxDecoration(
-          //                                     border: Border(
-          //                                       bottom: BorderSide(
-          //                                         color: Color(
-          //                                             0xFFE8E8E8), // Customize the color
-          //                                         width:
-          //                                             1.0, // Customize the width
-          //                                       ),
-          //                                     ),
-          //                                   ),
-          //                                   child: Column(
-          //                                     children: [
-          //                                       Padding(
-          //                                         padding:
-          //                                             const EdgeInsets.all(10),
-          //                                         child: Column(
-          //                                           children: [
-          //                                             Row(
-          //                                               crossAxisAlignment:
-          //                                                   CrossAxisAlignment
-          //                                                       .start,
-          //                                               children: [
-          //                                                 Container(
-          //                                                   width: 75,
-          //                                                   height: 75,
-          //                                                   decoration:
-          //                                                       BoxDecoration(
-          //                                                     color: const Color(
-          //                                                         0xFFFFFFFF),
-          //                                                     border: Border.all(
-          //                                                         width: 1.2,
-          //                                                         color: const Color(
-          //                                                             0xFFE8E8E8)),
-          //                                                     borderRadius:
-          //                                                         BorderRadius
-          //                                                             .circular(
-          //                                                                 10),
-          //                                                   ),
-          //                                                   child: Center(
-          //                                                     child: Image(
-          //                                                       image: courseLogo !=
-          //                                                               null
-          //                                                           ? NetworkImage(
-          //                                                               courseLogo,
-          //                                                             )
-          //                                                           : const AssetImage(
-          //                                                               "assets/images/bkdu2.png",
-          //                                                             ) as ImageProvider,
-          //                                                     ),
-          //                                                   ),
-          //                                                 ),
-          //                                                 const SizedBox(
-          //                                                     width:
-          //                                                         10), // 👈 Space between items
-          //                                                 SizedBox(
-          //                                                   width: 250,
-          //                                                   // Optional padding
-          //                                                   child: Column(
-          //                                                     crossAxisAlignment:
-          //                                                         CrossAxisAlignment
-          //                                                             .start,
-          //                                                     children: [
-          //                                                       Row(
-          //                                                         mainAxisAlignment:
-          //                                                             MainAxisAlignment
-          //                                                                 .spaceBetween,
-          //                                                         children: [
-          //                                                           Container(
-          //                                                             decoration:
-          //                                                                 BoxDecoration(
-          //                                                               color: const Color(
-          //                                                                   0xFFF7FAF4),
-          //                                                               borderRadius:
-          //                                                                   BorderRadius.circular(50),
-          //                                                             ),
-          //                                                             padding: const EdgeInsets
-          //                                                                 .symmetric(
-          //                                                                 horizontal:
-          //                                                                     10,
-          //                                                                 vertical:
-          //                                                                     5),
-          //                                                             child:
-          //                                                                 Text(
-          //                                                               status,
-          //                                                               style: GoogleFonts
-          //                                                                   .poppins(
-          //                                                                 fontSize:
-          //                                                                     12,
-          //                                                                 color:
-          //                                                                     statusColor,
-          //                                                                 fontWeight:
-          //                                                                     FontWeight.w600,
-          //                                                               ),
-          //                                                             ),
-          //                                                           ),
-          //                                                           Row(
-          //                                                             children: [
-          //                                                               InkWell(
-          //                                                                 onTap:
-          //                                                                     () {},
-          //                                                                 child:
-          //                                                                     Container(
-          //                                                                   width:
-          //                                                                       25,
-          //                                                                   height:
-          //                                                                       25,
-          //                                                                   decoration:
-          //                                                                       BoxDecoration(
-          //                                                                     color: const Color(0xFFF8F8F8),
-          //                                                                     borderRadius: BorderRadius.circular(50),
-          //                                                                   ),
-          //                                                                   child:
-          //                                                                       const Center(
-          //                                                                     child: Icon(
-          //                                                                       Icons.edit,
-          //                                                                       size: 16,
-          //                                                                       color: Color(0xFF669933),
-          //                                                                     ),
-          //                                                                   ),
-          //                                                                 ),
-          //                                                               ),
-          //                                                               const SizedBox(
-          //                                                                   width:
-          //                                                                       6),
-          //                                                               reservation['checkedIn'] == false &&
-          //                                                                       reservation['canceled'] == false
-          //                                                                   ? ElevatedButton(
-          //                                                                       // onPressed: () {
-          //                                                                       //   // Add your cancel logic here
-          //                                                                       // },
-          //                                                                       onPressed: () async {
-          //                                                                         // A pop up dialog to confirm cancellation
-          //                                                                         showDialog(
-          //                                                                             context: context,
-          //                                                                             builder: (BuildContext context) {
-          //                                                                               return AlertDialog(
-          //                                                                                 title: const Text('Confirm Cancellation'),
-          //                                                                                 content: const Text('Are you sure you want to cancel this tee time?'),
-          //                                                                                 actions: [
-          //                                                                                   TextButton(
-          //                                                                                     onPressed: () {
-          //                                                                                       Navigator.of(context).pop(); // Close the dialog
-          //                                                                                     },
-          //                                                                                     child: const Text('No'),
-          //                                                                                   ),
-          //                                                                                   TextButton(
-          //                                                                                     onPressed: () async {
-          //                                                                                       // ✅ Save a valid context reference BEFORE popping
-          //                                                                                       final messenger = ScaffoldMessenger.of(context);
-
-          //                                                                                       Navigator.of(context).pop(); // Now safe to close the dialog
-
-          //                                                                                       try {
-          //                                                                                         final secureStorage = const FlutterSecureStorage();
-          //                                                                                         final token = await secureStorage.read(key: 'accessToken');
-
-          //                                                                                         if (token == null) {
-          //                                                                                           throw Exception('Access token not found');
-          //                                                                                         }
-
-          //                                                                                         final uri = Uri.parse(
-          //                                                                                           'https://api.dev.driverpos.io/api/v1/teesheet/myBookings/cancel/$slotId',
-          //                                                                                         );
-
-          //                                                                                         final response = await http.delete(
-          //                                                                                           uri,
-          //                                                                                           headers: {
-          //                                                                                             'Authorization': 'Bearer $token',
-          //                                                                                             'Content-Type': 'application/json',
-          //                                                                                           },
-          //                                                                                           body: jsonEncode({
-          //                                                                                             "process": "Cancel",
-          //                                                                                           }),
-          //                                                                                         );
-
-          //                                                                                         if (response.statusCode == 200) {
-          //                                                                                           // ✅ Use the stored reference — not ScaffoldMessenger.of(context)
-          //                                                                                           messenger.showSnackBar(
-          //                                                                                             const SnackBar(
-          //                                                                                               content: Text('Tee time cancelled successfully'),
-          //                                                                                               backgroundColor: Color(0xFF9ECF9A),
-          //                                                                                             ),
-          //                                                                                           );
-
-          //                                                                                           await Future.delayed(const Duration(milliseconds: 300));
-
-          //                                                                                           if (context.mounted) {
-          //                                                                                             Navigator.pushReplacement(
-          //                                                                                               context,
-          //                                                                                               MaterialPageRoute(
-          //                                                                                                 builder: (context) => MyReservationPage(
-          //                                                                                                     key: UniqueKey(), // Ensure a new key to rebuild the widget
-          //                                                                                                     myRsvId: ''),
-          //                                                                                               ),
-          //                                                                                             );
-          //                                                                                           }
-          //                                                                                         } else {
-          //                                                                                           print('❌ Failed to cancel tee time: ${response.statusCode}');
-          //                                                                                         }
-          //                                                                                       } catch (e) {
-          //                                                                                         print('❗ Error cancelling tee time: $e');
-          //                                                                                       }
-          //                                                                                     },
-          //                                                                                     child: const Text('Yes'),
-          //                                                                                   ),
-          //                                                                                 ],
-          //                                                                               );
-          //                                                                             });
-          //                                                                       },
-
-          //                                                                       style: ElevatedButton.styleFrom(
-          //                                                                         backgroundColor: const Color(0xFF9ECF9A),
-          //                                                                         foregroundColor: Colors.white,
-          //                                                                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5), // vertical padding
-          //                                                                         minimumSize: const Size(0, 0), // disables default min height
-          //                                                                         shape: RoundedRectangleBorder(
-          //                                                                           borderRadius: BorderRadius.circular(8),
-          //                                                                         ),
-          //                                                                       ),
-          //                                                                       child: const Text(
-          //                                                                         "Cancel",
-          //                                                                         style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
-          //                                                                       ),
-          //                                                                     )
-          //                                                                   : const SizedBox.shrink(),
-          //                                                             ],
-          //                                                           ),
-          //                                                         ],
-          //                                                       ),
-          //                                                       const SizedBox(
-          //                                                           height: 5),
-          //                                                       Text(
-          //                                                         courseName,
-          //                                                         style: GoogleFonts
-          //                                                             .poppins(
-          //                                                           color: const Color(
-          //                                                               0xFF244065),
-          //                                                           fontSize:
-          //                                                               13,
-          //                                                           fontWeight:
-          //                                                               FontWeight
-          //                                                                   .w600,
-          //                                                         ),
-          //                                                       ),
-          //                                                       const SizedBox(
-          //                                                           height: 5),
-          //                                                       Row(
-          //                                                         spacing: 6,
-          //                                                         children: [
-          //                                                           const Icon(
-          //                                                             Icons
-          //                                                                 .calendar_month_outlined,
-          //                                                             color: Color(
-          //                                                                 0xFF6B7280),
-          //                                                             size: 18,
-          //                                                           ),
-          //                                                           Text(
-          //                                                             bookingTime,
-          //                                                             style: GoogleFonts.poppins(
-          //                                                                 color: const Color(
-          //                                                                     0xFF6E7373),
-          //                                                                 fontSize:
-          //                                                                     13,
-          //                                                                 fontWeight:
-          //                                                                     FontWeight.w500),
-          //                                                           ),
-          //                                                           Container(
-          //                                                             color: const Color(
-          //                                                                 0xFF6E7373),
-          //                                                             width: 1,
-          //                                                             height:
-          //                                                                 15,
-          //                                                           ),
-          //                                                           Text(
-          //                                                             bookingDateRaw !=
-          //                                                                     null
-          //                                                                 ? DateFormat('EEE, MMM d')
-          //                                                                     .format(DateFormat('EEEE dd, MMMM, yyyy').parse(bookingDateRaw))
-          //                                                                 : "Unknown Date",
-          //                                                             style: GoogleFonts.poppins(
-          //                                                                 color: const Color(
-          //                                                                     0xFF6E7373),
-          //                                                                 fontSize:
-          //                                                                     13,
-          //                                                                 fontWeight:
-          //                                                                     FontWeight.w500),
-          //                                                           ),
-          //                                                         ],
-          //                                                       )
-          //                                                     ],
-          //                                                   ),
-          //                                                 ),
-          //                                               ],
-          //                                             ),
-          //                                             const SizedBox(
-          //                                               height: 10,
-          //                                             ),
-          //                                             Padding(
-          //                                               padding:
-          //                                                   const EdgeInsets
-          //                                                       .only(
-          //                                                 left: 10,
-          //                                                 right: 10,
-          //                                               ),
-          //                                               child: Row(
-          //                                                 mainAxisAlignment:
-          //                                                     MainAxisAlignment
-          //                                                         .spaceBetween,
-          //                                                 children: [
-          //                                                   Container(
-          //                                                     decoration: BoxDecoration(
-          //                                                         color: const Color(
-          //                                                             0xFFF7FAF4),
-          //                                                         borderRadius:
-          //                                                             BorderRadius
-          //                                                                 .circular(
-          //                                                                     50)),
-          //                                                     child: Padding(
-          //                                                       padding: const EdgeInsets
-          //                                                           .symmetric(
-          //                                                           horizontal:
-          //                                                               15,
-          //                                                           vertical:
-          //                                                               6),
-          //                                                       child: Center(
-          //                                                         child: Row(
-          //                                                           children: [
-          //                                                             Text(
-          //                                                               "Holes: ",
-          //                                                               style: GoogleFonts.poppins(
-          //                                                                   fontSize:
-          //                                                                       14,
-          //                                                                   color:
-          //                                                                       const Color(0xFF6E7373),
-          //                                                                   fontWeight: FontWeight.w500),
-          //                                                             ),
-          //                                                             Text(
-          //                                                               holes,
-          //                                                               style: GoogleFonts.poppins(
-          //                                                                   fontSize:
-          //                                                                       14,
-          //                                                                   color:
-          //                                                                       const Color(0xFF244065),
-          //                                                                   fontWeight: FontWeight.w600),
-          //                                                             ),
-          //                                                           ],
-          //                                                         ),
-          //                                                       ),
-          //                                                     ),
-          //                                                   ),
-          //                                                   Container(
-          //                                                     decoration: BoxDecoration(
-          //                                                         color: const Color(
-          //                                                             0xFFF7FAF4),
-          //                                                         borderRadius:
-          //                                                             BorderRadius
-          //                                                                 .circular(
-          //                                                                     50)),
-          //                                                     child: Padding(
-          //                                                       padding: const EdgeInsets
-          //                                                           .symmetric(
-          //                                                           horizontal:
-          //                                                               15,
-          //                                                           vertical:
-          //                                                               6),
-          //                                                       child: Center(
-          //                                                         child: Row(
-          //                                                           children: [
-          //                                                             Text(
-          //                                                               "Players: ",
-          //                                                               style: GoogleFonts.poppins(
-          //                                                                   fontSize:
-          //                                                                       14,
-          //                                                                   color:
-          //                                                                       const Color(0xFF6E7373),
-          //                                                                   fontWeight: FontWeight.w500),
-          //                                                             ),
-          //                                                             Text(
-          //                                                               players,
-          //                                                               style: GoogleFonts.poppins(
-          //                                                                   fontSize:
-          //                                                                       14,
-          //                                                                   color:
-          //                                                                       const Color(0xFF244065),
-          //                                                                   fontWeight: FontWeight.w600),
-          //                                                             ),
-          //                                                           ],
-          //                                                         ),
-          //                                                       ),
-          //                                                     ),
-          //                                                   ),
-          //                                                   Container(
-          //                                                     decoration: BoxDecoration(
-          //                                                         color: const Color(
-          //                                                             0xFFF7FAF4),
-          //                                                         borderRadius:
-          //                                                             BorderRadius
-          //                                                                 .circular(
-          //                                                                     50)),
-          //                                                     child: Padding(
-          //                                                       padding: const EdgeInsets
-          //                                                           .symmetric(
-          //                                                           horizontal:
-          //                                                               15,
-          //                                                           vertical:
-          //                                                               6),
-          //                                                       child: Center(
-          //                                                         child: Row(
-          //                                                           children: [
-          //                                                             Text(
-          //                                                               "Carts: ",
-          //                                                               style: GoogleFonts.poppins(
-          //                                                                   fontSize:
-          //                                                                       14,
-          //                                                                   color:
-          //                                                                       const Color(0xFF6E7373),
-          //                                                                   fontWeight: FontWeight.w500),
-          //                                                             ),
-          //                                                             Text(
-          //                                                               carts,
-          //                                                               style: GoogleFonts.poppins(
-          //                                                                   fontSize:
-          //                                                                       14,
-          //                                                                   color:
-          //                                                                       const Color(0xFF244065),
-          //                                                                   fontWeight: FontWeight.w600),
-          //                                                             ),
-          //                                                           ],
-          //                                                         ),
-          //                                                       ),
-          //                                                     ),
-          //                                                   ),
-          //                                                 ],
-          //                                               ),
-          //                                             ),
-          //                                           ],
-          //                                         ),
-          //                                       ),
-          //                                     ],
-          //                                   ),
-          //                                 );
-          //                                 // Make box dynamic
-          //                               }),
-          //                               reservations.isEmpty
-          //                                   ? Center(
-          //                                       child: Text(
-          //                                         "No Reservations Found",
-          //                                         style: GoogleFonts.poppins(
-          //                                           color:
-          //                                               const Color(0xFF244065),
-          //                                           fontSize: 15,
-          //                                           fontWeight: FontWeight.w600,
-          //                                         ),
-          //                                       ),
-          //                                     )
-          //                                   : const SizedBox.shrink(),
-          //                             ],
-          //                           ),
-          //                         ),
-          //                         const SizedBox(
-          //                           height: 20,
-          //                         ),
-          //                       ],
-          //                     ),
-          //                   ),
-          //                 ),
-          //               ),
-          //             ],
-          //           ),
-          //         ),
-          //       ),
-
-          //       // child: SizedBox(
-          //       //   height: MediaQuery.of(context).size.height,
-
-          //       // ),
-          //     );
-          //   },
-          // ),
         ),
       ),
       bottomNavigationBar: const CustomBottomNavBar(selectedIndex: 1),
