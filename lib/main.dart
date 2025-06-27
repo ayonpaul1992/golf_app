@@ -28,22 +28,29 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        textTheme: GoogleFonts.poppinsTextTheme(),
+    return MediaQuery(
+      data: MediaQuery.of(context).copyWith(
+        // You can set this to 1.0 to disable all scaling,
+        // or a maximum value like 1.2 to limit it.
+        textScaler: const TextScaler.linear(1.0),
       ),
-      home: FutureBuilder<Widget>(
-        future: _getInitialScreen(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const SplashScreen();
-          } else if (snapshot.hasData) {
-            return snapshot.data!;
-          } else {
-            return const LoginPage(); // fallback
-          }
-        },
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          textTheme: GoogleFonts.poppinsTextTheme(),
+        ),
+        home: FutureBuilder<Widget>(
+          future: _getInitialScreen(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const SplashScreen();
+            } else if (snapshot.hasData) {
+              return snapshot.data!;
+            } else {
+              return const LoginPage(); // fallback
+            }
+          },
+        ),
       ),
     );
   }
