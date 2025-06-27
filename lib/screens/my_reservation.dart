@@ -249,6 +249,7 @@ class MyReservationPageState extends State<MyReservationPage> {
           // Handle navigation logic
         },
       ),
+      
       body: SafeArea(
         child: RefreshIndicator(
           onRefresh: _handleRefresh,
@@ -902,6 +903,8 @@ class MyReservationPageState extends State<MyReservationPage> {
           ),
         ),
       ),
+      
+      
       bottomNavigationBar: const CustomBottomNavBar(selectedIndex: 1),
     );
   }
