@@ -242,7 +242,7 @@ class SignupPageState extends State<SignupPage> {
                                         focusNode: phoneFocusNode,
                                         decoration: const InputDecoration(
                                           border: InputBorder.none,
-                                          hintText: '8777784755',
+                                          hintText: '',
                                           hintStyle: TextStyle(
                                             color: Color(0xFF244065),
                                             fontWeight: FontWeight.w600,

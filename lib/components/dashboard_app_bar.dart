@@ -16,7 +16,7 @@ class DashboardAppBar extends StatelessWidget implements PreferredSizeWidget {
     // required this.dshbId,
     this.onBackPressed,
     this.onTitleTapped,
-    this.showLeading = true,
+    this.showLeading = true, required dshbId,
   });
 
   @override
@@ -26,7 +26,14 @@ class DashboardAppBar extends StatelessWidget implements PreferredSizeWidget {
       leading: showLeading
           ? IconButton(
               icon: const Icon(Icons.arrow_back_ios, color: Color(0xFF9ECF9A)),
-              onPressed: onBackPressed ?? () => Navigator.pop(context),
+              onPressed: onBackPressed ??
+                  () {
+                    if (Navigator.of(context).canPop()) {
+                      Navigator.of(context).pop();
+                    } else {
+                      // Optionally handle the case when there's nothing to pop
+                    }
+                  },
             )
           : IconButton(
               // Display the menu icon when showLeading is false

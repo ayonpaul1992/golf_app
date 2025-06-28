@@ -133,7 +133,7 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
                           ),
                         );
                       } else {
-                        Navigator.pushReplacement(
+                        Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) => items[index]['route']!,
@@ -174,23 +174,24 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
                           ],
                         ),
                         AnimatedOpacity(
-                            // Use AnimatedOpacity for text fade
-                            duration: const Duration(milliseconds: 200),
-                            opacity: hoverIndex == index ? 0.0 : 1.0,
-                            child: FittedBox(
-                              fit: BoxFit.scaleDown,
-                              alignment: Alignment.center,
-                              child: Text(
-                                items[index]['label']!,
-                                style: GoogleFonts.poppins(
-                                  color: widget.selectedIndex == index
-                                      ? const Color(0xFF9ECF9A)
-                                      : const Color(0xFF648683),
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w400,
-                                ),
+                          // Use AnimatedOpacity for text fade
+                          duration: const Duration(milliseconds: 200),
+                          opacity: hoverIndex == index ? 0.0 : 1.0,
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            alignment: Alignment.center,
+                            child: Text(
+                              items[index]['label']!,
+                              style: GoogleFonts.poppins(
+                                color: widget.selectedIndex == index
+                                    ? const Color(0xFF9ECF9A)
+                                    : const Color(0xFF648683),
+                                fontSize: 13,
+                                fontWeight: FontWeight.w400,
                               ),
-                            )),
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   ),
