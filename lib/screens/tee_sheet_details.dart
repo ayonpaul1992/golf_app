@@ -735,6 +735,9 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
                                           fontWeight: FontWeight.w500,
                                         ),
                                       ),
+                                      const SizedBox(
+                                        height: 7,
+                                      ),
                                       Center(
                                         child: Row(
                                           mainAxisSize: MainAxisSize.min,
@@ -762,40 +765,41 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
                                             const SizedBox(
                                               width: 5,
                                             ),
-                                            Column(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                Opacity(
-                                                  opacity: 0.0,
-                                                  child: IconButton(
-                                                    key: _iconKeySecond,
-                                                    onPressed: null,
-                                                    icon: const Icon(
-                                                      Icons.keyboard_arrow_down,
-                                                      color: Color(0xFF244065),
-                                                      size: 20,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
+
+                                            // Column(
+                                            //   mainAxisSize: MainAxisSize.min,
+                                            //   children: [
+                                            //     Opacity(
+                                            //       opacity: 0.0,
+                                            //       child: IconButton(
+                                            //         key: _iconKeySecond,
+                                            //         onPressed: null,
+                                            //         icon: const Icon(
+                                            //           Icons.keyboard_arrow_down,
+                                            //           color: Color(0xFF244065),
+                                            //           size: 20,
+                                            //         ),
+                                            //       ),
+                                            //     ),
+                                            //   ],
+                                            // ),
                                           ],
                                         ),
                                       )
                                     ],
                                   ),
-                                  const SizedBox(
-                                    width: 5,
-                                  ),
+                                  // const SizedBox(
+                                  //   width: 5,
+                                  // ),
                                   Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.end,
                                     children: [
                                       Text(
-                                        "Rental set of clubs",
+                                        "Rental set of club",
+                                        overflow: TextOverflow.ellipsis,
                                         style: GoogleFonts.poppins(
                                           color: const Color(0xFF6E7373),
-                                          fontSize: 12,
+                                          fontSize: 11,
                                           fontWeight: FontWeight.w500,
                                         ),
                                       ),
@@ -855,7 +859,7 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
                                                               : Colors.white,
                                                           fontWeight:
                                                               FontWeight.w600,
-                                                          fontSize: 12,
+                                                          fontSize: 11,
                                                         ),
                                                       ),
                                                     ),
@@ -872,7 +876,7 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
                                                                   0xFF244065),
                                                           fontWeight:
                                                               FontWeight.w600,
-                                                          fontSize: 12,
+                                                          fontSize: 11,
                                                         ),
                                                       ),
                                                     ),
