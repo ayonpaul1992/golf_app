@@ -249,7 +249,6 @@ class MyReservationPageState extends State<MyReservationPage> {
           // Handle navigation logic
         },
       ),
-      
       body: SafeArea(
         child: RefreshIndicator(
           onRefresh: _handleRefresh,
@@ -529,33 +528,33 @@ class MyReservationPageState extends State<MyReservationPage> {
                                                                   ),
                                                                   Row(
                                                                     children: [
-                                                                      InkWell(
-                                                                        onTap:
-                                                                            () {},
-                                                                        child:
-                                                                            Container(
-                                                                          width:
-                                                                              25,
-                                                                          height:
-                                                                              25,
-                                                                          decoration:
-                                                                              BoxDecoration(
-                                                                            color:
-                                                                                const Color(0xFFF8F8F8),
-                                                                            borderRadius:
-                                                                                BorderRadius.circular(50),
-                                                                          ),
+                                                                      // Only show edit button if status is not 'Canceled'
+                                                                      if (!reservation[
+                                                                          'canceled'])
+                                                                        InkWell(
+                                                                          onTap:
+                                                                              () {},
                                                                           child:
-                                                                              const Center(
+                                                                              Container(
+                                                                            width:
+                                                                                25,
+                                                                            height:
+                                                                                25,
+                                                                            decoration:
+                                                                                BoxDecoration(
+                                                                              color: const Color(0xFFF8F8F8),
+                                                                              borderRadius: BorderRadius.circular(50),
+                                                                            ),
                                                                             child:
-                                                                                Icon(
-                                                                              Icons.edit,
-                                                                              size: 16,
-                                                                              color: Color(0xFF669933),
+                                                                                const Center(
+                                                                              child: Icon(
+                                                                                Icons.edit,
+                                                                                size: 16,
+                                                                                color: Color(0xFF669933),
+                                                                              ),
                                                                             ),
                                                                           ),
                                                                         ),
-                                                                      ),
                                                                       const SizedBox(
                                                                           width:
                                                                               6),
@@ -903,8 +902,6 @@ class MyReservationPageState extends State<MyReservationPage> {
           ),
         ),
       ),
-      
-      
       bottomNavigationBar: const CustomBottomNavBar(selectedIndex: 1),
     );
   }

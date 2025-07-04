@@ -1,4 +1,4 @@
-// ignore_for_file: deprecated_member_use
+// ignore_for_file: deprecated_member_use, use_build_context_synchronously
 
 import 'dart:convert';
 import 'package:flutter/material.dart';
@@ -11,6 +11,7 @@ import 'package:gulf_app/components/custom_drawer.dart';
 import 'package:gulf_app/components/custom_bottom_nav_bar.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:intl/intl.dart';
+import 'package:image_picker/image_picker.dart';
 
 class MyEditPage extends StatefulWidget {
   final String myEdId;
@@ -82,6 +83,7 @@ class MyEditPageState extends State<MyEditPage> {
       if (response.statusCode == 200) {
         final dataJson = json.decode(response.body);
         final data = dataJson['data'] as Map<String, dynamic>;
+        print("Fetched data: $data");
         setState(() {
           customerIdText.text = data['accountNumber'] ?? '';
           fullNmText.text = data['fname'] ?? '';
@@ -252,6 +254,142 @@ class MyEditPageState extends State<MyEditPage> {
     );
   }
 
+  // create a function to hanmdle form submission
+  void _handleFormSubmission() {
+    setState(() {
+      // Reset all errors
+      emailError = lgnemailError = phoneError = passError = dobError =
+          firstNameError = lastNameError = customerIdError =
+              addressError = cityError = stateError = zipError = null;
+
+      // Validation
+      if (customerIdText.text.isEmpty) {
+        customerIdError = "Customer ID is required";
+      }
+      if (fullNmText.text.isEmpty) {
+        firstNameError = "First Name is required";
+      }
+      if (lastNmText.text.isEmpty) {
+        lastNameError = "Last Name is required";
+      }
+      if (cityController.text.isEmpty) {
+        cityError = "City Name is required";
+      }
+      if (stateController.text.isEmpty) {
+        stateError = "State Name is required";
+      }
+      if (addressController.text.isEmpty) {
+        addressError = "Address is required";
+      }
+      if (zipController.text.isEmpty) {
+        zipError = "Zip code is required";
+      }
+
+      // Email validation (lowercase, must have '@' and domain like '.com')
+      if (emailIdText.text.isEmpty) {
+        emailError = "Email is required";
+      } else if (!RegExp(r'^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$')
+          .hasMatch(emailIdText.text)) {
+        emailError = "Enter a valid email address";
+      }
+
+      // Phone number validation (must be 10 digits)
+      if (phoneNoText.text.isEmpty) {
+        phoneError = "Phone number is required";
+      } else if (!RegExp(r'^\d{10}$').hasMatch(phoneNoText.text)) {
+        phoneError = "Enter a valid 10-digit phone number";
+      }
+
+      // Date of birth validation
+      if (_dateController.text.isEmpty) {
+        dobError = "Date of birth is required";
+      }
+
+      // print("Data to be sent: $data");
+
+      isLoading = true;
+      // Prepare the payload
+      final payload = {
+        'fname': fullNmText.text,
+        'lname': lastNmText.text,
+        'email': emailIdText.text,
+        'phoneNumber': phoneNoText.text,
+        'personalInfo': {
+          'address': {
+            'streetAddress': addressController.text,
+            'city': cityController.text,
+            'state': stateController.text,
+            'zipCode': zipController.text,
+          },
+          'dateOfBirth': _selectedDate != null
+              ? DateFormat('yyyy-MM-dd').format(_selectedDate!)
+              : '',
+        },
+      };
+
+      print("Payload to be sent: $payload");
+
+      secureStorage.read(key: 'accessToken').then((token) async {
+        try {
+          final response = await http.put(
+            Uri.parse('https://api.dev.driverpos.io/api/v1/customer/myProfile'),
+            headers: {
+              'Content-Type': 'application/json',
+              if (token != null) 'Authorization': 'Bearer $token',
+            },
+            body: jsonEncode(payload),
+          );
+          if (response.statusCode == 200) {
+            await secureStorage.write(
+                key: 'userName',
+                value: "${fullNmText.text} ${lastNmText.text}");
+            await secureStorage.write(
+                key: 'userEmail', value: emailIdText.text);
+            await secureStorage.write(
+                key: 'userPhone', value: phoneNoText.text);
+            // await secureStorage.write(key: 'userName', value: fullNmText.text);
+
+            // Optionally show a success message
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Profile updated successfully')),
+            );
+          } else {
+            // Optionally show an error message
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Failed to update profile')),
+            );
+          }
+        } catch (e) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error: $e')),
+          );
+        } finally {
+          setState(() {
+            isLoading = false;
+          });
+        }
+      });
+    });
+  }
+
+  void _openImagePicker(BuildContext context) async {
+    final ImagePicker picker = ImagePicker();
+
+    try {
+      final XFile? pickedFile =
+          await picker.pickImage(source: ImageSource.gallery);
+
+      if (pickedFile != null) {
+        await secureStorage.write(key: 'profilePic', value: pickedFile.path);
+        if (context.mounted) {
+          setState(() {});
+        }
+      }
+    } catch (e) {
+      print("Error: $e");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -330,7 +468,81 @@ class MyEditPageState extends State<MyEditPage> {
                         spacing: 10,
                         children: [
                           GestureDetector(
-                            onTap: () {},
+                            onTap: () {
+                              print('Profile picture tapped');
+                              showModalBottomSheet(
+                                context: context,
+                                shape: const RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.vertical(
+                                    top: Radius.circular(20),
+                                  ),
+                                ),
+                                builder: (BuildContext context) {
+                                  return SafeArea(
+                                    child: Wrap(
+                                      children: [
+                                        ListTile(
+                                          leading:
+                                              const Icon(Icons.photo_library),
+                                          title:
+                                              const Text('Choose from Gallery'),
+                                          onTap: () async {
+                                            Navigator.pop(
+                                                context); // Close the bottom sheet **before** launching the picker
+
+                                            _openImagePicker(context);
+
+                                            // Future.delayed(
+                                            //     const Duration(
+                                            //         milliseconds: 300), () {
+                                            //   // THEN open picker
+                                            // });
+
+                                            // _showImagePickerOptions(context);
+
+                                            // Future.delayed(
+                                            //     const Duration(
+                                            //         milliseconds: 200), () {
+                                            //   _pickImage(context);
+                                            // });
+
+                                            // try {
+                                            //   final ImagePicker picker =
+                                            //       ImagePicker();
+                                            //   final XFile? pickedFile =
+                                            //       await picker.pickImage(
+                                            //           source:
+                                            //               ImageSource.gallery);
+
+                                            //   if (pickedFile != null) {
+                                            //     await secureStorage.write(
+                                            //         key: 'profilePic',
+                                            //         value: pickedFile.path);
+                                            //     if (mounted) {
+                                            //       setState(() {}); // Refresh UI
+                                            //     }
+                                            //   }
+                                            // } catch (e) {
+                                            //   print('Image picking error: $e');
+                                            // }
+                                          },
+                                        ),
+                                        ListTile(
+                                          leading: const Icon(Icons.camera_alt),
+                                          title: const Text('Take a Picture'),
+                                          onTap: () async {
+                                            // Use image_picker package for taking a picture
+                                            // Example:
+                                            // final pickedFile = await ImagePicker().pickImage(source: ImageSource.camera);
+                                            Navigator.pop(context);
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                              );
+                            },
                             child: Container(
                               clipBehavior: Clip.none, // allow overflow
                               width: 162,
@@ -916,6 +1128,8 @@ class MyEditPageState extends State<MyEditPage> {
                                   // Proceed to next screen or save data
                                   // Navigator.push(context, MaterialPageRoute(builder: (context) => MyCartPage(myCartId: '')));
                                 }
+
+                                _handleFormSubmission();
                               });
                             },
                             child: Container(
