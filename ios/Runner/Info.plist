@@ -55,9 +55,15 @@
 
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>We need access to your photo library to upload images.</string>
-
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>We need access to save photos to your library.</string>
+	<key>PHPhotoLibraryPreventAutomaticLimitedAccessAlert</key>
+	<false/>
 	<key>NSCameraUsageDescription</key>
 	<string>We need access to your camera to take pictures.</string>
+
+	<key>com.apple.security.files.user-selected.read-only</key>
+  	<true/>
 
 
 </dict>

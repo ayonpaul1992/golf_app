@@ -1,7 +1,5 @@
 // ignore_for_file: deprecated_member_use, library_prefixes, unnecessary_string_interpolations
 
-import 'dart:collection';
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';

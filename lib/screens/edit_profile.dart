@@ -1,6 +1,7 @@
 // ignore_for_file: deprecated_member_use, use_build_context_synchronously
 
 import 'dart:convert';
+import 'dart:io' as io show File, Platform;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -12,6 +13,10 @@ import 'package:gulf_app/components/custom_bottom_nav_bar.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:intl/intl.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'dart:typed_data';
+import 'package:http_parser/http_parser.dart'; // for MediaType
 
 class MyEditPage extends StatefulWidget {
   final String myEdId;
@@ -52,6 +57,11 @@ class MyEditPageState extends State<MyEditPage> {
   String? cityError;
   String? stateError;
   String? zipError;
+
+  // state variables for profile picture
+  String? profilePicturePath;
+
+  Uint8List? profilePictureBytes; // for web
   @override
   void dispose() {
     phoneNoText.dispose();
@@ -96,6 +106,7 @@ class MyEditPageState extends State<MyEditPage> {
           cityController.text = data['personalInfo']['address']['city'] ?? '';
           stateController.text = data['personalInfo']['address']['state'] ?? '';
           zipController.text = data['personalInfo']['address']['zipCode'] ?? '';
+          profilePicturePath = data['profilePicture'] ?? '';
           passText.text = ''; // Do not prefill password for security
           if (data['personalInfo']['dateOfBirth'] != null &&
               data['personalInfo']['dateOfBirth'].isNotEmpty) {
@@ -255,132 +266,178 @@ class MyEditPageState extends State<MyEditPage> {
   }
 
   // create a function to hanmdle form submission
-  void _handleFormSubmission() {
+  void _handleFormSubmission() async {
     setState(() {
-      // Reset all errors
       emailError = lgnemailError = phoneError = passError = dobError =
           firstNameError = lastNameError = customerIdError =
               addressError = cityError = stateError = zipError = null;
 
-      // Validation
-      if (customerIdText.text.isEmpty) {
-        customerIdError = "Customer ID is required";
-      }
-      if (fullNmText.text.isEmpty) {
-        firstNameError = "First Name is required";
-      }
-      if (lastNmText.text.isEmpty) {
-        lastNameError = "Last Name is required";
-      }
-      if (cityController.text.isEmpty) {
-        cityError = "City Name is required";
-      }
-      if (stateController.text.isEmpty) {
-        stateError = "State Name is required";
-      }
-      if (addressController.text.isEmpty) {
-        addressError = "Address is required";
-      }
-      if (zipController.text.isEmpty) {
-        zipError = "Zip code is required";
-      }
-
-      // Email validation (lowercase, must have '@' and domain like '.com')
+      // --- Validation ---
+      if (fullNmText.text.isEmpty) firstNameError = "First Name is required";
+      if (lastNmText.text.isEmpty) lastNameError = "Last Name is required";
+      if (cityController.text.isEmpty) cityError = "City Name is required";
+      if (stateController.text.isEmpty) stateError = "State Name is required";
+      if (addressController.text.isEmpty) addressError = "Address is required";
+      if (zipController.text.isEmpty) zipError = "Zip code is required";
       if (emailIdText.text.isEmpty) {
         emailError = "Email is required";
       } else if (!RegExp(r'^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$')
           .hasMatch(emailIdText.text)) {
         emailError = "Enter a valid email address";
       }
-
-      // Phone number validation (must be 10 digits)
       if (phoneNoText.text.isEmpty) {
         phoneError = "Phone number is required";
       } else if (!RegExp(r'^\d{10}$').hasMatch(phoneNoText.text)) {
         phoneError = "Enter a valid 10-digit phone number";
       }
-
-      // Date of birth validation
       if (_dateController.text.isEmpty) {
         dobError = "Date of birth is required";
       }
 
-      // print("Data to be sent: $data");
-
       isLoading = true;
-      // Prepare the payload
-      final payload = {
-        'fname': fullNmText.text,
-        'lname': lastNmText.text,
-        'email': emailIdText.text,
-        'phoneNumber': phoneNoText.text,
-        'personalInfo': {
-          'address': {
-            'streetAddress': addressController.text,
-            'city': cityController.text,
-            'state': stateController.text,
-            'zipCode': zipController.text,
-          },
-          'dateOfBirth': _selectedDate != null
-              ? DateFormat('yyyy-MM-dd').format(_selectedDate!)
-              : '',
-        },
-      };
-
-      print("Payload to be sent: $payload");
-
-      secureStorage.read(key: 'accessToken').then((token) async {
-        try {
-          final response = await http.put(
-            Uri.parse('https://api.dev.driverpos.io/api/v1/customer/myProfile'),
-            headers: {
-              'Content-Type': 'application/json',
-              if (token != null) 'Authorization': 'Bearer $token',
-            },
-            body: jsonEncode(payload),
-          );
-          if (response.statusCode == 200) {
-            await secureStorage.write(
-                key: 'userName',
-                value: "${fullNmText.text} ${lastNmText.text}");
-            await secureStorage.write(
-                key: 'userEmail', value: emailIdText.text);
-            await secureStorage.write(
-                key: 'userPhone', value: phoneNoText.text);
-            // await secureStorage.write(key: 'userName', value: fullNmText.text);
-
-            // Optionally show a success message
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Profile updated successfully')),
-            );
-          } else {
-            // Optionally show an error message
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Failed to update profile')),
-            );
-          }
-        } catch (e) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error: $e')),
-          );
-        } finally {
-          setState(() {
-            isLoading = false;
-          });
-        }
-      });
     });
+
+    // --- Read image if any ---
+    String? imagePath = base64Encode(profilePictureBytes ?? Uint8List(0));
+    Uint8List? imageBytes;
+
+    // print("Now Image path: $imagePath");
+
+    if (kIsWeb) {
+      // Check if imagePath is a base64 string or a URL
+      if (imagePath.startsWith('http')) {
+        // It's a URL, do nothing (let the server handle it)
+      } else {
+        // Assume it's base64 string
+        imageBytes = base64Decode(imagePath);
+      }
+    }
+
+    // --- Prepare multipart request ---
+    final token = await secureStorage.read(key: 'accessToken');
+
+    final request = http.MultipartRequest(
+      'PUT',
+      Uri.parse('https://api.dev.driverpos.io/api/v1/customer/myProfile'),
+    ); // 🔁 Force PUT method
+
+    request.headers.addAll({
+      'Accept': 'application/json',
+      if (token != null) 'Authorization': 'Bearer $token',
+    });
+
+    // Text fields
+    request.fields['fname'] = fullNmText.text;
+    request.fields['lname'] = lastNmText.text;
+    request.fields['email'] = emailIdText.text;
+    request.fields['phoneNumber'] = phoneNoText.text;
+    request.fields['personalInfo[address][streetAddress]'] =
+        addressController.text;
+    request.fields['personalInfo[address][city]'] = cityController.text;
+    request.fields['personalInfo[address][state]'] = stateController.text;
+    request.fields['personalInfo[address][zipCode]'] = zipController.text;
+    request.fields['personalInfo[dateOfBirth]'] = _selectedDate != null
+        ? DateFormat('yyyy-MM-dd').format(_selectedDate!)
+        : '';
+
+    // Attach image (optional)
+    // print("Image path: $imagePath");
+
+    if (kIsWeb && imageBytes != null) {
+      request.files.add(
+        http.MultipartFile.fromBytes(
+          'profilePicture',
+          imageBytes,
+          // make dynamic filename
+          filename: 'profile_${DateTime.now().millisecondsSinceEpoch}.jpg',
+          contentType: MediaType('image', 'jpeg'),
+        ),
+      );
+    } else if (!kIsWeb && io.File(imagePath).existsSync()) {
+      request.files.add(
+        await http.MultipartFile.fromPath(
+          'profilePicture',
+          imagePath,
+          contentType: MediaType('image', 'jpeg'),
+        ),
+      );
+    }
+
+    // --- Send request ---
+    try {
+      final response = await request.send();
+      final res = await http.Response.fromStream(response);
+
+      if (res.statusCode == 200 || res.statusCode == 204) {
+        // print("Profile updated successfully: ${res.body}");
+        await secureStorage.write(
+          key: 'userName',
+          value: "${fullNmText.text} ${lastNmText.text}",
+        );
+        await secureStorage.write(key: 'userEmail', value: emailIdText.text);
+        await secureStorage.write(key: 'userPhone', value: phoneNoText.text);
+        await secureStorage.write(
+            key: 'profilePic',
+            value: res.body.isNotEmpty
+                ? json.decode(res.body)['data']['profilePicture']
+                : ''); // Update profile picture path in secure storage
+
+        // print("Profile updated successfully: ${res.body}");
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Profile updated successfully'),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to update profile: ${res.body}')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   void _openImagePicker(BuildContext context) async {
     final ImagePicker picker = ImagePicker();
 
     try {
-      final XFile? pickedFile =
-          await picker.pickImage(source: ImageSource.gallery);
+      final XFile? pickedFile = await picker.pickImage(
+        source: ImageSource.gallery,
+      );
+      // print("Picked file: ${pickedFile?.path}");
 
       if (pickedFile != null) {
-        await secureStorage.write(key: 'profilePic', value: pickedFile.path);
+        if (kIsWeb) {
+          // Handle Web
+          final Uint8List bytes = await pickedFile.readAsBytes();
+
+          // Store image in memory or encode to base64
+          profilePictureBytes = bytes;
+          // await secureStorage.write(
+          //     key: 'profilePic', value: base64Encode(bytes));
+          // print("Stored base64 in secureStorage");
+
+          profilePicturePath = 'data:image/jpeg;base64,${base64Encode(bytes)}';
+        } else {
+          // Handle Android/iOS
+          final savedPath =
+              '${(await getTemporaryDirectory()).path}/${DateTime.now().millisecondsSinceEpoch}.jpg';
+          final io.File savedImage =
+              await io.File(pickedFile.path).copy(savedPath);
+
+          profilePicturePath = savedImage.path;
+          await secureStorage.write(key: 'profilePic', value: savedImage.path);
+          print("Saved path: $profilePicturePath");
+        }
+
         if (context.mounted) {
           setState(() {});
         }
@@ -490,41 +547,14 @@ class MyEditPageState extends State<MyEditPage> {
                                             Navigator.pop(
                                                 context); // Close the bottom sheet **before** launching the picker
 
-                                            _openImagePicker(context);
+                                            WidgetsBinding.instance
+                                                .addPostFrameCallback((_) {
+                                              if (mounted) {
+                                                _openImagePicker(context);
+                                              }
+                                            });
 
-                                            // Future.delayed(
-                                            //     const Duration(
-                                            //         milliseconds: 300), () {
-                                            //   // THEN open picker
-                                            // });
-
-                                            // _showImagePickerOptions(context);
-
-                                            // Future.delayed(
-                                            //     const Duration(
-                                            //         milliseconds: 200), () {
-                                            //   _pickImage(context);
-                                            // });
-
-                                            // try {
-                                            //   final ImagePicker picker =
-                                            //       ImagePicker();
-                                            //   final XFile? pickedFile =
-                                            //       await picker.pickImage(
-                                            //           source:
-                                            //               ImageSource.gallery);
-
-                                            //   if (pickedFile != null) {
-                                            //     await secureStorage.write(
-                                            //         key: 'profilePic',
-                                            //         value: pickedFile.path);
-                                            //     if (mounted) {
-                                            //       setState(() {}); // Refresh UI
-                                            //     }
-                                            //   }
-                                            // } catch (e) {
-                                            //   print('Image picking error: $e');
-                                            // }
+                                            // _openImagePicker(context);
                                           },
                                         ),
                                         ListTile(
@@ -557,8 +587,9 @@ class MyEditPageState extends State<MyEditPage> {
                                     child: ClipOval(
                                       // Use ClipOval instead of ClipRRect for perfect circle
                                       child: FutureBuilder<String?>(
-                                        future: secureStorage.read(
-                                            key: 'profilePic'),
+                                        future: Future.value(
+                                          profilePicturePath,
+                                        ),
                                         builder: (context, snapshot) {
                                           if (snapshot.connectionState ==
                                               ConnectionState.waiting) {
@@ -566,8 +597,9 @@ class MyEditPageState extends State<MyEditPage> {
                                               width: 162,
                                               height: 162,
                                               child: Center(
-                                                  child:
-                                                      CircularProgressIndicator()),
+                                                child:
+                                                    CircularProgressIndicator(),
+                                              ),
                                             );
                                           }
 

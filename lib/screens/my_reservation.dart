@@ -529,8 +529,7 @@ class MyReservationPageState extends State<MyReservationPage> {
                                                                   Row(
                                                                     children: [
                                                                       // Only show edit button if status is not 'Canceled'
-                                                                      if (!reservation[
-                                                                          'canceled'])
+                                                                      if (!reservation['canceled'])
                                                                         InkWell(
                                                                           onTap:
                                                                               () {},

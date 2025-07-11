@@ -741,8 +741,8 @@ class DashboardPageState extends State<DashboardPage> {
                                             Padding(
                                               padding: const EdgeInsets.only(
                                                   top: 15,
-                                                  left: 20,
-                                                  right: 20,
+                                                  left: 17.5,
+                                                  right: 17.5,
                                                   bottom: 20),
                                               child:
                                                   // If there are no upcoming tee times, show this message
@@ -811,8 +811,8 @@ class DashboardPageState extends State<DashboardPage> {
                                                                             width:
                                                                                 10),
                                                                         SizedBox(
-                                                                          width:
-                                                                              250,
+                                                                          // width:
+                                                                          //     250,
                                                                           // Optional padding
                                                                           child:
                                                                               Column(

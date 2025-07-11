@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
+// import 'package:gulf_app/screens/image_picker_screen.dart';
 import 'screens/splash_screen.dart';
 import 'screens/login.dart';
 import 'screens/dashboard.dart'; // or your actual home screen
@@ -20,6 +21,7 @@ class MyApp extends StatelessWidget {
 
     if (isLoggedIn == 'true' && token != null) {
       return const DashboardPage(); // replace with your main/home screen
+      // return const ImagePickerScreen(); // fallback to image picker screen
     } else {
       // return const LoginPage(); // replace with your login screen
       return const SplashScreen(); // Show splash screen first
