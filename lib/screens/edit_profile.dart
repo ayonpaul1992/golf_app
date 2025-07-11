@@ -405,12 +405,12 @@ class MyEditPageState extends State<MyEditPage> {
     }
   }
 
-  void _openImagePicker(BuildContext context) async {
+  void _openImagePicker(BuildContext context, ImageSource source) async {
     final ImagePicker picker = ImagePicker();
 
     try {
       final XFile? pickedFile = await picker.pickImage(
-        source: ImageSource.gallery,
+        source: source,
       );
       // print("Picked file: ${pickedFile?.path}");
 
@@ -556,7 +556,8 @@ class MyEditPageState extends State<MyEditPage> {
                                             WidgetsBinding.instance
                                                 .addPostFrameCallback((_) {
                                               if (mounted) {
-                                                _openImagePicker(context);
+                                                _openImagePicker(context,
+                                                    ImageSource.gallery);
                                               }
                                             });
 
@@ -571,6 +572,13 @@ class MyEditPageState extends State<MyEditPage> {
                                             // Example:
                                             // final pickedFile = await ImagePicker().pickImage(source: ImageSource.camera);
                                             Navigator.pop(context);
+                                            WidgetsBinding.instance
+                                                .addPostFrameCallback((_) {
+                                              if (context.mounted) {
+                                                _openImagePicker(context,
+                                                    ImageSource.camera);
+                                              }
+                                            });
                                           },
                                         ),
                                       ],
