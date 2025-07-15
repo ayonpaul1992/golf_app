@@ -6,6 +6,9 @@ import 'screens/splash_screen.dart';
 import 'screens/login.dart';
 import 'screens/dashboard.dart'; // or your actual home screen
 
+final RouteObserver<ModalRoute<void>> routeObserver =
+    RouteObserver<ModalRoute<void>>();
+
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
@@ -38,6 +41,7 @@ class MyApp extends StatelessWidget {
       ),
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
+        navigatorObservers: [routeObserver],
         theme: ThemeData(
           textTheme: GoogleFonts.poppinsTextTheme(),
         ),

@@ -94,7 +94,7 @@ class DashboardPageState extends State<DashboardPage> {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         if (data['data'] != null && data['data'].isNotEmpty) {
-          print("Upcoming Tee Time: ${data['data'][0]}");
+          // print("Upcoming Tee Time: ${data['data'][0]}");
           return data['data'][0];
         }
       }

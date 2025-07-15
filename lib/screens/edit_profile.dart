@@ -298,14 +298,16 @@ class MyEditPageState extends State<MyEditPage> {
     });
 
     // --- Read image if any ---
-    String? imagePath = base64Encode(profilePictureBytes ?? Uint8List(0));
+    String? imagePath = profilePictureBytes != null
+        ? base64Encode(profilePictureBytes ?? Uint8List(0))
+        : profilePicturePath;
     Uint8List? imageBytes;
 
     // print("Now Image path: $imagePath");
 
     if (kIsWeb) {
       // Check if imagePath is a base64 string or a URL
-      if (imagePath.startsWith('http')) {
+      if (imagePath!.startsWith('http')) {
         // It's a URL, do nothing (let the server handle it)
       } else {
         // Assume it's base64 string
@@ -353,7 +355,7 @@ class MyEditPageState extends State<MyEditPage> {
           contentType: MediaType('image', 'jpeg'),
         ),
       );
-    } else if (!kIsWeb && io.File(imagePath).existsSync()) {
+    } else if (!kIsWeb && io.File(imagePath!).existsSync()) {
       request.files.add(
         await http.MultipartFile.fromPath(
           'profilePicture',
@@ -600,39 +602,73 @@ class MyEditPageState extends State<MyEditPage> {
                                         horizontal: 7, vertical: 5),
                                     child: ClipOval(
                                       child: SizedBox(
-                                        width: 162,
-                                        height: 162,
-                                        child: profilePicturePath != null &&
-                                                profilePicturePath!.isNotEmpty
-                                            ? (kIsWeb
-                                                ? Image.network(
-                                                    profilePicturePath!,
-                                                    fit: BoxFit.cover,
-                                                    errorBuilder: (context,
-                                                        error, stackTrace) {
-                                                      return Image.asset(
-                                                        "assets/images/profile_prsn.jpg",
-                                                        fit: BoxFit.cover,
-                                                      );
-                                                    },
-                                                  )
-                                                : Image.file(
-                                                    io.File(
-                                                        profilePicturePath!),
-                                                    fit: BoxFit.cover,
-                                                    errorBuilder: (context,
-                                                        error, stackTrace) {
-                                                      return Image.asset(
-                                                        "assets/images/profile_prsn.jpg",
-                                                        fit: BoxFit.cover,
-                                                      );
-                                                    },
-                                                  ))
-                                            : Image.asset(
-                                                "assets/images/profile_prsn.jpg",
-                                                fit: BoxFit.cover,
-                                              ),
-                                      ),
+                                          width: 162,
+                                          height: 162,
+                                          child: (profilePicturePath != null &&
+                                                  profilePicturePath!
+                                                      .isNotEmpty)
+                                              ? (kIsWeb ||
+                                                      profilePicturePath!
+                                                          .startsWith('http')
+                                                  ? Image.network(
+                                                      profilePicturePath!,
+                                                      fit: BoxFit.cover,
+                                                      errorBuilder: (context,
+                                                          error, stackTrace) {
+                                                        return Image.asset(
+                                                          "assets/images/profile_prsn.jpg",
+                                                          fit: BoxFit.cover,
+                                                        );
+                                                      },
+                                                    )
+                                                  : Image.file(
+                                                      io.File(
+                                                          profilePicturePath!),
+                                                      fit: BoxFit.cover,
+                                                      errorBuilder: (context,
+                                                          error, stackTrace) {
+                                                        return Image.asset(
+                                                          "assets/images/profile_prsn.jpg",
+                                                          fit: BoxFit.cover,
+                                                        );
+                                                      },
+                                                    ))
+                                              : Image.asset(
+                                                  "assets/images/profile_prsn.jpg",
+                                                  fit: BoxFit.cover,
+                                                )
+
+                                          // profilePicturePath != null &&
+                                          //         profilePicturePath!.isNotEmpty
+                                          //     ? (kIsWeb
+                                          //         ? Image.network(
+                                          //             profilePicturePath!,
+                                          //             fit: BoxFit.cover,
+                                          //             errorBuilder: (context,
+                                          //                 error, stackTrace) {
+                                          //               return Image.asset(
+                                          //                 "assets/images/profile_prsn.jpg",
+                                          //                 fit: BoxFit.cover,
+                                          //               );
+                                          //             },
+                                          //           )
+                                          //         : Image.file(
+                                          //             io.File(
+                                          //                 profilePicturePath!),
+                                          //             fit: BoxFit.cover,
+                                          //             errorBuilder: (context,
+                                          //                 error, stackTrace) {
+                                          //               return Image.asset(
+                                          //                 "assets/images/profile_prsn.jpg",
+                                          //                 fit: BoxFit.cover,
+                                          //               );
+                                          //             },
+                                          //           ))
+                                          //     : Image.asset(
+                                          //         "assets/images/profile_prsn.jpg",
+                                          //         fit: BoxFit.cover,
+                                          //       ),
+                                          ),
                                     ),
                                   ),
 

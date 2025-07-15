@@ -7,10 +7,15 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:gulf_app/components/custom_app_bar.dart';
 import 'package:gulf_app/components/custom_drawer.dart';
 import 'package:gulf_app/components/custom_bottom_nav_bar.dart';
+import 'package:gulf_app/screens/tab_card_screens.dart';
 import 'my_reservation.dart';
 import 'my_transaction.dart';
 import 'my_setting.dart';
 import 'edit_profile.dart';
+import 'package:flutter/widgets.dart';
+
+// Add a global RouteObserver for navigation events
+final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 
 class MyProfilePage extends StatefulWidget {
   final String myPfId;
@@ -21,7 +26,7 @@ class MyProfilePage extends StatefulWidget {
   State<StatefulWidget> createState() => MyProfilePageState();
 }
 
-class MyProfilePageState extends State<MyProfilePage> {
+class MyProfilePageState extends State<MyProfilePage> with RouteAware {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final FlutterSecureStorage secureStorage = const FlutterSecureStorage();
   String userName = '';
@@ -35,6 +40,33 @@ class MyProfilePageState extends State<MyProfilePage> {
   void initState() {
     super.initState();
     _loadUserDetails();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final ModalRoute? route = ModalRoute.of(context);
+    if (route is PageRoute) {
+      routeObserver.subscribe(this, route);
+      // debugPrint("✅ Subscribed to RouteObserver in MyProfilePage");
+    }
+  }
+
+  @override
+  void dispose() {
+    routeObserver.unsubscribe(this);
+    super.dispose();
+  }
+
+  @override
+  void didPopNext() {
+    debugPrint("↩️ Returned to MyProfilePage from another route");
+    _reloadData(); // This will re-trigger your reload logic
+  }
+
+  Future<void> _reloadData() async {
+    // You can call your data fetching method here
+    await _loadUserDetails();
   }
 
   Future<void> _loadUserDetails() async {
@@ -473,7 +505,16 @@ class MyProfilePageState extends State<MyProfilePage> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           GestureDetector(
-                            onTap: () {},
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const TabCardScreenPage(
+                                    tabcardId: '',
+                                  ), // Replace with your target widget
+                                ),
+                              );
+                            },
                             child: Container(
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 7, vertical: 5),
