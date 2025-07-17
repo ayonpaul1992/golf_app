@@ -23,6 +23,8 @@ class _TabCardScreenPageState extends State<TabCardScreenPage>
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final FlutterSecureStorage secureStorage = const FlutterSecureStorage();
   bool showAll = false;
+  bool showAllRchk = false;
+  bool showAllGCrd = false;
   final ScrollController _scrollController = ScrollController();
   final List<double> amounts = List.generate(10, (index) {
     return index.isEven ? 100.00 + index : -50.00 - index;
@@ -163,13 +165,13 @@ class _TabCardScreenPageState extends State<TabCardScreenPage>
                   children: [
                     Row(
                       children: [
-                        CircleAvatar(
-                          backgroundColor: const Color(0xFFF5F6FB),
+                        const CircleAvatar(
+                          backgroundColor: Color(0xFFF5F6FB),
                           radius: 25,
                           child: CircleAvatar(
-                            backgroundColor: const Color(0xFF9ECF9A),
+                            backgroundColor: Color(0xFF9ECF9A),
                             radius: 16,
-                            child: const Icon(Icons.person,
+                            child: Icon(Icons.person,
                                 color: Colors.white),
                           ),
                         ),
@@ -282,13 +284,13 @@ class _TabCardScreenPageState extends State<TabCardScreenPage>
                   children: [
                     Row(
                       children: [
-                        CircleAvatar(
-                          backgroundColor: const Color(0xFFF5F6FB),
+                        const CircleAvatar(
+                          backgroundColor: Color(0xFFF5F6FB),
                           radius: 25,
                           child: CircleAvatar(
-                            backgroundColor: const Color(0xFF9ECF9A),
+                            backgroundColor: Color(0xFF9ECF9A),
                             radius: 16,
-                            child: const Icon(Icons.person,
+                            child: Icon(Icons.person,
                                 color: Colors.white),
                           ),
                         ),
@@ -396,13 +398,13 @@ class _TabCardScreenPageState extends State<TabCardScreenPage>
                   children: [
                     Row(
                       children: [
-                        CircleAvatar(
-                          backgroundColor: const Color(0xFFF5F6FB),
+                        const CircleAvatar(
+                          backgroundColor: Color(0xFFF5F6FB),
                           radius: 25,
                           child: CircleAvatar(
-                            backgroundColor: const Color(0xFF9ECF9A),
+                            backgroundColor: Color(0xFF9ECF9A),
                             radius: 16,
-                            child: const Icon(Icons.person,
+                            child: Icon(Icons.person,
                                 color: Colors.white),
                           ),
                         ),
@@ -504,7 +506,7 @@ class _TabCardScreenPageState extends State<TabCardScreenPage>
           physics: const BouncingScrollPhysics(),
           padding: EdgeInsets.zero,
           shrinkWrap: true,
-          itemCount: (showAll ? 3 : 1) + 2,
+          itemCount: (showAllGCrd ? 3 : 1) + 2,
           itemBuilder: (context, index) {
             if (index == 0) {
               return Padding(
@@ -515,7 +517,7 @@ class _TabCardScreenPageState extends State<TabCardScreenPage>
                         fontSize: 18,
                         fontWeight: FontWeight.w700)),
               );
-            } else if (index <= (showAll ? 3 : 1)) {
+            } else if (index <= (showAllGCrd ? 3 : 1)) {
               return Padding(
                 padding: const EdgeInsets.only(top: 10),
                 child: giftCard(),
@@ -524,9 +526,9 @@ class _TabCardScreenPageState extends State<TabCardScreenPage>
               return IconButton(
                 onPressed: () {
                   setState(() {
-                    showAll = !showAll;
+                    showAllGCrd = !showAllGCrd;
                   });
-                  if (showAll) {
+                  if (showAllGCrd) {
                     Future.delayed(const Duration(milliseconds: 100), () {
                       if (_scrollController.hasClients) {
                         _scrollController.animateTo(
@@ -539,7 +541,7 @@ class _TabCardScreenPageState extends State<TabCardScreenPage>
                   }
                 },
                 icon: Icon(
-                  showAll
+                  showAllGCrd
                       ? Icons.keyboard_arrow_up_sharp
                       : Icons.keyboard_arrow_down_sharp,
                   color: const Color(0xFF244065),
@@ -639,7 +641,7 @@ return ConstrainedBox(
       physics: const BouncingScrollPhysics(),
       padding: EdgeInsets.zero,
       shrinkWrap: true,
-      itemCount: (showAll ? 3 : 1) + 2, // header + cards + button
+      itemCount: (showAllRchk ? 3 : 1) + 2, // header + cards + button
       itemBuilder: (context, index) {
         if (index == 0) {
           return Row(
@@ -658,7 +660,7 @@ return ConstrainedBox(
               ),
             ],
           );
-        }else if (index <= (showAll ? 3 : 1)) {
+        }else if (index <= (showAllRchk ? 3 : 1)) {
           // index-1 because index=0 is header
           final imagePath = imagePaths[(index - 1) % imagePaths.length];
           return Padding(
@@ -669,9 +671,9 @@ return ConstrainedBox(
           return IconButton(
             onPressed: () {
               setState(() {
-                showAll = !showAll;
+                showAllRchk = !showAllRchk;
               });
-              if (showAll) {
+              if (showAllRchk) {
                 Future.delayed(const Duration(milliseconds: 100),
                         () {
                       if (_scrollController.hasClients) {
@@ -685,7 +687,7 @@ return ConstrainedBox(
               }
             },
             icon: Icon(
-              showAll
+              showAllRchk
                   ? Icons.keyboard_arrow_up_sharp
                   : Icons.keyboard_arrow_down_sharp,
               color: const Color(0xFF244065),
@@ -940,7 +942,7 @@ return ConstrainedBox(
                         style: GoogleFonts.nunito(
                             fontSize: 14,
                             fontWeight: FontWeight.w400,
-                            color: Color(0xFF9D9FB2)),
+                            color: const Color(0xFF9D9FB2)),
                         children: [
                           TextSpan(
                             text:
@@ -968,7 +970,7 @@ return ConstrainedBox(
                       'Available: ',
                       style: GoogleFonts.nunito(
                           fontWeight: FontWeight.w400,
-                          color: Color(0xFF244065),
+                          color: const Color(0xFF244065),
                           fontSize: 13),
                     ),
                     Text.rich(

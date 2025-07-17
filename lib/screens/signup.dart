@@ -46,7 +46,7 @@ class SignupPageState extends State<SignupPage> {
       final data = response.body; // Process the response data as needed
       final decodedData = jsonDecode(data);
       formFields = List<Map<String, dynamic>>.from(decodedData['data']);
-      print('Form fields: $formFields');
+      // print('Form fields: $formFields');
       // Set loading to false after data is fetched
     } else {
       // Handle error
@@ -60,7 +60,8 @@ class SignupPageState extends State<SignupPage> {
   }
 
   // Function to handle form submission
-  Future<void> _submitForm() async {
+  Future<void> _submitForm(formData) async {
+    print('Form Data: $formData');
     // Example form submission logic, replace with your actual endpoint and logic
     final url = 'https://api.dev.driverpos.io/api/v1/auth/sign-up';
     final response = await http.post(
@@ -68,32 +69,41 @@ class SignupPageState extends State<SignupPage> {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: jsonEncode({
-        "fname": 'Arnab',
-        "lname": 'Banerjee',
-        "email": 'ab@gmail.com',
-        "password": "123456",
-        "phoneNumber": "8798881231",
-        //dateOfBirth:2000-01-08
-        "golfCourseCode": 'Xy1zAb56'
-      }),
+      body: jsonEncode(formData),
     );
+
     if (response.statusCode == 200) {
-      // Handle successful signup
-      final responseData = jsonDecode(response.body);
-      print('Signup successful: $responseData');
-      // Store user data securely
-      // await secureStorage.write(key: 'userId', value: responseData['userId']);
-      // Navigate to confirmation page or home page
-      // Navigator.push(
-      //   context,
-      //   MaterialPageRoute(builder: (context) => SignupConfirmPage()),
-      // );
+      // Signup success
+      jsonDecode(response.body);
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Signup Successful'),
+          content: const Text('Your account has been created.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
     } else {
-      // Handle error
-      final error = jsonDecode(response.body);
-      print('Signup failed: $error');
-      // _showError(error['message'] ?? 'An error occurred');
+      // Signup error
+      String errorMsg = 'Signup failed';
+      try {
+        final error = jsonDecode(response.body);
+        errorMsg = error['message'] ?? errorMsg;
+      } catch (_) {}
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(errorMsg)),
+      );
     }
   }
 
@@ -190,19 +200,200 @@ class SignupPageState extends State<SignupPage> {
                       children: [
                         //Dynamic Form Fields
 
+                        // ...formFields
+                        //     .where((field) => field['isDisplayed'] == true)
+                        //     .map((field) {
+                        //   return Column(
+                        //     children: [
+                        //       Text(
+                        //         field['displayName'] ?? '',
+                        //         style: GoogleFonts.poppins(
+                        //           color: const Color(0xFF6E7373),
+                        //           fontSize: 14,
+                        //           fontWeight: FontWeight.w400,
+                        //         ),
+                        //         textAlign: TextAlign.center,
+                        //       ),
+                        //       const SizedBox(height: 20),
+                        //       Padding(
+                        //         padding: const EdgeInsets.symmetric(
+                        //           horizontal: 38.0,
+                        //         ),
+                        //         child: Container(
+                        //           decoration: BoxDecoration(
+                        //             color: Colors.white,
+                        //             borderRadius: BorderRadius.circular(50),
+                        //             boxShadow: [
+                        //               BoxShadow(
+                        //                 color: Colors.black.withOpacity(0.1),
+                        //                 blurRadius: 6,
+                        //                 offset: const Offset(0, 3),
+                        //               ),
+                        //             ],
+                        //             border: Border.all(
+                        //               color: const Color(0xFFB2C1C0),
+                        //               width: 1,
+                        //             ),
+                        //           ),
+                        //           child: Builder(
+                        //             builder: (context) {
+                        //               switch (field['fieldType']) {
+                        //                 case 'email':
+                        //                   return TextField(
+                        //                     enabled: true,
+                        //                     decoration: _inputDecoration(
+                        //                       field['placeholder'] ?? '',
+                        //                     ),
+                        //                     keyboardType:
+                        //                         TextInputType.emailAddress,
+                        //                     style: GoogleFonts.poppins(
+                        //                       color: const Color(0xFF244065),
+                        //                       fontWeight: FontWeight.w600,
+                        //                       fontSize: 14,
+                        //                     ),
+                        //                   );
+                        //                 case 'password':
+                        //                   return TextField(
+                        //                     enabled: true,
+                        //                     decoration: _inputDecoration(
+                        //                       field['placeholder'] ?? '',
+                        //                     ),
+                        //                     obscureText: true,
+                        //                     style: GoogleFonts.poppins(
+                        //                       color: const Color(0xFF244065),
+                        //                       fontWeight: FontWeight.w600,
+                        //                       fontSize: 14,
+                        //                     ),
+                        //                   );
+                        //                 case 'number':
+                        //                   return TextField(
+                        //                     enabled: true,
+                        //                     decoration: _inputDecoration(
+                        //                         field['placeholder'] ?? ''),
+                        //                     keyboardType: TextInputType.number,
+                        //                     inputFormatters: [
+                        //                       // Only allow digits
+                        //                       FilteringTextInputFormatter
+                        //                           .digitsOnly,
+                        //                     ],
+                        //                     style: GoogleFonts.poppins(
+                        //                       color: const Color(0xFF244065),
+                        //                       fontWeight: FontWeight.w600,
+                        //                       fontSize: 14,
+                        //                     ),
+                        //                   );
+                        //                 case 'date':
+                        //                   String? dateValue = field['value'];
+                        //                   return StatefulBuilder(
+                        //                     builder: (context, setState) {
+                        //                       return TextField(
+                        //                         enabled: true,
+                        //                         decoration: _inputDecoration(
+                        //                           dateValue ??
+                        //                               field['placeholder'] ??
+                        //                               '',
+                        //                         ),
+                        //                         readOnly: true,
+                        //                         onTap: () async {
+                        //                           DateTime? pickedDate =
+                        //                               await showDatePicker(
+                        //                             context: context,
+                        //                             initialDate: DateTime.now(),
+                        //                             firstDate: DateTime(1900),
+                        //                             lastDate: DateTime(2100),
+                        //                           );
+                        //                           if (pickedDate != null) {
+                        //                             setState(() {
+                        //                               dateValue =
+                        //                                   "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+                        //                             });
+                        //                           }
+                        //                         },
+                        //                         style: GoogleFonts.poppins(
+                        //                           color: const Color(
+                        //                             0xFF244065,
+                        //                           ),
+                        //                           fontWeight: FontWeight.w600,
+                        //                           fontSize: 14,
+                        //                         ),
+                        //                       );
+                        //                     },
+                        //                   );
+                        //                 case 'file':
+                        //                   return InkWell(
+                        //                     onTap: () {
+                        //                       // Implement file picker logic here
+                        //                     },
+                        //                     child: Padding(
+                        //                       padding:
+                        //                           const EdgeInsets.symmetric(
+                        //                         vertical: 14.0,
+                        //                         horizontal: 8.0,
+                        //                       ),
+                        //                       child: Row(
+                        //                         children: [
+                        //                           const Icon(
+                        //                             Icons.attach_file,
+                        //                             color: Color(
+                        //                               0xFF244065,
+                        //                             ),
+                        //                           ),
+                        //                           const SizedBox(width: 8),
+                        //                           Text(
+                        //                             field['placeholder'] ??
+                        //                                 'Choose file',
+                        //                             style: GoogleFonts.poppins(
+                        //                               color: const Color(
+                        //                                 0xFF244065,
+                        //                               ),
+                        //                               fontWeight:
+                        //                                   FontWeight.w600,
+                        //                               fontSize: 14,
+                        //                             ),
+                        //                           ),
+                        //                         ],
+                        //                       ),
+                        //                     ),
+                        //                   );
+                        //                 case 'Text':
+                        //                 default:
+                        //                   return TextField(
+                        //                     enabled: true,
+                        //                     decoration: _inputDecoration(
+                        //                       field['placeholder'] ?? '',
+                        //                     ),
+                        //                     style: GoogleFonts.poppins(
+                        //                       color: const Color(0xFF244065),
+                        //                       fontWeight: FontWeight.w600,
+                        //                       fontSize: 14,
+                        //                     ),
+                        //                   );
+                        //               }
+                        //             },
+                        //           ),
+                        //         ),
+                        //       ),
+                        //       const SizedBox(height: 20),
+                        //     ],
+                        //   );
+                        // }),
+
                         ...formFields
                             .where((field) => field['isDisplayed'] == true)
                             .map((field) {
                           return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                field['displayName'] ?? '',
-                                style: GoogleFonts.poppins(
-                                  color: const Color(0xFF6E7373),
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w400,
+                              Center(
+                                child: Text(
+                                  field['displayName'] ?? '',
+                                  style: GoogleFonts.poppins(
+                                    color: const Color(0xFF6E7373),
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                  textAlign: TextAlign.center,
                                 ),
-                                textAlign: TextAlign.center,
                               ),
                               const SizedBox(height: 20),
                               Padding(
@@ -229,7 +420,8 @@ class SignupPageState extends State<SignupPage> {
                                       switch (field['fieldType']) {
                                         case 'email':
                                           return TextField(
-                                            enabled: true,
+                                            onChanged: (value) =>
+                                                field['value'] = value,
                                             decoration: _inputDecoration(
                                                 field['placeholder'] ?? ''),
                                             keyboardType:
@@ -242,7 +434,8 @@ class SignupPageState extends State<SignupPage> {
                                           );
                                         case 'password':
                                           return TextField(
-                                            enabled: true,
+                                            onChanged: (value) =>
+                                                field['value'] = value,
                                             decoration: _inputDecoration(
                                                 field['placeholder'] ?? ''),
                                             obscureText: true,
@@ -254,14 +447,14 @@ class SignupPageState extends State<SignupPage> {
                                           );
                                         case 'number':
                                           return TextField(
-                                            enabled: true,
+                                            onChanged: (value) =>
+                                                field['value'] = value,
                                             decoration: _inputDecoration(
                                                 field['placeholder'] ?? ''),
                                             keyboardType: TextInputType.number,
                                             inputFormatters: [
-                                              // Only allow digits
                                               FilteringTextInputFormatter
-                                                  .digitsOnly,
+                                                  .digitsOnly
                                             ],
                                             style: GoogleFonts.poppins(
                                               color: const Color(0xFF244065),
@@ -270,16 +463,11 @@ class SignupPageState extends State<SignupPage> {
                                             ),
                                           );
                                         case 'date':
-                                          String? dateValue = field['value'];
                                           return StatefulBuilder(
                                             builder: (context, setState) {
+                                              String? dateValue =
+                                                  field['value'];
                                               return TextField(
-                                                enabled: true,
-                                                decoration: _inputDecoration(
-                                                  dateValue ??
-                                                      field['placeholder'] ??
-                                                      '',
-                                                ),
                                                 readOnly: true,
                                                 onTap: () async {
                                                   DateTime? pickedDate =
@@ -290,16 +478,20 @@ class SignupPageState extends State<SignupPage> {
                                                     lastDate: DateTime(2100),
                                                   );
                                                   if (pickedDate != null) {
-                                                    setState(() {
-                                                      dateValue =
-                                                          "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
-                                                    });
+                                                    String formatted =
+                                                        "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+                                                    setState(() =>
+                                                        dateValue = formatted);
+                                                    field['value'] = formatted;
                                                   }
                                                 },
+                                                decoration: _inputDecoration(
+                                                    dateValue ??
+                                                        field['placeholder'] ??
+                                                        ''),
                                                 style: GoogleFonts.poppins(
-                                                  color: const Color(
-                                                    0xFF244065,
-                                                  ),
+                                                  color:
+                                                      const Color(0xFF244065),
                                                   fontWeight: FontWeight.w600,
                                                   fontSize: 14,
                                                 ),
@@ -309,7 +501,7 @@ class SignupPageState extends State<SignupPage> {
                                         case 'file':
                                           return InkWell(
                                             onTap: () {
-                                              // Implement file picker logic here
+                                              // File picker logic here
                                             },
                                             child: Padding(
                                               padding:
@@ -318,20 +510,15 @@ class SignupPageState extends State<SignupPage> {
                                                       horizontal: 8.0),
                                               child: Row(
                                                 children: [
-                                                  const Icon(
-                                                    Icons.attach_file,
-                                                    color: Color(
-                                                      0xFF244065,
-                                                    ),
-                                                  ),
+                                                  const Icon(Icons.attach_file,
+                                                      color: Color(0xFF244065)),
                                                   const SizedBox(width: 8),
                                                   Text(
                                                     field['placeholder'] ??
                                                         'Choose file',
                                                     style: GoogleFonts.poppins(
                                                       color: const Color(
-                                                        0xFF244065,
-                                                      ),
+                                                          0xFF244065),
                                                       fontWeight:
                                                           FontWeight.w600,
                                                       fontSize: 14,
@@ -344,7 +531,8 @@ class SignupPageState extends State<SignupPage> {
                                         case 'Text':
                                         default:
                                           return TextField(
-                                            enabled: true,
+                                            onChanged: (value) =>
+                                                field['value'] = value,
                                             decoration: _inputDecoration(
                                                 field['placeholder'] ?? ''),
                                             style: GoogleFonts.poppins(
@@ -363,222 +551,10 @@ class SignupPageState extends State<SignupPage> {
                           );
                         }),
 
-                        // Column(
-                        //   children: [
-                        //     Text(
-                        //       'Enter Mobile Number',
-                        //       style: GoogleFonts.poppins(
-                        //         color: const Color(0xFF6E7373),
-                        //         fontSize: 14,
-                        //         fontWeight: FontWeight.w400,
-                        //       ),
-                        //       textAlign: TextAlign.center,
-                        //     ),
-                        //     const SizedBox(height: 20),
-                        //     FocusScope(
-                        //       child: Focus(
-                        //         onFocusChange: (hasFocus) {
-                        //           setState(() {
-                        //             isPhoneFocused = hasFocus;
-                        //           });
-                        //         },
-                        //         child: Padding(
-                        //           padding: const EdgeInsets.symmetric(
-                        //               horizontal: 38.0),
-                        //           child: Container(
-                        //             decoration: BoxDecoration(
-                        //               color: Colors.white,
-                        //               borderRadius: BorderRadius.circular(50),
-                        //               border: Border.all(
-                        //                 color: isPhoneFocused
-                        //                     ? const Color(0xFF9ECF9A)
-                        //                     : const Color(0xFFB2C1C0),
-                        //                 width: 1,
-                        //               ),
-                        //               boxShadow: [
-                        //                 BoxShadow(
-                        //                   color: Colors.black
-                        //                       .withOpacity(0.1), // Shadow color
-                        //                   blurRadius: 6,
-                        //                   offset: const Offset(
-                        //                       0, 3), // Shadow position
-                        //                 ),
-                        //               ],
-                        //             ),
-                        //             padding: const EdgeInsets.symmetric(
-                        //                 horizontal: 12),
-                        //             child: Row(
-                        //               children: [
-                        //                 DropdownButtonHideUnderline(
-                        //                   child: DropdownButton<String>(
-                        //                     value: selectedCountryCode,
-                        //                     icon: const Icon(
-                        //                         Icons.arrow_drop_down,
-                        //                         color: Color(0xFF244065)),
-                        //                     style: GoogleFonts.poppins(
-                        //                       color: const Color(0xFF244065),
-                        //                       fontWeight: FontWeight.w600,
-                        //                       fontSize: 14,
-                        //                     ),
-                        //                     items: [
-                        //                       '+91',
-                        //                       '+1',
-                        //                       '+44',
-                        //                       '+61',
-                        //                       '+971'
-                        //                     ]
-                        //                         .map((code) => DropdownMenuItem(
-                        //                               value: code,
-                        //                               child: Text(code),
-                        //                             ))
-                        //                         .toList(),
-                        //                     onChanged: (value) {
-                        //                       if (value != null) {
-                        //                         setState(() {
-                        //                           selectedCountryCode = value;
-                        //                         });
-                        //                       }
-                        //                     },
-                        //                   ),
-                        //                 ),
-                        //                 const SizedBox(width: 10),
-                        //                 Expanded(
-                        //                   child: TextField(
-                        //                     controller: phoneText,
-                        //                     focusNode: phoneFocusNode,
-                        //                     decoration: const InputDecoration(
-                        //                       border: InputBorder.none,
-                        //                       hintText: '',
-                        //                       hintStyle: TextStyle(
-                        //                         color: Color(0xFF244065),
-                        //                         fontWeight: FontWeight.w600,
-                        //                         fontSize: 14,
-                        //                       ),
-                        //                     ),
-                        //                     keyboardType: TextInputType.phone,
-                        //                     style: GoogleFonts.poppins(
-                        //                       color: const Color(0xFF244065),
-                        //                       fontWeight: FontWeight.w600,
-                        //                       fontSize: 14,
-                        //                     ),
-                        //                   ),
-                        //                 ),
-                        //               ],
-                        //             ),
-                        //           ),
-                        //         ),
-                        //       ),
-                        //     ),
-                        //   ],
-                        // ),
-                        // const SizedBox(
-                        //   height: 20,
-                        // ),
-                        // Column(
-                        //   children: [
-                        //     Text(
-                        //       'Password',
-                        //       style: GoogleFonts.poppins(
-                        //         color: const Color(0xFF6E7373),
-                        //         fontSize: 14,
-                        //         fontWeight: FontWeight.w400,
-                        //       ),
-                        //       textAlign: TextAlign.center,
-                        //     ),
-                        //     const SizedBox(height: 20),
-                        //     Padding(
-                        //       padding:
-                        //           const EdgeInsets.symmetric(horizontal: 38.0),
-                        //       child: Container(
-                        //         decoration: BoxDecoration(
-                        //           color: Colors
-                        //               .white, // Set background color if needed
-                        //           borderRadius: BorderRadius.circular(50),
-                        //           boxShadow: [
-                        //             BoxShadow(
-                        //               color: Colors.black
-                        //                   .withOpacity(0.1), // Shadow color
-                        //               blurRadius: 6,
-                        //               offset:
-                        //                   const Offset(0, 3), // Shadow position
-                        //             ),
-                        //           ],
-                        //           border: Border.all(
-                        //             color: const Color(
-                        //                 0xFFB2C1C0), // Add a color here
-                        //             width: 1, // Optional: set the border width
-                        //           ),
-                        //         ),
-                        //         child: TextField(
-                        //           controller: passText,
-                        //           decoration: _inputDecoration(''),
-                        //           style: GoogleFonts.poppins(
-                        //             color: const Color(0xFF244065),
-                        //             fontWeight: FontWeight.w600,
-                        //             fontSize: 14,
-                        //           ),
-                        //         ),
-                        //       ),
-                        //     ),
-                        //   ],
-                        // ),
-                        // const SizedBox(
-                        //   height: 25,
-                        // ),
-                        // Column(
-                        //   children: [
-                        //     Text(
-                        //       'Confirm Password',
-                        //       style: GoogleFonts.poppins(
-                        //         color: const Color(0xFF6E7373),
-                        //         fontSize: 14,
-                        //         fontWeight: FontWeight.w400,
-                        //       ),
-                        //       textAlign: TextAlign.center,
-                        //     ),
-                        //     const SizedBox(height: 20),
-                        //     Padding(
-                        //       padding:
-                        //           const EdgeInsets.symmetric(horizontal: 38.0),
-                        //       child: Container(
-                        //         decoration: BoxDecoration(
-                        //           color: Colors
-                        //               .white, // Set background color if needed
-                        //           borderRadius: BorderRadius.circular(50),
-                        //           boxShadow: [
-                        //             BoxShadow(
-                        //               color: Colors.black
-                        //                   .withOpacity(0.1), // Shadow color
-                        //               blurRadius: 6,
-                        //               offset:
-                        //                   const Offset(0, 3), // Shadow position
-                        //             ),
-                        //           ],
-                        //           border: Border.all(
-                        //             color: const Color(
-                        //                 0xFFB2C1C0), // Add a color here
-                        //             width: 1, // Optional: set the border width
-                        //           ),
-                        //         ),
-                        //         child: TextField(
-                        //           controller: repassText,
-                        //           decoration: _inputDecoration(''),
-                        //           style: GoogleFonts.poppins(
-                        //             color: const Color(0xFF244065),
-                        //             fontWeight: FontWeight.w600,
-                        //             fontSize: 14,
-                        //           ),
-                        //         ),
-                        //       ),
-                        //     ),
-                        //   ],
-                        // ),
-
-                        //Dynamic Form Fields End
-
                         const SizedBox(
                           height: 25,
                         ),
+
                         Padding(
                           padding: const EdgeInsets.only(
                               left: 38, right: 38, bottom: 20),
@@ -587,16 +563,45 @@ class SignupPageState extends State<SignupPage> {
                               SizedBox(
                                 width: double.infinity,
                                 child: ElevatedButton(
-                                  onPressed: () {
-                                    // Call the submit function
-                                    _submitForm();
-                                    // Navigator.push(
-                                    //   context,
-                                    //   MaterialPageRoute(
-                                    //     builder: (context) =>
-                                    //         SignupConfirmPage(),
-                                    //   ),
-                                    // );
+                                  onPressed: () async {
+                                    bool isValid = true;
+                                    String errorMessage = '';
+
+                                    for (var field in formFields.where(
+                                        (f) => f['isDisplayed'] == true)) {
+                                      if ((field['isRequired'] ?? false) &&
+                                          (field['value'] == null ||
+                                              field['value']
+                                                  .toString()
+                                                  .trim()
+                                                  .isEmpty)) {
+                                        isValid = false;
+                                        errorMessage =
+                                            '${field['displayName']} is required.';
+                                        break;
+                                      }
+                                    }
+
+                                    if (isValid) {
+                                      Map<String, dynamic> formData = {};
+                                      formData['golfCourseCode'] =
+                                          'Xy1zAb56'; // Example static value
+                                      for (var field in formFields.where(
+                                          (f) => f['isDisplayed'] == true)) {
+                                        formData[field['fieldName']] =
+                                            field['value'];
+                                      }
+
+                                      // print('Form Data: $formData');
+                                      await _submitForm(formData);
+
+                                      // Submit or navigate
+                                    } else {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(content: Text(errorMessage)),
+                                      );
+                                    }
                                   },
                                   style: ElevatedButton.styleFrom(
                                       backgroundColor: const Color(0xFF9ECF9A)),
@@ -619,15 +624,93 @@ class SignupPageState extends State<SignupPage> {
                               const Positioned(
                                 top: 16.5,
                                 right: 15,
-                                child: Icon(
-                                  Icons.arrow_forward,
-                                  color: Color(0xFFFFFFFF),
-                                  size: 18,
-                                ),
+                                child: Icon(Icons.arrow_forward,
+                                    color: Color(0xFFFFFFFF), size: 18),
                               )
                             ],
                           ),
                         ),
+
+                        // Padding(
+                        //   padding: const EdgeInsets.only(
+                        //       left: 38, right: 38, bottom: 20),
+                        //   child: Stack(
+                        //     children: [
+                        //       SizedBox(
+                        //         width: double.infinity,
+                        //         child: ElevatedButton(
+                        //           onPressed: () async {
+                        //             bool isValid = true;
+                        //             String errorMessage = '';
+
+                        //             for (var field in formFields.where(
+                        //                 (f) => f['isDisplayed'] == true)) {
+                        //               // Example validation: required fields
+                        //               if ((field['isRequired'] ?? false) &&
+                        //                   (field['value'] == null ||
+                        //                       field['value']
+                        //                           .toString()
+                        //                           .trim()
+                        //                           .isEmpty)) {
+                        //                 isValid = false;
+                        //                 errorMessage =
+                        //                     '${field['displayName']} is required.';
+                        //                 break;
+                        //               }
+                        //               // Add more validation logic as needed (e.g., email format, password length)
+                        //             }
+
+                        //             if (isValid) {
+                        //               Map<String, dynamic> formData = {};
+                        //               for (var field in formFields.where(
+                        //                   (f) => f['isDisplayed'] == true)) {
+                        //                 formData[field['fieldName']] =
+                        //                     field['value'];
+                        //               }
+                        //               print('Form Data: $formData');
+                        //               // await _submitForm();
+                        //               // Optionally navigate to confirmation page
+                        //               // Navigator.push(context, MaterialPageRoute(builder: (context) => SignupConfirmPage()));
+                        //             } else {
+                        //               ScaffoldMessenger.of(context)
+                        //                   .showSnackBar(
+                        //                 SnackBar(
+                        //                   content: Text(errorMessage),
+                        //                 ),
+                        //               );
+                        //             }
+                        //           },
+                        //           style: ElevatedButton.styleFrom(
+                        //               backgroundColor: const Color(0xFF9ECF9A)),
+                        //           child: Padding(
+                        //             padding: const EdgeInsets.symmetric(
+                        //                 horizontal: 15.0, vertical: 10.0),
+                        //             child: Center(
+                        //               child: Text(
+                        //                 "Create an account",
+                        //                 style: GoogleFonts.poppins(
+                        //                   color: const Color(0xFFFFFFFF),
+                        //                   fontSize: 16,
+                        //                   fontWeight: FontWeight.w600,
+                        //                 ),
+                        //               ),
+                        //             ),
+                        //           ),
+                        //         ),
+                        //       ),
+                        //       const Positioned(
+                        //         top: 16.5,
+                        //         right: 15,
+                        //         child: Icon(
+                        //           Icons.arrow_forward,
+                        //           color: Color(0xFFFFFFFF),
+                        //           size: 18,
+                        //         ),
+                        //       )
+                        //     ],
+                        //   ),
+                        // ),
+
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisSize: MainAxisSize.min,
