@@ -2,11 +2,13 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:gulf_app/components/custom_bottom_nav_bar.dart';
+import 'package:gulf_app/screens/login.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:gulf_app/components/custom_app_bar.dart';
 import 'package:gulf_app/components/custom_drawer.dart';
 import 'package:gulf_app/screens/teesheet_page.dart'; // Import generic page
+import 'package:jwt_decoder/jwt_decoder.dart';
 
 class SelcetBookingClass extends StatefulWidget {
   final String userId; // ✅ Add this
@@ -50,6 +52,23 @@ class SelcetBookingClassState extends State<SelcetBookingClass> {
     _fetchTeesheets(); // Fetch teesheets when the page loads
   }
 
+  void debugToken(String token) {
+    final decoded = JwtDecoder.decode(token);
+    final expiry = JwtDecoder.getExpirationDate(token);
+    print("Decoded Token: $decoded");
+    print("Expires at: $expiry");
+  }
+
+  Future<bool> isTokenValid() async {
+    String? token = await secureStorage.read(key: 'accessToken');
+
+    if (token == null || token.isEmpty) return false;
+
+    // Check expiration
+    bool isExpired = JwtDecoder.isExpired(token);
+    return !isExpired;
+  }
+
   Future<void> _fetchTeesheets() async {
     setState(() => isLoading = true);
 
@@ -57,6 +76,33 @@ class SelcetBookingClassState extends State<SelcetBookingClass> {
         'https://api.dev.driverpos.io/api/v1/teesheet/customer-facility?golfCourseCode=YdTIjvWB';
 
     String? token = await secureStorage.read(key: 'accessToken') ?? '';
+
+    // debugToken(token); // Debug the token
+    isTokenValid().then((isValid) {
+      if (!isValid) {
+        // _showMessage('Token is invalid or expired. Please log in again.');
+        // secureStorage.delete(key: 'accessToken'); // Clear invalid token
+        secureStorage.deleteAll();
+        const SnackBar(
+          content: Text('Session expired. Redirecting to login.'),
+          duration: Duration(seconds: 2),
+        );
+
+        if (!mounted) return;
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const LoginPage(),
+          ),
+          (route) => false,
+        );
+
+        return;
+      } else {
+        print('Token is valid');
+        debugToken(token); // Debug the token if valid
+      }
+    });
 
     try {
       final response = await http.get(
@@ -223,7 +269,11 @@ class SelcetBookingClassState extends State<SelcetBookingClass> {
   }
 
   void _showMessage(String msg) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(msg),
+      ),
+    );
   }
 
   // @override
@@ -364,10 +414,13 @@ class SelcetBookingClassState extends State<SelcetBookingClass> {
                                       ),
                                       textAlign: TextAlign.center,
                                     ),
-                                    const SizedBox(height: 20),
+                                    const SizedBox(
+                                      height: 20,
+                                    ),
                                     Padding(
                                       padding: const EdgeInsets.symmetric(
-                                          horizontal: 38.0),
+                                        horizontal: 38.0,
+                                      ),
                                       child: CompositedTransformTarget(
                                         link: _layerLink,
                                         child: Column(
@@ -377,8 +430,9 @@ class SelcetBookingClassState extends State<SelcetBookingClass> {
                                               child: Container(
                                                 padding:
                                                     const EdgeInsets.symmetric(
-                                                        horizontal: 15,
-                                                        vertical: 8),
+                                                  horizontal: 15,
+                                                  vertical: 8,
+                                                ),
                                                 decoration: BoxDecoration(
                                                   border: Border.all(
                                                     color: isDropdownOpen

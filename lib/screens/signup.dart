@@ -9,6 +9,10 @@ import 'package:gulf_app/components/userentry_app_bar.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'login.dart';
 import 'signup_confirm.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'dart:io' as io show File, Platform;
 
 class SignupPage extends StatefulWidget {
   const SignupPage({super.key});
@@ -31,11 +35,61 @@ class SignupPageState extends State<SignupPage> {
   final FocusNode phoneFocusNode = FocusNode();
 
   List<Map<String, dynamic>> formFields = [];
+  String? profilePicturePath;
+  Uint8List? profilePictureBytes;
 
   @override
   void initState() {
     super.initState();
     _callSignupApi();
+  }
+
+  void _openImagePicker(BuildContext context, ImageSource source) async {
+    final ImagePicker picker = ImagePicker();
+
+    try {
+      final XFile? pickedFile = await picker.pickImage(
+        source: source,
+      );
+      // print("Picked file: ${pickedFile?.path}");
+
+      if (pickedFile != null) {
+        if (kIsWeb) {
+          // Handle Web
+          final Uint8List bytes = await pickedFile.readAsBytes();
+
+          // Store image in memory or encode to base64
+          profilePictureBytes = bytes;
+          // await secureStorage.write(
+          //     key: 'profilePic', value: base64Encode(bytes));
+          // print("Stored base64 in secureStorage");
+
+          setState(() {
+            profilePicturePath =
+                'data:image/jpeg;base64,${base64Encode(bytes)}';
+          });
+        } else {
+          // Handle Android/iOS
+          final savedPath =
+              '${(await getTemporaryDirectory()).path}/${DateTime.now().millisecondsSinceEpoch}.jpg';
+          final io.File savedImage =
+              await io.File(pickedFile.path).copy(savedPath);
+
+          // print("Saved image path: ${savedImage.path}");
+          setState(() {
+            profilePicturePath = savedImage.path;
+          });
+          // await secureStorage.write(key: 'profilePic', value: savedImage.path);
+          // print("Saved path: $profilePicturePath");
+        }
+
+        if (context.mounted) {
+          setState(() {});
+        }
+      }
+    } catch (e) {
+      print("Error: $e");
+    }
   }
 
   Future<void> _callSignupApi() async {
@@ -500,8 +554,94 @@ class SignupPageState extends State<SignupPage> {
                                           );
                                         case 'file':
                                           return InkWell(
-                                            onTap: () {
+                                            onTap: () async {
                                               // File picker logic here
+
+                                              showModalBottomSheet(
+                                                context: context,
+                                                shape:
+                                                    const RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.vertical(
+                                                    top: Radius.circular(20),
+                                                  ),
+                                                ),
+                                                builder:
+                                                    (BuildContext context) {
+                                                  return SafeArea(
+                                                    child: Wrap(
+                                                      children: [
+                                                        ListTile(
+                                                          leading: const Icon(
+                                                              Icons
+                                                                  .photo_library),
+                                                          title: const Text(
+                                                              'Choose from Gallery'),
+                                                          onTap: () async {
+                                                            Navigator.pop(
+                                                                context); // Close the bottom sheet **before** launching the picker
+
+                                                            WidgetsBinding
+                                                                .instance
+                                                                .addPostFrameCallback(
+                                                                    (_) {
+                                                              if (mounted) {
+                                                                _openImagePicker(
+                                                                    context,
+                                                                    ImageSource
+                                                                        .gallery);
+                                                              }
+                                                            });
+
+                                                            // _openImagePicker(context);
+                                                          },
+                                                        ),
+                                                        ListTile(
+                                                          leading: const Icon(
+                                                              Icons.camera_alt),
+                                                          title: const Text(
+                                                              'Take a Picture'),
+                                                          onTap: () async {
+                                                            // Use image_picker package for taking a picture
+                                                            // Example:
+                                                            // final pickedFile = await ImagePicker().pickImage(source: ImageSource.camera);
+                                                            Navigator.pop(
+                                                                context);
+                                                            WidgetsBinding
+                                                                .instance
+                                                                .addPostFrameCallback(
+                                                                    (_) {
+                                                              if (context
+                                                                  .mounted) {
+                                                                _openImagePicker(
+                                                                    context,
+                                                                    ImageSource
+                                                                        .camera);
+                                                              }
+                                                            });
+                                                          },
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  );
+                                                },
+                                              );
+
+                                              // For example, using file_picker package
+                                              // FilePickerResult? result = await FilePicker.platform.pickFiles();
+                                              // if (result != null) {
+                                              //   field['value'] = result.files.single.path;
+                                              // } else {
+                                              //   field['value'] = null; // User canceled the picker
+                                              // }
+                                              // ScaffoldMessenger.of(context)
+                                              //     .showSnackBar(
+                                              //   const SnackBar(
+                                              //     content: Text(
+                                              //       'File picker not implemented yet.',
+                                              //     ),
+                                              //   ),
+                                              // );
                                             },
                                             child: Padding(
                                               padding:
@@ -592,6 +732,15 @@ class SignupPageState extends State<SignupPage> {
                                             field['value'];
                                       }
 
+                                      if (formFields.any((f) =>
+                                          f['fieldType'] == 'file' &&
+                                          f['value'] != null)) {
+                                        var fileField = formFields.firstWhere(
+                                            (f) => f['fieldType'] == 'file');
+                                        formData['profilePicture'] =
+                                            fileField['value'];
+                                      }
+
                                       // print('Form Data: $formData');
                                       await _submitForm(formData);
 
@@ -599,7 +748,9 @@ class SignupPageState extends State<SignupPage> {
                                     } else {
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(
-                                        SnackBar(content: Text(errorMessage)),
+                                        SnackBar(
+                                          content: Text(errorMessage),
+                                        ),
                                       );
                                     }
                                   },
