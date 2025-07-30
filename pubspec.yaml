@@ -54,6 +54,7 @@ dependencies:
   http_parser: ^4.1.2
   jwt_decoder: ^2.0.1
   cryptography: ^2.7.0
+  encrypt: ^5.0.3
 
 dev_dependencies:
   flutter_test:
