@@ -11,6 +11,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'signup.dart';
 import 'forgot_password.dart';
 import 'reset_password.dart';
+import 'package:crypto/crypto.dart';
+import 'package:cryptography/cryptography.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -42,25 +44,46 @@ class LoginPageState extends State<LoginPage> {
         .showSnackBar(SnackBar(content: Text(message)));
   }
 
-  // Login API call
   Future<void> _loginUser() async {
     setState(() {
-      isLoading = true; // Show loading indicator
+      isLoading = true;
     });
 
-    final String apiUrlWithParams =
+    final String apiUrl =
         'https://api.dev.driverpos.io/api/v1/auth/login?role=customer&golfCourseCode=YdTIjvWB';
+
     try {
+      final loginPayload = {
+        'email': phoneText.text.trim(),
+        'password': passText.text.trim(),
+      };
+
+      // Encrypt the loginPayload
+      final secret =
+          'course1999golf01'; // must match Node backend ENCRYPT_SECRET
+      final keyHash = sha256.convert(utf8.encode(secret)).bytes;
+      final secretKey = SecretKey(keyHash);
+      final algorithm = AesGcm.with256bits();
+      final iv = algorithm.newNonce();
+
+      final secretBox = await algorithm.encrypt(
+        utf8.encode(jsonEncode(loginPayload)),
+        secretKey: secretKey,
+        nonce: iv,
+      );
+
+      final encryptedPayload = {
+        'iv': base64Encode(iv),
+        'data': base64Encode(secretBox.cipherText),
+        'tag': base64Encode(secretBox.mac.bytes),
+      };
+
       final response = await http.post(
-        Uri.parse(apiUrlWithParams),
+        Uri.parse(apiUrl),
         headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
+          'Content-Type': 'application/json',
         },
-        body: jsonEncode(<String, String>{
-          'email': phoneText.text
-              .trim(), // Still using 'email' field for mobile/email
-          'password': passText.text.trim(),
-        }),
+        body: jsonEncode(encryptedPayload),
       );
 
       if (response.statusCode == 200) {
@@ -71,52 +94,39 @@ class LoginPageState extends State<LoginPage> {
           final String userId = userData['id'] ?? '';
 
           if (userData['isVerified'] == false) {
-            // Navigate to Reset Password screen if not verified
             if (mounted) {
               Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (context) => ResetPasswordPage(
-                    userId: userId, // from your login response
-                    emailOrMobile:
-                        phoneText.text.trim(), // from login screen input
+                    userId: userId,
+                    emailOrMobile: phoneText.text.trim(),
                   ),
                 ),
               );
             }
-            return; // ⛔ Stop further execution
+            return;
           }
 
-          // If user is verified, save tokens and go to booking page
+          // Save tokens and other data
           await secureStorage.write(
-              key: 'userName', value: data['data']['fullName']);
+              key: 'userName', value: userData['fullName']);
+          await secureStorage.write(key: 'userEmail', value: userData['email']);
           await secureStorage.write(
-              key: 'userEmail', value: data['data']['email']);
+              key: 'userPhone', value: userData['phoneNumber']);
           await secureStorage.write(
-              key: 'userPhone', value: data['data']['phoneNumber']);
-
+              key: 'profilePic', value: userData['profilePicture']);
           await secureStorage.write(
-              key: 'profilePic', value: data['data']['profilePicture']);
+              key: 'accountNumber', value: userData['accountNumber']);
           await secureStorage.write(
-            key: 'accountNumber',
-            value: data['data']['accountNumber'],
-          );
+              key: 'membership', value: userData['membership']);
           await secureStorage.write(
-            key: 'membership',
-            value: data['data']['membership'],
-          );
+              key: 'golfCourseName', value: userData['golfCourse']['name']);
           await secureStorage.write(
-            key: 'golfCourseName',
-            value: data['data']['golfCourse']['name'],
-          );
+              key: 'golfCourseLogo', value: userData['golfCourse']['logo']);
           await secureStorage.write(
-            key: 'golfCourseLogo',
-            value: data['data']['golfCourse']['logo'],
-          );
-          await secureStorage.write(
-            key: 'golfCourseSmallLogo',
-            value: data['data']['golfCourse']['small_logo'],
-          );
+              key: 'golfCourseSmallLogo',
+              value: userData['golfCourse']['small_logo']);
           await secureStorage.write(
               key: 'accessToken', value: data['accessToken']);
           await secureStorage.write(
@@ -137,15 +147,13 @@ class LoginPageState extends State<LoginPage> {
                   const curve = Curves.easeInOut;
                   var tween = Tween(begin: begin, end: end)
                       .chain(CurveTween(curve: curve));
-                  var offsetAnimation = animation.drive(tween);
                   return SlideTransition(
-                    position: offsetAnimation,
-                    child: child,
-                  );
+                      position: animation.drive(tween), child: child);
                 },
               ),
             );
           }
+
           _showMessage(data['message'] ?? 'Logged in successfully');
         } else {
           _showMessage(data['message'] ?? 'Login failed');
@@ -164,7 +172,7 @@ class LoginPageState extends State<LoginPage> {
     } finally {
       if (mounted) {
         setState(() {
-          isLoading = false; // Always hide loading indicator
+          isLoading = false;
         });
       }
     }
