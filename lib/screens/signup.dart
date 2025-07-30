@@ -8,11 +8,12 @@ import 'dart:convert';
 import 'package:gulf_app/components/userentry_app_bar.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'login.dart';
-import 'signup_confirm.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'dart:io' as io show File, Platform;
+import 'package:crypto/crypto.dart';
+import 'package:cryptography/cryptography.dart';
 
 class SignupPage extends StatefulWidget {
   const SignupPage({super.key});
@@ -118,12 +119,32 @@ class SignupPageState extends State<SignupPage> {
     print('Form Data: $formData');
     // Example form submission logic, replace with your actual endpoint and logic
     final url = 'https://api.dev.driverpos.io/api/v1/auth/sign-up';
+
+    final payload = formData;
+
+    final secret = 'course1999golf01'; // must match Node backend ENCRYPT_SECRET
+    final keyHash = sha256.convert(utf8.encode(secret)).bytes;
+    final secretKey = SecretKey(keyHash);
+    final algorithm = AesGcm.with256bits();
+    final iv = algorithm.newNonce();
+
+    final secretBox = await algorithm.encrypt(
+      utf8.encode(jsonEncode(payload)),
+      secretKey: secretKey,
+      nonce: iv,
+    );
+
+    final encryptedPayload = {
+      'iv': base64Encode(iv),
+      'data': base64Encode(secretBox.cipherText),
+      'tag': base64Encode(secretBox.mac.bytes),
+    };
     final response = await http.post(
       Uri.parse(url),
       headers: {
         'Content-Type': 'application/json',
       },
-      body: jsonEncode(formData),
+      body: jsonEncode(encryptedPayload),
     );
 
     if (response.statusCode == 200) {
