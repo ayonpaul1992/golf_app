@@ -9,6 +9,8 @@ import 'package:gulf_app/components/custom_app_bar.dart';
 import 'package:gulf_app/components/custom_drawer.dart';
 import 'package:gulf_app/components/custom_bottom_nav_bar.dart';
 import 'package:intl/intl.dart';
+import 'package:crypto/crypto.dart';
+import 'package:cryptography/cryptography.dart';
 
 class MyReservationPage extends StatefulWidget {
   final String myRsvId;
@@ -529,7 +531,8 @@ class MyReservationPageState extends State<MyReservationPage> {
                                                                   Row(
                                                                     children: [
                                                                       // Only show edit button if status is not 'Canceled'
-                                                                      if (!reservation['canceled'])
+                                                                      if (!reservation[
+                                                                          'canceled'])
                                                                         InkWell(
                                                                           onTap:
                                                                               () {},
@@ -598,15 +601,36 @@ class MyReservationPageState extends State<MyReservationPage> {
                                                                                                   'https://api.dev.driverpos.io/api/v1/teesheet/myBookings/cancel/$slotId',
                                                                                                 );
 
+                                                                                                final payload = {
+                                                                                                  "process": "Cancel",
+                                                                                                };
+
+                                                                                                const secret = 'course1999golf01'; // same as backend
+
+                                                                                                final keyHash = sha256.convert(utf8.encode(secret)).bytes;
+                                                                                                final secretKey = SecretKey(keyHash);
+                                                                                                final algorithm = AesGcm.with256bits();
+                                                                                                final iv = algorithm.newNonce();
+
+                                                                                                final secretBox = await algorithm.encrypt(
+                                                                                                  utf8.encode(jsonEncode(payload)),
+                                                                                                  secretKey: secretKey,
+                                                                                                  nonce: iv,
+                                                                                                );
+
+                                                                                                final encryptedPayload = {
+                                                                                                  'iv': base64Encode(iv),
+                                                                                                  'data': base64Encode(secretBox.cipherText),
+                                                                                                  'tag': base64Encode(secretBox.mac.bytes),
+                                                                                                };
+
                                                                                                 final response = await http.delete(
                                                                                                   uri,
                                                                                                   headers: {
                                                                                                     'Authorization': 'Bearer $token',
                                                                                                     'Content-Type': 'application/json',
                                                                                                   },
-                                                                                                  body: jsonEncode({
-                                                                                                    "process": "Cancel",
-                                                                                                  }),
+                                                                                                  body: jsonEncode(encryptedPayload),
                                                                                                 );
 
                                                                                                 if (response.statusCode == 200) {
