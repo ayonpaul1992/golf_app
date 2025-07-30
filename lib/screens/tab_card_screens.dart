@@ -48,6 +48,7 @@ class _TabCardScreenPageState extends State<TabCardScreenPage>
   List<Map<String, dynamic>> history = [];
   List<Map<String, dynamic>> rainChecks = [];
   List<Map<String, dynamic>> giftCards = [];
+  String userProfileImage = '';
 
   @override
   void initState() {
@@ -68,6 +69,8 @@ class _TabCardScreenPageState extends State<TabCardScreenPage>
   }
 
   Future<void> fetchStoreCredits() async {
+    String? storedUserProfileImage =
+        await secureStorage.read(key: 'profilePic');
     const String apiUrl =
         'https://api.dev.driverpos.io/api/v1/storecredit/myStoreCredit?limit=20&page=1';
     final String? token = await secureStorage.read(key: 'accessToken');
@@ -94,6 +97,7 @@ class _TabCardScreenPageState extends State<TabCardScreenPage>
 
           history = List<Map<String, dynamic>>.from(
               responseData['data']['history'] ?? []);
+          userProfileImage = storedUserProfileImage ?? '';
           isLoading = false; // Set loading to false after fetching data
         });
 
@@ -312,13 +316,21 @@ class _TabCardScreenPageState extends State<TabCardScreenPage>
                   children: [
                     Row(
                       children: [
-                        const CircleAvatar(
-                          backgroundColor: Color(0xFFF5F6FB),
+                        CircleAvatar(
+                          backgroundColor: const Color(0xFFF5F6FB),
                           radius: 25,
-                          child: CircleAvatar(
-                            backgroundColor: Color(0xFF9ECF9A),
-                            radius: 16,
-                            child: Icon(Icons.person, color: Colors.white),
+                          child: Image(
+                            image: userProfileImage.isNotEmpty
+                                ? NetworkImage(userProfileImage)
+                                : const CircleAvatar(
+                                    backgroundColor: Color(0xFF9ECF9A),
+                                    radius: 16,
+                                    child:
+                                        Icon(Icons.person, color: Colors.white),
+                                  ) as ImageProvider,
+                            width: 80,
+                            height: 80,
+                            fit: BoxFit.cover,
                           ),
                         ),
                         const SizedBox(width: 8),
@@ -439,13 +451,21 @@ class _TabCardScreenPageState extends State<TabCardScreenPage>
                   children: [
                     Row(
                       children: [
-                        const CircleAvatar(
-                          backgroundColor: Color(0xFFF5F6FB),
+                        CircleAvatar(
+                          backgroundColor: const Color(0xFFF5F6FB),
                           radius: 25,
-                          child: CircleAvatar(
-                            backgroundColor: Color(0xFF9ECF9A),
-                            radius: 16,
-                            child: Icon(Icons.person, color: Colors.white),
+                          child: Image(
+                            image: userProfileImage.isNotEmpty
+                                ? NetworkImage(userProfileImage)
+                                : const CircleAvatar(
+                                    backgroundColor: Color(0xFF9ECF9A),
+                                    radius: 16,
+                                    child:
+                                        Icon(Icons.person, color: Colors.white),
+                                  ) as ImageProvider,
+                            width: 80,
+                            height: 80,
+                            fit: BoxFit.cover,
                           ),
                         ),
                         const SizedBox(width: 8),
@@ -558,13 +578,21 @@ class _TabCardScreenPageState extends State<TabCardScreenPage>
                   children: [
                     Row(
                       children: [
-                        const CircleAvatar(
-                          backgroundColor: Color(0xFFF5F6FB),
+                        CircleAvatar(
+                          backgroundColor: const Color(0xFFF5F6FB),
                           radius: 25,
-                          child: CircleAvatar(
-                            backgroundColor: Color(0xFF9ECF9A),
-                            radius: 16,
-                            child: Icon(Icons.person, color: Colors.white),
+                          child: Image(
+                            image: userProfileImage.isNotEmpty
+                                ? NetworkImage(userProfileImage)
+                                : const CircleAvatar(
+                                    backgroundColor: Color(0xFF9ECF9A),
+                                    radius: 16,
+                                    child:
+                                        Icon(Icons.person, color: Colors.white),
+                                  ) as ImageProvider,
+                            width: 80,
+                            height: 80,
+                            fit: BoxFit.cover,
                           ),
                         ),
                         const SizedBox(width: 8),
