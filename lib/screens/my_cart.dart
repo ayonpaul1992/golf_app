@@ -11,6 +11,8 @@ import 'package:gulf_app/components/custom_app_bar.dart';
 import 'package:gulf_app/components/custom_drawer.dart';
 import 'package:gulf_app/components/custom_bottom_nav_bar.dart';
 import 'package:intl/intl.dart';
+import 'package:crypto/crypto.dart';
+import 'package:cryptography/cryptography.dart';
 
 class MyCartPage extends StatefulWidget {
   final String myCartId;
@@ -963,6 +965,37 @@ class MyCartPageState extends State<MyCartPage> {
                                               key: 'accessToken') ??
                                           '';
 
+                                      final bookingPayload = {
+                                        'golfCourseCode': golfCourseCode,
+                                        'totalAmount': totalCartAmount,
+                                        'amount': totalCartAmount,
+                                        'paymentType': 'Book',
+                                      };
+
+                                      const secret =
+                                          'course1999golf01'; // same as backend
+
+                                      final keyHash = sha256
+                                          .convert(utf8.encode(secret))
+                                          .bytes;
+                                      final secretKey = SecretKey(keyHash);
+                                      final algorithm = AesGcm.with256bits();
+                                      final iv = algorithm.newNonce();
+
+                                      final secretBox = await algorithm.encrypt(
+                                        utf8.encode(jsonEncode(bookingPayload)),
+                                        secretKey: secretKey,
+                                        nonce: iv,
+                                      );
+
+                                      final encryptedPayload = {
+                                        'iv': base64Encode(iv),
+                                        'data':
+                                            base64Encode(secretBox.cipherText),
+                                        'tag':
+                                            base64Encode(secretBox.mac.bytes),
+                                      };
+
                                       final response = await http.post(
                                         Uri.parse(
                                           'https://api.dev.driverpos.io/api/v1/transaction/payment',
@@ -972,12 +1005,7 @@ class MyCartPageState extends State<MyCartPage> {
                                           'Authorization':
                                               'Bearer $token', // if needed
                                         },
-                                        body: jsonEncode({
-                                          "golfCourseCode": golfCourseCode,
-                                          "totalAmount": totalCartAmount,
-                                          "amount": totalCartAmount,
-                                          "paymentType": "Book"
-                                        }),
+                                        body: jsonEncode(encryptedPayload),
                                       );
 
                                       if (response.statusCode == 200) {
