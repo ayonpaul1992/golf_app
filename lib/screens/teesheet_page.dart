@@ -1433,14 +1433,16 @@ class TeesheetPageState extends State<TeesheetPage> {
                                                                                 slot['holes'] is List &&
                                                                                 slot['holes'].isNotEmpty)
                                                                             ? (slot['holes'] as List)
-                                                                                .map<Widget>((hole) => Text(
-                                                                                      '\$${(num.tryParse(hole.toString())?.toStringAsFixed(2) ?? '0.00')}',
-                                                                                      style: GoogleFonts.poppins(
-                                                                                        color: const Color(0xFF244065),
-                                                                                        fontSize: 13,
-                                                                                        fontWeight: FontWeight.w400,
-                                                                                      ),
-                                                                                    ))
+                                                                                .map<Widget>(
+                                                                                  (hole) => Text(
+                                                                                    hole == 9 ? '\$${((slot['fees']['nineHole']['greenFee']).toStringAsFixed(2) ?? '0.00')}' : '\$${(slot['fees']['eighteenHole']['greenFee'].toStringAsFixed(2) ?? '0.00')}',
+                                                                                    style: GoogleFonts.poppins(
+                                                                                      color: const Color(0xFF244065),
+                                                                                      fontSize: 13,
+                                                                                      fontWeight: FontWeight.w400,
+                                                                                    ),
+                                                                                  ),
+                                                                                )
                                                                                 .toList()
                                                                             : [
                                                                                 Text(
@@ -1468,7 +1470,7 @@ class TeesheetPageState extends State<TeesheetPage> {
                                                                                 slot['holes'].isNotEmpty)
                                                                             ? (slot['holes'] as List)
                                                                                 .map<Widget>((hole) => Text(
-                                                                                      '\$${(num.tryParse(hole.toString())?.toStringAsFixed(2) ?? '0.00')}',
+                                                                                      hole == 9 ? '\$${((slot['fees']['nineHole']['cartFee']).toStringAsFixed(2) ?? '0.00')}' : '\$${(slot['fees']['eighteenHole']['cartFee'].toStringAsFixed(2) ?? '0.00')}',
                                                                                       style: GoogleFonts.poppins(
                                                                                         color: const Color(0xFF244065),
                                                                                         fontSize: 13,
