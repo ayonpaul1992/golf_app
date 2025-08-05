@@ -969,191 +969,534 @@ class TeesheetPageState extends State<TeesheetPage> {
                                           runSpacing: 15,
                                           children: [
                                             ...allTeeSheetData.map((slot) {
-                                              return GestureDetector(
-                                                onTap: () {
-                                                  print(
-                                                      '_dateController.text: ${_dateController.text}');
-                                                  Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          TeeSheetDtls(
-                                                        teesheetPageId: widget
-                                                            .teesheetPageId,
-                                                        reservationGroupId: widget
-                                                            .reservationGroupId,
-                                                        date:
-                                                            '${_dateController.text}',
-                                                        time: slot['time'],
-                                                        players:
-                                                            slot['players'],
-                                                        holes: slot['holes'],
-                                                        allowName: allowName,
-                                                        socket: socket!,
-                                                      ), // Replace with your target widget
+                                              // return GestureDetector(
+                                              //   onTap: () {
+                                              //     print(
+                                              //         '_dateController.text: ${_dateController.text}');
+                                              //     Navigator.push(
+                                              //       context,
+                                              //       MaterialPageRoute(
+                                              //         builder: (context) =>
+                                              //             TeeSheetDtls(
+                                              //           teesheetPageId: widget
+                                              //               .teesheetPageId,
+                                              //           reservationGroupId: widget
+                                              //               .reservationGroupId,
+                                              //           date:
+                                              //               '${_dateController.text}',
+                                              //           time: slot['time'],
+                                              //           players:
+                                              //               slot['players'],
+                                              //           holes: slot['holes'],
+                                              //           allowName: allowName,
+                                              //           socket: socket!,
+                                              //         ), // Replace with your target widget
+                                              //       ),
+                                              //     );
+                                              //   },
+                                              //   child: Container(
+                                              //     padding: const EdgeInsets
+                                              //         .symmetric(
+                                              //       horizontal: 20,
+                                              //       vertical: 10,
+                                              //     ),
+                                              //     decoration: BoxDecoration(
+                                              //       color:
+                                              //           const Color(0xFFFFFFFF),
+                                              //       borderRadius:
+                                              //           BorderRadius.circular(
+                                              //               15),
+                                              //       boxShadow: [
+                                              //         BoxShadow(
+                                              //           color: Colors.black
+                                              //               .withOpacity(0.1),
+                                              //           blurRadius: 3,
+                                              //           spreadRadius: 1,
+                                              //           offset:
+                                              //               const Offset(0, 0),
+                                              //         ),
+                                              //       ],
+                                              //     ),
+                                              //     child: Column(
+                                              //       crossAxisAlignment:
+                                              //           CrossAxisAlignment
+                                              //               .center,
+                                              //       children: [
+                                              //         const SizedBox(
+                                              //           height: 6,
+                                              //         ),
+                                              //         Container(
+                                              //           width: 119,
+                                              //           padding:
+                                              //               const EdgeInsets
+                                              //                   .symmetric(
+                                              //                   horizontal: 15,
+                                              //                   vertical: 7),
+                                              //           decoration:
+                                              //               BoxDecoration(
+                                              //             color: const Color(
+                                              //                 0xFF9ECF9A),
+                                              //             borderRadius:
+                                              //                 BorderRadius.circular(
+                                              //                     50), // Optional
+                                              //             boxShadow: [
+                                              //               BoxShadow(
+                                              //                 color: Colors
+                                              //                     .black
+                                              //                     .withOpacity(
+                                              //                         0.1),
+                                              //                 blurRadius: 3,
+                                              //                 spreadRadius: 1,
+                                              //                 offset:
+                                              //                     const Offset(
+                                              //                         0, 2),
+                                              //               ),
+                                              //             ],
+                                              //           ),
+                                              //           child: Center(
+                                              //             child: Text(
+                                              //               slot['time'] ?? '',
+                                              //               style: GoogleFonts
+                                              //                   .poppins(
+                                              //                 color: const Color(
+                                              //                     0xFFFFFFFF),
+                                              //                 fontSize: 13,
+                                              //                 fontWeight:
+                                              //                     FontWeight
+                                              //                         .w600,
+                                              //               ),
+                                              //             ),
+                                              //           ),
+                                              //         ),
+                                              //         const SizedBox(
+                                              //           height: 6,
+                                              //         ),
+                                              //         SingleChildScrollView(
+                                              //           scrollDirection:
+                                              //               Axis.horizontal,
+                                              //           child: Row(
+                                              //             mainAxisAlignment:
+                                              //                 MainAxisAlignment
+                                              //                     .spaceBetween,
+                                              //             children: [
+                                              //               Row(
+                                              //                 mainAxisAlignment:
+                                              //                     MainAxisAlignment
+                                              //                         .end,
+                                              //                 children: [
+                                              //                   const Icon(
+                                              //                     Icons.flag,
+                                              //                     size: 14,
+                                              //                     color: Color(
+                                              //                         0xFF6B7280),
+                                              //                   ),
+                                              //                   Row(
+                                              //                     mainAxisAlignment:
+                                              //                         MainAxisAlignment
+                                              //                             .center,
+                                              //                     children: [
+                                              //                       Text(
+                                              //                         (slot['holes'] != null &&
+                                              //                                 slot['holes'] is List &&
+                                              //                                 slot['holes'].isNotEmpty)
+                                              //                             ? (slot['holes'] as List).join(' or ')
+                                              //                             : '',
+                                              //                         style: GoogleFonts
+                                              //                             .poppins(
+                                              //                           color: const Color(
+                                              //                               0xFF6E7373),
+                                              //                           fontSize:
+                                              //                               13,
+                                              //                           fontWeight:
+                                              //                               FontWeight.w400,
+                                              //                         ),
+                                              //                       )
+                                              //                     ],
+                                              //                   )
+                                              //                 ],
+                                              //               ),
+                                              //               const SizedBox(
+                                              //                 width: 20,
+                                              //               ),
+                                              //               Row(
+                                              //                 mainAxisAlignment:
+                                              //                     MainAxisAlignment
+                                              //                         .end,
+                                              //                 children: [
+                                              //                   const Icon(
+                                              //                     Icons.person,
+                                              //                     size: 14,
+                                              //                     color: Color(
+                                              //                         0xFF6B7280),
+                                              //                   ),
+                                              //                   Row(
+                                              //                     mainAxisAlignment:
+                                              //                         MainAxisAlignment
+                                              //                             .center,
+                                              //                     children: [
+                                              //                       Text(
+                                              //                         slot['players']
+                                              //                                 ?.toString() ??
+                                              //                             '',
+                                              //                         style: GoogleFonts.poppins(
+                                              //                             color: const Color(
+                                              //                                 0xFF6E7373),
+                                              //                             fontSize:
+                                              //                                 13,
+                                              //                             fontWeight:
+                                              //                                 FontWeight.w400),
+                                              //                       ),
+                                              //                     ],
+                                              //                   )
+                                              //                 ],
+                                              //               )
+                                              //             ],
+                                              //           ),
+                                              //         ),
+                                              //       ],
+                                              //     ),
+                                              //   ),
+                                              // );
+
+                                              return SizedBox(
+                                                width: 170,
+                                                child: GestureDetector(
+                                                  onTap: () {
+                                                    print(
+                                                        '_dateController.text: ${_dateController.text}');
+                                                    Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            TeeSheetDtls(
+                                                          teesheetPageId: widget
+                                                              .teesheetPageId,
+                                                          reservationGroupId: widget
+                                                              .reservationGroupId,
+                                                          date:
+                                                              '${_dateController.text}',
+                                                          time: slot['time'],
+                                                          players:
+                                                              slot['players'],
+                                                          holes: slot['holes'],
+                                                          allowName: allowName,
+                                                          socket: socket!,
+                                                        ), // Replace with your target widget
+                                                      ),
+                                                    );
+                                                  },
+                                                  child: Container(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                      top: 0,
+                                                      bottom: 7,
                                                     ),
-                                                  );
-                                                },
-                                                child: Container(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                    horizontal: 20,
-                                                    vertical: 10,
-                                                  ),
-                                                  decoration: BoxDecoration(
-                                                    color:
-                                                        const Color(0xFFFFFFFF),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            15),
-                                                    boxShadow: [
-                                                      BoxShadow(
-                                                        color: Colors.black
-                                                            .withOpacity(0.1),
-                                                        blurRadius: 3,
-                                                        spreadRadius: 1,
-                                                        offset:
-                                                            const Offset(0, 0),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  child: Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .center,
-                                                    children: [
-                                                      const SizedBox(
-                                                        height: 6,
-                                                      ),
-                                                      Container(
-                                                        width: 119,
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .symmetric(
-                                                                horizontal: 15,
-                                                                vertical: 7),
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          color: const Color(
-                                                              0xFF9ECF9A),
-                                                          borderRadius:
-                                                              BorderRadius.circular(
-                                                                  50), // Optional
-                                                          boxShadow: [
-                                                            BoxShadow(
-                                                              color: Colors
-                                                                  .black
-                                                                  .withOpacity(
-                                                                      0.1),
-                                                              blurRadius: 3,
-                                                              spreadRadius: 1,
-                                                              offset:
-                                                                  const Offset(
-                                                                      0, 2),
-                                                            ),
-                                                          ],
+                                                    decoration: BoxDecoration(
+                                                      color: const Color(
+                                                          0xFFFFFFFF),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              15),
+                                                      boxShadow: [
+                                                        BoxShadow(
+                                                          color: Colors.black
+                                                              .withOpacity(0.1),
+                                                          blurRadius: 3,
+                                                          spreadRadius: 1,
+                                                          offset: const Offset(
+                                                              0, 0),
                                                         ),
-                                                        child: Center(
-                                                          child: Text(
-                                                            slot['time'] ?? '',
-                                                            style: GoogleFonts
-                                                                .poppins(
-                                                              color: const Color(
-                                                                  0xFFFFFFFF),
-                                                              fontSize: 13,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w600,
+                                                      ],
+                                                    ),
+                                                    child: Column(
+                                                      children: [
+                                                        Container(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .only(
+                                                                  top: 10,
+                                                                  bottom: 10,
+                                                                  left: 10,
+                                                                  right: 20),
+                                                          decoration:
+                                                              const BoxDecoration(
+                                                            color: Color(
+                                                                0xFF9ECF9A),
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .only(
+                                                              topLeft: Radius
+                                                                  .circular(15),
+                                                              topRight: Radius
+                                                                  .circular(15),
+                                                              bottomLeft: Radius
+                                                                  .circular(0),
+                                                              bottomRight:
+                                                                  Radius
+                                                                      .circular(
+                                                                          0),
                                                             ),
                                                           ),
-                                                        ),
-                                                      ),
-                                                      const SizedBox(
-                                                        height: 6,
-                                                      ),
-                                                      SingleChildScrollView(
-                                                        scrollDirection:
-                                                            Axis.horizontal,
-                                                        child: Row(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .spaceBetween,
-                                                          children: [
-                                                            Row(
+                                                          child: Row(
                                                               mainAxisAlignment:
                                                                   MainAxisAlignment
-                                                                      .end,
+                                                                      .spaceBetween,
                                                               children: [
-                                                                const Icon(
-                                                                  Icons.flag,
-                                                                  size: 14,
-                                                                  color: Color(
-                                                                      0xFF6B7280),
-                                                                ),
-                                                                Row(
-                                                                  mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .center,
-                                                                  children: [
-                                                                    Text(
-                                                                      (slot['holes'] != null &&
-                                                                              slot['holes'] is List &&
-                                                                              slot['holes'].isNotEmpty)
-                                                                          ? (slot['holes'] as List).join(' or ')
-                                                                          : '',
+                                                                Container(
+                                                                  decoration:
+                                                                      const BoxDecoration(
+                                                                    color: Color(
+                                                                        0xFF9ECF9A),
+                                                                  ),
+                                                                  child: Center(
+                                                                    child: Text(
+                                                                      slot['time'] ??
+                                                                          '',
                                                                       style: GoogleFonts
                                                                           .poppins(
                                                                         color: const Color(
-                                                                            0xFF6E7373),
+                                                                            0xFFFFFFFF),
                                                                         fontSize:
                                                                             13,
                                                                         fontWeight:
-                                                                            FontWeight.w400,
+                                                                            FontWeight.w600,
                                                                       ),
-                                                                    )
-                                                                  ],
-                                                                )
-                                                              ],
-                                                            ),
-                                                            const SizedBox(
-                                                              width: 20,
-                                                            ),
-                                                            Row(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .end,
-                                                              children: [
-                                                                const Icon(
-                                                                  Icons.person,
-                                                                  size: 14,
-                                                                  color: Color(
-                                                                      0xFF6B7280),
+                                                                    ),
+                                                                  ),
                                                                 ),
                                                                 Row(
                                                                   mainAxisAlignment:
                                                                       MainAxisAlignment
+                                                                          .end,
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
                                                                           .center,
                                                                   children: [
-                                                                    Text(
-                                                                      slot['players']
-                                                                              ?.toString() ??
-                                                                          '',
-                                                                      style: GoogleFonts.poppins(
-                                                                          color: const Color(
-                                                                              0xFF6E7373),
-                                                                          fontSize:
-                                                                              13,
-                                                                          fontWeight:
-                                                                              FontWeight.w400),
+                                                                    const Icon(
+                                                                      Icons
+                                                                          .person,
+                                                                      size: 15,
+                                                                      color: Color(
+                                                                          0xFFFFFFFF),
+                                                                    ),
+                                                                    const SizedBox(
+                                                                      width: 1,
+                                                                    ),
+                                                                    Row(
+                                                                      mainAxisAlignment:
+                                                                          MainAxisAlignment
+                                                                              .center,
+                                                                      children: [
+                                                                        Text(
+                                                                          slot['players']?.toString() ??
+                                                                              '',
+                                                                          style: GoogleFonts.poppins(
+                                                                              color: const Color(0xFFFFFFFF),
+                                                                              fontSize: 13,
+                                                                              fontWeight: FontWeight.w400),
+                                                                        ),
+                                                                      ],
+                                                                    )
+                                                                  ],
+                                                                ),
+                                                              ]),
+                                                        ),
+                                                        SingleChildScrollView(
+                                                          child: Column(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .start,
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start, // optional
+                                                            children: [
+                                                              Container(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                        .all(8),
+                                                                color: const Color(
+                                                                    0xFFF8F8F8),
+                                                                child: Row(
+                                                                  children: [
+                                                                    const SizedBox(
+                                                                      width: 20,
+                                                                      child:
+                                                                          Icon(
+                                                                        Icons
+                                                                            .flag,
+                                                                        size:
+                                                                            16,
+                                                                        color: Color(
+                                                                            0xFF669933),
+                                                                      ),
+                                                                    ),
+                                                                    const SizedBox(
+                                                                        width:
+                                                                            10),
+                                                                    const SizedBox(
+                                                                      width: 50,
+                                                                      child:
+                                                                          Row(
+                                                                        mainAxisAlignment:
+                                                                            MainAxisAlignment.start,
+                                                                        children: [
+                                                                          Icon(
+                                                                            Icons.directions_walk,
+                                                                            size:
+                                                                                16,
+                                                                            color:
+                                                                                Color(0xFF669933),
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                    ),
+                                                                    const SizedBox(
+                                                                        width:
+                                                                            10),
+                                                                    SizedBox(
+                                                                      width: 50,
+                                                                      child:
+                                                                          Row(
+                                                                        mainAxisAlignment:
+                                                                            MainAxisAlignment.start,
+                                                                        children: [
+                                                                          Image
+                                                                              .asset(
+                                                                            'assets/images/golf_car.png',
+                                                                            width:
+                                                                                16,
+                                                                            height:
+                                                                                16,
+                                                                            color:
+                                                                                const Color(0xFF669933),
+                                                                          ),
+                                                                        ],
+                                                                      ),
                                                                     ),
                                                                   ],
-                                                                )
-                                                              ],
-                                                            )
-                                                          ],
+                                                                ),
+                                                              ),
+                                                              Container(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                        .only(
+                                                                        left:
+                                                                            10,
+                                                                        right:
+                                                                            8,
+                                                                        top: 8,
+                                                                        bottom:
+                                                                            8),
+                                                                child: Row(
+                                                                  children: [
+                                                                    SizedBox(
+                                                                      width: 20,
+                                                                      child:
+                                                                          Column(
+                                                                        crossAxisAlignment:
+                                                                            CrossAxisAlignment.start,
+                                                                        children: (slot['holes'] != null &&
+                                                                                slot['holes'] is List &&
+                                                                                slot['holes'].isNotEmpty)
+                                                                            ? (slot['holes'] as List)
+                                                                                .map<Widget>((hole) => Text(
+                                                                                      hole.toString(),
+                                                                                      style: GoogleFonts.poppins(
+                                                                                        color: const Color(0xFF244065),
+                                                                                        fontSize: 13,
+                                                                                        fontWeight: FontWeight.w400,
+                                                                                      ),
+                                                                                    ))
+                                                                                .toList()
+                                                                            : [
+                                                                                Text(
+                                                                                  '',
+                                                                                  style: GoogleFonts.poppins(
+                                                                                    color: const Color(0xFF244065),
+                                                                                    fontSize: 13,
+                                                                                    fontWeight: FontWeight.w400,
+                                                                                  ),
+                                                                                )
+                                                                              ],
+                                                                      ),
+                                                                    ),
+                                                                    const SizedBox(
+                                                                      width: 10,
+                                                                    ),
+                                                                    SizedBox(
+                                                                      width: 50,
+                                                                      child:
+                                                                          Column(
+                                                                        crossAxisAlignment:
+                                                                            CrossAxisAlignment.start,
+                                                                        children: (slot['holes'] != null &&
+                                                                                slot['holes'] is List &&
+                                                                                slot['holes'].isNotEmpty)
+                                                                            ? (slot['holes'] as List)
+                                                                                .map<Widget>((hole) => Text(
+                                                                                      '\$${(num.tryParse(hole.toString())?.toStringAsFixed(2) ?? '0.00')}',
+                                                                                      style: GoogleFonts.poppins(
+                                                                                        color: const Color(0xFF244065),
+                                                                                        fontSize: 13,
+                                                                                        fontWeight: FontWeight.w400,
+                                                                                      ),
+                                                                                    ))
+                                                                                .toList()
+                                                                            : [
+                                                                                Text(
+                                                                                  '',
+                                                                                  style: GoogleFonts.poppins(
+                                                                                    color: const Color(0xFF244065),
+                                                                                    fontSize: 13,
+                                                                                    fontWeight: FontWeight.w400,
+                                                                                  ),
+                                                                                )
+                                                                              ],
+                                                                      ),
+                                                                    ),
+                                                                    const SizedBox(
+                                                                      width: 10,
+                                                                    ),
+                                                                    SizedBox(
+                                                                      width: 50,
+                                                                      child:
+                                                                          Column(
+                                                                        crossAxisAlignment:
+                                                                            CrossAxisAlignment.start,
+                                                                        children: (slot['holes'] != null &&
+                                                                                slot['holes'] is List &&
+                                                                                slot['holes'].isNotEmpty)
+                                                                            ? (slot['holes'] as List)
+                                                                                .map<Widget>((hole) => Text(
+                                                                                      '\$${(num.tryParse(hole.toString())?.toStringAsFixed(2) ?? '0.00')}',
+                                                                                      style: GoogleFonts.poppins(
+                                                                                        color: const Color(0xFF244065),
+                                                                                        fontSize: 13,
+                                                                                        fontWeight: FontWeight.w400,
+                                                                                      ),
+                                                                                    ))
+                                                                                .toList()
+                                                                            : [
+                                                                                Text(
+                                                                                  '',
+                                                                                  style: GoogleFonts.poppins(
+                                                                                    color: const Color(0xFF244065),
+                                                                                    fontSize: 13,
+                                                                                    fontWeight: FontWeight.w400,
+                                                                                  ),
+                                                                                )
+                                                                              ],
+                                                                      ),
+                                                                    )
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                              // First Column
+                                                            ],
+                                                          ),
                                                         ),
-                                                      ),
-                                                    ],
+                                                      ],
+                                                    ),
                                                   ),
                                                 ),
                                               );

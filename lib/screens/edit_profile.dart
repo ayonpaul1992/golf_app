@@ -342,9 +342,6 @@ class MyEditPageState extends State<MyEditPage> {
         ? DateFormat('yyyy-MM-dd').format(_selectedDate!)
         : '';
 
-    // Attach image (optional)
-    // print("Image path: $imagePath");
-
     if (kIsWeb && imageBytes != null) {
       request.files.add(
         http.MultipartFile.fromBytes(
@@ -588,8 +585,6 @@ class MyEditPageState extends State<MyEditPage> {
                                   );
                                 },
                               );
-                            
-                            
                             },
                             child: Container(
                               clipBehavior: Clip.none, // allow overflow
