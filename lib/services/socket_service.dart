@@ -1,62 +1,57 @@
+import 'dart:async';
+
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class SocketService {
   static final SocketService _instance = SocketService._internal();
   factory SocketService() => _instance;
-
-  IO.Socket? _socket;
-  bool _isConnected = false;
-
   SocketService._internal();
 
-  IO.Socket? get socket => _socket;
+  IO.Socket? socket;
+  bool isConnected = false;
+  Completer<void> _readyCompleter = Completer<void>();
 
-  bool get isConnected => _isConnected;
+  Future<void> init(String token) async {
+    if (socket != null && isConnected) return;
 
-  void init(String token) {
-    if (_socket != null && _isConnected) {
-      print("✅ Socket already initialized");
-      return;
-    }
-
-    _socket = IO.io(
+    socket = IO.io(
       'https://api.dev.driverpos.io',
       <String, dynamic>{
         'transports': ['websocket'],
-        'timeout': 5000,
+        'auth': {'token': token},
         'reconnection': true,
         'reconnectionAttempts': 5,
-        'auth': {'token': token},
       },
     );
 
-    _socket!.onConnect((_) {
+    socket!.onConnect((_) {
+      isConnected = true;
       print("✅ Socket connected");
-      _isConnected = true;
+      if (!_readyCompleter.isCompleted) _readyCompleter.complete();
     });
 
-    _socket!.onDisconnect((_) {
-      print("🔌 Socket disconnected");
-      _isConnected = false;
+    socket!.onDisconnect((_) {
+      isConnected = false;
+      _readyCompleter = Completer(); // Reset completer
     });
 
-    _socket!.onError((err) {
-      print("❌ Socket error: $err");
-      _isConnected = false;
-    });
+    socket!.onConnectError((e) => print("❌ Connect Error: $e"));
 
-    _socket!.onConnectError((err) {
-      print("❌ Connect error: $err");
-    });
-
-    _socket!.connect();
+    socket!.connect();
   }
 
+  Future<void> waitUntilConnected() => _readyCompleter.future;
+
+  /// Clean up listeners and close socket connection
   void dispose() {
-    _socket?.clearListeners();
-    _socket?.disconnect();
-    _socket?.destroy();
-    _socket = null;
-    _isConnected = false;
+    if (socket != null) {
+      socket!.clearListeners();
+      socket!.disconnect();
+      socket!.destroy();
+      socket = null;
+      isConnected = false;
+      _readyCompleter = Completer(); // Reset
+      print("🧹 Socket disposed");
+    }
   }
 }

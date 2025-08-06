@@ -160,84 +160,6 @@ class TeesheetPageState extends State<TeesheetPage> {
     }
   }
 
-  // void _initializeSocketAndFetch(Map<String, dynamic> params) async {
-  //   final FlutterSecureStorage secureStorage = const FlutterSecureStorage();
-  //   final token = await secureStorage.read(key: 'accessToken') ?? '';
-
-  //   final socketService = SocketService();
-  //   socketService.init(token); // Will only initialize once
-
-  //   // Wait for connection or proceed if already connected
-  //   if (socketService.isConnected) {
-  //     _fetchCustomerTeesheets(params);
-  //   } else {
-  //     socketService.socket?.onConnect((_) {
-  //       _fetchCustomerTeesheets(params);
-  //     });
-  //   }
-  // }
-
-  // Future<void> _fetchCustomerTeesheets(Map<String, dynamic> params) async {
-  //   // setState(() {
-  //   //   isLoading = true;
-  //   // });
-
-  //   final String teesheetId = params['teeSheet'];
-  //   final String date = params['date'];
-
-  //   final String triggerEvent =
-  //       "/triggerEvent?teesheetId=$teesheetId&date=$date";
-  //   final String dataEvent =
-  //       "/customerTeesheet?teesheetId=$teesheetId&date=$date";
-
-  //   // Clean old listeners
-  //   socket?.off(dataEvent);
-  //   socket?.off(triggerEvent);
-
-  //   // Listen for trigger
-  //   socket?.on(triggerEvent, (_) {
-  //     print("🔔 Trigger received: Re-fetching data");
-  //     socket?.emit("/customerTeesheet", params);
-  //   });
-
-  //   // Listen for data response
-  //   socket?.on(dataEvent, (data) {
-  //     // print("📦 Full data received: $data");
-
-  //     final innerData = data['data'];
-  //     final teeSheetConfig = data['teeSheetConfig'];
-
-  //     setState(() {
-  //       teesheetData = innerData;
-  //       setTeeSheetConfig(teeSheetConfig);
-  //       setTeeSheetData();
-  //       timeOfDay = "all";
-  //       isLoading = false;
-  //     });
-  //   });
-
-  //   // Emit initial fetch
-  //   // socket?.emit("/customerTeesheet", params);
-
-  //   if (socket != null && socket!.connected) {
-  //     socket!.emit("/customerTeesheet", params);
-  //   } else {
-  //     socket?.once('connect', (_) {
-  //       socket?.emit("/customerTeesheet", params);
-  //     });
-  //   }
-
-  //   // ⏱️ Fallback timeout: clear loading state if no response in 5 sec
-  //   Future.delayed(const Duration(seconds: 10), () {
-  //     if (isLoading) {
-  //       print("⚠️ Timeout: No response from /customerTeesheet");
-  //       setState(() {
-  //         isLoading = false;
-  //       });
-  //     }
-  //   });
-  // }
-
   Future<void> _fetchCustomerTeesheets(Map<String, dynamic> params) async {
     final String teesheetId = params['teeSheet'];
     final String date = params['date'];
@@ -288,10 +210,6 @@ class TeesheetPageState extends State<TeesheetPage> {
         }
       });
     }
-
-    // setState(() {
-    //   isLoading = true;
-    // });
 
     // 🛠️ Ensure the socket is connected before proceeding
     if (s.connected) {
@@ -1057,195 +975,6 @@ class TeesheetPageState extends State<TeesheetPage> {
                                           runSpacing: 15,
                                           children: [
                                             ...allTeeSheetData.map((slot) {
-                                              // return GestureDetector(
-                                              //   onTap: () {
-                                              //     print(
-                                              //         '_dateController.text: ${_dateController.text}');
-                                              //     Navigator.push(
-                                              //       context,
-                                              //       MaterialPageRoute(
-                                              //         builder: (context) =>
-                                              //             TeeSheetDtls(
-                                              //           teesheetPageId: widget
-                                              //               .teesheetPageId,
-                                              //           reservationGroupId: widget
-                                              //               .reservationGroupId,
-                                              //           date:
-                                              //               '${_dateController.text}',
-                                              //           time: slot['time'],
-                                              //           players:
-                                              //               slot['players'],
-                                              //           holes: slot['holes'],
-                                              //           allowName: allowName,
-                                              //           socket: socket!,
-                                              //         ), // Replace with your target widget
-                                              //       ),
-                                              //     );
-                                              //   },
-                                              //   child: Container(
-                                              //     padding: const EdgeInsets
-                                              //         .symmetric(
-                                              //       horizontal: 20,
-                                              //       vertical: 10,
-                                              //     ),
-                                              //     decoration: BoxDecoration(
-                                              //       color:
-                                              //           const Color(0xFFFFFFFF),
-                                              //       borderRadius:
-                                              //           BorderRadius.circular(
-                                              //               15),
-                                              //       boxShadow: [
-                                              //         BoxShadow(
-                                              //           color: Colors.black
-                                              //               .withOpacity(0.1),
-                                              //           blurRadius: 3,
-                                              //           spreadRadius: 1,
-                                              //           offset:
-                                              //               const Offset(0, 0),
-                                              //         ),
-                                              //       ],
-                                              //     ),
-                                              //     child: Column(
-                                              //       crossAxisAlignment:
-                                              //           CrossAxisAlignment
-                                              //               .center,
-                                              //       children: [
-                                              //         const SizedBox(
-                                              //           height: 6,
-                                              //         ),
-                                              //         Container(
-                                              //           width: 119,
-                                              //           padding:
-                                              //               const EdgeInsets
-                                              //                   .symmetric(
-                                              //                   horizontal: 15,
-                                              //                   vertical: 7),
-                                              //           decoration:
-                                              //               BoxDecoration(
-                                              //             color: const Color(
-                                              //                 0xFF9ECF9A),
-                                              //             borderRadius:
-                                              //                 BorderRadius.circular(
-                                              //                     50), // Optional
-                                              //             boxShadow: [
-                                              //               BoxShadow(
-                                              //                 color: Colors
-                                              //                     .black
-                                              //                     .withOpacity(
-                                              //                         0.1),
-                                              //                 blurRadius: 3,
-                                              //                 spreadRadius: 1,
-                                              //                 offset:
-                                              //                     const Offset(
-                                              //                         0, 2),
-                                              //               ),
-                                              //             ],
-                                              //           ),
-                                              //           child: Center(
-                                              //             child: Text(
-                                              //               slot['time'] ?? '',
-                                              //               style: GoogleFonts
-                                              //                   .poppins(
-                                              //                 color: const Color(
-                                              //                     0xFFFFFFFF),
-                                              //                 fontSize: 13,
-                                              //                 fontWeight:
-                                              //                     FontWeight
-                                              //                         .w600,
-                                              //               ),
-                                              //             ),
-                                              //           ),
-                                              //         ),
-                                              //         const SizedBox(
-                                              //           height: 6,
-                                              //         ),
-                                              //         SingleChildScrollView(
-                                              //           scrollDirection:
-                                              //               Axis.horizontal,
-                                              //           child: Row(
-                                              //             mainAxisAlignment:
-                                              //                 MainAxisAlignment
-                                              //                     .spaceBetween,
-                                              //             children: [
-                                              //               Row(
-                                              //                 mainAxisAlignment:
-                                              //                     MainAxisAlignment
-                                              //                         .end,
-                                              //                 children: [
-                                              //                   const Icon(
-                                              //                     Icons.flag,
-                                              //                     size: 14,
-                                              //                     color: Color(
-                                              //                         0xFF6B7280),
-                                              //                   ),
-                                              //                   Row(
-                                              //                     mainAxisAlignment:
-                                              //                         MainAxisAlignment
-                                              //                             .center,
-                                              //                     children: [
-                                              //                       Text(
-                                              //                         (slot['holes'] != null &&
-                                              //                                 slot['holes'] is List &&
-                                              //                                 slot['holes'].isNotEmpty)
-                                              //                             ? (slot['holes'] as List).join(' or ')
-                                              //                             : '',
-                                              //                         style: GoogleFonts
-                                              //                             .poppins(
-                                              //                           color: const Color(
-                                              //                               0xFF6E7373),
-                                              //                           fontSize:
-                                              //                               13,
-                                              //                           fontWeight:
-                                              //                               FontWeight.w400,
-                                              //                         ),
-                                              //                       )
-                                              //                     ],
-                                              //                   )
-                                              //                 ],
-                                              //               ),
-                                              //               const SizedBox(
-                                              //                 width: 20,
-                                              //               ),
-                                              //               Row(
-                                              //                 mainAxisAlignment:
-                                              //                     MainAxisAlignment
-                                              //                         .end,
-                                              //                 children: [
-                                              //                   const Icon(
-                                              //                     Icons.person,
-                                              //                     size: 14,
-                                              //                     color: Color(
-                                              //                         0xFF6B7280),
-                                              //                   ),
-                                              //                   Row(
-                                              //                     mainAxisAlignment:
-                                              //                         MainAxisAlignment
-                                              //                             .center,
-                                              //                     children: [
-                                              //                       Text(
-                                              //                         slot['players']
-                                              //                                 ?.toString() ??
-                                              //                             '',
-                                              //                         style: GoogleFonts.poppins(
-                                              //                             color: const Color(
-                                              //                                 0xFF6E7373),
-                                              //                             fontSize:
-                                              //                                 13,
-                                              //                             fontWeight:
-                                              //                                 FontWeight.w400),
-                                              //                       ),
-                                              //                     ],
-                                              //                   )
-                                              //                 ],
-                                              //               )
-                                              //             ],
-                                              //           ),
-                                              //         ),
-                                              //       ],
-                                              //     ),
-                                              //   ),
-                                              // );
-
                                               return SizedBox(
                                                 width: 170,
                                                 child: GestureDetector(
@@ -1268,7 +997,9 @@ class TeesheetPageState extends State<TeesheetPage> {
                                                               slot['players'],
                                                           holes: slot['holes'],
                                                           allowName: allowName,
-                                                          socket: socket!,
+                                                          socket:
+                                                              SocketService()
+                                                                  .socket!,
                                                         ), // Replace with your target widget
                                                       ),
                                                     );
