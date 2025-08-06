@@ -57,6 +57,14 @@ class TeesheetPageState extends State<TeesheetPage> {
   // List<String> teeSheetConfigHoles = [];
 
   IO.Socket? socket;
+  bool isSocketInitialized = false;
+
+  int? editingIndex;
+  int selectedPlayer = 0;
+  String selectedHole = "";
+  int selectedIndex = 0; // index 0 is "All"
+  bool showDropdown = false;
+  OverlayEntry? _dropdownOverlay;
 
   @override
   void initState() {
@@ -75,10 +83,171 @@ class TeesheetPageState extends State<TeesheetPage> {
       // 'holes': selectedHole,
       // 'players': selectedPlayer.toString(),
     };
-    _fetchCustomerTeesheets(queryParameters); // Call the API on screen load
+    setState(() {
+      isLoading = true;
+    });
+    _initializeSocketAndFetch(queryParameters);
+    // _fetchCustomerTeesheets(queryParameters); // Call the API on screen load
 
     // _fetchPendingReservation();
   }
+
+  @override
+  void dispose() {
+    _dropdownOverlay?.remove();
+    socket?.clearListeners();
+    socket?.disconnect();
+    socket?.destroy();
+    socket = null;
+    super.dispose();
+  }
+
+  void _initializeSocketAndFetch(Map<String, dynamic> params) async {
+    final FlutterSecureStorage secureStorage = const FlutterSecureStorage();
+    String token = await secureStorage.read(key: 'accessToken') ?? '';
+
+    // Initialize socket only once
+    if (socket == null || !isSocketInitialized) {
+      socket = IO.io(
+        'https://api.dev.driverpos.io',
+        <String, dynamic>{
+          'transports': ['websocket'],
+          'timeout': 5000,
+          'reconnection': true,
+          'reconnectionAttempts': 5,
+          'auth': {'token': token},
+        },
+      );
+
+      socket!.onConnect((_) {
+        print("✅ Socket connected");
+        _fetchCustomerTeesheets(params); // Fetch once connected
+      });
+
+      socket!.onConnectError((err) => print('❌ Connect error: $err'));
+      socket!.onError((err) => print('❌ General error: $err'));
+      socket!.onDisconnect((_) => print('🔌 Socket disconnected'));
+
+      socket!.connect();
+      isSocketInitialized = true;
+    } else {
+      // Socket already connected, just fetch
+      _fetchCustomerTeesheets(params);
+    }
+  }
+
+  Future<void> _fetchCustomerTeesheets(Map<String, dynamic> params) async {
+    // setState(() {
+    //   isLoading = true;
+    // });
+
+    final String teesheetId = params['teeSheet'];
+    final String date = params['date']; // Format: yyyy-MM-dd
+
+    final String triggerEvent =
+        "/triggerEvent?teesheetId=$teesheetId&date=$date";
+    final String dataEvent =
+        "/customerTeesheet?teesheetId=$teesheetId&date=$date";
+
+    // 🧹 Remove old listeners (if any)
+    socket?.off(dataEvent);
+    socket?.off(triggerEvent);
+
+    // 🔊 Listen to real-time update trigger
+    socket?.on(triggerEvent, (_) {
+      // print("🔔 Trigger received: New update available");
+      // 🔁 Re-fetch full data when trigger fires
+      socket?.emit("/customerTeesheet", params);
+    });
+
+    // 🎧 Listen to the full data response
+    socket?.on(dataEvent, (data) {
+      // print("📦 Full data received: $data");
+
+      final innerData = data['data'];
+      final teeSheetConfig = data['teeSheetConfig'];
+
+      setState(() {
+        teesheetData = innerData;
+        setTeeSheetConfig(teeSheetConfig);
+        setTeeSheetData();
+        timeOfDay = "all";
+        isLoading = false;
+      });
+    });
+
+    // 🔁 Initial fetch
+    socket?.emit("/customerTeesheet", params);
+  }
+
+  // Future<void> _fetchCustomerTeesheets(Map<String, dynamic> params) async {
+  //   setState(() {
+  //     isLoading = true;
+  //   });
+
+  //   // Get token
+  //   final FlutterSecureStorage secureStorage = const FlutterSecureStorage();
+  //   String token = await secureStorage.read(key: 'accessToken') ?? '';
+
+  //   // Clean up old socket if exists
+  //   if (socket != null) {
+  //     socket!.clearListeners();
+  //     socket!.disconnect();
+  //     socket!.destroy();
+  //     socket = null;
+  //   }
+
+  //   // Create new socket instance
+  //   socket = IO.io(
+  //     'https://api.dev.driverpos.io',
+  //     <String, dynamic>{
+  //       'transports': ['websocket'],
+  //       'timeout': 5000,
+  //       'reconnection': true,
+  //       'reconnectionAttempts': 5,
+  //       'auth': {'token': token},
+  //     },
+  //   );
+
+  //   // Extract dynamic event key from params
+  //   final String teesheetId = params['teeSheet'];
+  //   final String date = params['date']; // should be in "yyyy-MM-dd" format
+  //   final String eventName =
+  //       "/customerTeesheet?teesheetId=$teesheetId&date=$date";
+
+  //   // Setup socket event listeners
+  //   socket!.onConnect((_) {
+  //     print("✅ Socket connected");
+  //     // Remove any old listener for the same event
+  //     socket!.off(eventName);
+
+  //     // Listen for the new data
+  //     socket!.on(eventName, (data) {
+  //       // print("📦 Received data: $data");
+
+  //       final innerData = data['data'];
+  //       final teeSheetConfig = data['teeSheetConfig'];
+
+  //       setState(() {
+  //         teesheetData = innerData;
+  //         setTeeSheetConfig(teeSheetConfig);
+  //         setTeeSheetData();
+  //         // selectedIndex = 0; // Reset selectedIndex to 0 (All)
+  //         timeOfDay = "all"; // Reset timeOfDay to 'all'
+  //         isLoading = false;
+  //       });
+  //     });
+
+  //     // Emit after listener is set
+  //     socket!.emit("/customerTeesheet", params);
+  //   });
+
+  //   socket!.onConnectError((err) => print('❌ Connect error: $err'));
+  //   socket!.onError((err) => print('❌ General error: $err'));
+  //   socket!.onDisconnect((_) => print('🔌 Socket disconnected'));
+
+  //   socket!.connect();
+  // }
 
   Future<void> _handleRefresh() async {
     final now = DateTime.now();
@@ -133,129 +302,6 @@ class TeesheetPageState extends State<TeesheetPage> {
           'Holes: ${slot['holes']}, Green Fee: ${slot['greenFee']}, '
           'Cart Fee: ${slot['cartFee']}, Group Customers: ${slot['groupCustomers']}');
     }
-  }
-
-  // Future<void> _fetchCustomerTeesheets(Map<String, dynamic> params) async {
-  //   // setState(() {
-  //   //   isLoading = true;
-  //   // });
-  //   // Always dispose the old one
-  //   final FlutterSecureStorage secureStorage = const FlutterSecureStorage();
-
-  //   String token = await secureStorage.read(key: 'accessToken') ?? '';
-
-  //   socket?.clearListeners(); // ✅ clear all previous .on() handlers
-  //   socket?.disconnect();
-  //   socket?.destroy();
-  //   socket = null;
-
-  //   socket?.dispose();
-
-  //   socket = IO.io('https://api.dev.driverpos.io', <String, dynamic>{
-  //     'transports': ['websocket'],
-  //     'timeout': 5000,
-  //     'reconnection': true,
-  //     'reconnectionAttempts': 5,
-  //     'auth': {
-  //       'token': token, // ✅ this matches the React structure
-  //     },
-  //   });
-
-  //   socket!.onConnect((_) {
-  //     socket!.emit("/customerTeesheet", params);
-  //   });
-
-  //   socket!.off("/customerTeesheet");
-
-  //   socket!.on(
-  //       "/customerTeesheet?teesheetId=${widget.teesheetPageId}&date=${DateFormat("yyyy-MM-dd").format(_selectedDate!)}",
-  //       (data) {
-  //     final innerData = data['data']; // Extract the inner 'data' object
-  //     final teeSheetConfig = data['teeSheetConfig']; // Get config
-
-  //     print("📦 Received data: $data");
-  //     setState(() {
-  //       teesheetData = innerData;
-  //       setTeeSheetConfig(teeSheetConfig);
-  //       setTeeSheetData();
-  //       isLoading = false;
-  //     });
-  //   });
-
-  //   socket!.onConnectError((err) => print('❌ Connect error: $err'));
-  //   socket!.onError((err) => print('❌ General error: $err'));
-  //   socket!.onDisconnect((_) => print('🔌 Socket disconnected'));
-
-  //   socket!.connect();
-  // }
-
-  Future<void> _fetchCustomerTeesheets(Map<String, dynamic> params) async {
-    setState(() {
-      isLoading = true;
-    });
-
-    // Get token
-    final FlutterSecureStorage secureStorage = const FlutterSecureStorage();
-    String token = await secureStorage.read(key: 'accessToken') ?? '';
-
-    // Clean up old socket if exists
-    if (socket != null) {
-      socket!.clearListeners();
-      socket!.disconnect();
-      socket!.destroy();
-      socket = null;
-    }
-
-    // Create new socket instance
-    socket = IO.io(
-      'https://api.dev.driverpos.io',
-      <String, dynamic>{
-        'transports': ['websocket'],
-        'timeout': 5000,
-        'reconnection': true,
-        'reconnectionAttempts': 5,
-        'auth': {'token': token},
-      },
-    );
-
-    // Extract dynamic event key from params
-    final String teesheetId = params['teeSheet'];
-    final String date = params['date']; // should be in "yyyy-MM-dd" format
-    final String eventName =
-        "/customerTeesheet?teesheetId=$teesheetId&date=$date";
-
-    // Setup socket event listeners
-    socket!.onConnect((_) {
-      print("✅ Socket connected");
-      // Remove any old listener for the same event
-      socket!.off(eventName);
-
-      // Listen for the new data
-      socket!.on(eventName, (data) {
-        print("📦 Received data: $data");
-
-        final innerData = data['data'];
-        final teeSheetConfig = data['teeSheetConfig'];
-
-        setState(() {
-          teesheetData = innerData;
-          setTeeSheetConfig(teeSheetConfig);
-          setTeeSheetData();
-          // selectedIndex = 0; // Reset selectedIndex to 0 (All)
-          timeOfDay = "all"; // Reset timeOfDay to 'all'
-          isLoading = false;
-        });
-      });
-
-      // Emit after listener is set
-      socket!.emit("/customerTeesheet", params);
-    });
-
-    socket!.onConnectError((err) => print('❌ Connect error: $err'));
-    socket!.onError((err) => print('❌ General error: $err'));
-    socket!.onDisconnect((_) => print('🔌 Socket disconnected'));
-
-    socket!.connect();
   }
 
   void _showDatePicker(BuildContext context) {
@@ -411,23 +457,6 @@ class TeesheetPageState extends State<TeesheetPage> {
         );
       },
     );
-  }
-
-  int? editingIndex;
-  int selectedPlayer = 0;
-  String selectedHole = "";
-  int selectedIndex = 0; // index 0 is "All"
-  bool showDropdown = false;
-  OverlayEntry? _dropdownOverlay;
-
-  @override
-  void dispose() {
-    _dropdownOverlay?.remove();
-    socket?.clearListeners();
-    socket?.disconnect();
-    socket?.destroy();
-    socket = null;
-    super.dispose();
   }
 
   @override
