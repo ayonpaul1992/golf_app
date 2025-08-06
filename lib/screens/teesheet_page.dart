@@ -82,25 +82,16 @@ class TeesheetPageState extends State<TeesheetPage> {
       'date': _selectedDate != null
           ? DateFormat("yyyy-MM-dd").format(_selectedDate!)
           : '',
-      // 'holes': selectedHole,
-      // 'players': selectedPlayer.toString(),
     };
     setState(() {
       isLoading = true;
     });
     _initializeSocketAndFetch(queryParameters);
-    // _fetchCustomerTeesheets(queryParameters); // Call the API on screen load
-
-    // _fetchPendingReservation();
   }
 
   @override
   void dispose() {
     _dropdownOverlay?.remove();
-    // socket?.clearListeners();
-    // socket?.disconnect();
-    // socket?.destroy();
-    // socket = null;
     super.dispose();
   }
 
@@ -108,167 +99,83 @@ class TeesheetPageState extends State<TeesheetPage> {
     final FlutterSecureStorage secureStorage = const FlutterSecureStorage();
     final token = await secureStorage.read(key: 'accessToken') ?? '';
 
-    final socketService = SocketService();
-    socketService.init(token); // Will only initialize once
+    final socketService = SocketService(); // Singleton
+    socketService.init(token); // Initializes once
+    final s = socketService.socket;
 
-    // Wait for connection or proceed if already connected
-    if (socketService.isConnected) {
-      _fetchCustomerTeesheets(params);
+    if (s == null) return;
+
+    final String teesheetId = params['teeSheet'];
+    final String date = params['date'];
+    final String triggerEvent =
+        "/triggerEvent?teesheetId=$teesheetId&date=$date";
+    final String dataEvent =
+        "/customerTeesheet?teesheetId=$teesheetId&date=$date";
+
+    void setupListeners() {
+      // Clear existing listeners to prevent stacking
+      s.off(triggerEvent);
+      s.off(dataEvent);
+
+      s.on(triggerEvent, (_) {
+        print("🔔 Trigger received: Re-fetching data");
+        s.emit("/customerTeesheet", params);
+      });
+
+      s.on(dataEvent, (data) {
+        final innerData = data['data'];
+        final teeSheetConfig = data['teeSheetConfig'];
+
+        setState(() {
+          teesheetData = innerData;
+          setTeeSheetConfig(teeSheetConfig);
+          setTeeSheetData();
+          timeOfDay = "all";
+          isLoading = false;
+        });
+      });
+
+      print("📤 Emitting /customerTeesheet...");
+      s.emit("/customerTeesheet", params);
+
+      Future.delayed(const Duration(seconds: 10), () {
+        if (isLoading) {
+          print("⚠️ Timeout: No response from /customerTeesheet");
+          setState(() {
+            isLoading = false;
+          });
+        }
+      });
+    }
+
+    if (s.connected) {
+      print("🟢 Socket already connected");
+      setupListeners();
     } else {
-      socketService.socket?.onConnect((_) {
-        _fetchCustomerTeesheets(params);
+      print("🕐 Waiting for socket connection...");
+      s.once('connect', (_) {
+        print("✅ Socket connected");
+        setupListeners();
       });
     }
   }
 
   // void _initializeSocketAndFetch(Map<String, dynamic> params) async {
   //   final FlutterSecureStorage secureStorage = const FlutterSecureStorage();
-  //   String token = await secureStorage.read(key: 'accessToken') ?? '';
+  //   final token = await secureStorage.read(key: 'accessToken') ?? '';
 
-  //   // Initialize socket only once
-  //   if (socket == null) {
-  //     // print("🔌 Socket already initialized");
-  //     print('🔌 Initializing socket connection...');
+  //   final socketService = SocketService();
+  //   socketService.init(token); // Will only initialize once
 
-  //     socket = IO.io(
-  //       'https://api.dev.driverpos.io',
-  //       <String, dynamic>{
-  //         'transports': ['websocket'],
-  //         'timeout': 5000,
-  //         'reconnection': true,
-  //         'reconnectionAttempts': 5,
-  //         'auth': {'token': token},
-  //       },
-  //     );
-
-  //     socket!.onConnect((_) {
-  //       print("✅ Socket connected");
-  //       _fetchCustomerTeesheets(params); // Initial fetch on connect
-  //     });
-
-  //     socket!.onReconnect((_) {
-  //       print("🔄 Reconnected");
-  //       _fetchCustomerTeesheets(params); // Optional: fetch again on reconnect
-  //     });
-
-  //     socket!.onConnectError((err) {
-  //       print('❌ Connect error: $err');
-  //     });
-
-  //     socket!.onError((err) {
-  //       print('❌ General socket error: $err');
-  //     });
-
-  //     socket!.onDisconnect((_) {
-  //       print('🔌 Socket disconnected');
-  //     });
-
-  //     socket!.connect();
-  //   } else {
-  //     print("🔌 Socket already initialized");
-  //     // Socket already exists
-  //     if (socket!.connected) {
-  //       print("♻️ Socket already connected, fetching...");
-  //       _fetchCustomerTeesheets(params);
-  //     } else {
-  //       print("⏳ Waiting for socket to connect...");
-  //       socket!.onConnect((_) {
-  //         _fetchCustomerTeesheets(params);
-  //       });
-  //       if (!socket!.connected) {
-  //         socket!.connect(); // Ensure it's trying to connect
-  //       }
-  //     }
-  //   }
-  // }
-
-  // void _initializeSocketAndFetch(Map<String, dynamic> params) async {
-  //   final FlutterSecureStorage secureStorage = const FlutterSecureStorage();
-  //   String token = await secureStorage.read(key: 'accessToken') ?? '';
-
-  //   // Initialize socket only once
-  //   if (socket == null || !isSocketInitialized) {
-  //     print('🔌 Initializing socket connection...');
-  //     socket = IO.io(
-  //       'https://api.dev.driverpos.io',
-  //       <String, dynamic>{
-  //         'transports': ['websocket'],
-  //         'timeout': 5000,
-  //         'reconnection': true,
-  //         'reconnectionAttempts': 5,
-  //         'auth': {'token': token},
-  //       },
-  //     );
-
-  //     socket!.onConnect((_) {
-  //       print("✅ Socket connected");
-  //       _fetchCustomerTeesheets(params); // Fetch once connected
-  //     });
-
-  //     socket!.onConnectError((err) => print('❌ Connect error: $err'));
-  //     socket!.onError((err) => print('❌ General error: $err'));
-  //     socket!.onDisconnect((_) => print('🔌 Socket disconnected'));
-
-  //     socket!.connect();
-  //     isSocketInitialized = true;
-  //   } else {
-  //     // Socket already connected, just fetch
+  //   // Wait for connection or proceed if already connected
+  //   if (socketService.isConnected) {
   //     _fetchCustomerTeesheets(params);
+  //   } else {
+  //     socketService.socket?.onConnect((_) {
+  //       _fetchCustomerTeesheets(params);
+  //     });
   //   }
   // }
-
-  Future<void> _fetchCustomerTeesheets(Map<String, dynamic> params) async {
-    // setState(() {
-    //   isLoading = true;
-    // });
-
-    final String teesheetId = params['teeSheet'];
-    final String date = params['date'];
-
-    final String triggerEvent =
-        "/triggerEvent?teesheetId=$teesheetId&date=$date";
-    final String dataEvent =
-        "/customerTeesheet?teesheetId=$teesheetId&date=$date";
-
-    // Clean old listeners
-    socket?.off(dataEvent);
-    socket?.off(triggerEvent);
-
-    // Listen for trigger
-    socket?.on(triggerEvent, (_) {
-      print("🔔 Trigger received: Re-fetching data");
-      socket?.emit("/customerTeesheet", params);
-    });
-
-    // Listen for data response
-    socket?.on(dataEvent, (data) {
-      // print("📦 Full data received: $data");
-
-      final innerData = data['data'];
-      final teeSheetConfig = data['teeSheetConfig'];
-
-      setState(() {
-        teesheetData = innerData;
-        setTeeSheetConfig(teeSheetConfig);
-        setTeeSheetData();
-        timeOfDay = "all";
-        isLoading = false;
-      });
-    });
-
-    // Emit initial fetch
-    socket?.emit("/customerTeesheet", params);
-
-    // ⏱️ Fallback timeout: clear loading state if no response in 5 sec
-    Future.delayed(const Duration(seconds: 5), () {
-      if (isLoading) {
-        print("⚠️ Timeout: No response from /customerTeesheet");
-        setState(() {
-          isLoading = false;
-        });
-      }
-    });
-  }
 
   // Future<void> _fetchCustomerTeesheets(Map<String, dynamic> params) async {
   //   // setState(() {
@@ -276,25 +183,24 @@ class TeesheetPageState extends State<TeesheetPage> {
   //   // });
 
   //   final String teesheetId = params['teeSheet'];
-  //   final String date = params['date']; // Format: yyyy-MM-dd
+  //   final String date = params['date'];
 
   //   final String triggerEvent =
   //       "/triggerEvent?teesheetId=$teesheetId&date=$date";
   //   final String dataEvent =
   //       "/customerTeesheet?teesheetId=$teesheetId&date=$date";
 
-  //   // 🧹 Remove old listeners (if any)
+  //   // Clean old listeners
   //   socket?.off(dataEvent);
   //   socket?.off(triggerEvent);
 
-  //   // 🔊 Listen to real-time update trigger
+  //   // Listen for trigger
   //   socket?.on(triggerEvent, (_) {
-  //     // print("🔔 Trigger received: New update available");
-  //     // 🔁 Re-fetch full data when trigger fires
+  //     print("🔔 Trigger received: Re-fetching data");
   //     socket?.emit("/customerTeesheet", params);
   //   });
 
-  //   // 🎧 Listen to the full data response
+  //   // Listen for data response
   //   socket?.on(dataEvent, (data) {
   //     // print("📦 Full data received: $data");
 
@@ -310,9 +216,95 @@ class TeesheetPageState extends State<TeesheetPage> {
   //     });
   //   });
 
-  //   // 🔁 Initial fetch
-  //   socket?.emit("/customerTeesheet", params);
+  //   // Emit initial fetch
+  //   // socket?.emit("/customerTeesheet", params);
+
+  //   if (socket != null && socket!.connected) {
+  //     socket!.emit("/customerTeesheet", params);
+  //   } else {
+  //     socket?.once('connect', (_) {
+  //       socket?.emit("/customerTeesheet", params);
+  //     });
+  //   }
+
+  //   // ⏱️ Fallback timeout: clear loading state if no response in 5 sec
+  //   Future.delayed(const Duration(seconds: 10), () {
+  //     if (isLoading) {
+  //       print("⚠️ Timeout: No response from /customerTeesheet");
+  //       setState(() {
+  //         isLoading = false;
+  //       });
+  //     }
+  //   });
   // }
+
+  Future<void> _fetchCustomerTeesheets(Map<String, dynamic> params) async {
+    final String teesheetId = params['teeSheet'];
+    final String date = params['date'];
+
+    final String triggerEvent =
+        "/triggerEvent?teesheetId=$teesheetId&date=$date";
+    final String dataEvent =
+        "/customerTeesheet?teesheetId=$teesheetId&date=$date";
+
+    final socketService = SocketService();
+    final s = socketService.socket;
+
+    if (s == null) {
+      print("❌ Socket is null");
+      return;
+    }
+
+    void setupListeners() {
+      s.off(triggerEvent);
+      s.off(dataEvent);
+
+      s.on(triggerEvent, (_) {
+        print("🔔 Trigger received: Re-fetching data");
+        s.emit("/customerTeesheet", params);
+      });
+
+      s.on(dataEvent, (data) {
+        final innerData = data['data'];
+        final teeSheetConfig = data['teeSheetConfig'];
+
+        setState(() {
+          teesheetData = innerData;
+          setTeeSheetConfig(teeSheetConfig);
+          setTeeSheetData();
+          timeOfDay = "all";
+          isLoading = false;
+        });
+      });
+
+      s.emit("/customerTeesheet", params);
+
+      Future.delayed(const Duration(seconds: 10), () {
+        if (isLoading) {
+          print("⚠️ Timeout: No response from /customerTeesheet");
+          setState(() {
+            isLoading = false;
+          });
+        }
+      });
+    }
+
+    // setState(() {
+    //   isLoading = true;
+    // });
+
+    // 🛠️ Ensure the socket is connected before proceeding
+    if (s.connected) {
+      print("🟢 Socket already connected (fetch)");
+      setupListeners();
+    } else {
+      print("🕐 Socket not connected yet (fetch), waiting...");
+      s.once('connect', (_) {
+        print("✅ Socket connected (fetch)");
+        setupListeners();
+      });
+    }
+  }
 
   Future<void> _handleRefresh() async {
     final now = DateTime.now();
@@ -320,6 +312,8 @@ class TeesheetPageState extends State<TeesheetPage> {
     _dateController.text = DateFormat("MMM dd, yyyy").format(now);
     timeOfDay = 'all'; // Reset timeOfDay to 'all'
     selectedIndex = 0; // Reset selectedIndex to 0 (All)
+    selectedHole = ""; // Reset selectedHole
+    selectedPlayer = 0; // Reset selectedPlayer
     final queryParameters = {
       'timeOfDay': timeOfDay, // Reset to 'all' time slot
       'teeSheet': widget.teesheetPageId,
