@@ -10,7 +10,6 @@ import 'package:gulf_app/services/socket_service.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:gulf_app/screens/tee_sheet_details.dart';
 import 'package:intl/intl.dart';
-import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class TeesheetPage extends StatefulWidget {
   final String teesheetPageId;

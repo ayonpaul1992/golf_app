@@ -560,9 +560,11 @@ class MyReservationPageState extends State<MyReservationPage> {
                                                                       const SizedBox(
                                                                           width:
                                                                               6),
-                                                                      reservation['checkedIn'] == false &&
-                                                                              reservation['canceled'] ==
-                                                                                  false
+                                                                      // reservation['checkedIn'] == false &&
+                                                                      //         reservation['canceled'] ==
+                                                                      //             false
+                                                                      reservation[
+                                                                              'isCancelable']
                                                                           ? ElevatedButton(
                                                                               // onPressed: () {
                                                                               //   // Add your cancel logic here
