@@ -1,8 +1,15 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:gulf_app/screens/dashboard.dart';
+import 'package:gulf_app/screens/login.dart';
+import 'package:gulf_app/screens/my_profile.dart';
+import 'package:gulf_app/screens/my_reservation.dart';
+import 'package:gulf_app/screens/my_transaction.dart';
 import 'package:gulf_app/screens/selcet_booking_class.dart';
+import 'package:gulf_app/screens/tab_card_screens.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
@@ -24,6 +31,11 @@ class CustomDrawer extends StatefulWidget {
 class _CustomDrawerState extends State<CustomDrawer> {
   String activeTile = '';
   String loggedInUserName = '';
+  String loggedInUserPhone = '';
+  String loggedInGolfCourse = '';
+  String profilePic = ""; // Placeholder for profile picture URL
+
+  final FlutterSecureStorage secureStorage = const FlutterSecureStorage();
 
   @override
   void initState() {
@@ -33,132 +45,19 @@ class _CustomDrawerState extends State<CustomDrawer> {
   }
 
   void _loadUserName() async {
-    String? userName = await getUserName();
+    String? userName = await secureStorage.read(key: 'userName');
+    String? userPhone = await secureStorage.read(key: 'userPhone');
+    String? golfCourseName = await secureStorage.read(key: 'golfCourseName');
+    String? storedPic = await secureStorage.read(key: 'profilePic');
+
+    // print('User Name: $userName');
     setState(() {
-      loggedInUserName = userName ?? "Guest"; // Provide a fallback value
+      loggedInUserName = userName ?? ""; // Provide a fallback value
+      loggedInUserPhone = userPhone ?? ""; // Provide a fallback value
+      loggedInGolfCourse = golfCourseName ?? ""; // Static value for now
+      profilePic = storedPic ?? ""; // Provide a fallback value
     });
   }
-
-  Future<String?> getUserName() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('user_name'); // Returns userId if stored, else null
-  }
-
-  Future<void> _logout(BuildContext context) async {
-    final prefs = await SharedPreferences.getInstance();
-
-    // Retrieve the dynamically stored API URL and auth token from SharedPreferences
-    const String apiUrl =
-        'https://wealthclockadvisors.com/api/client/logout'; // Replace with your actual API URL
-    final String? authToken =
-    prefs.getString('auth_token'); // Dynamically get the auth token
-
-    // Check if the auth token is null
-    if (authToken == null) {
-      // print('Auth token not found in SharedPreferences');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content:
-            Text('Unable to retrieve session data. Please log in again.')),
-      );
-      return;
-    }
-
-    try {
-      // print('Attempting to log out...');
-      // print('API URL: $apiUrl');
-      // print('Authorization Token: $authToken');
-
-      // Sending the GET request to the logout API
-      final response = await http.get(
-        Uri.parse('$apiUrl?logout=true'),
-        headers: {
-          'Authorization': 'Bearer $authToken', // Use the dynamic auth token
-          'Content-Type': 'application/json',
-        },
-      );
-
-      // print('Response status: ${response.statusCode}');
-      // print('Response body: ${response.body}');
-
-      if (response.statusCode == 200) {
-        // Successfully logged out
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Logged out successfully!')),
-        );
-
-        // Clear all session data after logout
-        await prefs.clear();
-
-        // Navigate to the login screen after successful logout
-        Navigator.pushReplacementNamed(context, '/login');
-      } else if (response.statusCode == 401) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Unauthorized')),
-        );
-      } else {
-        // Handle API error response
-        // print('Error during logout. Status code: ${response.statusCode}');
-        // print('Error body: ${response.body}');
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Unable to logout. Please try again.'),
-          ),
-        );
-      }
-    } catch (e) {
-      // Handle network or other errors
-      // print('Error during logout: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Error: Unable to log out. $e'),
-        ),
-      );
-    }
-  }
-
-  // Widget _buildDrawerTile({
-  //   required String title,
-  //   required IconData icon,
-  // }) {
-  //   bool isActive = activeTile == title;
-  //   return Container(
-  //     decoration: BoxDecoration(
-  //       border:
-  //           Border(bottom: BorderSide(color: Colors.grey.shade400, width: 1.0)),
-  //     ),
-  //     child: ElevatedButton(
-  //       style: ElevatedButton.styleFrom(
-  //         padding: EdgeInsets.zero,
-  //         backgroundColor: isActive ? Color(0xFFfee0be) : Colors.transparent,
-  //         elevation: isActive ? 5 : 0,
-  //         shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
-  //       ),
-  //       onPressed: () {
-  //         setState(() {
-  //           activeTile = title;
-  //         });
-  //         widget.onTileTap(title);
-  //         Navigator.pop(context); // Close drawer
-  //       },
-  //       child: ListTile(
-  //         leading: Icon(
-  //           icon,
-  //           color: isActive ? Color(0xFF0f625c) : Color(0xFF303131),
-  //           size: 20,
-  //         ),
-  //         title: Text(
-  //           title,
-  //           style: TextStyle(
-  //             color: isActive ? Color(0xFF0f625c) : Color(0xFF303131),
-  //             fontSize: 15,
-  //             fontWeight: FontWeight.w600,
-  //           ),
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  // }
 
   Widget _buildDrawerTile({
     required String title,
@@ -169,51 +68,71 @@ class _CustomDrawerState extends State<CustomDrawer> {
 
     return InkWell(
       onTap: () {
-        Navigator.pop(context); // Close drawer
+        // // Close drawer
 
         if (activeTile == title) {
           // ✅ Don't navigate if already on this screen
+          Navigator.pop(context);
           return;
         }
+
         setState(() {
           activeTile = title;
+          isActive = true;
         });
+
         widget.onTileTap(title);
 
+        print('Active tile after tap: $activeTile');
+
         if (destinationScreen != null) {
+          print('Navigating to $title screen');
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => destinationScreen),
           );
         } else {
+          Navigator.pop(context);
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('$title screen is under development!')),
           );
         }
-
-        // Navigator.push(
-        //   context,
-        //   MaterialPageRoute(builder: (context) => destinationScreen),
-        // );
       },
       child: AnimatedContainer(
-        duration: Duration(milliseconds: 200),
+        duration: const Duration(milliseconds: 200),
         decoration: BoxDecoration(
-          color: isActive ? Color(0xFFfee0be) : Colors.transparent,
-          border: Border(
-            bottom: BorderSide(color: Colors.grey.shade400, width: 1.0),
+          color: isActive ? const Color(0xFF7DB778) : Colors.transparent,
+          border: const Border(
+            bottom: BorderSide(color: Color(0xFFBFEBBC), width: 1.0),
           ),
         ),
         child: ListTile(
-          leading: Icon(
-            icon,
-            color: isActive ? Color(0xFF0f625c) : Color(0xFF303131),
-            size: 22, // Slightly increased for better visibility
+          leading: Container(
+            width: 35,
+            height: 35,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(100),
+              border: Border.all(
+                  color: isActive
+                      ? const Color(0xFF669933)
+                      : const Color(0xFF9ECF9A),
+                  width: 1),
+            ),
+            child: Center(
+              child: Icon(
+                icon,
+                color: isActive
+                    ? const Color(0xFFffffff)
+                    : const Color(0xFFffffff),
+                size: 22, // Slightly increased for better visibility
+              ),
+            ),
           ),
           title: Text(
             title,
             style: TextStyle(
-              color: isActive ? Color(0xFF0f625c) : Color(0xFF303131),
+              color:
+                  isActive ? const Color(0xFFffffff) : const Color(0xFFffffff),
               fontSize: 15,
               fontWeight: FontWeight.w600,
             ),
@@ -227,51 +146,98 @@ class _CustomDrawerState extends State<CustomDrawer> {
   Widget build(BuildContext context) {
     return Drawer(
       child: Container(
-        color: Color(0xFFfdd1a0),
+        color: const Color(0xFF9ECF9A),
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
             // Header
             DrawerHeader(
-              decoration: BoxDecoration(color: Color(0xFFfdd1a0)),
+              decoration: const BoxDecoration(color: Color(0xFF9ECF9A)),
               child: SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    ClipOval(
-                      child: Image.asset(
-                        'assets/images/menu_ppl.png',
-                        fit: BoxFit.cover,
-                        width: 64,
-                        height: 64,
+                    GestureDetector(
+                      onTap: () => Navigator.pop(context),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        spacing: 5,
+                        children: [
+                          const Icon(
+                            Icons.arrow_back_ios_sharp,
+                            size: 19,
+                            color: Color(0xFFffffff),
+                          ),
+                          Text(
+                            loggedInGolfCourse.isNotEmpty
+                                ? loggedInGolfCourse
+                                : 'Golf Course',
+                            style: GoogleFonts.poppins(
+                                color: const Color(0xFFFFFFFF),
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600),
+                          )
+                        ],
                       ),
                     ),
-                    SizedBox(
-                      width: 150,
-                      child: Text(
-                        loggedInUserName,
-                        style: GoogleFonts.poppins(
-                          color: Color(0xFF0f625c),
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
+                    const SizedBox(
+                      height: 40,
                     ),
-                    Container(
-                      width: 43,
-                      height: 43,
-                      decoration: BoxDecoration(
-                        color: Color(0xFFfee8d0),
-                        borderRadius: BorderRadius.circular(100),
-                      ),
-                      child: Center(
-                        child: IconButton(
-                          icon: Icon(Icons.clear, size: 19),
-                          onPressed: () => Navigator.pop(context),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      spacing: 5,
+                      children: [
+                        ClipOval(
+                          child: Image(
+                            image: profilePic.isNotEmpty
+                                ? NetworkImage(profilePic)
+                                : const AssetImage('assets/images/bkdu1.png')
+                                    as ImageProvider,
+                            fit: BoxFit.cover,
+                            width: 50,
+                            height: 50,
+                          ),
+
+                          // Image.asset(
+                          //   'assets/images/menu_ppl.png',
+                          //   fit: BoxFit.cover,
+                          //   width: 64,
+                          //   height: 64,
+                          // ),
                         ),
-                      ),
-                    )
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              width: 200,
+                              child: Text(
+                                loggedInUserName,
+                                style: GoogleFonts.poppins(
+                                  color: const Color(0xFFFFFFFF),
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                            Container(
+                              padding: const EdgeInsets.only(top: 5),
+                              width: 200,
+                              child: Text(
+                                '+1 ${loggedInUserPhone.replaceFirstMapped(RegExp(r'^(\d{5})(\d+)'), (m) => '${m[1]} ${m[2]}')}',
+                                style: GoogleFonts.poppins(
+                                  color: const Color(0xFFFFFFFF),
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ],
                 ),
               ),
@@ -281,52 +247,121 @@ class _CustomDrawerState extends State<CustomDrawer> {
             _buildDrawerTile(
               title: 'Home',
               icon: Icons.home,
-              destinationScreen: SelcetBookingClass(userId: ''),
-            ),
-            _buildDrawerTile(
-              title: 'My Orders',
-              icon: Icons.shopping_bag_outlined,
+              destinationScreen: const DashboardPage(),
             ),
             _buildDrawerTile(
               title: 'My Profile',
               icon: Icons.person_outline_sharp,
+              destinationScreen: const MyProfilePage(myPfId: ''),
             ),
             _buildDrawerTile(
-              title: 'Change Password',
-              icon: Icons.lock_outline,
+              title: 'Tee Times',
+              icon: Icons.golf_course_outlined,
+              destinationScreen: const SelcetBookingClass(
+                userId: '',
+              ),
             ),
             _buildDrawerTile(
-              title: 'Request a Service',
-              icon: Icons.event_note_sharp,
+              title: 'My Transactions',
+              icon: Icons.receipt_long,
+              destinationScreen: const MyTransactionPage(
+                myTransId: '',
+              ), // Placeholder
             ),
             _buildDrawerTile(
-              title: 'Contact Us',
-              icon: Icons.email_outlined,
+              title: 'My Reservations',
+              icon: Icons.calendar_month_sharp,
+              destinationScreen: const MyReservationPage(
+                myRsvId: '',
+              ), // Placeholder
+            ),
+            _buildDrawerTile(
+              title: 'My Wallet',
+              icon: Icons.shopping_cart,
+              destinationScreen: const TabCardScreenPage(
+                tabcardId: '',
+              ), // Placeholder
+            ),
+            _buildDrawerTile(
+              title: 'Gift Card',
+              icon: Icons.card_giftcard,
+              destinationScreen: const TabCardScreenPage(
+                tabcardId: '',
+              ), // Placeholder
             ),
 
             // Logout Button
             Container(
-              margin: EdgeInsets.only(top: 100),
+              margin: const EdgeInsets.only(top: 100),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(left: 20),
-                    child: ElevatedButton(
-                      onPressed: () => _logout(context),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFfef1e2),
-                        elevation: 5,
-                      ),
-                      child: Text(
-                        'Log Out'.toUpperCase(),
-                        style: GoogleFonts.poppins(
-                          fontSize: 17,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xFF222222),
+                    child: Stack(children: [
+                      SizedBox(
+                        width: 260,
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            bool? confirm = await showDialog<bool>(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: const Text('Confirm Logout'),
+                                  content: const Text(
+                                      'Are you sure you want to logout?'),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () =>
+                                          Navigator.of(context).pop(false),
+                                      child: const Text('Cancel'),
+                                    ),
+                                    TextButton(
+                                      onPressed: () =>
+                                          Navigator.of(context).pop(true),
+                                      child: const Text('Logout'),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+
+                            if (confirm != true) {
+                              return;
+                            }
+                            await secureStorage.deleteAll();
+                            if (!mounted) return;
+                            Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const LoginPage(),
+                              ),
+                              (route) => false,
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF244065),
+                            elevation: 5,
+                          ),
+                          child: Text(
+                            'Logout',
+                            style: GoogleFonts.poppins(
+                              fontSize: 17,
+                              fontWeight: FontWeight.w600,
+                              color: const Color(0xFFFFFFFF),
+                            ),
+                          ),
                         ),
                       ),
-                    ),
+                      const Positioned(
+                          top: 14,
+                          right: 12,
+                          child: Icon(
+                            Icons.arrow_forward,
+                            color: Color(0xFFffffff),
+                            size: 20,
+                          )),
+                    ]),
                   ),
                 ],
               ),

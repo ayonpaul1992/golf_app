@@ -128,7 +128,7 @@ class DashboardPageState extends State<DashboardPage> {
         setState(() {
           upcomingTeeTime = teeTime;
         });
-        print("Upcoming Tee Time: $teeTime");
+        // print("Upcoming Tee Time: $teeTime");
       } else {
         print("No upcoming tee time found.");
       }

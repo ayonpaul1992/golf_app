@@ -55,6 +55,9 @@ dependencies:
   jwt_decoder: ^2.0.1
   cryptography: ^2.7.0
   encrypt: ^5.0.3
+  new_version_plus: ^0.1.0
+  firebase_core: ^4.0.0
+  firebase_messaging: ^16.0.0
 
 dev_dependencies:
   flutter_test:
