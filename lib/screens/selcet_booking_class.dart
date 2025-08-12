@@ -292,7 +292,7 @@ class SelcetBookingClassState extends State<SelcetBookingClass> {
         showLeading: false, // ✅ This should prevent the back button
       ),
       drawer: CustomDrawer(
-        activeTile: 'Home',
+        activeTile: 'Tee Times',
         onTileTap: (selectedTile) {
           //print("Navigating to $selectedTile");
           // Handle navigation logic

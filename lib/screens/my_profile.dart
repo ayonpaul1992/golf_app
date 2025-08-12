@@ -104,7 +104,7 @@ class MyProfilePageState extends State<MyProfilePage> with RouteAware {
         },
       ),
       drawer: CustomDrawer(
-        activeTile: 'Home',
+        activeTile: 'My Profile',
         onTileTap: (selectedTile) {
           //print("Navigating to $selectedTile");
           // Handle navigation logic

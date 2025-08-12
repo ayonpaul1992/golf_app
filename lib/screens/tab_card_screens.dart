@@ -198,14 +198,14 @@ class _TabCardScreenPageState extends State<TabCardScreenPage>
       appBar: CustomAppBar(
         scaffoldKey: _scaffoldKey,
         userId: widget.tabcardId,
-        showLeading: true,
+        showLeading: false,
         isOnProfilePage: true,
         onBackPressed: () {
           Navigator.pop(context);
         },
       ),
       drawer: CustomDrawer(
-        activeTile: 'Home',
+        activeTile: 'My Wallet',
         onTileTap: (selectedTile) {},
       ),
       body: isLoading

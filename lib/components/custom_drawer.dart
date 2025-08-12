@@ -10,8 +10,6 @@ import 'package:gulf_app/screens/my_reservation.dart';
 import 'package:gulf_app/screens/my_transaction.dart';
 import 'package:gulf_app/screens/selcet_booking_class.dart';
 import 'package:gulf_app/screens/tab_card_screens.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/http.dart' as http;
 
 class CustomDrawer extends StatefulWidget {
   final String activeTile;
@@ -66,6 +64,9 @@ class _CustomDrawerState extends State<CustomDrawer> {
   }) {
     bool isActive = activeTile == title;
 
+    // print('Active tile before tap: $activeTile');
+    // print('Building tile for: $title, isActive: $isActive');
+
     return InkWell(
       onTap: () {
         // // Close drawer
@@ -83,10 +84,12 @@ class _CustomDrawerState extends State<CustomDrawer> {
 
         widget.onTileTap(title);
 
-        print('Active tile after tap: $activeTile');
+        // print('Active tile after tap: $activeTile');
 
         if (destinationScreen != null) {
-          print('Navigating to $title screen');
+          Navigator.pop(context);
+
+          // print('Navigating to $title screen');
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => destinationScreen),
@@ -103,7 +106,10 @@ class _CustomDrawerState extends State<CustomDrawer> {
         decoration: BoxDecoration(
           color: isActive ? const Color(0xFF7DB778) : Colors.transparent,
           border: const Border(
-            bottom: BorderSide(color: Color(0xFFBFEBBC), width: 1.0),
+            bottom: BorderSide(
+              color: Color(0xFFBFEBBC),
+              width: 1.0,
+            ),
           ),
         ),
         child: ListTile(

@@ -216,7 +216,7 @@ class MyTransactionPageState extends State<MyTransactionPage> {
         },
       ),
       drawer: CustomDrawer(
-        activeTile: 'Home',
+        activeTile: 'My Transactions',
         onTileTap: (selectedTile) {},
       ),
 

@@ -245,7 +245,7 @@ class MyReservationPageState extends State<MyReservationPage> {
         },
       ),
       drawer: CustomDrawer(
-        activeTile: 'Home',
+        activeTile: 'My Reservations',
         onTileTap: (selectedTile) {
           //print("Navigating to $selectedTile");
           // Handle navigation logic
