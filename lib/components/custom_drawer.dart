@@ -72,7 +72,6 @@ class _CustomDrawerState extends State<CustomDrawer> {
         // // Close drawer
 
         if (activeTile == title) {
-          // ✅ Don't navigate if already on this screen
           Navigator.pop(context);
           return;
         }

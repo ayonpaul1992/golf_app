@@ -41,16 +41,17 @@ class _WeatherScreenState extends State<WeatherScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Weather Info')),
+      appBar: AppBar(title: const Text('Weather Info')),
       body: Center(
         child: weatherDescription.isEmpty
-            ? CircularProgressIndicator()
+            ? const CircularProgressIndicator()
             : Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text('🌤 $weatherDescription',
-                      style: TextStyle(fontSize: 24)),
-                  Text('🌡 $temperature°F', style: TextStyle(fontSize: 20)),
+                      style: const TextStyle(fontSize: 24)),
+                  Text('🌡 $temperature°F',
+                      style: const TextStyle(fontSize: 20)),
                 ],
               ),
       ),
