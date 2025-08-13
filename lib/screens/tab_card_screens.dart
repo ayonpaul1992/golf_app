@@ -175,6 +175,10 @@ class _TabCardScreenPageState extends State<TabCardScreenPage>
         print('Giftcards data : $responseData');
         print('Total Giftcards: $totalGiftCards');
 
+        setState(() {
+          isLoading = false; // Set loading to false after fetching data
+        });
+
         // ✅ Get stored name BEFORE setState
 
         // setState(() {
@@ -199,7 +203,7 @@ class _TabCardScreenPageState extends State<TabCardScreenPage>
         scaffoldKey: _scaffoldKey,
         userId: widget.tabcardId,
         showLeading: false,
-        isOnProfilePage: true,
+        isOnProfilePage: false,
         onBackPressed: () {
           Navigator.pop(context);
         },
@@ -322,12 +326,15 @@ class _TabCardScreenPageState extends State<TabCardScreenPage>
                           child: Image(
                             image: userProfileImage.isNotEmpty
                                 ? NetworkImage(userProfileImage)
-                                : const CircleAvatar(
-                                    backgroundColor: Color(0xFF9ECF9A),
-                                    radius: 16,
-                                    child:
-                                        Icon(Icons.person, color: Colors.white),
-                                  ) as ImageProvider,
+                                : const AssetImage(
+                                    'assets/images/user-svgrepo-com.png'),
+
+                            // const CircleAvatar(
+                            //     backgroundColor: Color(0xFF9ECF9A),
+                            //     radius: 16,
+                            //     child:
+                            //         Icon(Icons.person, color: Colors.white),
+                            //   ) as ImageProvider,
                             width: 80,
                             height: 80,
                             fit: BoxFit.cover,
@@ -457,12 +464,15 @@ class _TabCardScreenPageState extends State<TabCardScreenPage>
                           child: Image(
                             image: userProfileImage.isNotEmpty
                                 ? NetworkImage(userProfileImage)
-                                : const CircleAvatar(
-                                    backgroundColor: Color(0xFF9ECF9A),
-                                    radius: 16,
-                                    child:
-                                        Icon(Icons.person, color: Colors.white),
-                                  ) as ImageProvider,
+                                : const AssetImage(
+                                    'assets/images/user-svgrepo-com.png'),
+
+                            // const CircleAvatar(
+                            //     backgroundColor: Color(0xFF9ECF9A),
+                            //     radius: 16,
+                            //     child:
+                            //         Icon(Icons.person, color: Colors.white),
+                            //   ) as ImageProvider,
                             width: 80,
                             height: 80,
                             fit: BoxFit.cover,
@@ -584,12 +594,14 @@ class _TabCardScreenPageState extends State<TabCardScreenPage>
                           child: Image(
                             image: userProfileImage.isNotEmpty
                                 ? NetworkImage(userProfileImage)
-                                : const CircleAvatar(
-                                    backgroundColor: Color(0xFF9ECF9A),
-                                    radius: 16,
-                                    child:
-                                        Icon(Icons.person, color: Colors.white),
-                                  ) as ImageProvider,
+                                : const AssetImage(
+                                    'assets/images/user-svgrepo-com.png'),
+                            // const CircleAvatar(
+                            //     backgroundColor: Color(0xFF9ECF9A),
+                            //     radius: 16,
+                            //     child:
+                            //         Icon(Icons.person, color: Colors.white),
+                            //   ) as ImageProvider,
                             width: 80,
                             height: 80,
                             fit: BoxFit.cover,
@@ -1189,7 +1201,7 @@ class _TabCardScreenPageState extends State<TabCardScreenPage>
                     child: Image(
                       image: rainCheck['golfCourse']['logo'].isNotEmpty
                           ? NetworkImage(rainCheck['golfCourse']['logo'])
-                          : const AssetImage("assets/images/profile_prsn.jpg")
+                          : const AssetImage("assets/images/main_logo.png")
                               as ImageProvider,
                       width: 80,
                       height: 80,

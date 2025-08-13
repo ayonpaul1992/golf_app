@@ -17,7 +17,7 @@ tasks.register("clean", Delete) {
     delete rootProject.buildDir
 }
 
-dependencies {
-    classpath 'com.google.gms:google-services:4.4.3' // latest
-}
+// dependencies {
+//     classpath 'com.google.gms:google-services:4.4.3' // latest
+// }
 // Add this line to apply the Google Services plugin
