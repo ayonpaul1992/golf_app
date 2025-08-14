@@ -2,6 +2,7 @@
 
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:gulf_app/screens/dashboard.dart';
@@ -13,6 +14,7 @@ import 'forgot_password.dart';
 import 'reset_password.dart';
 import 'package:crypto/crypto.dart';
 import 'package:cryptography/cryptography.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -134,6 +136,7 @@ class LoginPageState extends State<LoginPage> {
           await secureStorage.write(key: 'isLoggedIn', value: 'true');
 
           if (mounted) {
+            setupPushNotifications(userId);
             Navigator.pushReplacement(
               context,
               PageRouteBuilder(
@@ -175,6 +178,37 @@ class LoginPageState extends State<LoginPage> {
           isLoading = false;
         });
       }
+    }
+  }
+
+  Future<void> setupPushNotifications(String userId) async {
+    // 1. Ask for permission
+    NotificationSettings settings =
+        await FirebaseMessaging.instance.requestPermission(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
+
+    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+      debugPrint("✅ Notifications allowed");
+
+      // 2. Get FCM token
+      String? fcmToken = await FirebaseMessaging.instance.getToken();
+      if (fcmToken != null) {
+        debugPrint("🔑 FCM token: $fcmToken");
+
+        // 3. Send token to backend with userId
+        // await sendTokenToServer(userId, fcmToken);
+      }
+
+      // 4. (Optional) iOS APNs token
+      if (Platform.isIOS && !kIsWeb) {
+        String? apnsToken = await FirebaseMessaging.instance.getAPNSToken();
+        debugPrint("📌 APNs token: $apnsToken");
+      }
+    } else {
+      debugPrint("❌ Notifications not allowed");
     }
   }
 

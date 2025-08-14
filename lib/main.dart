@@ -8,8 +8,6 @@ import 'firebase_options.dart';
 import 'screens/splash_screen.dart';
 import 'screens/login.dart';
 import 'screens/dashboard.dart';
-import 'dart:io' show Platform;
-import 'package:flutter/foundation.dart';
 
 // Route observer for tracking navigation
 final RouteObserver<ModalRoute<void>> routeObserver =
@@ -31,57 +29,7 @@ Future<void> main() async {
   // Handle background messages
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
-  // Request notification permissions (iOS only)
-  await _requestNotificationPermissions();
-
-  // Log tokens for testing (comment out in production)
-  await logFcmAndApnsTokens();
-
   runApp(const MyApp());
-}
-
-Future<void> _requestNotificationPermissions() async {
-  final messaging = FirebaseMessaging.instance;
-  final settings = await messaging.requestPermission(
-    alert: true,
-    badge: true,
-    sound: true,
-  );
-  debugPrint('🔔 Notification permission: ${settings.authorizationStatus}');
-}
-
-Future<void> logFcmAndApnsTokens() async {
-  try {
-    // Make sure permissions are already granted before trying
-    NotificationSettings settings =
-        await FirebaseMessaging.instance.requestPermission(
-      alert: true,
-      badge: true,
-      sound: true,
-    );
-
-    debugPrint('🔔 Notification permission: ${settings.authorizationStatus}');
-
-    // Get FCM token
-    String? fcmToken = await FirebaseMessaging.instance.getToken();
-    if (fcmToken != null) {
-      debugPrint("🔑 FCM token: $fcmToken");
-    } else {
-      debugPrint("⚠️ Could not retrieve FCM token yet");
-    }
-
-    // Get APNs token only on real iOS device
-    if (Platform.isIOS && !kIsWeb) {
-      try {
-        String? apnsToken = await FirebaseMessaging.instance.getAPNSToken();
-        debugPrint("📌 APNs token: $apnsToken");
-      } catch (e) {
-        debugPrint("⚠️ APNs token not available (likely simulator): $e");
-      }
-    }
-  } catch (e, st) {
-    debugPrint("❌ Error getting tokens: $e\n$st");
-  }
 }
 
 class MyApp extends StatelessWidget {
