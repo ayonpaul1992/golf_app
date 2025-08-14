@@ -45,6 +45,8 @@ class TeesheetPageState extends State<TeesheetPage> {
   dynamic allTeeSheetData = [];
 
   List<int> teeSheetConfigHoles = [0, 0];
+  Map<String, dynamic> teesheetConfigHolidays = {};
+
   bool onlineBookingStatus = false;
   int bookingWindowDays = 0;
   int maxPlayers = 0;
@@ -251,6 +253,7 @@ class TeesheetPageState extends State<TeesheetPage> {
       allowName = config['allowName'];
       bookingsPerDay = config['bookingsPerDay'];
       limitExistingGroup = config['limitExistingGroup'];
+      teesheetConfigHolidays = config['holiday'] ?? {};
     });
   }
 
@@ -472,6 +475,70 @@ class TeesheetPageState extends State<TeesheetPage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
+                            if (teesheetConfigHolidays['isHoliday'] == true)
+                              Container(
+                                decoration: const BoxDecoration(
+                                  color: Color(0xFFFFFFFF),
+                                ),
+                                child: Stack(
+                                  children: [
+                                    // Inner shadow overlay
+                                    Positioned.fill(
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: const Color(0xFFBAB8B3)
+                                                  .withOpacity(0.1),
+                                              blurRadius: 0,
+                                              spreadRadius: 0,
+                                              offset: const Offset(0, 1),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    // Dark bottom shadow
+                                    Positioned(
+                                      left: 0,
+                                      right: 0,
+                                      bottom: 0,
+                                      height: 2,
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          gradient: LinearGradient(
+                                            colors: [
+                                              const Color(0xFFC9C9C7)
+                                                  .withOpacity(0.10),
+                                              Colors.transparent,
+                                            ],
+                                            begin: Alignment.bottomCenter,
+                                            end: Alignment.topCenter,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    // Main content
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 1, vertical: 5),
+                                      child: Center(
+                                        child: Text(
+                                          teesheetConfigHolidays[
+                                                  'holidayName'] ??
+                                              "",
+                                          style: GoogleFonts.poppins(
+                                            color: const Color(0xFF244065),
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
                             Padding(
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 15),
