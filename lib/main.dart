@@ -8,10 +8,10 @@ import 'firebase_options.dart';
 import 'screens/splash_screen.dart';
 import 'screens/login.dart';
 import 'screens/dashboard.dart';
+import 'package:gulf_app/services/token_route_observer.dart';
 
-// Route observer for tracking navigation
-final RouteObserver<ModalRoute<void>> routeObserver =
-    RouteObserver<ModalRoute<void>>();
+// Use our custom observer globally
+final RouteObserver<PageRoute> routeObserver = TokenRouteObserver();
 
 // Handles background push notifications
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -54,7 +54,7 @@ class MyApp extends StatelessWidget {
       ),
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        navigatorObservers: [routeObserver],
+        navigatorObservers: [routeObserver], // 👈 now using TokenRouteObserver
         theme: ThemeData(
           textTheme: GoogleFonts.poppinsTextTheme(),
         ),

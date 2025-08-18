@@ -52,12 +52,12 @@ class SelcetBookingClassState extends State<SelcetBookingClass> {
     _fetchTeesheets(); // Fetch teesheets when the page loads
   }
 
-  // void debugToken(String token) {
-  //   final decoded = JwtDecoder.decode(token);
-  //   final expiry = JwtDecoder.getExpirationDate(token);
-  //   // print("Decoded Token: $decoded");
-  //   // print("Expires at: $expiry");
-  // }
+  void debugToken(String token) {
+    final decoded = JwtDecoder.decode(token);
+    final expiry = JwtDecoder.getExpirationDate(token);
+    print("Decoded Token: $decoded");
+    print("Expires at: $expiry");
+  }
 
   Future<bool> isTokenValid() async {
     String? token = await secureStorage.read(key: 'accessToken');

@@ -67,7 +67,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               InkWell(
                 onTap: onTitleTapped ??
                     () {
-                      Navigator.pushReplacement(
+                      Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) =>
