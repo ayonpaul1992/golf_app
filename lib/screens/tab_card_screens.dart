@@ -213,7 +213,11 @@ class _TabCardScreenPageState extends State<TabCardScreenPage>
         onTileTap: (selectedTile) {},
       ),
       body: isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(
+              child: CircularProgressIndicator(
+                color: Color(0xFF9ECF9A),
+              ),
+            )
           : Stack(children: [
               Column(
                 children: [
