@@ -75,6 +75,7 @@ class MyEditPageState extends State<MyEditPage> {
     _selectedDate = now;
     _dateController.text = DateFormat("MMM dd, yyyy").format(now);
     fetchUserProfile();
+    // fetchPostalCodeData('00501'); // Example postal code
   }
 
   Future<void> fetchUserProfile() async {
@@ -130,6 +131,27 @@ class MyEditPageState extends State<MyEditPage> {
       setState(() {
         isLoading = false;
       });
+    }
+  }
+
+  Future<void> fetchPostalCodeData(String postalCode) async {
+    String url =
+        'http://api.geonames.org/postalCodeLookupJSON?postalcode=$postalCode&country=US&username=tuhinkapri';
+
+    try {
+      final response = await http.get(Uri.parse(url));
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        print("✅ API Response: $data");
+
+        cityController.text = data['postalcodes'][0]['placeName'] ?? '';
+        stateController.text = data['postalcodes'][0]['adminName1'] ?? '';
+      } else {
+        print("⚠️ Error: ${response.statusCode} - ${response.reasonPhrase}");
+      }
+    } catch (e) {
+      print("❌ Exception caught: $e");
     }
   }
 
@@ -1502,28 +1524,40 @@ class MyEditPageState extends State<MyEditPage> {
               ),
             ),
             child: TextField(
-              controller: controller,
-              textInputAction: TextInputAction.done,
-              inputFormatters: [
-                LengthLimitingTextInputFormatter(
-                    30), // Add this line for the 30-letter limit
-              ],
-              style: GoogleFonts.poppins(
-                color: const Color(0xFF244065),
-                fontWeight: FontWeight.w600,
-                fontSize: 14,
-              ),
-              decoration: _inputDecoration('').copyWith(
-                suffixIcon: const Padding(
-                  padding: EdgeInsets.only(right: 10),
-                  child: Icon(
-                    Icons.edit,
-                    color: Color(0xFF6B7280),
-                    size: 18,
+                controller: controller,
+                readOnly: controller == cityController ||
+                        controller == stateController
+                    ? true
+                    : false,
+                textInputAction: TextInputAction.done,
+                inputFormatters: [
+                  LengthLimitingTextInputFormatter(
+                      30), // Add this line for the 30-letter limit
+                ],
+                style: GoogleFonts.poppins(
+                  color: const Color(0xFF244065),
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14,
+                ),
+                decoration: _inputDecoration('').copyWith(
+                  suffixIcon: Padding(
+                    padding: const EdgeInsets.only(right: 10),
+                    child: controller == cityController ||
+                            controller == stateController
+                        ? null
+                        : const Icon(
+                            Icons.edit,
+                            color: Color(0xFF6B7280),
+                            size: 18,
+                          ),
                   ),
                 ),
-              ),
-            ),
+                onChanged: (value) {
+                  if (label == "Zip" && value.length >= 5) {
+                    // Call only when 5+ digits entered
+                    fetchPostalCodeData(value);
+                  }
+                }),
           ),
           if (errorText != null)
             Padding(
