@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:gulf_app/extras/notification.dart';
 import 'package:gulf_app/screens/edit_profile.dart';
 import 'package:gulf_app/screens/login.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -9,6 +10,7 @@ import 'package:gulf_app/components/custom_app_bar.dart';
 import 'package:gulf_app/components/custom_drawer.dart';
 import 'package:gulf_app/components/custom_bottom_nav_bar.dart';
 import 'package:gulf_app/screens/my_transaction.dart';
+import 'package:gulf_app/screens/tab_card_screens.dart';
 
 class MySettingPage extends StatefulWidget {
   final String myStngId;
@@ -345,7 +347,16 @@ class MySettingPageState extends State<MySettingPage> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         GestureDetector(
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const NotificationPage(
+                                  myNtfId: '',
+                                ), // Replace with your target widget
+                              ),
+                            );
+                          },
                           child: Container(
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 7, vertical: 5),
@@ -501,7 +512,16 @@ class MySettingPageState extends State<MySettingPage> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         GestureDetector(
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const TabCardScreenPage(
+                                  tabcardId: '',
+                                ), // Replace with your target widget
+                              ),
+                            );
+                          },
                           child: Container(
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 7, vertical: 5),
@@ -666,7 +686,16 @@ class MySettingPageState extends State<MySettingPage> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         GestureDetector(
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const TabCardScreenPage(
+                                  tabcardId: '',
+                                ), // Replace with your target widget
+                              ),
+                            );
+                          },
                           child: Container(
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 7, vertical: 5),
