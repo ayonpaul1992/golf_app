@@ -94,7 +94,7 @@ class MyEditPageState extends State<MyEditPage> {
       if (response.statusCode == 200) {
         final dataJson = json.decode(response.body);
         final data = dataJson['data'] as Map<String, dynamic>;
-        print("Fetched data: $data");
+        // print("Fetched data: $data");
         setState(() {
           customerIdText.text = data['accountNumber'] ?? '';
           fullNmText.text = data['fname'] ?? '';
@@ -143,7 +143,7 @@ class MyEditPageState extends State<MyEditPage> {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        print("✅ API Response: $data");
+        // print("✅ API Response: $data");
 
         cityController.text = data['postalcodes'][0]['placeName'] ?? '';
         stateController.text = data['postalcodes'][0]['adminName1'] ?? '';

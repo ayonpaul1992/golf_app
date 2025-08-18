@@ -31,6 +31,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       future: Future.wait([
         storage.read(key: 'golfCourseLogo'),
         storage.read(key: 'membership'),
+        storage.read(key: 'profilePic'),
       ]),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
@@ -39,6 +40,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
 
         String logoUrl = snapshot.data![0] ?? '';
         String membershipType = snapshot.data![1] ?? 'Platinum'; // fallback
+        String profilePic = snapshot.data![2] ?? '';
 
         return AppBar(
           backgroundColor: Colors.white,
@@ -151,11 +153,21 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                 minimumSize: const Size(20, 20),
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),
-              child: Image.asset(
-                'assets/images/user-svgrepo-com.png',
-                height: 20,
-                width: 20,
+              child: Image(
+                image: profilePic.isNotEmpty
+                    ? NetworkImage(profilePic)
+                    : const AssetImage('assets/images/user-svgrepo-com.png')
+                        as ImageProvider,
+                width: 25,
+                height: 25,
+                fit: BoxFit.contain,
               ),
+
+              //  Image.asset(
+              //   'assets/images/user-svgrepo-com.png',
+              //   height: 20,
+              //   width: 20,
+              // ),
             ),
             const SizedBox(width: 20),
           ],
