@@ -240,7 +240,7 @@ class MyProfilePageState extends State<MyProfilePage> with RouteAware {
                               image: userProfileImage.isNotEmpty
                                   ? NetworkImage(userProfileImage)
                                   : const AssetImage(
-                                          "assets/images/profile_prsn.jpg")
+                                          "assets/images/user-svgrepo-com.png")
                                       as ImageProvider,
                               width: 80,
                               height: 80,

@@ -165,7 +165,7 @@ class MySettingPageState extends State<MySettingPage> {
                                         image: userProfileImage!.isNotEmpty
                                             ? NetworkImage(userProfileImage!)
                                             : const AssetImage(
-                                                    "assets/images/profile_prsn.jpg")
+                                                    "assets/images/user-svgrepo-com.jpg")
                                                 as ImageProvider,
                                         width: 50,
                                         height: 50,
@@ -1067,7 +1067,7 @@ class MySettingPageState extends State<MySettingPage> {
           )),
         ),
       ),
-      bottomNavigationBar: const CustomBottomNavBar(selectedIndex: 4),
+      bottomNavigationBar: const CustomBottomNavBar(selectedIndex: -1),
     );
   }
 }

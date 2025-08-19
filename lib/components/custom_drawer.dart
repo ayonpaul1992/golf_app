@@ -199,7 +199,8 @@ class _CustomDrawerState extends State<CustomDrawer> {
                           child: Image(
                             image: profilePic.isNotEmpty
                                 ? NetworkImage(profilePic)
-                                : const AssetImage('assets/images/bkdu1.png')
+                                : const AssetImage(
+                                        'assets/images/user-svgrepo-com.png')
                                     as ImageProvider,
                             fit: BoxFit.cover,
                             width: 50,

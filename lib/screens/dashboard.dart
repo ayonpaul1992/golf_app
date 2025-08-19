@@ -303,7 +303,7 @@ class DashboardPageState extends State<DashboardPage> {
                                                                   ? NetworkImage(
                                                                       profilePic)
                                                                   : const AssetImage(
-                                                                          'assets/images/bkdu1.png')
+                                                                          'assets/images/user-svgrepo-com.png')
                                                                       as ImageProvider,
                                                               fit: BoxFit.cover,
                                                               width: 50,

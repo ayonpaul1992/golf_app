@@ -621,144 +621,43 @@ class MyEditPageState extends State<MyEditPage> {
                                         horizontal: 7, vertical: 5),
                                     child: ClipOval(
                                       child: SizedBox(
-                                          width: 162,
-                                          height: 162,
-                                          child: (profilePicturePath != null &&
-                                                  profilePicturePath!
-                                                      .isNotEmpty)
-                                              ? (kIsWeb ||
-                                                      profilePicturePath!
-                                                          .startsWith('http')
-                                                  ? Image.network(
-                                                      profilePicturePath!,
-                                                      fit: BoxFit.cover,
-                                                      errorBuilder: (context,
-                                                          error, stackTrace) {
-                                                        return Image.asset(
-                                                          "assets/images/profile_prsn.jpg",
-                                                          fit: BoxFit.cover,
-                                                        );
-                                                      },
-                                                    )
-                                                  : Image.file(
-                                                      io.File(
-                                                          profilePicturePath!),
-                                                      fit: BoxFit.cover,
-                                                      errorBuilder: (context,
-                                                          error, stackTrace) {
-                                                        return Image.asset(
-                                                          "assets/images/profile_prsn.jpg",
-                                                          fit: BoxFit.cover,
-                                                        );
-                                                      },
-                                                    ))
-                                              : Image.asset(
-                                                  "assets/images/profile_prsn.jpg",
-                                                  fit: BoxFit.cover,
-                                                )
-
-                                          // profilePicturePath != null &&
-                                          //         profilePicturePath!.isNotEmpty
-                                          //     ? (kIsWeb
-                                          //         ? Image.network(
-                                          //             profilePicturePath!,
-                                          //             fit: BoxFit.cover,
-                                          //             errorBuilder: (context,
-                                          //                 error, stackTrace) {
-                                          //               return Image.asset(
-                                          //                 "assets/images/profile_prsn.jpg",
-                                          //                 fit: BoxFit.cover,
-                                          //               );
-                                          //             },
-                                          //           )
-                                          //         : Image.file(
-                                          //             io.File(
-                                          //                 profilePicturePath!),
-                                          //             fit: BoxFit.cover,
-                                          //             errorBuilder: (context,
-                                          //                 error, stackTrace) {
-                                          //               return Image.asset(
-                                          //                 "assets/images/profile_prsn.jpg",
-                                          //                 fit: BoxFit.cover,
-                                          //               );
-                                          //             },
-                                          //           ))
-                                          //     : Image.asset(
-                                          //         "assets/images/profile_prsn.jpg",
-                                          //         fit: BoxFit.cover,
-                                          //       ),
-                                          ),
+                                        width: 162,
+                                        height: 162,
+                                        child: (profilePicturePath != null &&
+                                                profilePicturePath!.isNotEmpty)
+                                            ? (kIsWeb ||
+                                                    profilePicturePath!
+                                                        .startsWith('http')
+                                                ? Image.network(
+                                                    profilePicturePath!,
+                                                    fit: BoxFit.cover,
+                                                    errorBuilder: (context,
+                                                        error, stackTrace) {
+                                                      return Image.asset(
+                                                        "assets/images/user-svgrepo-com.png",
+                                                        fit: BoxFit.cover,
+                                                      );
+                                                    },
+                                                  )
+                                                : Image.file(
+                                                    io.File(
+                                                        profilePicturePath!),
+                                                    fit: BoxFit.cover,
+                                                    errorBuilder: (context,
+                                                        error, stackTrace) {
+                                                      return Image.asset(
+                                                        "assets/images/user-svgrepo-com.png",
+                                                        fit: BoxFit.cover,
+                                                      );
+                                                    },
+                                                  ))
+                                            : Image.asset(
+                                                "assets/images/user-svgrepo-com.png",
+                                                fit: BoxFit.cover,
+                                              ),
+                                      ),
                                     ),
                                   ),
-
-                                  // Container(
-                                  //   padding: const EdgeInsets.symmetric(
-                                  //       horizontal: 7, vertical: 5),
-                                  //   child: ClipOval(
-                                  //     // Use ClipOval instead of ClipRRect for perfect circle
-                                  //     child: FutureBuilder<String?>(
-                                  //       future: Future.value(
-                                  //         profilePicturePath,
-                                  //       ),
-                                  //       builder: (context, snapshot) {
-                                  //         if (snapshot.connectionState ==
-                                  //             ConnectionState.waiting) {
-                                  //           return const SizedBox(
-                                  //             width: 162,
-                                  //             height: 162,
-                                  //             child: Center(
-                                  //               child:
-                                  //                   CircularProgressIndicator(),
-                                  //             ),
-                                  //           );
-                                  //         }
-
-                                  //         final imageData = snapshot.data;
-
-                                  //         if (imageData != null &&
-                                  //             imageData.isNotEmpty) {
-                                  //           return Image.network(
-                                  //             imageData,
-                                  //             width: 162,
-                                  //             height: 162,
-                                  //             fit: BoxFit.cover,
-                                  //             errorBuilder:
-                                  //                 (context, error, stackTrace) {
-                                  //               return Image.asset(
-                                  //                 "assets/images/profile_prsn.jpg",
-                                  //                 width: 162,
-                                  //                 height: 162,
-                                  //                 fit: BoxFit.cover,
-                                  //               );
-                                  //             },
-                                  //             loadingBuilder: (context, child,
-                                  //                 loadingProgress) {
-                                  //               if (loadingProgress == null) {
-                                  //                 return child;
-                                  //               }
-                                  //               return const SizedBox(
-                                  //                 width: 162,
-                                  //                 height: 162,
-                                  //                 child: Center(
-                                  //                     child:
-                                  //                         CircularProgressIndicator()),
-                                  //               );
-                                  //             },
-                                  //           );
-                                  //         } else {
-                                  //           return Image.asset(
-                                  //             "assets/images/profile_prsn.jpg",
-                                  //             width: 162,
-                                  //             height: 162,
-                                  //             fit: BoxFit.cover,
-                                  //           );
-                                  //         }
-                                  //       },
-                                  //     ),
-
-                                  //   ),
-                                  // ),
-
                                   Positioned(
                                     bottom: -10,
                                     left: 65,

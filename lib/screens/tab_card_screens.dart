@@ -30,15 +30,12 @@ class _TabCardScreenPageState extends State<TabCardScreenPage>
   bool showAllGCrd = false;
   bool isLoading = true;
 
-  final ScrollController _scrollController = ScrollController();
+  final ScrollController _scrollController1 = ScrollController();
+  final ScrollController _scrollController2 = ScrollController();
+  final ScrollController _scrollController3 = ScrollController();
   final List<double> amounts = List.generate(10, (index) {
     return index.isEven ? 100.00 + index : -50.00 - index;
   });
-  final List<String> imagePaths = [
-    'assets/images/bkdu1.png',
-    'assets/images/bkdu2.png',
-    'assets/images/bkdu3.png',
-  ];
 
   late TabController _tabController;
   String userName = "";
@@ -86,7 +83,7 @@ class _TabCardScreenPageState extends State<TabCardScreenPage>
       if (httpResponse.statusCode == 200) {
         final responseData =
             jsonDecode(httpResponse.body) as Map<String, dynamic>;
-        print('Store Credits: $responseData');
+        // print('Store Credits: $responseData');
 
         // ✅ Get stored name BEFORE setState
         String? storedName = await secureStorage.read(key: 'userName');
@@ -101,7 +98,7 @@ class _TabCardScreenPageState extends State<TabCardScreenPage>
           isLoading = false; // Set loading to false after fetching data
         });
 
-        print('User Name: $userName');
+        // print('User Name: $userName');
       }
     } catch (e) {
       debugPrint('Error fetching store credits: $e');
@@ -129,19 +126,8 @@ class _TabCardScreenPageState extends State<TabCardScreenPage>
         rainChecks =
             List<Map<String, dynamic>>.from(responseData['data'] ?? []);
 
-        print('Rainchecks data : $responseData');
-        print('Total Rainchecks: $totalRainchecks');
-
-        // ✅ Get stored name BEFORE setState
-
-        // setState(() {
-        //   userName = storedName ?? '';
-        //   totalStoreCredits = responseData['data']['credit'];
-
-        //   history = List<Map<String, dynamic>>.from(
-        //       responseData['data']['history'] ?? []);
-        //   isLoading = false; // Set loading to false after fetching data
-        // });
+        // print('Rainchecks data : $responseData');
+        // print('Total Rainchecks: $totalRainchecks');
       }
     } catch (e) {
       debugPrint('Error fetching store credits: $e');
@@ -170,25 +156,14 @@ class _TabCardScreenPageState extends State<TabCardScreenPage>
 
         giftCards = List<Map<String, dynamic>>.from(responseData['data']);
 
-        print('Gift Cards data : ${giftCards.length}');
+        // print('Gift Cards data : ${giftCards.length}');
 
-        print('Giftcards data : $responseData');
-        print('Total Giftcards: $totalGiftCards');
+        // print('Giftcards data : $responseData');
+        // print('Total Giftcards: $totalGiftCards');
 
         setState(() {
           isLoading = false; // Set loading to false after fetching data
         });
-
-        // ✅ Get stored name BEFORE setState
-
-        // setState(() {
-        //   userName = storedName ?? '';
-        //   totalStoreCredits = responseData['data']['credit'];
-
-        //   history = List<Map<String, dynamic>>.from(
-        //       responseData['data']['history'] ?? []);
-        //   isLoading = false; // Set loading to false after fetching data
-        // });
       }
     } catch (e) {
       debugPrint('Error fetching store credits: $e');
@@ -260,13 +235,13 @@ class _TabCardScreenPageState extends State<TabCardScreenPage>
           return Expanded(
             child: GestureDetector(
               onTap: () {
-                print('Selected tab: ${tabs[index]}');
+                // print('Selected tab: ${tabs[index]}');
 
                 if (tabs[index] == 'Store Credits') {
                   // _scrollController.jumpTo(0); // Scroll to top for Store Credits
                 } else if (tabs[index] == 'Rainchecks') {
                   // _scrollController.jumpTo(0); // Scroll to top for Rainchecks
-                  print('Jumping to top for Rainchecks');
+                  // print('Jumping to top for Rainchecks');
                 } else if (tabs[index] == 'Gift Cards') {
                   // _scrollController.jumpTo(0); // Scroll to top for Gift Cards
                 }
@@ -325,23 +300,22 @@ class _TabCardScreenPageState extends State<TabCardScreenPage>
                     Row(
                       children: [
                         CircleAvatar(
-                          backgroundColor: const Color(0xFFF5F6FB),
+                          backgroundColor: Colors.transparent,
                           radius: 25,
-                          child: Image(
-                            image: userProfileImage.isNotEmpty
-                                ? NetworkImage(userProfileImage)
-                                : const AssetImage(
-                                    'assets/images/user-svgrepo-com.png'),
-
-                            // const CircleAvatar(
-                            //     backgroundColor: Color(0xFF9ECF9A),
-                            //     radius: 16,
-                            //     child:
-                            //         Icon(Icons.person, color: Colors.white),
-                            //   ) as ImageProvider,
-                            width: 80,
-                            height: 80,
-                            fit: BoxFit.cover,
+                          child: ClipOval(
+                            child: userProfileImage.isNotEmpty
+                                ? Image.network(
+                                    userProfileImage,
+                                    width: 50,
+                                    height: 50,
+                                    fit: BoxFit.cover,
+                                  )
+                                : Image.asset(
+                                    'assets/images/user-svgrepo-com.png',
+                                    width: 50,
+                                    height: 50,
+                                    fit: BoxFit.cover,
+                                  ),
                           ),
                         ),
                         const SizedBox(width: 8),
@@ -463,23 +437,22 @@ class _TabCardScreenPageState extends State<TabCardScreenPage>
                     Row(
                       children: [
                         CircleAvatar(
-                          backgroundColor: const Color(0xFFF5F6FB),
+                          backgroundColor: Colors.transparent,
                           radius: 25,
-                          child: Image(
-                            image: userProfileImage.isNotEmpty
-                                ? NetworkImage(userProfileImage)
-                                : const AssetImage(
-                                    'assets/images/user-svgrepo-com.png'),
-
-                            // const CircleAvatar(
-                            //     backgroundColor: Color(0xFF9ECF9A),
-                            //     radius: 16,
-                            //     child:
-                            //         Icon(Icons.person, color: Colors.white),
-                            //   ) as ImageProvider,
-                            width: 80,
-                            height: 80,
-                            fit: BoxFit.cover,
+                          child: ClipOval(
+                            child: userProfileImage.isNotEmpty
+                                ? Image.network(
+                                    userProfileImage,
+                                    width: 50,
+                                    height: 50,
+                                    fit: BoxFit.cover,
+                                  )
+                                : Image.asset(
+                                    'assets/images/user-svgrepo-com.png',
+                                    width: 50,
+                                    height: 50,
+                                    fit: BoxFit.cover,
+                                  ),
                           ),
                         ),
                         const SizedBox(width: 8),
@@ -593,22 +566,22 @@ class _TabCardScreenPageState extends State<TabCardScreenPage>
                     Row(
                       children: [
                         CircleAvatar(
-                          backgroundColor: const Color(0xFFF5F6FB),
+                          backgroundColor: Colors.transparent,
                           radius: 25,
-                          child: Image(
-                            image: userProfileImage.isNotEmpty
-                                ? NetworkImage(userProfileImage)
-                                : const AssetImage(
-                                    'assets/images/user-svgrepo-com.png'),
-                            // const CircleAvatar(
-                            //     backgroundColor: Color(0xFF9ECF9A),
-                            //     radius: 16,
-                            //     child:
-                            //         Icon(Icons.person, color: Colors.white),
-                            //   ) as ImageProvider,
-                            width: 80,
-                            height: 80,
-                            fit: BoxFit.cover,
+                          child: ClipOval(
+                            child: userProfileImage.isNotEmpty
+                                ? Image.network(
+                                    userProfileImage,
+                                    width: 50,
+                                    height: 50,
+                                    fit: BoxFit.cover,
+                                  )
+                                : Image.asset(
+                                    'assets/images/user-svgrepo-com.png',
+                                    width: 50,
+                                    height: 50,
+                                    fit: BoxFit.cover,
+                                  ),
                           ),
                         ),
                         const SizedBox(width: 8),
@@ -715,11 +688,11 @@ class _TabCardScreenPageState extends State<TabCardScreenPage>
     return ConstrainedBox(
       constraints: const BoxConstraints(maxHeight: 300),
       child: Scrollbar(
-        controller: _scrollController,
+        controller: _scrollController1,
         thumbVisibility: true,
         interactive: true,
         child: ListView.builder(
-          controller: _scrollController,
+          controller: _scrollController1,
           physics: const BouncingScrollPhysics(),
           padding: EdgeInsets.zero,
           shrinkWrap: true,
@@ -746,51 +719,6 @@ class _TabCardScreenPageState extends State<TabCardScreenPage>
                 child: giftCard(giftCards[index - 1]),
               );
             }
-
-            // if (index == 0) {
-            //   return Padding(
-            //     padding: const EdgeInsets.only(left: 18, top: 30),
-            //     child: Text(
-            //       'My Gift Cards',
-            //       style: GoogleFonts.nunito(
-            //         color: const Color(0xFF244065),
-            //         fontSize: 18,
-            //         fontWeight: FontWeight.w700,
-            //       ),
-            //     ),
-            //   );
-            // } else if (index <= (giftCards.length)) {
-            //   return Padding(
-            //     padding: const EdgeInsets.only(top: 10),
-            //     child: giftCard(giftCards[index]),
-            //   );
-            // } else {
-            //   return IconButton(
-            //     onPressed: () {
-            //       setState(() {
-            //         showAllGCrd = !showAllGCrd;
-            //       });
-            //       if (showAllGCrd) {
-            //         Future.delayed(const Duration(milliseconds: 100), () {
-            //           if (_scrollController.hasClients) {
-            //             _scrollController.animateTo(
-            //               _scrollController.position.maxScrollExtent,
-            //               duration: const Duration(milliseconds: 300),
-            //               curve: Curves.easeOut,
-            //             );
-            //           }
-            //         });
-            //       }
-            //     },
-            //     icon: Icon(
-            //       showAllGCrd
-            //           ? Icons.keyboard_arrow_up_sharp
-            //           : Icons.keyboard_arrow_down_sharp,
-            //       color: const Color(0xFF244065),
-            //       size: 30,
-            //     ),
-            //   );
-            // }
           },
         ),
       ),
@@ -803,11 +731,11 @@ class _TabCardScreenPageState extends State<TabCardScreenPage>
         maxHeight: 300,
       ),
       child: Scrollbar(
-        controller: _scrollController,
+        controller: _scrollController2,
         thumbVisibility: true,
         interactive: true,
         child: ListView.builder(
-          controller: _scrollController,
+          controller: _scrollController2,
           physics: const BouncingScrollPhysics(),
           padding: EdgeInsets.zero,
           shrinkWrap: false, // ✅ FIXED: allow scrolling
@@ -855,11 +783,11 @@ class _TabCardScreenPageState extends State<TabCardScreenPage>
         maxHeight: 300, // or whatever max you want
       ),
       child: Scrollbar(
-        controller: _scrollController,
+        controller: _scrollController3,
         thumbVisibility: true,
         interactive: true,
         child: ListView.builder(
-          controller: _scrollController,
+          controller: _scrollController3,
           physics: const BouncingScrollPhysics(),
           padding: EdgeInsets.zero,
           shrinkWrap: true,
@@ -891,60 +819,6 @@ class _TabCardScreenPageState extends State<TabCardScreenPage>
                 child: raincheckCard(rainChecks[index - 1]),
               );
             }
-
-            // if (index == 0) {
-            //   return Row(
-            //     mainAxisAlignment: MainAxisAlignment.start,
-            //     children: [
-            //       Padding(
-            //         padding: const EdgeInsets.only(left: 18, top: 30),
-            //         child: Text(
-            //           'Available Rainchecks',
-            //           style: GoogleFonts.nunito(
-            //             color: const Color(0xFF244065),
-            //             fontSize: 18,
-            //             fontWeight: FontWeight.w700,
-            //           ),
-            //         ),
-            //       ),
-            //     ],
-            //   );
-            // } else if (index <= (rainChecks.length)) {
-            //   // index-1 because index=0 is header
-            //   // final imagePath = imagePaths[(index - 1) % imagePaths.length];
-            //   return Padding(
-            //     padding: const EdgeInsets.only(top: 10),
-            //     child: raincheckCard(rainChecks[index]),
-            //   );
-            // }
-            // return null;
-            // else {
-            //   return IconButton(
-            //     onPressed: () {
-            //       setState(() {
-            //         showAllRchk = !showAllRchk;
-            //       });
-            //       if (showAllRchk) {
-            //         Future.delayed(const Duration(milliseconds: 100), () {
-            //           if (_scrollController.hasClients) {
-            //             _scrollController.animateTo(
-            //               _scrollController.position.maxScrollExtent,
-            //               duration: const Duration(milliseconds: 300),
-            //               curve: Curves.easeOut,
-            //             );
-            //           }
-            //         });
-            //       }
-            //     },
-            //     icon: Icon(
-            //       showAllRchk
-            //           ? Icons.keyboard_arrow_up_sharp
-            //           : Icons.keyboard_arrow_down_sharp,
-            //       color: const Color(0xFF244065),
-            //       size: 30,
-            //     ),
-            //   );
-            // }
           },
         ),
       ),
