@@ -1,9 +1,6 @@
 // ignore_for_file: deprecated_member_use, use_build_context_synchronously
 
 import 'dart:convert';
-import 'dart:io';
-import 'dart:math';
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -13,8 +10,10 @@ import 'package:gulf_app/components/custom_bottom_nav_bar.dart';
 import 'package:gulf_app/screens/my_cart.dart';
 import 'package:intl/intl.dart';
 import 'dart:async';
+// ignore: library_prefixes
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:http/http.dart' as http;
+// ignore: depend_on_referenced_packages
 import 'package:crypto/crypto.dart';
 import 'package:cryptography/cryptography.dart';
 
@@ -67,7 +66,7 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
   OverlayEntry? _dropdownRideOverlay;
 
   final GlobalKey _iconKey = GlobalKey(); // Key for Players dropdown
-  final GlobalKey _iconKeySecond = GlobalKey(); // Key for Riders dropdown
+// Key for Riders dropdown
   String userName = '';
   int selectedPlayerCount = 1;
 

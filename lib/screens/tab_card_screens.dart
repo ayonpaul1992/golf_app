@@ -1184,16 +1184,4 @@ class _TabCardScreenPageState extends State<TabCardScreenPage>
       ),
     );
   }
-
-  Widget _circleButton(IconData icon, {Color? color}) {
-    return Container(
-      width: 30,
-      height: 30,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(100),
-        border: Border.all(width: 1, color: const Color(0xFF949FD5)),
-      ),
-      child: Icon(icon, size: 17, color: color ?? const Color(0xFFA5A5A5)),
-    );
-  }
 }

@@ -1,4 +1,4 @@
-// ignore_for_file: deprecated_member_use, use_build_context_synchronously
+// ignore_for_file: deprecated_member_use, use_build_context_synchronously, depend_on_referenced_packages
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -11,7 +11,7 @@ import 'login.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
-import 'dart:io' as io show File, Platform;
+import 'dart:io' as io show File;
 import 'package:crypto/crypto.dart';
 import 'package:cryptography/cryptography.dart';
 
