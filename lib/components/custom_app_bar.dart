@@ -153,14 +153,13 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                 minimumSize: const Size(20, 20),
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),
-              child: Image(
-                image: profilePic.isNotEmpty
+              child: CircleAvatar(
+                radius: 11.5,
+                backgroundColor: Colors.transparent,
+                backgroundImage: profilePic.isNotEmpty
                     ? NetworkImage(profilePic)
                     : const AssetImage('assets/images/user-svgrepo-com.png')
                         as ImageProvider,
-                width: 25,
-                height: 25,
-                fit: BoxFit.contain,
               ),
 
               //  Image.asset(

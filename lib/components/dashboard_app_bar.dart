@@ -105,14 +105,13 @@ class DashboardAppBar extends StatelessWidget implements PreferredSizeWidget {
                 padding: EdgeInsets.zero,
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),
-              child: Image(
-                image: profilePic.isNotEmpty
+              child: CircleAvatar(
+                radius: 11.5,
+                backgroundImage: profilePic.isNotEmpty
                     ? NetworkImage(profilePic)
                     : const AssetImage('assets/images/user-svgrepo-com.png')
                         as ImageProvider,
-                width: 25,
-                height: 25,
-                fit: BoxFit.contain,
+                backgroundColor: Colors.transparent,
               ),
             ),
             const SizedBox(width: 20),
