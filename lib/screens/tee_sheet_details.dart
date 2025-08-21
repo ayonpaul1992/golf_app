@@ -18,7 +18,6 @@ import 'package:crypto/crypto.dart';
 import 'package:cryptography/cryptography.dart';
 
 class TeeSheetDtls extends StatefulWidget {
-  // final String TeeSheetDtlsUsrId;
   final String teesheetPageId;
   final String reservationGroupId;
 
@@ -29,7 +28,6 @@ class TeeSheetDtls extends StatefulWidget {
   final bool allowName;
 
   final IO.Socket socket;
-  // const TeeSheetDtls({super.key, required this.TeeSheetDtlsUsrId});
   const TeeSheetDtls({
     super.key,
     required this.teesheetPageId,
@@ -39,7 +37,6 @@ class TeeSheetDtls extends StatefulWidget {
     required this.players,
     required this.holes,
     required this.allowName,
-    // required this.teesheetData,
     required this.socket,
   });
 

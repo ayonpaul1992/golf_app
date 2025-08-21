@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:gulf_app/screens/membership_screen.dart';
 import '../extras/notification.dart';
 import '../screens/my_profile.dart';
 import '../screens/selcet_booking_class.dart'; // Adjust the path as needed
@@ -94,27 +95,59 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           ),
 
           actions: [
-            Container(
-              padding: const EdgeInsets.all(5),
-              decoration: BoxDecoration(
-                color: const Color(0xFF244065),
-                borderRadius: BorderRadius.circular(50),
-              ),
-              child: Row(
-                children: [
-                  Image.asset("assets/images/mmbr_arw.png"),
-                  const SizedBox(width: 5),
-                  Text(
-                    membershipType,
-                    style: GoogleFonts.poppins(
-                      fontWeight: FontWeight.w500,
-                      fontSize: 11.5,
-                      color: Colors.white,
+            // Container(
+            //   padding: const EdgeInsets.all(5),
+            //   decoration: BoxDecoration(
+            //     color: const Color(0xFF244065),
+            //     borderRadius: BorderRadius.circular(50),
+            //   ),
+            //   child: Row(
+            //     children: [
+            //       Image.asset("assets/images/mmbr_arw.png"),
+            //       const SizedBox(width: 5),
+            //       Text(
+            //         membershipType,
+            //         style: GoogleFonts.poppins(
+            //           fontWeight: FontWeight.w500,
+            //           fontSize: 11.5,
+            //           color: Colors.white,
+            //         ),
+            //       ),
+            //     ],
+            //   ),
+            // ),
+
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const MembershipScreen(mmbspId: ''),
+                    ));
+              },
+              child: Container(
+                padding: const EdgeInsets.all(5),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF244065),
+                  borderRadius: BorderRadius.circular(50),
+                ),
+                child: Row(
+                  children: [
+                    Image.asset("assets/images/mmbr_arw.png"),
+                    const SizedBox(width: 5),
+                    Text(
+                      membershipType,
+                      style: GoogleFonts.poppins(
+                        fontWeight: FontWeight.w500,
+                        fontSize: 11.5,
+                        color: Colors.white,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
+
             const SizedBox(width: 10),
             TextButton(
               onPressed: () {
