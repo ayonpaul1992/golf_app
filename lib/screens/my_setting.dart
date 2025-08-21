@@ -9,6 +9,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:gulf_app/components/custom_app_bar.dart';
 import 'package:gulf_app/components/custom_drawer.dart';
 import 'package:gulf_app/components/custom_bottom_nav_bar.dart';
+import 'package:gulf_app/screens/membership_screen.dart';
 import 'package:gulf_app/screens/my_transaction.dart';
 import 'package:gulf_app/screens/tab_card_screens.dart';
 
@@ -155,17 +156,11 @@ class MySettingPageState extends State<MySettingPage> {
                                   children: [
                                     ClipRRect(
                                       borderRadius: BorderRadius.circular(100),
-                                      // child: Image.asset(
-                                      //   "assets/images/profile_prsn.jpg",
-                                      //   width: 50,
-                                      //   height: 50,
-                                      //   fit: BoxFit.cover,
-                                      // ),
                                       child: Image(
                                         image: userProfileImage!.isNotEmpty
                                             ? NetworkImage(userProfileImage!)
                                             : const AssetImage(
-                                                    "assets/images/user-svgrepo-com.jpg")
+                                                    "assets/images/user-svgrepo-com.png")
                                                 as ImageProvider,
                                         width: 50,
                                         height: 50,
@@ -434,7 +429,16 @@ class MySettingPageState extends State<MySettingPage> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         GestureDetector(
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const MembershipScreen(
+                                  mmbspId: '',
+                                ), // Replace with your target widget
+                              ),
+                            );
+                          },
                           child: Container(
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 7, vertical: 5),

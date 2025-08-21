@@ -7,6 +7,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:gulf_app/components/custom_app_bar.dart';
 import 'package:gulf_app/components/custom_drawer.dart';
 import 'package:gulf_app/components/custom_bottom_nav_bar.dart';
+import 'package:gulf_app/screens/membership_screen.dart';
 import 'package:gulf_app/screens/tab_card_screens.dart';
 import 'my_reservation.dart';
 import 'my_transaction.dart';
@@ -338,7 +339,16 @@ class MyProfilePageState extends State<MyProfilePage> with RouteAware {
                         // )
 
                         GestureDetector(
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const MembershipScreen(
+                                    mmbspId:
+                                        ''), // Replace with your target widget
+                              ),
+                            );
+                          },
                           child: Container(
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 7, vertical: 5),
