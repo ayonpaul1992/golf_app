@@ -34,6 +34,8 @@
 	<string>We need access to your camera to take pictures.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>We need your location to fetch weather data.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>We need your location to provide continuous location-based services, even when the app is in the background.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>We need access to save photos to your library.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
