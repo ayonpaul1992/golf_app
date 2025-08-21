@@ -1,5 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:http/http.dart' as http;
 
 class MemberShipAppBar extends StatefulWidget implements PreferredSizeWidget {
   final GlobalKey<ScaffoldState> scaffoldKey;
@@ -27,6 +31,78 @@ class MemberShipAppBar extends StatefulWidget implements PreferredSizeWidget {
 class _MemberShipAppBarState extends State<MemberShipAppBar> {
   bool _isExpanded = false;
   OverlayEntry? _dropdownOverlay;
+  final FlutterSecureStorage secureStorage = const FlutterSecureStorage();
+
+  String golfCourseName = '';
+  String golfCourseLogo = '';
+
+  bool isLoading = false;
+
+  // store all golf courses
+  List<Map<String, dynamic>> allGolfCourses = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchGolfCourse();
+    _fetchAllGolfCourses(); // Uncomment if you want to fetch membership on init
+  }
+
+  Future<void> _fetchGolfCourse() async {
+    final String? name = await secureStorage.read(key: 'golfCourseName');
+    final String? logo = await secureStorage.read(key: 'golfCourseLogo');
+
+    if (name != null) {
+      setState(() {
+        golfCourseName = name;
+        golfCourseLogo = logo ?? '';
+      });
+    } else {
+      setState(() {
+        golfCourseName = '';
+      });
+    }
+  }
+
+  Future<Map<String, dynamic>?> _fetchAllGolfCourses() async {
+    // setState(() {
+    //   isLoading = true;
+    // });
+    try {
+      final String baseUrl = 'https://api.dev.driverpos.io/api/v1';
+      final String? token = await secureStorage.read(key: 'accessToken');
+
+      final response = Uri.parse(
+        '$baseUrl/golfCourse/business-golfcourses/eHIq4K',
+      ).resolveUri(Uri());
+
+      // Example using http package:
+      final httpResponse = await http.get(response, headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      });
+
+      if (httpResponse.statusCode == 200) {
+        final data = jsonDecode(httpResponse.body) as Map<String, dynamic>;
+        setState(() {
+          allGolfCourses = List<Map<String, dynamic>>.from(data['data']);
+        });
+        print(data);
+        // return data;
+      } else {
+        return null;
+      }
+      // return null; // Remove this and uncomment above for real API
+    } catch (e) {
+      // Handle error
+      return null;
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+    return null;
+  }
 
   void _toggleDropdown(BuildContext context) {
     if (_isExpanded) {
@@ -72,90 +148,110 @@ class _MemberShipAppBarState extends State<MemberShipAppBar> {
                   children: [
                     ListTile(
                       leading: Container(
-                          width: 30,
-                          height: 30,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(100),
-                            border: Border.all(
-                              color: const Color(
-                                  0xFFE2E4E4), // 👈 your border color
-                              width: 1.5, // 👈 border width
-                            ),
+                        width: 30,
+                        height: 30,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(100),
+                          border: Border.all(
+                            color:
+                                const Color(0xFFE2E4E4), // 👈 your border color
+                            width: 1.5, // 👈 border width
                           ),
-                          child: Center(
-                              child: Image.asset(
-                                  "assets/images/ftr_teesheet.png",
-                                  width: 15,
-                                  height: 15))),
-                      title: Text("Plan 1",
-                          style: GoogleFonts.poppins(
-                            color: const Color(0xFF244065),
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                          )),
+                        ),
+                        child: Center(
+                          child: Image.network(
+                            golfCourseLogo.isNotEmpty
+                                ? golfCourseLogo
+                                : 'assets/images/mmbr_poplogo.png',
+                            width: 15,
+                            height: 15,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Image.asset(
+                                "assets/images/ftr_teesheet.png",
+                                width: 15,
+                                height: 15,
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                      title: Text(
+                        golfCourseName,
+                        style: GoogleFonts.poppins(
+                          color: const Color(0xFF244065),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
                       onTap: () {
-                        debugPrint("Plan 1 selected");
+                        debugPrint("$golfCourseName selected");
                         _removeDropdown();
                       },
                     ),
-                    const Divider(color: Color(0xFFE2E4E4)),
-                    ListTile(
-                      leading: Container(
-                          width: 30,
-                          height: 30,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(100),
-                            border: Border.all(
-                              color: const Color(
-                                  0xFFE2E4E4), // 👈 your border color
-                              width: 1.5, // 👈 border width
-                            ),
-                          ),
-                          child: Center(
-                              child: Image.asset(
-                                  "assets/images/ftr_teesheet.png",
-                                  width: 15,
-                                  height: 15))),
-                      title: Text("Plan 2",
-                          style: GoogleFonts.poppins(
-                            color: const Color(0xFF244065),
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                          )),
-                      onTap: () {
-                        debugPrint("Plan 2 selected");
-                        _removeDropdown();
-                      },
+                    const Divider(
+                      color: Color(0xFFE2E4E4),
                     ),
-                    const Divider(color: Color(0xFFE2E4E4)),
-                    ListTile(
-                      leading: Container(
-                          width: 30,
-                          height: 30,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(100),
-                            border: Border.all(
-                              color: const Color(
-                                  0xFFE2E4E4), // 👈 your border color
-                              width: 1.5, // 👈 border width
+                    ...allGolfCourses.map((course) {
+                      if (course['name'] == golfCourseName) {
+                        return const SizedBox.shrink();
+                      }
+                      final String name = course['name'] ?? '';
+                      final String logo = course['logo'] ?? '';
+                      return Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          ListTile(
+                            leading: Container(
+                              width: 30,
+                              height: 30,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(100),
+                                border: Border.all(
+                                  color: const Color(0xFFE2E4E4),
+                                  width: 1.5,
+                                ),
+                              ),
+                              child: Center(
+                                child: logo.isNotEmpty
+                                    ? Image.network(
+                                        logo,
+                                        width: 15,
+                                        height: 15,
+                                        errorBuilder:
+                                            (context, error, stackTrace) {
+                                          return Image.asset(
+                                            "assets/images/ftr_teesheet.png",
+                                            width: 15,
+                                            height: 15,
+                                          );
+                                        },
+                                      )
+                                    : Image.asset(
+                                        "assets/images/ftr_teesheet.png",
+                                        width: 15,
+                                        height: 15,
+                                      ),
+                              ),
                             ),
+                            title: Text(
+                              name,
+                              style: GoogleFonts.poppins(
+                                color: const Color(0xFF244065),
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            onTap: () {
+                              debugPrint("$name selected");
+                              _removeDropdown();
+                            },
                           ),
-                          child: Center(
-                              child: Image.asset(
-                                  "assets/images/ftr_teesheet.png",
-                                  width: 15,
-                                  height: 15))),
-                      title: Text("Plan 3",
-                          style: GoogleFonts.poppins(
-                            color: const Color(0xFF244065),
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                          )),
-                      onTap: () {
-                        debugPrint("Plan 3 selected");
-                        _removeDropdown();
-                      },
-                    ),
+                          const Divider(
+                            color: Color(0xFFE2E4E4),
+                          ),
+                        ],
+                      );
+                    }),
                   ],
                 ),
               ),
@@ -199,7 +295,7 @@ class _MemberShipAppBarState extends State<MemberShipAppBar> {
       title: Column(
         children: [
           Text(
-            'Jester Park Golf Course',
+            golfCourseName,
             textAlign: TextAlign.center,
             style: GoogleFonts.poppins(
               color: const Color(0xFF244065),
@@ -228,12 +324,27 @@ class _MemberShipAppBarState extends State<MemberShipAppBar> {
             children: [
               Padding(
                 padding: const EdgeInsets.only(right: 2.0),
-                child: Image.asset(
-                  'assets/images/mmbr_poplogo.png',
-                  width: 30,
-                  height: 30,
-                  fit: BoxFit.contain,
-                ),
+                child: golfCourseLogo.isNotEmpty
+                    ? Image.network(
+                        golfCourseLogo,
+                        width: 30,
+                        height: 30,
+                        fit: BoxFit.contain,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Image.asset(
+                            'assets/images/mmbr_poplogo.png',
+                            width: 30,
+                            height: 30,
+                            fit: BoxFit.contain,
+                          );
+                        },
+                      )
+                    : Image.asset(
+                        'assets/images/mmbr_poplogo.png',
+                        width: 30,
+                        height: 30,
+                        fit: BoxFit.contain,
+                      ),
               ),
               Icon(
                 _isExpanded

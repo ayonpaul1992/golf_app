@@ -1,9 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:gulf_app/components/custom_bottom_nav_bar.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../components/member_app_bar.dart';
+import 'package:http/http.dart' as http;
 
 class MembershipScreen extends StatefulWidget {
   final String mmbspId;
@@ -39,6 +42,47 @@ class MembershipScreenState extends State<MembershipScreen>
         setState(() {}); // rebuild to update active border color
       }
     });
+
+    fetchCurrentMembership();
+  }
+
+  Future<Map<String, dynamic>?> fetchCurrentMembership() async {
+    // setState(() {
+    //   isLoading = true;
+    // });
+    try {
+      final String baseUrl = 'https://api.dev.driverpos.io/api/v1';
+      final String? token = await secureStorage.read(key: 'accessToken');
+      final String? golfCourse =
+          await secureStorage.read(key: 'golfCourseName');
+
+      final response = Uri.parse(
+        '$baseUrl/customer/myMembership?golfCourse=$golfCourse',
+      ).resolveUri(Uri());
+
+      // Example using http package:
+      final httpResponse = await http.get(response, headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      });
+
+      if (httpResponse.statusCode == 200) {
+        final data = jsonDecode(httpResponse.body) as Map<String, dynamic>;
+        // print(data);
+        // return data;
+      } else {
+        return null;
+      }
+      // return null; // Remove this and uncomment above for real API
+    } catch (e) {
+      // Handle error
+      return null;
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+    return null;
   }
 
   @override
@@ -53,447 +97,438 @@ class MembershipScreenState extends State<MembershipScreen>
 
   Widget giftCard() {
     return Container(
-      child: Container(
-        padding:
-            const EdgeInsets.only(top: 10, left: 10, right: 10, bottom: 10),
-        decoration: BoxDecoration(
-          color: const Color(0xFFD5E29D),
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              spacing: 10,
-              children: [
-                Image.asset(
-                  "assets/images/ftr_teesheet.png",
-                  width: 15,
-                  height: 15,
-                  color: Colors.white,
+      padding: const EdgeInsets.only(top: 10, left: 10, right: 10, bottom: 10),
+      decoration: BoxDecoration(
+        color: const Color(0xFFD5E29D),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            spacing: 10,
+            children: [
+              Image.asset(
+                "assets/images/ftr_teesheet.png",
+                width: 15,
+                height: 15,
+                color: Colors.white,
+              ),
+              RichText(
+                text: TextSpan(
+                  text: "Gold Couples Membership - ", // 👈 first part
+                  style: GoogleFonts.poppins(
+                      color: const Color(0xFF244065),
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600),
+                  children: const [
+                    TextSpan(
+                      text: "\$", // 👈 styled part
+                    ),
+                    TextSpan(
+                      text: "1000", // 👈 last part
+                    ),
+                  ],
                 ),
-                RichText(
-                  text: TextSpan(
-                    text: "Gold Couples Membership - ", // 👈 first part
-                    style: GoogleFonts.poppins(
-                        color: const Color(0xFF244065),
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600),
-                    children: const [
-                      TextSpan(
-                        text: "\$", // 👈 styled part
+              ),
+            ],
+          ),
+          Container(
+            margin: const EdgeInsets.only(top: 10),
+            decoration: BoxDecoration(
+              color: Colors.transparent, // 👈 keeps your table bg visible
+              borderRadius: BorderRadius.circular(12), // 👈 Rounded corners
+              border: Border.all(
+                color: const Color(0xFFFFFFFF),
+                width: 1.5,
+              ),
+            ),
+            clipBehavior: Clip.hardEdge,
+            child: Table(
+              border: const TableBorder(
+                top: BorderSide(color: Color(0x000fffff), width: 0),
+                bottom: BorderSide(color: Color(0x000fffff), width: 0),
+                left: BorderSide(color: Color(0x000fffff), width: 0),
+                right: BorderSide(color: Color(0x000fffff), width: 0),
+              ),
+              columnWidths: const {
+                0: FlexColumnWidth(2),
+                1: FlexColumnWidth(2),
+                2: FlexColumnWidth(2),
+              },
+              children: [
+                // Header Row
+                TableRow(
+                  decoration: const BoxDecoration(color: Color(0xFFFFFFFF)),
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        "Time/Day",
+                        style: GoogleFonts.poppins(
+                            color: const Color(0xFF244065),
+                            fontWeight: FontWeight.w600,
+                            fontSize: 12),
                       ),
-                      TextSpan(
-                        text: "1000", // 👈 last part
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        "9 Holes",
+                        style: GoogleFonts.poppins(
+                            color: const Color(0xFF244065),
+                            fontWeight: FontWeight.w600,
+                            fontSize: 12),
                       ),
-                    ],
-                  ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        "18 Holes",
+                        style: GoogleFonts.poppins(
+                            color: const Color(0xFF244065),
+                            fontWeight: FontWeight.w600,
+                            fontSize: 12),
+                      ),
+                    ),
+                  ],
+                ),
+
+                // Row 1
+                TableRow(
+                  children: [
+                    Container(
+                      decoration: const BoxDecoration(
+                        border: Border(
+                          bottom: BorderSide(
+                              color: Color(0xFFE8E8E8),
+                              width: 1), // 👈 bottom border
+                        ),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Weekday",
+                              style: GoogleFonts.poppins(
+                                  color: const Color(0xFF3F4B4B),
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600),
+                            ),
+                            RichText(
+                              text: TextSpan(
+                                text: "Mon ",
+                                style: GoogleFonts.poppins(
+                                    color: const Color(0xFF3F4B4B),
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w500),
+                                children: const [
+                                  TextSpan(text: "-"),
+                                  TextSpan(text: "Thu"),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+
+                    // Column 2
+                    Container(
+                      decoration: const BoxDecoration(
+                        border: Border(
+                          bottom:
+                              BorderSide(color: Color(0xFFE8E8E8), width: 1),
+                        ),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            RichText(
+                              text: TextSpan(
+                                text: "\$",
+                                style: GoogleFonts.poppins(
+                                    color: const Color(0xFF3F4B4B),
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w700),
+                                children: const [TextSpan(text: "18.00")],
+                              ),
+                            ),
+                            RichText(
+                              text: TextSpan(
+                                text: "\$",
+                                style: GoogleFonts.poppins(
+                                    color: const Color(0xFF3F4B4B),
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w700),
+                                children: const [TextSpan(text: "14.00")],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+
+                    // Column 3
+                    Container(
+                      decoration: const BoxDecoration(
+                        border: Border(
+                          bottom:
+                              BorderSide(color: Color(0xFFE8E8E8), width: 1),
+                        ),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            RichText(
+                              text: TextSpan(
+                                text: "\$",
+                                style: GoogleFonts.poppins(
+                                    color: const Color(0xFF3F4B4B),
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w700),
+                                children: const [TextSpan(text: "24.00")],
+                              ),
+                            ),
+                            RichText(
+                              text: TextSpan(
+                                text: "\$",
+                                style: GoogleFonts.poppins(
+                                    color: const Color(0xFF3F4B4B),
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w700),
+                                children: const [TextSpan(text: "17.00")],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+
+                // Row 2
+                TableRow(
+                  children: [
+                    Container(
+                      decoration: const BoxDecoration(
+                        border: Border(
+                          bottom: BorderSide(
+                              color: Color(0xFFE8E8E8),
+                              width: 1), // 👈 bottom border
+                        ),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Weekday",
+                              style: GoogleFonts.poppins(
+                                  color: const Color(0xFF3F4B4B),
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600),
+                            ),
+                            RichText(
+                              text: TextSpan(
+                                text: "Fri ",
+                                style: GoogleFonts.poppins(
+                                    color: const Color(0xFF3F4B4B),
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w500),
+                                children: const [
+                                  TextSpan(text: "-"),
+                                  TextSpan(text: "Sun"),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+
+                    // Column 2
+                    Container(
+                      decoration: const BoxDecoration(
+                        border: Border(
+                          bottom:
+                              BorderSide(color: Color(0xFFE8E8E8), width: 1),
+                        ),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            RichText(
+                              text: TextSpan(
+                                text: "\$",
+                                style: GoogleFonts.poppins(
+                                    color: const Color(0xFF3F4B4B),
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w700),
+                                children: const [TextSpan(text: "18.00")],
+                              ),
+                            ),
+                            RichText(
+                              text: TextSpan(
+                                text: "\$",
+                                style: GoogleFonts.poppins(
+                                    color: const Color(0xFF3F4B4B),
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w700),
+                                children: const [TextSpan(text: "14.00")],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+
+                    // Column 3
+                    Container(
+                      decoration: const BoxDecoration(
+                        border: Border(
+                          bottom:
+                              BorderSide(color: Color(0xFFE8E8E8), width: 1),
+                        ),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            RichText(
+                              text: TextSpan(
+                                text: "\$",
+                                style: GoogleFonts.poppins(
+                                    color: const Color(0xFF3F4B4B),
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w700),
+                                children: const [TextSpan(text: "24.00")],
+                              ),
+                            ),
+                            RichText(
+                              text: TextSpan(
+                                text: "\$",
+                                style: GoogleFonts.poppins(
+                                    color: const Color(0xFF3F4B4B),
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w700),
+                                children: const [TextSpan(text: "17.00")],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+
+                // Row 3
+                TableRow(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Weekday",
+                            style: GoogleFonts.poppins(
+                                color: const Color(0xFF3F4B4B),
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600),
+                          ),
+                          RichText(
+                            text: TextSpan(
+                              text: "Fri ",
+                              style: GoogleFonts.poppins(
+                                  color: const Color(0xFF3F4B4B),
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w500),
+                              children: const [
+                                TextSpan(text: "-"),
+                                TextSpan(text: "Sun"),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    // Column 2
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          RichText(
+                            text: TextSpan(
+                              text: "\$",
+                              style: GoogleFonts.poppins(
+                                  color: const Color(0xFF3F4B4B),
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w700),
+                              children: const [TextSpan(text: "18.00")],
+                            ),
+                          ),
+                          RichText(
+                            text: TextSpan(
+                              text: "\$",
+                              style: GoogleFonts.poppins(
+                                  color: const Color(0xFF3F4B4B),
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w700),
+                              children: const [TextSpan(text: "14.00")],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    // Column 3
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          RichText(
+                            text: TextSpan(
+                              text: "\$",
+                              style: GoogleFonts.poppins(
+                                  color: const Color(0xFF3F4B4B),
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w700),
+                              children: const [TextSpan(text: "24.00")],
+                            ),
+                          ),
+                          RichText(
+                            text: TextSpan(
+                              text: "\$",
+                              style: GoogleFonts.poppins(
+                                  color: const Color(0xFF3F4B4B),
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w700),
+                              children: const [TextSpan(text: "17.00")],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
-            Container(
-              margin: const EdgeInsets.only(top: 10),
-              decoration: BoxDecoration(
-                color: Colors.transparent, // 👈 keeps your table bg visible
-                borderRadius: BorderRadius.circular(12), // 👈 Rounded corners
-                border: Border.all(
-                  color: const Color(0xFFFFFFFF),
-                  width: 1.5,
-                ),
-              ),
-              clipBehavior: Clip.hardEdge,
-              child: Table(
-                border: const TableBorder(
-                  top: BorderSide(color: Color(0x000fffff), width: 0),
-                  bottom: BorderSide(color: Color(0x000fffff), width: 0),
-                  left: BorderSide(color: Color(0x000fffff), width: 0),
-                  right: BorderSide(color: Color(0x000fffff), width: 0),
-                ),
-                columnWidths: const {
-                  0: FlexColumnWidth(2),
-                  1: FlexColumnWidth(2),
-                  2: FlexColumnWidth(2),
-                },
-                children: [
-                  // Header Row
-                  TableRow(
-                    decoration: const BoxDecoration(color: Color(0xFFFFFFFF)),
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          "Time/Day",
-                          style: GoogleFonts.poppins(
-                              color: const Color(0xFF244065),
-                              fontWeight: FontWeight.w600,
-                              fontSize: 12),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          "9 Holes",
-                          style: GoogleFonts.poppins(
-                              color: const Color(0xFF244065),
-                              fontWeight: FontWeight.w600,
-                              fontSize: 12),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          "18 Holes",
-                          style: GoogleFonts.poppins(
-                              color: const Color(0xFF244065),
-                              fontWeight: FontWeight.w600,
-                              fontSize: 12),
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  // Row 1
-                  TableRow(
-                    children: [
-                      Container(
-                        decoration: const BoxDecoration(
-                          border: Border(
-                            bottom: BorderSide(
-                                color: Color(0xFFE8E8E8),
-                                width: 1), // 👈 bottom border
-                          ),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Weekday",
-                                style: GoogleFonts.poppins(
-                                    color: const Color(0xFF3F4B4B),
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600),
-                              ),
-                              RichText(
-                                text: TextSpan(
-                                  text: "Mon ",
-                                  style: GoogleFonts.poppins(
-                                      color: const Color(0xFF3F4B4B),
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.w500),
-                                  children: const [
-                                    TextSpan(text: "-"),
-                                    TextSpan(text: "Thu"),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-
-                      // Column 2
-                      Container(
-                        decoration: const BoxDecoration(
-                          border: Border(
-                            bottom:
-                                BorderSide(color: Color(0xFFE8E8E8), width: 1),
-                          ),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              RichText(
-                                text: TextSpan(
-                                  text: "\$",
-                                  style: GoogleFonts.poppins(
-                                      color: const Color(0xFF3F4B4B),
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w700),
-                                  children: const [TextSpan(text: "18.00")],
-                                ),
-                              ),
-                              RichText(
-                                text: TextSpan(
-                                  text: "\$",
-                                  style: GoogleFonts.poppins(
-                                      color: const Color(0xFF3F4B4B),
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w700),
-                                  children: const [TextSpan(text: "14.00")],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-
-                      // Column 3
-                      Container(
-                        decoration: const BoxDecoration(
-                          border: Border(
-                            bottom:
-                                BorderSide(color: Color(0xFFE8E8E8), width: 1),
-                          ),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              RichText(
-                                text: TextSpan(
-                                  text: "\$",
-                                  style: GoogleFonts.poppins(
-                                      color: const Color(0xFF3F4B4B),
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w700),
-                                  children: const [TextSpan(text: "24.00")],
-                                ),
-                              ),
-                              RichText(
-                                text: TextSpan(
-                                  text: "\$",
-                                  style: GoogleFonts.poppins(
-                                      color: const Color(0xFF3F4B4B),
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w700),
-                                  children: const [TextSpan(text: "17.00")],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  // Row 2
-                  TableRow(
-                    children: [
-                      Container(
-                        decoration: const BoxDecoration(
-                          border: Border(
-                            bottom: BorderSide(
-                                color: Color(0xFFE8E8E8),
-                                width: 1), // 👈 bottom border
-                          ),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Weekday",
-                                style: GoogleFonts.poppins(
-                                    color: const Color(0xFF3F4B4B),
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600),
-                              ),
-                              RichText(
-                                text: TextSpan(
-                                  text: "Fri ",
-                                  style: GoogleFonts.poppins(
-                                      color: const Color(0xFF3F4B4B),
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.w500),
-                                  children: const [
-                                    TextSpan(text: "-"),
-                                    TextSpan(text: "Sun"),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-
-                      // Column 2
-                      Container(
-                        decoration: const BoxDecoration(
-                          border: Border(
-                            bottom:
-                                BorderSide(color: Color(0xFFE8E8E8), width: 1),
-                          ),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              RichText(
-                                text: TextSpan(
-                                  text: "\$",
-                                  style: GoogleFonts.poppins(
-                                      color: const Color(0xFF3F4B4B),
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w700),
-                                  children: const [TextSpan(text: "18.00")],
-                                ),
-                              ),
-                              RichText(
-                                text: TextSpan(
-                                  text: "\$",
-                                  style: GoogleFonts.poppins(
-                                      color: const Color(0xFF3F4B4B),
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w700),
-                                  children: const [TextSpan(text: "14.00")],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-
-                      // Column 3
-                      Container(
-                        decoration: const BoxDecoration(
-                          border: Border(
-                            bottom:
-                                BorderSide(color: Color(0xFFE8E8E8), width: 1),
-                          ),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              RichText(
-                                text: TextSpan(
-                                  text: "\$",
-                                  style: GoogleFonts.poppins(
-                                      color: const Color(0xFF3F4B4B),
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w700),
-                                  children: const [TextSpan(text: "24.00")],
-                                ),
-                              ),
-                              RichText(
-                                text: TextSpan(
-                                  text: "\$",
-                                  style: GoogleFonts.poppins(
-                                      color: const Color(0xFF3F4B4B),
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w700),
-                                  children: const [TextSpan(text: "17.00")],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  // Row 3
-                  TableRow(
-                    children: [
-                      Container(
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Weekday",
-                                style: GoogleFonts.poppins(
-                                    color: const Color(0xFF3F4B4B),
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600),
-                              ),
-                              RichText(
-                                text: TextSpan(
-                                  text: "Fri ",
-                                  style: GoogleFonts.poppins(
-                                      color: const Color(0xFF3F4B4B),
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.w500),
-                                  children: const [
-                                    TextSpan(text: "-"),
-                                    TextSpan(text: "Sun"),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-
-                      // Column 2
-                      Container(
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              RichText(
-                                text: TextSpan(
-                                  text: "\$",
-                                  style: GoogleFonts.poppins(
-                                      color: const Color(0xFF3F4B4B),
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w700),
-                                  children: const [TextSpan(text: "18.00")],
-                                ),
-                              ),
-                              RichText(
-                                text: TextSpan(
-                                  text: "\$",
-                                  style: GoogleFonts.poppins(
-                                      color: const Color(0xFF3F4B4B),
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w700),
-                                  children: const [TextSpan(text: "14.00")],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-
-                      // Column 3
-                      Container(
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              RichText(
-                                text: TextSpan(
-                                  text: "\$",
-                                  style: GoogleFonts.poppins(
-                                      color: const Color(0xFF3F4B4B),
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w700),
-                                  children: const [TextSpan(text: "24.00")],
-                                ),
-                              ),
-                              RichText(
-                                text: TextSpan(
-                                  text: "\$",
-                                  style: GoogleFonts.poppins(
-                                      color: const Color(0xFF3F4B4B),
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w700),
-                                  children: const [TextSpan(text: "17.00")],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -512,8 +547,8 @@ class MembershipScreenState extends State<MembershipScreen>
           itemCount: (showAll ? 3 : 1) + 2,
           itemBuilder: (context, index) {
             if (index == 0) {
-              return Padding(
-                padding: const EdgeInsets.only(left: 18, top: 20),
+              return const Padding(
+                padding: EdgeInsets.only(left: 18, top: 20),
               );
             } else if (index <= (showAll ? 3 : 1)) {
               return Padding(
@@ -793,38 +828,36 @@ class MembershipScreenState extends State<MembershipScreen>
               const SizedBox(
                 height: 15,
               ),
-              Container(
-                child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          width: 40,
-                          height: 1.1,
-                          color: const Color(0xFFB2C1C0),
-                        ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        Text(
-                          "Current Membership Plan",
-                          style: GoogleFonts.poppins(
-                              color: const Color(0xFF244065),
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600),
-                        ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        Container(
-                          width: 40,
-                          height: 1.1,
-                          color: const Color(0xFFB2C1C0),
-                        ),
-                      ],
-                    )),
-              ),
+              SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        width: 40,
+                        height: 1.1,
+                        color: const Color(0xFFB2C1C0),
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Text(
+                        "Current Membership Plan",
+                        style: GoogleFonts.poppins(
+                            color: const Color(0xFF244065),
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600),
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Container(
+                        width: 40,
+                        height: 1.1,
+                        color: const Color(0xFFB2C1C0),
+                      ),
+                    ],
+                  )),
               const SizedBox(
                 height: 10,
               ),
@@ -1211,114 +1244,103 @@ class MembershipScreenState extends State<MembershipScreen>
                               // Row 3
                               TableRow(
                                 children: [
-                                  Container(
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            "Weekday",
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          "Weekday",
+                                          style: GoogleFonts.poppins(
+                                              color: const Color(0xFFFFFFFF),
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w600),
+                                        ),
+                                        RichText(
+                                          text: TextSpan(
+                                            text: "Fri ",
                                             style: GoogleFonts.poppins(
                                                 color: const Color(0xFFFFFFFF),
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w600),
+                                                fontSize: 11,
+                                                fontWeight: FontWeight.w500),
+                                            children: const [
+                                              TextSpan(text: "-"),
+                                              TextSpan(text: "Sun"),
+                                            ],
                                           ),
-                                          RichText(
-                                            text: TextSpan(
-                                              text: "Fri ",
-                                              style: GoogleFonts.poppins(
-                                                  color:
-                                                      const Color(0xFFFFFFFF),
-                                                  fontSize: 11,
-                                                  fontWeight: FontWeight.w500),
-                                              children: const [
-                                                TextSpan(text: "-"),
-                                                TextSpan(text: "Sun"),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      ),
+                                        ),
+                                      ],
                                     ),
                                   ),
 
                                   // Column 2
-                                  Container(
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          RichText(
-                                            text: TextSpan(
-                                              text: "\$",
-                                              style: GoogleFonts.poppins(
-                                                  color:
-                                                      const Color(0xFFFFFFFF),
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.w700),
-                                              children: const [
-                                                TextSpan(text: "18.00")
-                                              ],
-                                            ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        RichText(
+                                          text: TextSpan(
+                                            text: "\$",
+                                            style: GoogleFonts.poppins(
+                                                color: const Color(0xFFFFFFFF),
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.w700),
+                                            children: const [
+                                              TextSpan(text: "18.00")
+                                            ],
                                           ),
-                                          RichText(
-                                            text: TextSpan(
-                                              text: "\$",
-                                              style: GoogleFonts.poppins(
-                                                  color:
-                                                      const Color(0xFFFFFFFF),
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.w700),
-                                              children: const [
-                                                TextSpan(text: "14.00")
-                                              ],
-                                            ),
+                                        ),
+                                        RichText(
+                                          text: TextSpan(
+                                            text: "\$",
+                                            style: GoogleFonts.poppins(
+                                                color: const Color(0xFFFFFFFF),
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.w700),
+                                            children: const [
+                                              TextSpan(text: "14.00")
+                                            ],
                                           ),
-                                        ],
-                                      ),
+                                        ),
+                                      ],
                                     ),
                                   ),
 
                                   // Column 3
-                                  Container(
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          RichText(
-                                            text: TextSpan(
-                                              text: "\$",
-                                              style: GoogleFonts.poppins(
-                                                  color:
-                                                      const Color(0xFFFFFFFF),
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.w700),
-                                              children: const [
-                                                TextSpan(text: "24.00")
-                                              ],
-                                            ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        RichText(
+                                          text: TextSpan(
+                                            text: "\$",
+                                            style: GoogleFonts.poppins(
+                                                color: const Color(0xFFFFFFFF),
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.w700),
+                                            children: const [
+                                              TextSpan(text: "24.00")
+                                            ],
                                           ),
-                                          RichText(
-                                            text: TextSpan(
-                                              text: "\$",
-                                              style: GoogleFonts.poppins(
-                                                  color:
-                                                      const Color(0xFFFFFFFF),
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.w700),
-                                              children: const [
-                                                TextSpan(text: "17.00")
-                                              ],
-                                            ),
+                                        ),
+                                        RichText(
+                                          text: TextSpan(
+                                            text: "\$",
+                                            style: GoogleFonts.poppins(
+                                                color: const Color(0xFFFFFFFF),
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.w700),
+                                            children: const [
+                                              TextSpan(text: "17.00")
+                                            ],
                                           ),
-                                        ],
-                                      ),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ],
@@ -1380,38 +1402,36 @@ class MembershipScreenState extends State<MembershipScreen>
               const SizedBox(
                 height: 30,
               ),
-              Container(
-                child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          width: 40,
-                          height: 1.1,
-                          color: const Color(0xFFB2C1C0),
-                        ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        Text(
-                          "Other Membership Plans",
-                          style: GoogleFonts.poppins(
-                              color: const Color(0xFF244065),
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600),
-                        ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        Container(
-                          width: 40,
-                          height: 1.1,
-                          color: const Color(0xFFB2C1C0),
-                        ),
-                      ],
-                    )),
-              ),
+              SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        width: 40,
+                        height: 1.1,
+                        color: const Color(0xFFB2C1C0),
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Text(
+                        "Other Membership Plans",
+                        style: GoogleFonts.poppins(
+                            color: const Color(0xFF244065),
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600),
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Container(
+                        width: 40,
+                        height: 1.1,
+                        color: const Color(0xFFB2C1C0),
+                      ),
+                    ],
+                  )),
               Column(
                 children: [
                   Container(
@@ -1474,7 +1494,7 @@ class MembershipScreenState extends State<MembershipScreen>
           )),
         ),
       ),
-      bottomNavigationBar: const CustomBottomNavBar(selectedIndex: 0),
+      bottomNavigationBar: const CustomBottomNavBar(selectedIndex: -1),
     );
   }
 }
