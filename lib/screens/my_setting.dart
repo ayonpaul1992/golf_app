@@ -777,7 +777,15 @@ class MySettingPageState extends State<MySettingPage> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         GestureDetector(
-                          onTap: () {},
+                          onTap: () {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content:
+                                    Text('FAQs screen is under development'),
+                                duration: Duration(seconds: 2),
+                              ),
+                            );
+                          },
                           child: Container(
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 7, vertical: 5),
@@ -855,7 +863,15 @@ class MySettingPageState extends State<MySettingPage> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         GestureDetector(
-                          onTap: () {},
+                          onTap: () {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                    'Terms and Conditions screen is under development'),
+                                duration: Duration(seconds: 2),
+                              ),
+                            );
+                          },
                           child: Container(
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 7, vertical: 5),
@@ -878,8 +894,8 @@ class MySettingPageState extends State<MySettingPage> {
                                       decoration: const BoxDecoration(
                                         color: Color(0xFFF8F8F8),
                                         borderRadius: BorderRadius.all(
-                                            Radius.circular(
-                                                100)), // Use Radius.circular
+                                          Radius.circular(100),
+                                        ), // Use Radius.circular
                                       ),
                                       child: const Center(
                                         child: Icon(
@@ -933,7 +949,16 @@ class MySettingPageState extends State<MySettingPage> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         GestureDetector(
-                          onTap: () {},
+                          onTap: () {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                  'Help and Support screen is under development',
+                                ),
+                                duration: Duration(seconds: 2),
+                              ),
+                            );
+                          },
                           child: Container(
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 7, vertical: 5),

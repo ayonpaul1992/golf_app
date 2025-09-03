@@ -67,27 +67,29 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                   scaffoldKey.currentState?.openDrawer();
                 },
               ),
-              InkWell(
-                onTap: onTitleTapped ??
-                    () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              const SelcetBookingClass(userId: ''),
-                        ),
-                      );
-                    },
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 41),
-                  child: Image(
-                    image: logoUrl.isNotEmpty
-                        ? NetworkImage(logoUrl)
-                        : const AssetImage('assets/images/main_logo.png')
-                            as ImageProvider,
-                    width: 41,
-                    height: 41,
-                    fit: BoxFit.contain,
+              Expanded(
+                child: InkWell(
+                  onTap: onTitleTapped ??
+                      () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                const SelcetBookingClass(userId: ''),
+                          ),
+                        );
+                      },
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 41),
+                    child: Image(
+                      image: logoUrl.isNotEmpty
+                          ? NetworkImage(logoUrl)
+                          : const AssetImage('assets/images/main_logo.png')
+                              as ImageProvider,
+                      width: 41,
+                      height: 41,
+                      fit: BoxFit.contain,
+                    ),
                   ),
                 ),
               ),
@@ -95,28 +97,6 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           ),
 
           actions: [
-            // Container(
-            //   padding: const EdgeInsets.all(5),
-            //   decoration: BoxDecoration(
-            //     color: const Color(0xFF244065),
-            //     borderRadius: BorderRadius.circular(50),
-            //   ),
-            //   child: Row(
-            //     children: [
-            //       Image.asset("assets/images/mmbr_arw.png"),
-            //       const SizedBox(width: 5),
-            //       Text(
-            //         membershipType,
-            //         style: GoogleFonts.poppins(
-            //           fontWeight: FontWeight.w500,
-            //           fontSize: 11.5,
-            //           color: Colors.white,
-            //         ),
-            //       ),
-            //     ],
-            //   ),
-            // ),
-
             GestureDetector(
               onTap: () {
                 Navigator.push(
@@ -132,23 +112,24 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                   color: const Color(0xFF244065),
                   borderRadius: BorderRadius.circular(50),
                 ),
-                child: Row(
-                  children: [
-                    Image.asset("assets/images/mmbr_arw.png"),
-                    const SizedBox(width: 5),
-                    Text(
-                      membershipType,
-                      style: GoogleFonts.poppins(
-                        fontWeight: FontWeight.w500,
-                        fontSize: 11.5,
-                        color: Colors.white,
+                child: FittedBox(
+                  child: Row(
+                    children: [
+                      Image.asset("assets/images/mmbr_arw.png"),
+                      const SizedBox(width: 5),
+                      Text(
+                        membershipType,
+                        style: GoogleFonts.poppins(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 11.5,
+                          color: Colors.white,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
-
             const SizedBox(width: 10),
             TextButton(
               onPressed: () {
@@ -195,12 +176,6 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                     : const AssetImage('assets/images/user-svgrepo-com.png')
                         as ImageProvider,
               ),
-
-              //  Image.asset(
-              //   'assets/images/user-svgrepo-com.png',
-              //   height: 20,
-              //   width: 20,
-              // ),
             ),
             const SizedBox(width: 20),
           ],

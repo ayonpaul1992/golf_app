@@ -1,7 +1,6 @@
 // ignore_for_file: deprecated_member_use, use_build_context_synchronously
 
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
@@ -214,32 +213,38 @@ class DashboardPageState extends State<DashboardPage> {
               });
             });
           },
-          child: SingleChildScrollView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            child: SizedBox(
-                height: MediaQuery.of(context).size.height,
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              return SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
                 child: ConstrainedBox(
                   constraints: BoxConstraints(
-                    minHeight: MediaQuery.of(context).size.height,
+                    minHeight: constraints.maxHeight,
                   ),
-                  child: IntrinsicHeight(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          color: const Color(0xFFFAFCFA),
-                          width: double.infinity,
-                          height: MediaQuery.of(context).size.height,
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 0),
-                            child: SingleChildScrollView(
+                  child: SizedBox(
+                    height: MediaQuery.of(context).size.height,
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        minHeight: MediaQuery.of(context).size.height,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            color: const Color(0xFFFAFCFA),
+                            width: double.infinity,
+                            height: MediaQuery.of(context).size.height,
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 0),
+                              // Remove the SingleChildScrollView here to make it unscrollable
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.center,
-                                    spacing: 10,
+                                    // Remove 'spacing' property if present, as it's not valid for Column
                                     children: [
                                       Container(
                                         width: double.infinity,
@@ -247,13 +252,10 @@ class DashboardPageState extends State<DashboardPage> {
                                           boxShadow: [
                                             BoxShadow(
                                               color: const Color(0xFF9ECF9A)
-                                                  .withOpacity(
-                                                      0.15), // make it visible
-                                              blurRadius: 30, // soft edges
-                                              spreadRadius:
-                                                  1, // controls how far the shadow spreads
-                                              offset: const Offset(3,
-                                                  0), // shift shadow down slightly
+                                                  .withOpacity(0.15),
+                                              blurRadius: 30,
+                                              spreadRadius: 1,
+                                              offset: const Offset(3, 0),
                                             ),
                                           ],
                                         ),
@@ -334,78 +336,79 @@ class DashboardPageState extends State<DashboardPage> {
                                                               const SizedBox(
                                                                 height: 2,
                                                               ),
-                                                              Row(
-                                                                  spacing: 6,
-                                                                  children: [
-                                                                    Container(
-                                                                      padding: const EdgeInsets.only(
-                                                                          left:
-                                                                              7,
-                                                                          right:
-                                                                              7,
-                                                                          top:
-                                                                              5,
-                                                                          bottom:
-                                                                              5),
-                                                                      decoration:
-                                                                          BoxDecoration(
-                                                                        color: const Color(
-                                                                            0xFF244065),
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(50),
+                                                              Row(children: [
+                                                                Container(
+                                                                  padding: const EdgeInsets
+                                                                      .only(
+                                                                      left: 7,
+                                                                      right: 7,
+                                                                      top: 5,
+                                                                      bottom:
+                                                                          5),
+                                                                  decoration:
+                                                                      BoxDecoration(
+                                                                    color: const Color(
+                                                                        0xFF244065),
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            50),
+                                                                  ),
+                                                                  child: Row(
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .center,
+                                                                    children: [
+                                                                      Image.asset(
+                                                                          "assets/images/mmbr_arw.png"),
+                                                                      const SizedBox(
+                                                                        width:
+                                                                            5,
                                                                       ),
-                                                                      child:
-                                                                          Row(
-                                                                        mainAxisAlignment:
-                                                                            MainAxisAlignment.center,
-                                                                        children: [
-                                                                          Image.asset(
-                                                                              "assets/images/mmbr_arw.png"),
-                                                                          const SizedBox(
-                                                                            width:
-                                                                                5,
-                                                                          ),
-                                                                          Text(
-                                                                            membership.isNotEmpty
-                                                                                ? membership
-                                                                                : "Membership",
-                                                                            style: GoogleFonts.poppins(
-                                                                                fontWeight: FontWeight.w500,
-                                                                                fontSize: 11.5,
-                                                                                color: const Color(0xFFFFFFFF)),
-                                                                          )
-                                                                        ],
-                                                                      ),
-                                                                    ),
-                                                                    Container(
-                                                                      decoration:
-                                                                          BoxDecoration(
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(20),
-                                                                        color: const Color(
-                                                                            0xFFF7FAF4),
-                                                                      ),
-                                                                      padding: const EdgeInsets
-                                                                          .symmetric(
-                                                                          horizontal:
-                                                                              10,
-                                                                          vertical:
-                                                                              5),
-                                                                      child:
-                                                                          Text(
-                                                                        accountNumber.isNotEmpty
-                                                                            ? accountNumber
-                                                                            : "",
+                                                                      Text(
+                                                                        membership.isNotEmpty
+                                                                            ? membership
+                                                                            : "Membership",
                                                                         style: GoogleFonts.poppins(
-                                                                            color: const Color(
-                                                                                0xFF669933),
+                                                                            fontWeight: FontWeight
+                                                                                .w500,
                                                                             fontSize:
-                                                                                12,
-                                                                            fontWeight:
-                                                                                FontWeight.w600),
-                                                                      ),
-                                                                    )
-                                                                  ]),
+                                                                                11.5,
+                                                                            color:
+                                                                                const Color(0xFFFFFFFF)),
+                                                                      )
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                                Container(
+                                                                  decoration:
+                                                                      BoxDecoration(
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            20),
+                                                                    color: const Color(
+                                                                        0xFFF7FAF4),
+                                                                  ),
+                                                                  padding: const EdgeInsets
+                                                                      .symmetric(
+                                                                      horizontal:
+                                                                          10,
+                                                                      vertical:
+                                                                          5),
+                                                                  child: Text(
+                                                                    accountNumber
+                                                                            .isNotEmpty
+                                                                        ? accountNumber
+                                                                        : "",
+                                                                    style: GoogleFonts.poppins(
+                                                                        color: const Color(
+                                                                            0xFF669933),
+                                                                        fontSize:
+                                                                            12,
+                                                                        fontWeight:
+                                                                            FontWeight.w600),
+                                                                  ),
+                                                                )
+                                                              ]),
                                                             ],
                                                           ),
                                                         ],
@@ -423,7 +426,6 @@ class DashboardPageState extends State<DashboardPage> {
                                                   MainAxisAlignment.center,
                                               children: [
                                                 Row(
-                                                  spacing: 25,
                                                   children: [
                                                     Row(
                                                       children: [
@@ -493,7 +495,6 @@ class DashboardPageState extends State<DashboardPage> {
                                                   width: 30,
                                                 ),
                                                 Row(
-                                                  spacing: 5,
                                                   children: [
                                                     const Row(
                                                       children: [
@@ -556,7 +557,6 @@ class DashboardPageState extends State<DashboardPage> {
                                               children: [
                                                 GestureDetector(
                                                   onTap: () {
-                                                    // print("Book a New Tee Time tapped");
                                                     Navigator.push(
                                                       context,
                                                       MaterialPageRoute(
@@ -579,15 +579,11 @@ class DashboardPageState extends State<DashboardPage> {
                                                       boxShadow: [
                                                         BoxShadow(
                                                           color: Colors.black
-                                                              .withOpacity(
-                                                                  0.1), // light shadow
+                                                              .withOpacity(0.1),
                                                           offset: const Offset(
-                                                              1,
-                                                              1), // x: right, y: down
-                                                          blurRadius:
-                                                              10, // soft blur
-                                                          spreadRadius:
-                                                              1, // slight spread
+                                                              1, 1),
+                                                          blurRadius: 10,
+                                                          spreadRadius: 1,
                                                         ),
                                                       ],
                                                     ),
@@ -650,15 +646,11 @@ class DashboardPageState extends State<DashboardPage> {
                                                       boxShadow: [
                                                         BoxShadow(
                                                           color: Colors.black
-                                                              .withOpacity(
-                                                                  0.1), // light shadow
+                                                              .withOpacity(0.1),
                                                           offset: const Offset(
-                                                              1,
-                                                              1), // x: right, y: down
-                                                          blurRadius:
-                                                              10, // soft blur
-                                                          spreadRadius:
-                                                              1, // slight spread
+                                                              1, 1),
+                                                          blurRadius: 10,
+                                                          spreadRadius: 1,
                                                         ),
                                                       ],
                                                     ),
@@ -702,287 +694,298 @@ class DashboardPageState extends State<DashboardPage> {
                                             const SizedBox(
                                               height: 15,
                                             ),
-                                            SingleChildScrollView(
-                                                scrollDirection:
-                                                    Axis.horizontal,
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                  children: [
-                                                    Container(
-                                                      width: 40,
-                                                      height: 1,
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                Container(
+                                                  width: 40,
+                                                  height: 1,
+                                                  color:
+                                                      const Color(0xFFB2C1C0),
+                                                ),
+                                                const SizedBox(
+                                                  width: 10,
+                                                ),
+                                                Text(
+                                                  "Upcoming Tee Time",
+                                                  style: GoogleFonts.poppins(
                                                       color: const Color(
-                                                          0xFFB2C1C0),
-                                                    ),
-                                                    const SizedBox(
-                                                      width: 10,
-                                                    ),
-                                                    Text(
-                                                      "Upcoming Tee Time",
-                                                      style: GoogleFonts.poppins(
-                                                          color: const Color(
-                                                              0xFF244065),
-                                                          fontSize: 22,
-                                                          fontWeight:
-                                                              FontWeight.w600),
-                                                    ),
-                                                    const SizedBox(
-                                                      width: 10,
-                                                    ),
-                                                    Container(
-                                                      width: 40,
-                                                      height: 1,
-                                                      color: const Color(
-                                                          0xFFB2C1C0),
-                                                    ),
-                                                  ],
-                                                )),
+                                                          0xFF244065),
+                                                      fontSize: 22,
+                                                      fontWeight:
+                                                          FontWeight.w600),
+                                                ),
+                                                const SizedBox(
+                                                  width: 10,
+                                                ),
+                                                Container(
+                                                  width: 40,
+                                                  height: 1,
+                                                  color:
+                                                      const Color(0xFFB2C1C0),
+                                                ),
+                                              ],
+                                            ),
                                             Padding(
                                               padding: const EdgeInsets.only(
                                                   top: 15,
                                                   left: 17.5,
                                                   right: 17.5,
                                                   bottom: 20),
-                                              child:
-                                                  // If there are no upcoming tee times, show this message
-                                                  upcomingTeeTime != null
-                                                      ? Container(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .only(
-                                                                  bottom: 5,
-                                                                  top: 5),
-                                                          decoration:
-                                                              const BoxDecoration(
-                                                            border: Border(
-                                                              bottom:
-                                                                  BorderSide(
-                                                                color: Color(
-                                                                    0xFFE8E8E8), // Customize the color
-                                                                width:
-                                                                    1.0, // Customize the width
-                                                              ),
-                                                            ),
+                                              child: upcomingTeeTime != null
+                                                  ? Container(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              bottom: 5,
+                                                              top: 5),
+                                                      decoration:
+                                                          const BoxDecoration(
+                                                        border: Border(
+                                                          bottom: BorderSide(
+                                                            color: Color(
+                                                                0xFFE8E8E8),
+                                                            width: 1.0,
                                                           ),
-                                                          child: Column(
-                                                            children: [
-                                                              Padding(
-                                                                padding:
-                                                                    const EdgeInsets
-                                                                        .all(
-                                                                        10),
-                                                                child: Column(
+                                                        ),
+                                                      ),
+                                                      child: Column(
+                                                        children: [
+                                                          Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .all(10),
+                                                            child: Column(
+                                                              children: [
+                                                                Row(
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .start,
                                                                   children: [
-                                                                    Row(
-                                                                      crossAxisAlignment:
-                                                                          CrossAxisAlignment
-                                                                              .start,
-                                                                      children: [
-                                                                        Container(
-                                                                          width:
-                                                                              75,
-                                                                          height:
-                                                                              75,
-                                                                          decoration:
-                                                                              BoxDecoration(
-                                                                            color:
-                                                                                const Color(0xFFFFFFFF),
-                                                                            border:
-                                                                                Border.all(width: 1.2, color: const Color(0xFFE8E8E8)),
-                                                                            borderRadius:
-                                                                                BorderRadius.circular(10),
-                                                                          ),
-                                                                          child:
-                                                                              Center(
-                                                                            child:
-                                                                                Image(
-                                                                              image: upcomingTeeTime!['golfCourseLogo'] != null
-                                                                                  ? NetworkImage(
-                                                                                      upcomingTeeTime!['golfCourseLogo'],
-                                                                                    )
-                                                                                  : const AssetImage(
-                                                                                      "assets/images/bkdu2.png",
-                                                                                    ) as ImageProvider,
-                                                                            ),
-                                                                          ),
-                                                                        ),
-                                                                        const SizedBox(
-                                                                            width:
-                                                                                10),
-                                                                        SizedBox(
-                                                                          // width:
-                                                                          //     250,
-                                                                          // Optional padding
-                                                                          child:
-                                                                              Column(
-                                                                            crossAxisAlignment:
-                                                                                CrossAxisAlignment.start,
-                                                                            children: [
-                                                                              Row(
-                                                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                                                children: [
-                                                                                  Container(
-                                                                                    decoration: BoxDecoration(
-                                                                                      color: const Color(0xFFF7FAF4),
-                                                                                      borderRadius: BorderRadius.circular(50),
-                                                                                    ),
-                                                                                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                                                                                    child: Text(
-                                                                                      upcomingTeeTime!['booking']['status'],
-                                                                                      style: GoogleFonts.poppins(
-                                                                                        fontSize: 12,
-                                                                                        color: hexToColor(upcomingTeeTime!['booking']['bgColor']),
-                                                                                        fontWeight: FontWeight.w600,
-                                                                                      ),
-                                                                                    ),
-                                                                                  ),
-                                                                                ],
-                                                                              ),
-                                                                              const SizedBox(height: 5),
-                                                                              Text(
-                                                                                upcomingTeeTime!['golfCourse'],
-                                                                                style: GoogleFonts.poppins(
-                                                                                  color: const Color(0xFF244065),
-                                                                                  fontSize: 13,
-                                                                                  fontWeight: FontWeight.w600,
-                                                                                ),
-                                                                              ),
-                                                                              const SizedBox(height: 5),
-                                                                              Row(
-                                                                                spacing: 6,
-                                                                                children: [
-                                                                                  const Icon(
-                                                                                    Icons.calendar_month_outlined,
-                                                                                    color: Color(0xFF6B7280),
-                                                                                    size: 18,
-                                                                                  ),
-                                                                                  Text(
-                                                                                    upcomingTeeTime!['startingSlot'],
-                                                                                    style: GoogleFonts.poppins(color: const Color(0xFF6E7373), fontSize: 13, fontWeight: FontWeight.w500),
-                                                                                  ),
-                                                                                  Container(
-                                                                                    color: const Color(0xFF6E7373),
-                                                                                    width: 1,
-                                                                                    height: 15,
-                                                                                  ),
-                                                                                  Text(
-                                                                                    upcomingTeeTime!['date'] != null ? DateFormat('EEE, MMM d').format(DateFormat('EEEE dd, MMMM, yyyy').parse(upcomingTeeTime!['date'])) : 'Unknown Date',
-                                                                                    style: GoogleFonts.poppins(color: const Color(0xFF6E7373), fontSize: 13, fontWeight: FontWeight.w500),
-                                                                                  ),
-                                                                                ],
-                                                                              )
-                                                                            ],
-                                                                          ),
-                                                                        ),
-                                                                      ],
-                                                                    ),
-                                                                    const SizedBox(
+                                                                    Container(
+                                                                      width: 75,
                                                                       height:
-                                                                          10,
-                                                                    ),
-                                                                    Padding(
-                                                                      padding:
-                                                                          const EdgeInsets
-                                                                              .only(
-                                                                        left:
-                                                                            10,
-                                                                        right:
-                                                                            10,
+                                                                          75,
+                                                                      decoration:
+                                                                          BoxDecoration(
+                                                                        color: const Color(
+                                                                            0xFFFFFFFF),
+                                                                        border: Border.all(
+                                                                            width:
+                                                                                1.2,
+                                                                            color:
+                                                                                const Color(0xFFE8E8E8)),
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(10),
                                                                       ),
                                                                       child:
-                                                                          Row(
-                                                                        mainAxisAlignment:
-                                                                            MainAxisAlignment.spaceBetween,
+                                                                          Center(
+                                                                        child:
+                                                                            Image(
+                                                                          image: upcomingTeeTime!['golfCourseLogo'] != null
+                                                                              ? NetworkImage(
+                                                                                  upcomingTeeTime!['golfCourseLogo'],
+                                                                                )
+                                                                              : const AssetImage(
+                                                                                  "assets/images/bkdu2.png",
+                                                                                ) as ImageProvider,
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                    const SizedBox(
+                                                                        width:
+                                                                            10),
+                                                                    SizedBox(
+                                                                      child:
+                                                                          Column(
+                                                                        crossAxisAlignment:
+                                                                            CrossAxisAlignment.start,
                                                                         children: [
-                                                                          Container(
-                                                                            decoration:
-                                                                                BoxDecoration(color: const Color(0xFFF7FAF4), borderRadius: BorderRadius.circular(50)),
-                                                                            child:
-                                                                                Padding(
-                                                                              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 6),
-                                                                              child: Center(
-                                                                                child: Row(
-                                                                                  children: [
-                                                                                    Text(
-                                                                                      "Holes: ",
-                                                                                      style: GoogleFonts.poppins(fontSize: 14, color: const Color(0xFF6E7373), fontWeight: FontWeight.w500),
-                                                                                    ),
-                                                                                    Text(
-                                                                                      upcomingTeeTime!['holes'].toString(),
-                                                                                      style: GoogleFonts.poppins(fontSize: 14, color: const Color(0xFF244065), fontWeight: FontWeight.w600),
-                                                                                    ),
-                                                                                  ],
+                                                                          Row(
+                                                                            mainAxisAlignment:
+                                                                                MainAxisAlignment.spaceBetween,
+                                                                            children: [
+                                                                              Container(
+                                                                                decoration: BoxDecoration(
+                                                                                  color: const Color(0xFFF7FAF4),
+                                                                                  borderRadius: BorderRadius.circular(50),
+                                                                                ),
+                                                                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                                                                child: Text(
+                                                                                  upcomingTeeTime!['booking']['status'],
+                                                                                  style: GoogleFonts.poppins(
+                                                                                    fontSize: 12,
+                                                                                    color: hexToColor(upcomingTeeTime!['booking']['bgColor']),
+                                                                                    fontWeight: FontWeight.w600,
+                                                                                  ),
                                                                                 ),
                                                                               ),
+                                                                            ],
+                                                                          ),
+                                                                          const SizedBox(
+                                                                              height: 5),
+                                                                          Text(
+                                                                            upcomingTeeTime!['golfCourse'],
+                                                                            style:
+                                                                                GoogleFonts.poppins(
+                                                                              color: const Color(0xFF244065),
+                                                                              fontSize: 13,
+                                                                              fontWeight: FontWeight.w600,
                                                                             ),
                                                                           ),
-                                                                          Container(
-                                                                            decoration:
-                                                                                BoxDecoration(color: const Color(0xFFF7FAF4), borderRadius: BorderRadius.circular(50)),
-                                                                            child:
-                                                                                Padding(
-                                                                              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 6),
-                                                                              child: Center(
-                                                                                child: Row(
-                                                                                  children: [
-                                                                                    Text(
-                                                                                      "Players: ",
-                                                                                      style: GoogleFonts.poppins(fontSize: 14, color: const Color(0xFF6E7373), fontWeight: FontWeight.w500),
-                                                                                    ),
-                                                                                    Text(
-                                                                                      upcomingTeeTime!['persons'].toString(),
-                                                                                      style: GoogleFonts.poppins(fontSize: 14, color: const Color(0xFF244065), fontWeight: FontWeight.w600),
-                                                                                    ),
-                                                                                  ],
-                                                                                ),
+                                                                          const SizedBox(
+                                                                              height: 5),
+                                                                          Row(
+                                                                            children: [
+                                                                              const Icon(
+                                                                                Icons.calendar_month_outlined,
+                                                                                color: Color(0xFF6B7280),
+                                                                                size: 18,
                                                                               ),
-                                                                            ),
-                                                                          ),
-                                                                          Container(
-                                                                            decoration:
-                                                                                BoxDecoration(color: const Color(0xFFF7FAF4), borderRadius: BorderRadius.circular(50)),
-                                                                            child:
-                                                                                Padding(
-                                                                              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 6),
-                                                                              child: Center(
-                                                                                child: Row(
-                                                                                  children: [
-                                                                                    Text(
-                                                                                      "Carts: ",
-                                                                                      style: GoogleFonts.poppins(fontSize: 14, color: const Color(0xFF6E7373), fontWeight: FontWeight.w500),
-                                                                                    ),
-                                                                                    Text(
-                                                                                      upcomingTeeTime!['carts'].toString(),
-                                                                                      style: GoogleFonts.poppins(fontSize: 14, color: const Color(0xFF244065), fontWeight: FontWeight.w600),
-                                                                                    ),
-                                                                                  ],
-                                                                                ),
+                                                                              Text(
+                                                                                upcomingTeeTime!['startingSlot'],
+                                                                                style: GoogleFonts.poppins(color: const Color(0xFF6E7373), fontSize: 13, fontWeight: FontWeight.w500),
                                                                               ),
-                                                                            ),
-                                                                          ),
+                                                                              Container(
+                                                                                color: const Color(0xFF6E7373),
+                                                                                width: 1,
+                                                                                height: 15,
+                                                                              ),
+                                                                              Text(
+                                                                                upcomingTeeTime!['date'] != null ? DateFormat('EEE, MMM d').format(DateFormat('EEEE dd, MMMM, yyyy').parse(upcomingTeeTime!['date'])) : 'Unknown Date',
+                                                                                style: GoogleFonts.poppins(color: const Color(0xFF6E7373), fontSize: 13, fontWeight: FontWeight.w500),
+                                                                              ),
+                                                                            ],
+                                                                          )
                                                                         ],
                                                                       ),
                                                                     ),
                                                                   ],
                                                                 ),
-                                                              ),
-                                                            ],
+                                                                const SizedBox(
+                                                                  height: 10,
+                                                                ),
+                                                                Padding(
+                                                                  padding:
+                                                                      const EdgeInsets
+                                                                          .only(
+                                                                    left: 10,
+                                                                    right: 10,
+                                                                  ),
+                                                                  child: Row(
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .spaceBetween,
+                                                                    children: [
+                                                                      Container(
+                                                                        decoration: BoxDecoration(
+                                                                            color:
+                                                                                const Color(0xFFF7FAF4),
+                                                                            borderRadius: BorderRadius.circular(50)),
+                                                                        child:
+                                                                            Padding(
+                                                                          padding: const EdgeInsets
+                                                                              .symmetric(
+                                                                              horizontal: 15,
+                                                                              vertical: 6),
+                                                                          child:
+                                                                              Center(
+                                                                            child:
+                                                                                Row(
+                                                                              children: [
+                                                                                Text(
+                                                                                  "Holes: ",
+                                                                                  style: GoogleFonts.poppins(fontSize: 14, color: const Color(0xFF6E7373), fontWeight: FontWeight.w500),
+                                                                                ),
+                                                                                Text(
+                                                                                  upcomingTeeTime!['holes'].toString(),
+                                                                                  style: GoogleFonts.poppins(fontSize: 14, color: const Color(0xFF244065), fontWeight: FontWeight.w600),
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                      Container(
+                                                                        decoration: BoxDecoration(
+                                                                            color:
+                                                                                const Color(0xFFF7FAF4),
+                                                                            borderRadius: BorderRadius.circular(50)),
+                                                                        child:
+                                                                            Padding(
+                                                                          padding: const EdgeInsets
+                                                                              .symmetric(
+                                                                              horizontal: 15,
+                                                                              vertical: 6),
+                                                                          child:
+                                                                              Center(
+                                                                            child:
+                                                                                Row(
+                                                                              children: [
+                                                                                Text(
+                                                                                  "Players: ",
+                                                                                  style: GoogleFonts.poppins(fontSize: 14, color: const Color(0xFF6E7373), fontWeight: FontWeight.w500),
+                                                                                ),
+                                                                                Text(
+                                                                                  upcomingTeeTime!['persons'].toString(),
+                                                                                  style: GoogleFonts.poppins(fontSize: 14, color: const Color(0xFF244065), fontWeight: FontWeight.w600),
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                      Container(
+                                                                        decoration: BoxDecoration(
+                                                                            color:
+                                                                                const Color(0xFFF7FAF4),
+                                                                            borderRadius: BorderRadius.circular(50)),
+                                                                        child:
+                                                                            Padding(
+                                                                          padding: const EdgeInsets
+                                                                              .symmetric(
+                                                                              horizontal: 15,
+                                                                              vertical: 6),
+                                                                          child:
+                                                                              Center(
+                                                                            child:
+                                                                                Row(
+                                                                              children: [
+                                                                                Text(
+                                                                                  "Carts: ",
+                                                                                  style: GoogleFonts.poppins(fontSize: 14, color: const Color(0xFF6E7373), fontWeight: FontWeight.w500),
+                                                                                ),
+                                                                                Text(
+                                                                                  upcomingTeeTime!['carts'].toString(),
+                                                                                  style: GoogleFonts.poppins(fontSize: 14, color: const Color(0xFF244065), fontWeight: FontWeight.w600),
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
                                                           ),
-                                                        )
-                                                      : Text(
-                                                          "No tee times coming up — book your next round now!",
-                                                          textAlign:
-                                                              TextAlign.center,
-                                                          style: GoogleFonts
-                                                              .poppins(
-                                                            color: const Color(
-                                                                0xFF6E7373),
-                                                            fontWeight:
-                                                                FontWeight.w400,
-                                                            fontSize: 14,
-                                                          ),
-                                                        ),
+                                                        ],
+                                                      ),
+                                                    )
+                                                  : Text(
+                                                      "No tee times coming up — book your next round now!",
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                      style:
+                                                          GoogleFonts.poppins(
+                                                        color: const Color(
+                                                            0xFF6E7373),
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                        fontSize: 14,
+                                                      ),
+                                                    ),
                                             ),
                                           ],
                                         ),
@@ -1006,7 +1009,6 @@ class DashboardPageState extends State<DashboardPage> {
                                                   );
 
                                                   try {
-                                                    // Try launching with external application mode
                                                     final bool launched =
                                                         await launchUrl(
                                                             emailUri,
@@ -1017,7 +1019,6 @@ class DashboardPageState extends State<DashboardPage> {
                                                       throw 'Could not launch email client.';
                                                     }
                                                   } catch (e) {
-                                                    // Show fallback UI or error message
                                                     ScaffoldMessenger.of(
                                                             context)
                                                         .showSnackBar(
@@ -1031,9 +1032,9 @@ class DashboardPageState extends State<DashboardPage> {
                                                   }
                                                 },
                                                 style: ElevatedButton.styleFrom(
-                                                    backgroundColor:
-                                                        const Color(
-                                                            0xFF9ECF9A)),
+                                                  backgroundColor:
+                                                      const Color(0xFF9ECF9A),
+                                                ),
                                                 child: Padding(
                                                   padding: const EdgeInsets
                                                       .symmetric(
@@ -1055,15 +1056,6 @@ class DashboardPageState extends State<DashboardPage> {
                                                 ),
                                               ),
                                             ),
-                                            const Positioned(
-                                              top: 16.5,
-                                              right: 15,
-                                              child: Icon(
-                                                Icons.arrow_forward,
-                                                color: Color(0xFFFFFFFF),
-                                                size: 18,
-                                              ),
-                                            )
                                           ],
                                         ),
                                       ),
@@ -1073,11 +1065,13 @@ class DashboardPageState extends State<DashboardPage> {
                               ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
-                )),
+                ),
+              );
+            },
           ),
         ),
       ),

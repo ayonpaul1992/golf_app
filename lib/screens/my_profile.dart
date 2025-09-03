@@ -1,7 +1,10 @@
 // ignore_for_file: deprecated_member_use, use_build_context_synchronously
 
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:gulf_app/main.dart';
 import 'package:gulf_app/screens/login.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:gulf_app/components/custom_app_bar.dart';
@@ -13,6 +16,9 @@ import 'my_reservation.dart';
 import 'my_transaction.dart';
 import 'my_setting.dart';
 import 'edit_profile.dart';
+import 'package:http/http.dart' as http;
+import 'package:crypto/crypto.dart';
+import 'package:cryptography/cryptography.dart';
 
 // Add a global RouteObserver for navigation events
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
@@ -853,9 +859,268 @@ class MyProfilePageState extends State<MyProfilePage> with RouteAware {
                         ],
                       ),
                     ),
+                    Container(
+                      width: double.infinity,
+                      margin: const EdgeInsets.only(left: 15, right: 15),
+                      padding: const EdgeInsets.only(left: 15, right: 15),
+                      decoration: BoxDecoration(
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color(0xFF9ECF9A)
+                                .withOpacity(0.15), // make it visible
+                            blurRadius: 20, // soft edges
+                            spreadRadius:
+                                6, // controls how far the shadow spreads
+                            offset: const Offset(
+                                3, 0), // shift shadow down slightly
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              final parentContext =
+                                  context; // ✅ Capture the page context (safe one)
+
+                              showDialog(
+                                context: parentContext,
+                                builder: (BuildContext dialogContext) {
+                                  final TextEditingController
+                                      passwordController =
+                                      TextEditingController();
+
+                                  return AlertDialog(
+                                    title: const Text('Delete Account'),
+                                    content: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        const Text(
+                                            'Please enter your password to confirm account deletion:'),
+                                        const SizedBox(height: 16),
+                                        TextField(
+                                          controller: passwordController,
+                                          obscureText: true,
+                                          decoration: const InputDecoration(
+                                            labelText: 'Password',
+                                            border: OutlineInputBorder(),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.of(dialogContext)
+                                              .pop(); // ✅ close dialog safely
+                                        },
+                                        child: const Text('Cancel'),
+                                      ),
+                                      TextButton(
+                                        onPressed: () async {
+                                          final password =
+                                              passwordController.text.trim();
+
+                                          if (password.isEmpty) {
+                                            rootScaffoldMessengerKey
+                                                .currentState
+                                                ?.showSnackBar(
+                                              const SnackBar(
+                                                  content: Text(
+                                                      'Password cannot be empty')),
+                                            );
+                                            return;
+                                          }
+
+                                          // ✅ Close password dialog using dialogContext
+                                          Navigator.of(dialogContext,
+                                                  rootNavigator: true)
+                                              .pop();
+
+                                          // ✅ Show loading dialog using parentContext
+                                          showDialog(
+                                            context: parentContext,
+                                            barrierDismissible: false,
+                                            builder: (ctx) {
+                                              return const Center(
+                                                child:
+                                                    CircularProgressIndicator(),
+                                              );
+                                            },
+                                          );
+
+                                          try {
+                                            final token = await secureStorage
+                                                .read(key: 'accessToken');
+
+                                            // --- encryption logic (unchanged) ---
+                                            final loginPayload = {
+                                              'password': password
+                                            };
+                                            final secret = 'course1999golf01';
+                                            final keyHash = sha256
+                                                .convert(utf8.encode(secret))
+                                                .bytes;
+                                            final secretKey =
+                                                SecretKey(keyHash);
+                                            final algorithm =
+                                                AesGcm.with256bits();
+                                            final iv = algorithm.newNonce();
+
+                                            final secretBox =
+                                                await algorithm.encrypt(
+                                              utf8.encode(
+                                                  jsonEncode(loginPayload)),
+                                              secretKey: secretKey,
+                                              nonce: iv,
+                                            );
+
+                                            final encryptedPayload = {
+                                              'iv': base64Encode(iv),
+                                              'data': base64Encode(
+                                                  secretBox.cipherText),
+                                              'tag': base64Encode(
+                                                  secretBox.mac.bytes),
+                                            };
+
+                                            final response = await http.delete(
+                                              Uri.parse(
+                                                  'https://api.dev.driverpos.io/api/v1/customer/delete'),
+                                              headers: {
+                                                'Authorization':
+                                                    'Bearer $token',
+                                                'Content-Type':
+                                                    'application/json',
+                                              },
+                                              body:
+                                                  jsonEncode(encryptedPayload),
+                                            );
+
+                                            // ✅ Close loading dialog using rootNavigator
+                                            Navigator.of(parentContext,
+                                                    rootNavigator: true)
+                                                .pop();
+
+                                            if (!parentContext.mounted) return;
+
+                                            if (response.statusCode == 200) {
+                                              await secureStorage.deleteAll();
+
+                                              rootScaffoldMessengerKey
+                                                  .currentState
+                                                  ?.showSnackBar(
+                                                const SnackBar(
+                                                  content: Text(
+                                                      'Account deleted successfully.'),
+                                                ),
+                                              );
+                                              Navigator.pushAndRemoveUntil(
+                                                parentContext,
+                                                MaterialPageRoute(
+                                                    builder: (_) =>
+                                                        const LoginPage()),
+                                                (route) => false,
+                                              );
+                                            } else {
+                                              rootScaffoldMessengerKey
+                                                  .currentState
+                                                  ?.showSnackBar(
+                                                const SnackBar(
+                                                    content: Text(
+                                                        'Failed to delete account.')),
+                                              );
+                                            }
+                                          } catch (e) {
+                                            Navigator.of(parentContext,
+                                                    rootNavigator: true)
+                                                .pop();
+
+                                            if (parentContext.mounted) {
+                                              rootScaffoldMessengerKey
+                                                  .currentState
+                                                  ?.showSnackBar(
+                                                SnackBar(
+                                                    content: Text(
+                                                        'Error: ${e.toString()}')),
+                                              );
+                                            }
+                                          }
+                                        },
+                                        child: const Text('Delete'),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 7,
+                                vertical: 5,
+                              ),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(50),
+                                border: Border.all(
+                                  color: const Color(0xFF9ECF9A),
+                                  width: 1,
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Container(
+                                        width: 40,
+                                        height: 40,
+                                        decoration: const BoxDecoration(
+                                          color: Color(0xFFF8F8F8),
+                                          borderRadius: BorderRadius.all(
+                                            Radius.circular(100),
+                                          ), // Use Radius.circular
+                                        ),
+                                        child: const Center(
+                                          child: Icon(
+                                            Icons.delete_forever,
+                                            size: 17,
+                                            color: Color(0xFF6B7280),
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                        width: 6,
+                                      ),
+                                      Text(
+                                        "Delete Account",
+                                        style: GoogleFonts.poppins(
+                                          color: const Color(0xFF244065),
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const Icon(
+                                    Icons.arrow_forward_ios_outlined,
+                                    size: 13,
+                                    color: Color(0xFF9ECF9A),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                     Padding(
                       padding: const EdgeInsets.only(
-                          left: 38, right: 38, bottom: 20),
+                        left: 38,
+                        right: 38,
+                        bottom: 20,
+                      ),
                       child: Stack(
                         children: [
                           SizedBox(

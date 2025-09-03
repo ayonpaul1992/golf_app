@@ -12,6 +12,8 @@ import 'package:gulf_app/services/token_route_observer.dart';
 
 // Use our custom observer globally
 final RouteObserver<PageRoute> routeObserver = TokenRouteObserver();
+final GlobalKey<ScaffoldMessengerState> rootScaffoldMessengerKey =
+    GlobalKey<ScaffoldMessengerState>();
 
 // Handles background push notifications
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -54,7 +56,9 @@ class MyApp extends StatelessWidget {
       ),
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        navigatorObservers: [routeObserver], // 👈 now using TokenRouteObserver
+        scaffoldMessengerKey: rootScaffoldMessengerKey, // ✅ global snackbar key
+
+        navigatorObservers: [routeObserver],
         theme: ThemeData(
           textTheme: GoogleFonts.poppinsTextTheme(),
         ),

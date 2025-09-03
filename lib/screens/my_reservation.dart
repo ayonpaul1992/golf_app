@@ -463,9 +463,12 @@ class MyReservationPageState extends State<MyReservationPage> {
                                                             color: const Color(
                                                                 0xFFFFFFFF),
                                                             border: Border.all(
-                                                                width: 1.2,
-                                                                color: const Color(
-                                                                    0xFFE8E8E8)),
+                                                              width: 1.2,
+                                                              color:
+                                                                  const Color(
+                                                                0xFFE8E8E8,
+                                                              ),
+                                                            ),
                                                             borderRadius:
                                                                 BorderRadius
                                                                     .circular(
@@ -647,14 +650,11 @@ class MyReservationPageState extends State<MyReservationPage> {
                                                                                                   await Future.delayed(const Duration(milliseconds: 300));
 
                                                                                                   if (context.mounted) {
-                                                                                                    Navigator.pushReplacement(
-                                                                                                      context,
-                                                                                                      MaterialPageRoute(
-                                                                                                        builder: (context) => MyReservationPage(
-                                                                                                            key: UniqueKey(), // Ensure a new key to rebuild the widget
-                                                                                                            myRsvId: ''),
-                                                                                                      ),
-                                                                                                    );
+                                                                                                    // Instead of pushReplacement, just refresh the bookings
+                                                                                                    setState(() {
+                                                                                                      isLoading = true;
+                                                                                                    });
+                                                                                                    await fetchMyBookings();
                                                                                                   }
                                                                                                 } else {
                                                                                                   print('❌ Failed to cancel tee time: ${response.statusCode}');

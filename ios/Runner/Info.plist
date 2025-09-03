@@ -31,7 +31,7 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>We need access to your camera to take pictures.</string>
+	<string>We use the camera to let you upload your profile picture for your account.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>We need your location to fetch weather data.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
