@@ -6,7 +6,6 @@ import 'package:gulf_app/screens/dashboard.dart';
 import 'package:gulf_app/screens/my_profile.dart';
 // import 'package:gulf_app/screens/my_setting.dart';
 import 'package:gulf_app/screens/my_reservation.dart';
-import 'package:gulf_app/screens/my_setting.dart';
 import 'package:gulf_app/screens/my_transaction.dart';
 import 'package:gulf_app/screens/selcet_booking_class.dart';
 import 'package:shared_preferences/shared_preferences.dart';

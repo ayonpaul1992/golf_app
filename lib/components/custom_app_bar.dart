@@ -99,12 +99,12 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           actions: [
             GestureDetector(
               onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const MembershipScreen(mmbspId: ''),
-                  ),
-                );
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(
+                //     builder: (context) => const MembershipScreen(mmbspId: ''),
+                //   ),
+                // );
               },
               child: Container(
                 padding: const EdgeInsets.all(5),

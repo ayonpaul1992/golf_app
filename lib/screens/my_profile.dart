@@ -346,14 +346,14 @@ class MyProfilePageState extends State<MyProfilePage> with RouteAware {
 
                         GestureDetector(
                           onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const MembershipScreen(
-                                    mmbspId:
-                                        ''), // Replace with your target widget
-                              ),
-                            );
+                            // Navigator.push(
+                            //   context,
+                            //   MaterialPageRoute(
+                            //     builder: (context) => const MembershipScreen(
+                            //         mmbspId:
+                            //             ''), // Replace with your target widget
+                            //   ),
+                            // );
                           },
                           child: Container(
                             padding: const EdgeInsets.symmetric(

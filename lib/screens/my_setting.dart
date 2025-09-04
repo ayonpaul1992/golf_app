@@ -245,84 +245,85 @@ class MySettingPageState extends State<MySettingPage> {
                       ],
                     ),
                   ),
-                  Container(
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      boxShadow: [
-                        BoxShadow(
-                          color: const Color(0xFF9ECF9A)
-                              .withOpacity(0.15), // make it visible
-                          blurRadius: 30, // soft edges
-                          spreadRadius:
-                              1, // controls how far the shadow spreads
-                          offset:
-                              const Offset(3, 0), // shift shadow down slightly
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        GestureDetector(
-                          onTap: () {},
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 7, vertical: 5),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(50),
-                              border: Border.all(
-                                color: const Color(0xFF9ECF9A),
-                                width: 1,
-                              ),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Container(
-                                      width: 40,
-                                      height: 40,
-                                      decoration: const BoxDecoration(
-                                        color: Color(0xFFF8F8F8),
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(
-                                                100)), // Use Radius.circular
-                                      ),
-                                      child: const Center(
-                                        child: Icon(
-                                          Icons.edit,
-                                          size: 17,
-                                          color: Color(0xFF6B7280),
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      width: 6,
-                                    ),
-                                    Text(
-                                      "Change Password",
-                                      style: GoogleFonts.poppins(
-                                        color: const Color(0xFF244065),
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const Icon(
-                                  Icons.arrow_forward_ios_outlined,
-                                  size: 13,
-                                  color: Color(0xFF9ECF9A),
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                  // Container(
+                  //   width: double.infinity,
+                  //   decoration: BoxDecoration(
+                  //     boxShadow: [
+                  //       BoxShadow(
+                  //         color: const Color(0xFF9ECF9A)
+                  //             .withOpacity(0.15), // make it visible
+                  //         blurRadius: 30, // soft edges
+                  //         spreadRadius:
+                  //             1, // controls how far the shadow spreads
+                  //         offset:
+                  //             const Offset(3, 0), // shift shadow down slightly
+                  //       ),
+                  //     ],
+                  //   ),
+                  //   child: Column(
+                  //     crossAxisAlignment: CrossAxisAlignment.center,
+                  //     children: [
+                  //       GestureDetector(
+                  //         onTap: () {},
+                  //         child: Container(
+                  //           padding: const EdgeInsets.symmetric(
+                  //               horizontal: 7, vertical: 5),
+                  //           decoration: BoxDecoration(
+                  //             borderRadius: BorderRadius.circular(50),
+                  //             border: Border.all(
+                  //               color: const Color(0xFF9ECF9A),
+                  //               width: 1,
+                  //             ),
+                  //           ),
+                  //           child: Row(
+                  //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  //             children: [
+                  //               Row(
+                  //                 mainAxisAlignment: MainAxisAlignment.center,
+                  //                 children: [
+                  //                   Container(
+                  //                     width: 40,
+                  //                     height: 40,
+                  //                     decoration: const BoxDecoration(
+                  //                       color: Color(0xFFF8F8F8),
+                  //                       borderRadius: BorderRadius.all(
+                  //                           Radius.circular(
+                  //                               100)), // Use Radius.circular
+                  //                     ),
+                  //                     child: const Center(
+                  //                       child: Icon(
+                  //                         Icons.edit,
+                  //                         size: 17,
+                  //                         color: Color(0xFF6B7280),
+                  //                       ),
+                  //                     ),
+                  //                   ),
+                  //                   const SizedBox(
+                  //                     width: 6,
+                  //                   ),
+                  //                   Text(
+                  //                     "Change Password",
+                  //                     style: GoogleFonts.poppins(
+                  //                       color: const Color(0xFF244065),
+                  //                       fontSize: 14,
+                  //                       fontWeight: FontWeight.w600,
+                  //                     ),
+                  //                   ),
+                  //                 ],
+                  //               ),
+                  //               const Icon(
+                  //                 Icons.arrow_forward_ios_outlined,
+                  //                 size: 13,
+                  //                 color: Color(0xFF9ECF9A),
+                  //               )
+                  //             ],
+                  //           ),
+                  //         ),
+                  //       ),
+                  //     ],
+                  //   ),
+                  // ),
+
                   Container(
                     width: double.infinity,
                     decoration: BoxDecoration(
@@ -410,93 +411,95 @@ class MySettingPageState extends State<MySettingPage> {
                       ],
                     ),
                   ),
-                  Container(
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      boxShadow: [
-                        BoxShadow(
-                          color: const Color(0xFF9ECF9A)
-                              .withOpacity(0.15), // make it visible
-                          blurRadius: 30, // soft edges
-                          spreadRadius:
-                              1, // controls how far the shadow spreads
-                          offset:
-                              const Offset(3, 0), // shift shadow down slightly
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const MembershipScreen(
-                                  mmbspId: '',
-                                ), // Replace with your target widget
-                              ),
-                            );
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 7, vertical: 5),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(50),
-                              border: Border.all(
-                                color: const Color(0xFF9ECF9A),
-                                width: 1,
-                              ),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Container(
-                                      width: 40,
-                                      height: 40,
-                                      decoration: const BoxDecoration(
-                                        color: Color(0xFFF8F8F8),
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(
-                                                100)), // Use Radius.circular
-                                      ),
-                                      child: const Center(
-                                        child: Icon(
-                                          Icons.fact_check,
-                                          size: 17,
-                                          color: Color(0xFF6B7280),
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      width: 6,
-                                    ),
-                                    Text(
-                                      "Membership",
-                                      style: GoogleFonts.poppins(
-                                        color: const Color(0xFF244065),
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const Icon(
-                                  Icons.arrow_forward_ios_outlined,
-                                  size: 13,
-                                  color: Color(0xFF9ECF9A),
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+
+                  // Container(
+                  //   width: double.infinity,
+                  //   decoration: BoxDecoration(
+                  //     boxShadow: [
+                  //       BoxShadow(
+                  //         color: const Color(0xFF9ECF9A)
+                  //             .withOpacity(0.15), // make it visible
+                  //         blurRadius: 30, // soft edges
+                  //         spreadRadius:
+                  //             1, // controls how far the shadow spreads
+                  //         offset:
+                  //             const Offset(3, 0), // shift shadow down slightly
+                  //       ),
+                  //     ],
+                  //   ),
+                  //   child: Column(
+                  //     crossAxisAlignment: CrossAxisAlignment.center,
+                  //     children: [
+                  //       GestureDetector(
+                  //         onTap: () {
+                  //           Navigator.push(
+                  //             context,
+                  //             MaterialPageRoute(
+                  //               builder: (context) => const MembershipScreen(
+                  //                 mmbspId: '',
+                  //               ), // Replace with your target widget
+                  //             ),
+                  //           );
+                  //         },
+                  //         child: Container(
+                  //           padding: const EdgeInsets.symmetric(
+                  //               horizontal: 7, vertical: 5),
+                  //           decoration: BoxDecoration(
+                  //             borderRadius: BorderRadius.circular(50),
+                  //             border: Border.all(
+                  //               color: const Color(0xFF9ECF9A),
+                  //               width: 1,
+                  //             ),
+                  //           ),
+                  //           child: Row(
+                  //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  //             children: [
+                  //               Row(
+                  //                 mainAxisAlignment: MainAxisAlignment.center,
+                  //                 children: [
+                  //                   Container(
+                  //                     width: 40,
+                  //                     height: 40,
+                  //                     decoration: const BoxDecoration(
+                  //                       color: Color(0xFFF8F8F8),
+                  //                       borderRadius: BorderRadius.all(
+                  //                           Radius.circular(
+                  //                               100)), // Use Radius.circular
+                  //                     ),
+                  //                     child: const Center(
+                  //                       child: Icon(
+                  //                         Icons.fact_check,
+                  //                         size: 17,
+                  //                         color: Color(0xFF6B7280),
+                  //                       ),
+                  //                     ),
+                  //                   ),
+                  //                   const SizedBox(
+                  //                     width: 6,
+                  //                   ),
+                  //                   Text(
+                  //                     "Membership",
+                  //                     style: GoogleFonts.poppins(
+                  //                       color: const Color(0xFF244065),
+                  //                       fontSize: 14,
+                  //                       fontWeight: FontWeight.w600,
+                  //                     ),
+                  //                   ),
+                  //                 ],
+                  //               ),
+                  //               const Icon(
+                  //                 Icons.arrow_forward_ios_outlined,
+                  //                 size: 13,
+                  //                 color: Color(0xFF9ECF9A),
+                  //               )
+                  //             ],
+                  //           ),
+                  //         ),
+                  //       ),
+                  //     ],
+                  //   ),
+                  // ),
+
                   Container(
                     width: double.infinity,
                     decoration: BoxDecoration(
