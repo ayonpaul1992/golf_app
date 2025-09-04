@@ -7,6 +7,7 @@ import 'package:gulf_app/screens/my_profile.dart';
 // import 'package:gulf_app/screens/my_setting.dart';
 import 'package:gulf_app/screens/my_reservation.dart';
 import 'package:gulf_app/screens/my_setting.dart';
+import 'package:gulf_app/screens/my_transaction.dart';
 import 'package:gulf_app/screens/selcet_booking_class.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -66,8 +67,8 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
           },
           {
             'icon': 'assets/images/self_chkng.png',
-            'label': 'Self Checking',
-            'route': null
+            'label': 'Transactions',
+            'route': const MyTransactionPage(myTransId: '')
           },
           // {
           //   'icon': 'assets/images/ftr_str.png',

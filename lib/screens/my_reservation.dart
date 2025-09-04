@@ -589,28 +589,22 @@ class MyReservationPageState extends State<MyReservationPage> {
                                                                                           ),
                                                                                           TextButton(
                                                                                             onPressed: () async {
-                                                                                              // ✅ Save a valid context reference BEFORE popping
                                                                                               final messenger = ScaffoldMessenger.of(context);
-
-                                                                                              Navigator.of(context).pop(); // Now safe to close the dialog
+                                                                                              Navigator.of(context).pop(); // Close dialog
 
                                                                                               try {
                                                                                                 final secureStorage = const FlutterSecureStorage();
                                                                                                 final token = await secureStorage.read(key: 'accessToken');
-
-                                                                                                if (token == null) {
-                                                                                                  throw Exception('Access token not found');
-                                                                                                }
+                                                                                                if (token == null) throw Exception('Access token not found');
 
                                                                                                 final uri = Uri.parse(
                                                                                                   'https://api.dev.driverpos.io/api/v1/teesheet/myBookings/cancel/$slotId',
                                                                                                 );
 
                                                                                                 final payload = {
-                                                                                                  "process": "Cancel",
+                                                                                                  "process": "Cancel"
                                                                                                 };
-
-                                                                                                const secret = 'course1999golf01'; // same as backend
+                                                                                                const secret = 'course1999golf01';
 
                                                                                                 final keyHash = sha256.convert(utf8.encode(secret)).bytes;
                                                                                                 final secretKey = SecretKey(keyHash);
@@ -639,7 +633,6 @@ class MyReservationPageState extends State<MyReservationPage> {
                                                                                                 );
 
                                                                                                 if (response.statusCode == 200) {
-                                                                                                  // ✅ Use the stored reference — not ScaffoldMessenger.of(context)
                                                                                                   messenger.showSnackBar(
                                                                                                     const SnackBar(
                                                                                                       content: Text('Tee time cancelled successfully'),
@@ -649,12 +642,13 @@ class MyReservationPageState extends State<MyReservationPage> {
 
                                                                                                   await Future.delayed(const Duration(milliseconds: 300));
 
-                                                                                                  if (context.mounted) {
-                                                                                                    // Instead of pushReplacement, just refresh the bookings
-                                                                                                    setState(() {
-                                                                                                      isLoading = true;
-                                                                                                    });
-                                                                                                    await fetchMyBookings();
+                                                                                                  if (!mounted) return; // ✅ prevent setState after dispose
+                                                                                                  setState(() {
+                                                                                                    isLoading = true;
+                                                                                                  });
+
+                                                                                                  if (mounted) {
+                                                                                                    await fetchMyBookings(); // ✅ safe call
                                                                                                   }
                                                                                                 } else {
                                                                                                   print('❌ Failed to cancel tee time: ${response.statusCode}');
@@ -663,6 +657,82 @@ class MyReservationPageState extends State<MyReservationPage> {
                                                                                                 print('❗ Error cancelling tee time: $e');
                                                                                               }
                                                                                             },
+                                                                                            // onPressed: () async {
+                                                                                            //   // ✅ Save a valid context reference BEFORE popping
+                                                                                            //   final messenger = ScaffoldMessenger.of(context);
+
+                                                                                            //   Navigator.of(context).pop(); // Now safe to close the dialog
+
+                                                                                            //   try {
+                                                                                            //     final secureStorage = const FlutterSecureStorage();
+                                                                                            //     final token = await secureStorage.read(key: 'accessToken');
+
+                                                                                            //     if (token == null) {
+                                                                                            //       throw Exception('Access token not found');
+                                                                                            //     }
+
+                                                                                            //     final uri = Uri.parse(
+                                                                                            //       'https://api.dev.driverpos.io/api/v1/teesheet/myBookings/cancel/$slotId',
+                                                                                            //     );
+
+                                                                                            //     final payload = {
+                                                                                            //       "process": "Cancel",
+                                                                                            //     };
+
+                                                                                            //     const secret = 'course1999golf01'; // same as backend
+
+                                                                                            //     final keyHash = sha256.convert(utf8.encode(secret)).bytes;
+                                                                                            //     final secretKey = SecretKey(keyHash);
+                                                                                            //     final algorithm = AesGcm.with256bits();
+                                                                                            //     final iv = algorithm.newNonce();
+
+                                                                                            //     final secretBox = await algorithm.encrypt(
+                                                                                            //       utf8.encode(jsonEncode(payload)),
+                                                                                            //       secretKey: secretKey,
+                                                                                            //       nonce: iv,
+                                                                                            //     );
+
+                                                                                            //     final encryptedPayload = {
+                                                                                            //       'iv': base64Encode(iv),
+                                                                                            //       'data': base64Encode(secretBox.cipherText),
+                                                                                            //       'tag': base64Encode(secretBox.mac.bytes),
+                                                                                            //     };
+
+                                                                                            //     final response = await http.delete(
+                                                                                            //       uri,
+                                                                                            //       headers: {
+                                                                                            //         'Authorization': 'Bearer $token',
+                                                                                            //         'Content-Type': 'application/json',
+                                                                                            //       },
+                                                                                            //       body: jsonEncode(encryptedPayload),
+                                                                                            //     );
+
+                                                                                            //     if (response.statusCode == 200) {
+                                                                                            //       // ✅ Use the stored reference — not ScaffoldMessenger.of(context)
+                                                                                            //       messenger.showSnackBar(
+                                                                                            //         const SnackBar(
+                                                                                            //           content: Text('Tee time cancelled successfully'),
+                                                                                            //           backgroundColor: Color(0xFF9ECF9A),
+                                                                                            //         ),
+                                                                                            //       );
+
+                                                                                            //       await Future.delayed(const Duration(milliseconds: 300));
+
+                                                                                            //       if (context.mounted) {
+                                                                                            //         // Instead of pushReplacement, just refresh the bookings
+                                                                                            //         setState(() {
+                                                                                            //           isLoading = true;
+                                                                                            //         });
+                                                                                            //         await fetchMyBookings();
+                                                                                            //       }
+                                                                                            //     } else {
+                                                                                            //       print('❌ Failed to cancel tee time: ${response.statusCode}');
+                                                                                            //     }
+                                                                                            //   } catch (e) {
+                                                                                            //     print('❗ Error cancelling tee time: $e');
+                                                                                            //   }
+                                                                                            // },
+
                                                                                             child: const Text('Yes'),
                                                                                           ),
                                                                                         ],

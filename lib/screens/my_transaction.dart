@@ -1055,7 +1055,7 @@ class MyTransactionPageState extends State<MyTransactionPage> {
       //         ),
       //       ),
 
-      bottomNavigationBar: const CustomBottomNavBar(selectedIndex: -1),
+      bottomNavigationBar: const CustomBottomNavBar(selectedIndex: 3),
     );
   }
 }

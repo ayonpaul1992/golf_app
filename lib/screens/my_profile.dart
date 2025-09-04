@@ -1018,8 +1018,9 @@ class MyProfilePageState extends State<MyProfilePage> with RouteAware {
                                               Navigator.pushAndRemoveUntil(
                                                 parentContext,
                                                 MaterialPageRoute(
-                                                    builder: (_) =>
-                                                        const LoginPage()),
+                                                  builder: (_) =>
+                                                      const LoginPage(),
+                                                ),
                                                 (route) => false,
                                               );
                                             } else {
