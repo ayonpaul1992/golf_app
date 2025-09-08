@@ -1,12 +1,10 @@
-import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:gulf_app/components/custom_app_bar.dart';
-import 'package:gulf_app/components/custom_drawer.dart';
-import 'package:gulf_app/components/custom_bottom_nav_bar.dart';
+import '/components/custom_app_bar.dart';
+import '/components/custom_drawer.dart';
+import '/components/custom_bottom_nav_bar.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:intl/intl.dart';
 
@@ -396,7 +394,7 @@ class MyReservationPageState extends State<MyReservationPage> {
                         border: Border(
                           bottom: BorderSide(
                             color: Colors.grey, // Customize the color
-                            width: 1.0,         // Customize the width
+                            width: 1.0, // Customize the width
                           ),
                         ),
                       ),
@@ -408,7 +406,8 @@ class MyReservationPageState extends State<MyReservationPage> {
                               child: Stack(
                                 children: [
                                   Container(
-                                    child: Image.asset("assets/images/bkd1.png"),
+                                    child:
+                                        Image.asset("assets/images/bkd1.png"),
                                   ),
                                   Positioned(
                                     top: 9.5,
@@ -418,9 +417,11 @@ class MyReservationPageState extends State<MyReservationPage> {
                                       height: 68,
                                       decoration: BoxDecoration(
                                           color: Color(0xFFFFFFFF),
-                                          borderRadius: BorderRadius.circular(10)),
+                                          borderRadius:
+                                              BorderRadius.circular(10)),
                                       child: Center(
-                                        child: Image.asset("assets/images/bkdu1.png"),
+                                        child: Image.asset(
+                                            "assets/images/bkdu1.png"),
                                       ),
                                     ),
                                   ),
@@ -443,7 +444,8 @@ class MyReservationPageState extends State<MyReservationPage> {
                                   child: Container(
                                     decoration: BoxDecoration(
                                         color: Color(0xFFF7FAF4),
-                                        borderRadius: BorderRadius.circular(50)),
+                                        borderRadius:
+                                            BorderRadius.circular(50)),
                                     child: Padding(
                                       padding: EdgeInsets.symmetric(
                                           horizontal: 10, vertical: 5),
@@ -466,22 +468,28 @@ class MyReservationPageState extends State<MyReservationPage> {
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.red,
                                     foregroundColor: Colors.white,
-                                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5), // vertical padding
-                                    minimumSize: Size(0, 0), // disables default min height
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 10,
+                                        vertical: 5), // vertical padding
+                                    minimumSize: Size(
+                                        0, 0), // disables default min height
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                   ),
                                   child: Text(
                                     "Cancel",
-                                    style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
+                                    style: TextStyle(
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.w600),
                                   ),
                                 ),
                               ],
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.only(left: 10, right: 10, bottom: 10),
+                            padding: EdgeInsets.only(
+                                left: 10, right: 10, bottom: 10),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -503,7 +511,8 @@ class MyReservationPageState extends State<MyReservationPage> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.only(left: 10, right: 10, bottom: 10),
+                            padding: EdgeInsets.only(
+                                left: 10, right: 10, bottom: 10),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -525,7 +534,8 @@ class MyReservationPageState extends State<MyReservationPage> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.only(left: 10, right: 10, bottom: 10),
+                            padding: EdgeInsets.only(
+                                left: 10, right: 10, bottom: 10),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -547,7 +557,8 @@ class MyReservationPageState extends State<MyReservationPage> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.only(left: 10, right: 10, bottom: 10),
+                            padding: EdgeInsets.only(
+                                left: 10, right: 10, bottom: 10),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -671,12 +682,12 @@ class MyReservationPageState extends State<MyReservationPage> {
                       ),
                     ),
                     Container(
-                      padding: EdgeInsets.only(bottom: 15,top: 10),
+                      padding: EdgeInsets.only(bottom: 15, top: 10),
                       decoration: BoxDecoration(
                         border: Border(
                           bottom: BorderSide(
                             color: Colors.grey, // Customize the color
-                            width: 1.0,         // Customize the width
+                            width: 1.0, // Customize the width
                           ),
                         ),
                       ),
@@ -688,7 +699,8 @@ class MyReservationPageState extends State<MyReservationPage> {
                               child: Stack(
                                 children: [
                                   Container(
-                                    child: Image.asset("assets/images/bkd2.png"),
+                                    child:
+                                        Image.asset("assets/images/bkd2.png"),
                                   ),
                                   Positioned(
                                     top: 9.5,
@@ -698,9 +710,11 @@ class MyReservationPageState extends State<MyReservationPage> {
                                       height: 68,
                                       decoration: BoxDecoration(
                                           color: Color(0xFFFFFFFF),
-                                          borderRadius: BorderRadius.circular(10)),
+                                          borderRadius:
+                                              BorderRadius.circular(10)),
                                       child: Center(
-                                        child: Image.asset("assets/images/bkdu2.png"),
+                                        child: Image.asset(
+                                            "assets/images/bkdu2.png"),
                                       ),
                                     ),
                                   ),
@@ -723,7 +737,8 @@ class MyReservationPageState extends State<MyReservationPage> {
                                   child: Container(
                                     decoration: BoxDecoration(
                                         color: Color(0xFFFDF2F2),
-                                        borderRadius: BorderRadius.circular(50)),
+                                        borderRadius:
+                                            BorderRadius.circular(50)),
                                     child: Padding(
                                       padding: EdgeInsets.symmetric(
                                           horizontal: 10, vertical: 5),
@@ -746,22 +761,28 @@ class MyReservationPageState extends State<MyReservationPage> {
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.red,
                                     foregroundColor: Colors.white,
-                                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5), // vertical padding
-                                    minimumSize: Size(0, 0), // disables default min height
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 10,
+                                        vertical: 5), // vertical padding
+                                    minimumSize: Size(
+                                        0, 0), // disables default min height
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                   ),
                                   child: Text(
                                     "Cancel",
-                                    style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
+                                    style: TextStyle(
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.w600),
                                   ),
                                 ),
                               ],
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.only(left: 10, right: 10, bottom: 10),
+                            padding: EdgeInsets.only(
+                                left: 10, right: 10, bottom: 10),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -783,7 +804,8 @@ class MyReservationPageState extends State<MyReservationPage> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.only(left: 10, right: 10, bottom: 10),
+                            padding: EdgeInsets.only(
+                                left: 10, right: 10, bottom: 10),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -805,7 +827,8 @@ class MyReservationPageState extends State<MyReservationPage> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.only(left: 10, right: 10, bottom: 10),
+                            padding: EdgeInsets.only(
+                                left: 10, right: 10, bottom: 10),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -827,7 +850,8 @@ class MyReservationPageState extends State<MyReservationPage> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.only(left: 10, right: 10, bottom: 10),
+                            padding: EdgeInsets.only(
+                                left: 10, right: 10, bottom: 10),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -951,7 +975,7 @@ class MyReservationPageState extends State<MyReservationPage> {
                       ),
                     ),
                     Container(
-                      padding: EdgeInsets.only(bottom: 15,top: 10),
+                      padding: EdgeInsets.only(bottom: 15, top: 10),
                       child: Column(
                         children: [
                           Padding(
@@ -960,7 +984,8 @@ class MyReservationPageState extends State<MyReservationPage> {
                               child: Stack(
                                 children: [
                                   Container(
-                                    child: Image.asset("assets/images/bkd3.png"),
+                                    child:
+                                        Image.asset("assets/images/bkd3.png"),
                                   ),
                                   Positioned(
                                     top: 9.5,
@@ -970,9 +995,11 @@ class MyReservationPageState extends State<MyReservationPage> {
                                       height: 68,
                                       decoration: BoxDecoration(
                                           color: Color(0xFFFFFFFF),
-                                          borderRadius: BorderRadius.circular(10)),
+                                          borderRadius:
+                                              BorderRadius.circular(10)),
                                       child: Center(
-                                        child: Image.asset("assets/images/bkdu3.png"),
+                                        child: Image.asset(
+                                            "assets/images/bkdu3.png"),
                                       ),
                                     ),
                                   ),
@@ -989,12 +1016,12 @@ class MyReservationPageState extends State<MyReservationPage> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 InkWell(
-                                  onTap: () {
-                                  },
+                                  onTap: () {},
                                   child: Container(
                                     decoration: BoxDecoration(
                                         color: Color(0xFFFDF2F2),
-                                        borderRadius: BorderRadius.circular(50)),
+                                        borderRadius:
+                                            BorderRadius.circular(50)),
                                     child: Padding(
                                       padding: EdgeInsets.symmetric(
                                           horizontal: 10, vertical: 5),
@@ -1017,22 +1044,28 @@ class MyReservationPageState extends State<MyReservationPage> {
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.red,
                                     foregroundColor: Colors.white,
-                                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5), // vertical padding
-                                    minimumSize: Size(0, 0), // disables default min height
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 10,
+                                        vertical: 5), // vertical padding
+                                    minimumSize: Size(
+                                        0, 0), // disables default min height
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                   ),
                                   child: Text(
                                     "Cancel",
-                                    style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
+                                    style: TextStyle(
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.w600),
                                   ),
                                 ),
                               ],
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.only(left: 10, right: 10, bottom: 10),
+                            padding: EdgeInsets.only(
+                                left: 10, right: 10, bottom: 10),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -1054,7 +1087,8 @@ class MyReservationPageState extends State<MyReservationPage> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.only(left: 10, right: 10, bottom: 10),
+                            padding: EdgeInsets.only(
+                                left: 10, right: 10, bottom: 10),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -1076,7 +1110,8 @@ class MyReservationPageState extends State<MyReservationPage> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.only(left: 10, right: 10, bottom: 10),
+                            padding: EdgeInsets.only(
+                                left: 10, right: 10, bottom: 10),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -1098,7 +1133,8 @@ class MyReservationPageState extends State<MyReservationPage> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.only(left: 10, right: 10, bottom: 10),
+                            padding: EdgeInsets.only(
+                                left: 10, right: 10, bottom: 10),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [

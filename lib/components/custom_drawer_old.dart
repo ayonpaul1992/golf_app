@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:gulf_app/screens/selcet_booking_class.dart';
+import '/screens/selcet_booking_class.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
@@ -51,7 +51,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
     const String apiUrl =
         'https://wealthclockadvisors.com/api/client/logout'; // Replace with your actual API URL
     final String? authToken =
-    prefs.getString('auth_token'); // Dynamically get the auth token
+        prefs.getString('auth_token'); // Dynamically get the auth token
 
     // Check if the auth token is null
     if (authToken == null) {
@@ -59,7 +59,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
             content:
-            Text('Unable to retrieve session data. Please log in again.')),
+                Text('Unable to retrieve session data. Please log in again.')),
       );
       return;
     }

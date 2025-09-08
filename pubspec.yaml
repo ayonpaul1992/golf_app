@@ -1,4 +1,4 @@
-name: gulf_app
+name: driver_pos
 description: "A new Flutter project."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -66,7 +66,8 @@ dev_dependencies:
 
 flutter_launcher_icons:
   ios: true
-  image_path: "assets/images/main_logo.png"
+  android: true
+  image_path: "assets/images/app_icon.png"
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is

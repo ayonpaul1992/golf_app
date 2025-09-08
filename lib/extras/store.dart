@@ -1,26 +1,23 @@
-import 'dart:convert';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:gulf_app/components/custom_app_bar.dart';
-import 'package:gulf_app/components/custom_drawer.dart';
-import 'package:gulf_app/components/custom_bottom_nav_bar.dart';
-import 'package:syncfusion_flutter_datepicker/datepicker.dart';
-import 'package:intl/intl.dart';
+import '/components/custom_app_bar.dart';
+import '/components/custom_drawer.dart';
+import '/components/custom_bottom_nav_bar.dart';
 
 class StorePage extends StatefulWidget {
   final String storeId; // ✅ Add this
   const StorePage(
-      {super.key,required this.storeId, required String storeName}); // ✅ Fix constructor
+      {super.key,
+      required this.storeId,
+      required String storeName}); // ✅ Fix constructor
 
   @override
   State<StorePage> createState() => _StorePageState();
 }
-class _StorePageState extends State<StorePage>{
+
+class _StorePageState extends State<StorePage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  final FlutterSecureStorage secureStorage = FlutterSecureStorage();
+  final FlutterSecureStorage secureStorage = const FlutterSecureStorage();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,8 +35,7 @@ class _StorePageState extends State<StorePage>{
         },
       ),
       body: Container(),
-      bottomNavigationBar: CustomBottomNavBar(selectedIndex: 0),
+      bottomNavigationBar: const CustomBottomNavBar(selectedIndex: 0),
     );
   }
-
 }

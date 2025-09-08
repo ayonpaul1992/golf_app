@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:gulf_app/components/userentry_app_bar.dart';
+import '/components/userentry_app_bar.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'login.dart';
 import 'package:image_picker/image_picker.dart';

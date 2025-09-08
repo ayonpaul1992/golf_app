@@ -2,16 +2,16 @@
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:gulf_app/extras/notification.dart';
-import 'package:gulf_app/screens/edit_profile.dart';
-import 'package:gulf_app/screens/login.dart';
+import '/extras/notification.dart';
+import '/screens/edit_profile.dart';
+import '/screens/login.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:gulf_app/components/custom_app_bar.dart';
-import 'package:gulf_app/components/custom_drawer.dart';
-import 'package:gulf_app/components/custom_bottom_nav_bar.dart';
-import 'package:gulf_app/screens/membership_screen.dart';
-import 'package:gulf_app/screens/my_transaction.dart';
-import 'package:gulf_app/screens/tab_card_screens.dart';
+import '/components/custom_app_bar.dart';
+import '/components/custom_drawer.dart';
+import '/components/custom_bottom_nav_bar.dart';
+// import '/screens/membership_screen.dart';
+import '/screens/my_transaction.dart';
+import '/screens/tab_card_screens.dart';
 
 class MySettingPage extends StatefulWidget {
   final String myStngId;

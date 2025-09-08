@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:gulf_app/components/custom_app_bar.dart';
-import 'package:gulf_app/components/custom_drawer.dart';
-import 'package:gulf_app/components/custom_bottom_nav_bar.dart';
+import '/components/custom_app_bar.dart';
+import '/components/custom_drawer.dart';
+import '/components/custom_bottom_nav_bar.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
-// import 'package:gulf_app/screens/tee_sheet_details.dart';
+// import '/screens/tee_sheet_details.dart';
 import 'package:intl/intl.dart';
 
 class GardenSideTeesheetPage extends StatefulWidget {

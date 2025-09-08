@@ -7,9 +7,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
 
-import 'package:gulf_app/components/custom_app_bar.dart';
-import 'package:gulf_app/components/custom_drawer.dart';
-import 'package:gulf_app/components/custom_bottom_nav_bar.dart';
+import '/components/custom_app_bar.dart';
+import '/components/custom_drawer.dart';
+import '/components/custom_bottom_nav_bar.dart';
 import 'package:http/http.dart' as http;
 
 class TabCardScreenPage extends StatefulWidget {

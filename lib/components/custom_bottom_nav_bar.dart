@@ -2,12 +2,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:gulf_app/screens/dashboard.dart';
-import 'package:gulf_app/screens/my_profile.dart';
-// import 'package:gulf_app/screens/my_setting.dart';
-import 'package:gulf_app/screens/my_reservation.dart';
-import 'package:gulf_app/screens/my_transaction.dart';
-import 'package:gulf_app/screens/selcet_booking_class.dart';
+import '/screens/dashboard.dart';
+import '/screens/my_profile.dart';
+// import '/screens/my_setting.dart';
+import '/screens/my_reservation.dart';
+import '/screens/my_transaction.dart';
+import '/screens/selcet_booking_class.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CustomBottomNavBar extends StatefulWidget {

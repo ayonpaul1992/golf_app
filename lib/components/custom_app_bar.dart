@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:gulf_app/screens/membership_screen.dart';
+// import '/screens/membership_screen.dart';
 import '../extras/notification.dart';
 import '../screens/my_profile.dart';
 import '../screens/selcet_booking_class.dart'; // Adjust the path as needed

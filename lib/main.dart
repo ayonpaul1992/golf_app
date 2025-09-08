@@ -8,7 +8,7 @@ import 'firebase_options.dart';
 import 'screens/splash_screen.dart';
 import 'screens/login.dart';
 import 'screens/dashboard.dart';
-import 'package:gulf_app/services/token_route_observer.dart';
+import '/services/token_route_observer.dart';
 
 // Use our custom observer globally
 final RouteObserver<PageRoute> routeObserver = TokenRouteObserver();

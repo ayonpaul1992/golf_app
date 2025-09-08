@@ -1,12 +1,10 @@
-import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:gulf_app/components/custom_app_bar.dart';
-import 'package:gulf_app/components/custom_drawer.dart';
-import 'package:gulf_app/components/custom_bottom_nav_bar.dart';
+import '/components/custom_app_bar.dart';
+import '/components/custom_drawer.dart';
+import '/components/custom_bottom_nav_bar.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:intl/intl.dart';
 
@@ -363,21 +361,27 @@ class MyReservationPageState extends State<MyReservationPage> {
                           ),
                         ),
                         Text(
-                          "Filter by:",style: GoogleFonts.poppins(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w500,
-                          color: Color(0xFF6E7373)
+                          "Filter by:",
+                          style: GoogleFonts.poppins(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w500,
+                              color: Color(0xFF6E7373)),
                         ),
+                        SizedBox(
+                          width: 5,
                         ),
-                        SizedBox(width: 5,),
                         Text(
-                          "This month",style: GoogleFonts.poppins(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600,
-                            color: Color(0xFF244065)
+                          "This month",
+                          style: GoogleFonts.poppins(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xFF244065)),
                         ),
-                        ),
-                        Icon(Icons.keyboard_arrow_down_rounded,size: 22,color: Color(0xFF669933),)
+                        Icon(
+                          Icons.keyboard_arrow_down_rounded,
+                          size: 22,
+                          color: Color(0xFF669933),
+                        )
                       ],
                     ),
                   ],

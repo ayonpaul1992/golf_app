@@ -1,13 +1,13 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:gulf_app/components/custom_bottom_nav_bar.dart';
-import 'package:gulf_app/screens/login.dart';
+import '/components/custom_bottom_nav_bar.dart';
+import '/screens/login.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:gulf_app/components/custom_app_bar.dart';
-import 'package:gulf_app/components/custom_drawer.dart';
-import 'package:gulf_app/screens/teesheet_page.dart'; // Import generic page
+import '/components/custom_app_bar.dart';
+import '/components/custom_drawer.dart';
+import '/screens/teesheet_page.dart'; // Import generic page
 import 'package:jwt_decoder/jwt_decoder.dart';
 
 class SelcetBookingClass extends StatefulWidget {

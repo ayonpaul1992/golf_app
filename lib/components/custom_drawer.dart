@@ -3,13 +3,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:gulf_app/screens/dashboard.dart';
-import 'package:gulf_app/screens/login.dart';
-import 'package:gulf_app/screens/my_profile.dart';
-import 'package:gulf_app/screens/my_reservation.dart';
-import 'package:gulf_app/screens/my_transaction.dart';
-import 'package:gulf_app/screens/selcet_booking_class.dart';
-import 'package:gulf_app/screens/tab_card_screens.dart';
+import '/screens/dashboard.dart';
+import '/screens/login.dart';
+import '/screens/my_profile.dart';
+import '/screens/my_reservation.dart';
+import '/screens/my_transaction.dart';
+import '/screens/selcet_booking_class.dart';
+import '/screens/tab_card_screens.dart';
 
 class CustomDrawer extends StatefulWidget {
   final String activeTile;

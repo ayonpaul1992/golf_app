@@ -1,24 +1,22 @@
-import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:gulf_app/components/custom_app_bar.dart';
-import 'package:gulf_app/components/custom_drawer.dart';
-import 'package:gulf_app/components/custom_bottom_nav_bar.dart';
-import 'package:syncfusion_flutter_datepicker/datepicker.dart';
-import 'package:intl/intl.dart';
+import '/components/custom_app_bar.dart';
+import '/components/custom_drawer.dart';
+import '/components/custom_bottom_nav_bar.dart';
 
 class HistoryPage extends StatefulWidget {
   final String historyId; // ✅ Add this
   const HistoryPage(
-      {super.key,required this.historyId,required String history}); // ✅ Fix constructor
+      {super.key,
+      required this.historyId,
+      required String history}); // ✅ Fix constructor
 
   @override
   State<HistoryPage> createState() => _HistoryPageState();
 }
-class _HistoryPageState extends State<HistoryPage>{
+
+class _HistoryPageState extends State<HistoryPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final FlutterSecureStorage secureStorage = FlutterSecureStorage();
   @override
@@ -41,5 +39,4 @@ class _HistoryPageState extends State<HistoryPage>{
       bottomNavigationBar: CustomBottomNavBar(selectedIndex: 0),
     );
   }
-
 }
