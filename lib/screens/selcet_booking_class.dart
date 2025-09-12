@@ -247,8 +247,11 @@ class SelcetBookingClassState extends State<SelcetBookingClass> {
 
   Future<void> _fetchReservationGroups(String teeSheetId) async {
     String? token = await secureStorage.read(key: 'accessToken') ?? '';
+
+    final String baseUrl = ApiConfig.baseUrl;
+
     final String url =
-        'https://api.dev.driverpos.io/api/v1/reservationGroup/customer?teeSheet=$teeSheetId';
+        '$baseUrl/reservationGroup/customer?teeSheet=$teeSheetId';
 
     try {
       final response = await http.get(
@@ -454,21 +457,48 @@ class SelcetBookingClassState extends State<SelcetBookingClass> {
                                                       MainAxisAlignment
                                                           .spaceBetween,
                                                   children: [
-                                                    Text(
-                                                      selectedItem,
-                                                      style:
-                                                          GoogleFonts.poppins(
-                                                        fontSize: 14,
-                                                        color: const Color(
-                                                            0xFF244065),
-                                                        fontWeight:
-                                                            FontWeight.w600,
+                                                    // Text(
+                                                    //   selectedItem,
+                                                    //   style:
+                                                    //       GoogleFonts.poppins(
+                                                    //     fontSize: 14,
+                                                    //     color: const Color(
+                                                    //         0xFF244065),
+                                                    //     fontWeight:
+                                                    //         FontWeight.w600,
+                                                    //   ),
+                                                    //   maxLines: 1,
+                                                    //   overflow:
+                                                    //       TextOverflow.ellipsis,
+                                                    // ),
+                                                    // Icon(isDropdownOpen
+                                                    //     ? Icons.arrow_drop_up
+                                                    //     : Icons
+                                                    //         .arrow_drop_down),
+
+                                                    Expanded(
+                                                      child: Text(
+                                                        selectedItem,
+                                                        style:
+                                                            GoogleFonts.poppins(
+                                                          fontSize: 14,
+                                                          color: const Color(
+                                                              0xFF244065),
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                        ),
+                                                        maxLines:
+                                                            1, //ensure single line
+                                                        overflow: TextOverflow
+                                                            .ellipsis, // prevent overflow
                                                       ),
                                                     ),
-                                                    Icon(isDropdownOpen
-                                                        ? Icons.arrow_drop_up
-                                                        : Icons
-                                                            .arrow_drop_down),
+                                                    Icon(
+                                                      isDropdownOpen
+                                                          ? Icons.arrow_drop_up
+                                                          : Icons
+                                                              .arrow_drop_down,
+                                                    ),
                                                   ],
                                                 ),
                                               ),

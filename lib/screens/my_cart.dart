@@ -901,8 +901,10 @@ class MyCartPageState extends State<MyCartPage> {
                                   throw Exception('Access token not found');
                                 }
 
+                                final String baseUrl = ApiConfig.baseUrl;
+
                                 final uri = Uri.parse(
-                                  'https://api.dev.driverpos.io/api/v1/sales/clear?cartState=customerCart',
+                                  '$baseUrl/sales/clear?cartState=customerCart',
                                 );
 
                                 final response = await http.delete(
@@ -999,9 +1001,11 @@ class MyCartPageState extends State<MyCartPage> {
                                             base64Encode(secretBox.mac.bytes),
                                       };
 
+                                      final String baseUrl = ApiConfig.baseUrl;
+
                                       final response = await http.post(
                                         Uri.parse(
-                                          'https://api.dev.driverpos.io/api/v1/transaction/payment',
+                                          '$baseUrl/transaction/payment',
                                         ),
                                         headers: {
                                           'Content-Type': 'application/json',

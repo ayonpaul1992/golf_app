@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:driver_pos/services/api_config.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class SocketService {

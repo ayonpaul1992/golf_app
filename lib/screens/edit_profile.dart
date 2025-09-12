@@ -343,9 +343,11 @@ class MyEditPageState extends State<MyEditPage> {
     // --- Prepare multipart request ---
     final token = await secureStorage.read(key: 'accessToken');
 
+    final String baseUrl = ApiConfig.baseUrl;
+
     final request = http.MultipartRequest(
       'PUT',
-      Uri.parse('https://api.dev.driverpos.io/api/v1/customer/myProfile'),
+      Uri.parse('$baseUrl/customer/myProfile'),
     ); // 🔁 Force PUT method
 
     request.headers.addAll({
