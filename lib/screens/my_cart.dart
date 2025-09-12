@@ -2,6 +2,7 @@
 import 'dart:async';
 import 'dart:convert';
 // import 'package:flutter/cupertino.dart';
+import 'package:driver_pos/services/api_config.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '/screens/my_reservation.dart';
@@ -88,9 +89,11 @@ class MyCartPageState extends State<MyCartPage> {
     try {
       String token = await secureStorage.read(key: 'accessToken') ?? '';
 
+      final String baseUrl = ApiConfig.baseUrl;
+
       final response = await http.get(
         Uri.parse(
-          'https://api.dev.driverpos.io/api/v1/sales/customer',
+          '$baseUrl/sales/customer',
         ),
         headers: {
           'Content-Type': 'application/json',

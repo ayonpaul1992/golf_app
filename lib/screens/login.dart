@@ -2,6 +2,7 @@
 
 import 'dart:convert';
 import 'dart:io';
+import 'package:driver_pos/services/api_config.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -51,8 +52,11 @@ class LoginPageState extends State<LoginPage> {
       isLoading = true;
     });
 
+    final String baseUrl = ApiConfig.baseUrl;
+    final String golfCourseCode = ApiConfig.golfCourseCode;
+
     final String apiUrl =
-        'https://api.dev.driverpos.io/api/v1/auth/login?role=customer&golfCourseCode=YdTIjvWB';
+        '$baseUrl/auth/login?role=customer&golfCourseCode=$golfCourseCode';
 
     try {
       final loginPayload = {

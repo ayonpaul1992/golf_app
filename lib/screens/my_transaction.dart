@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:driver_pos/services/api_config.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
@@ -100,9 +101,11 @@ class MyTransactionPageState extends State<MyTransactionPage> {
     });
     try {
       final token = await secureStorage.read(key: 'accessToken');
+      final String baseUrl = ApiConfig.baseUrl;
+
       final response = await http.get(
         Uri.parse(
-            'https://api.dev.driverpos.io/api/v1/report/myTransactions?limit=50&startDate=${getDateRange(_selectedFilter)['startDate']}&endDate=${getDateRange(_selectedFilter)['endDate']}'),
+            '$baseUrl/report/myTransactions?limit=50&startDate=${getDateRange(_selectedFilter)['startDate']}&endDate=${getDateRange(_selectedFilter)['endDate']}'),
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',

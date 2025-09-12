@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:driver_pos/services/api_config.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
@@ -106,8 +107,9 @@ class ResetPasswordPageState extends State<ResetPasswordPage> {
         body['mobile'] = emailOrMobile;
       }
 
-      final String url =
-          'https://api.dev.driverpos.io/api/v1/auth/password?role=customer';
+      final String baseUrl = ApiConfig.baseUrl;
+
+      final String url = '$baseUrl/auth/password?role=customer';
 
       final response = await http.put(
         Uri.parse(url),

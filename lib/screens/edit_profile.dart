@@ -2,6 +2,7 @@
 
 import 'dart:convert';
 import 'dart:io' as io show File;
+import 'package:driver_pos/services/api_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -84,8 +85,10 @@ class MyEditPageState extends State<MyEditPage> {
     });
     try {
       final token = await secureStorage.read(key: 'accessToken');
+      final String baseUrl = ApiConfig.baseUrl;
+
       final response = await http.get(
-        Uri.parse('https://api.dev.driverpos.io/api/v1/customer/myProfile'),
+        Uri.parse('$baseUrl/customer/myProfile'),
         headers: {
           'Content-Type': 'application/json',
           if (token != null) 'Authorization': 'Bearer $token',

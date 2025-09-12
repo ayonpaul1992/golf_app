@@ -2,6 +2,7 @@
 
 import 'dart:convert';
 
+import 'package:driver_pos/services/api_config.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '/main.dart';
@@ -984,9 +985,12 @@ class MyProfilePageState extends State<MyProfilePage> with RouteAware {
                                                   secretBox.mac.bytes),
                                             };
 
+                                            final String baseUrl =
+                                                ApiConfig.baseUrl;
+
                                             final response = await http.delete(
                                               Uri.parse(
-                                                  'https://api.dev.driverpos.io/api/v1/customer/delete'),
+                                                  '$baseUrl/customer/delete'),
                                               headers: {
                                                 'Authorization':
                                                     'Bearer $token',

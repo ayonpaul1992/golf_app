@@ -9,6 +9,7 @@ import 'screens/splash_screen.dart';
 import 'screens/login.dart';
 import 'screens/dashboard.dart';
 import '/services/token_route_observer.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 // Use our custom observer globally
 final RouteObserver<PageRoute> routeObserver = TokenRouteObserver();
@@ -30,6 +31,8 @@ Future<void> main() async {
 
   // Handle background messages
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+  await dotenv.load(fileName: ".env");
 
   runApp(const MyApp());
 }

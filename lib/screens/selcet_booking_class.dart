@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:driver_pos/services/api_config.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '/components/custom_bottom_nav_bar.dart';
@@ -72,8 +73,11 @@ class SelcetBookingClassState extends State<SelcetBookingClass> {
   Future<void> _fetchTeesheets() async {
     setState(() => isLoading = true);
 
-    const String apiUrl =
-        'https://api.dev.driverpos.io/api/v1/teesheet/customer-facility?golfCourseCode=YdTIjvWB';
+    final String baseUrl = ApiConfig.baseUrl;
+    final String golfCourseCode = ApiConfig.golfCourseCode;
+
+    String apiUrl =
+        '$baseUrl/teesheet/customer-facility?golfCourseCode=$golfCourseCode';
 
     String? token = await secureStorage.read(key: 'accessToken') ?? '';
 

@@ -1,5 +1,6 @@
 // ignore_for_file: deprecated_member_use, use_build_context_synchronously, depend_on_referenced_packages
 
+import 'package:driver_pos/services/api_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -95,8 +96,12 @@ class SignupPageState extends State<SignupPage> {
 
   Future<void> _callSignupApi() async {
     // Example API call, replace with your actual endpoint and logic
-    final response = await http.get(
-        Uri.parse('https://api.dev.driverpos.io/api/v1/pageSettings/Xy1zAb56'));
+
+    final String baseUrl = ApiConfig.baseUrl;
+    final String golfCourseCode = ApiConfig.golfCourseCode;
+
+    final response =
+        await http.get(Uri.parse('$baseUrl/pageSettings/$golfCourseCode'));
     if (response.statusCode == 200) {
       final data = response.body; // Process the response data as needed
       final decodedData = jsonDecode(data);
@@ -117,8 +122,11 @@ class SignupPageState extends State<SignupPage> {
   // Function to handle form submission
   Future<void> _submitForm(formData) async {
     print('Form Data: $formData');
+
+    final String baseUrl = ApiConfig.baseUrl;
+    // final String golfCourseCode = ApiConfig.golfCourseCode;
     // Example form submission logic, replace with your actual endpoint and logic
-    final url = 'https://api.dev.driverpos.io/api/v1/auth/sign-up';
+    final url = '$baseUrl/auth/sign-up';
 
     final payload = formData;
 

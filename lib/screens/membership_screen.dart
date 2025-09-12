@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:driver_pos/services/api_config.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -51,7 +52,7 @@ class MembershipScreenState extends State<MembershipScreen>
     //   isLoading = true;
     // });
     try {
-      final String baseUrl = 'https://api.dev.driverpos.io/api/v1';
+      final String baseUrl = ApiConfig.baseUrl;
       final String? token = await secureStorage.read(key: 'accessToken');
       final String? golfCourse =
           await secureStorage.read(key: 'golfCourseName');

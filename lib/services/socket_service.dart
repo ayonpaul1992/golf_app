@@ -14,8 +14,11 @@ class SocketService {
   Future<void> init(String token) async {
     if (socket != null && isConnected) return;
 
+    final String baseUrl = ApiConfig.socketUrl;
+
+    // Initialize socket connection
     socket = IO.io(
-      'https://api.dev.driverpos.io',
+      baseUrl,
       <String, dynamic>{
         'transports': ['websocket'],
         'auth': {'token': token},

@@ -1,6 +1,7 @@
 // ignore_for_file: deprecated_member_use, use_build_context_synchronously
 
 import 'dart:convert';
+import 'package:driver_pos/services/api_config.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -174,9 +175,11 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
       print(
           'Fetching suggestions for golfCourse: $golfCourse, date: $date, time: $time');
 
+      final String baseUrl = ApiConfig.baseUrl;
+
       final response = await http.get(
         Uri.parse(
-          'https://api.dev.driverpos.io/api/v1/customer/players?golfCourse=$golfCourse&date=$date&time=$time',
+          '$baseUrl/customer/players?golfCourse=$golfCourse&date=$date&time=$time',
         ),
         headers: {
           'Content-Type': 'application/json',
@@ -957,118 +960,6 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
                             ),
                           ),
                           GestureDetector(
-                            // onTap: () {
-                            //   Navigator.push(
-                            //     context,
-                            //     MaterialPageRoute(
-                            //       builder: (context) => const MyCartPage(
-                            //           myCartId:
-                            //               ''), // Replace with your target widget
-                            //     ),
-                            //   );
-                            // },
-
-                            // onTap: () async {
-                            //   cancelPendingReservation();
-                            //   try {
-                            //     List<String> playerNames = _controllers
-                            //         .skip(1)
-                            //         .map((controller) => controller.text)
-                            //         .toList();
-
-                            //     List<String> selectedPlayerIds =
-                            //         playerSuggestions
-                            //             .where((player) => playerNames
-                            //                 .contains(player['fullName']))
-                            //             .map((player) => player['id'] as String)
-                            //             .toList();
-
-                            //     List<Map<String, String>>
-                            //         selectedPlayersIdsObjects = [];
-                            //     for (int i = 0;
-                            //         i < selectedPlayerIds.length;
-                            //         i++) {
-                            //       if (selectedPlayerIds[i].isNotEmpty) {
-                            //         selectedPlayersIdsObjects.add(
-                            //             {"customerId": selectedPlayerIds[i]});
-                            //       }
-                            //     }
-
-                            //     String token = await secureStorage.read(
-                            //             key: 'accessToken') ??
-                            //         '';
-
-                            //     final response = await http.post(
-                            //       Uri.parse(
-                            //         'https://api.dev.driverpos.io/api/v1/teesheet/book-teesheet',
-                            //       ),
-                            //       headers: {
-                            //         'Content-Type': 'application/json',
-                            //         'Authorization':
-                            //             'Bearer $token', // if needed
-                            //       },
-                            //       body: jsonEncode({
-                            //         "teeSheetId": widget.teesheetPageId,
-                            //         "onlineReservationGroupId":
-                            //             widget.reservationGroupId,
-                            //         "date": DateFormat('yyyy-MM-dd').format(
-                            //           DateFormat('MMM dd, yyyy')
-                            //               .parse(widget.date),
-                            //         ),
-                            //         "startingSlot": widget.time,
-                            //         "persons": selectedPlayerCount,
-                            //         "holes": selectedHole,
-                            //         "carts": selectedRidePlayer,
-                            //         "rentalClubs": isYes,
-                            //         "customers": selectedPlayersIdsObjects,
-                            //       }),
-                            //     );
-
-                            //     if (response.statusCode == 200) {
-                            //       final data = jsonDecode(response.body);
-                            //       print('✅ Booking API Response: $data');
-
-                            //       if (data['success'] == true) {
-                            //         // Handle success
-                            //         // print('✅ Booking successful');
-
-                            //         Navigator.push(
-                            //           context,
-                            //           MaterialPageRoute(
-                            //             builder: (context) =>
-                            //                 const MyCartPage(myCartId: ''),
-                            //           ),
-                            //         );
-                            //       } else {
-                            //         // Handle error
-                            //         print(
-                            //             '❌ Booking failed: ${data['message']}');
-                            //         ScaffoldMessenger.of(context).showSnackBar(
-                            //           const SnackBar(
-                            //             content: Text('Booking failed'),
-                            //           ),
-                            //         );
-                            //       }
-                            //     } else {
-                            //       print('❌ API Error: ${response.body}');
-                            //       ScaffoldMessenger.of(context).showSnackBar(
-                            //         SnackBar(
-                            //           content: Text(
-                            //             jsonDecode(response.body)['message'],
-                            //           ),
-                            //         ),
-                            //       );
-                            //     }
-                            //   } catch (e) {
-                            //     print('❌ Exception: $e');
-                            //     ScaffoldMessenger.of(context).showSnackBar(
-                            //       const SnackBar(
-                            //         content: Text('Something went wrong'),
-                            //       ),
-                            //     );
-                            //   }
-                            // },
-
                             onTap: () async {
                               cancelPendingReservation();
                               try {
@@ -1141,9 +1032,11 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
                                 // 🔐 AES encryption ends
                                 // ---------------------------------------------
 
+                                final String baseUrl = ApiConfig.baseUrl;
+
                                 final response = await http.post(
                                   Uri.parse(
-                                    'https://api.dev.driverpos.io/api/v1/teesheet/book-teesheet',
+                                    '$baseUrl/teesheet/book-teesheet',
                                   ),
                                   headers: {
                                     'Content-Type': 'application/json',
@@ -1187,7 +1080,6 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
                                 );
                               }
                             },
-
                             child: Container(
                               decoration: BoxDecoration(
                                 color: const Color(0xFF9ECF9A),

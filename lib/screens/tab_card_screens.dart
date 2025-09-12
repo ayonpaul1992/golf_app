@@ -2,6 +2,7 @@
 
 import 'dart:convert';
 
+import 'package:driver_pos/services/api_config.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -68,8 +69,9 @@ class _TabCardScreenPageState extends State<TabCardScreenPage>
   Future<void> fetchStoreCredits() async {
     String? storedUserProfileImage =
         await secureStorage.read(key: 'profilePic');
-    const String apiUrl =
-        'https://api.dev.driverpos.io/api/v1/storecredit/myStoreCredit?limit=20&page=1';
+    final String baseUrl = ApiConfig.baseUrl;
+
+    String apiUrl = '$baseUrl/storecredit/myStoreCredit?limit=20&page=1';
     final String? token = await secureStorage.read(key: 'accessToken');
 
     try {
@@ -106,8 +108,9 @@ class _TabCardScreenPageState extends State<TabCardScreenPage>
   }
 
   Future<void> fetchRainchecks() async {
-    const String apiUrl =
-        'https://api.dev.driverpos.io/api/v1/raincheck/myRainChecks?limit=20&page=1';
+    final String baseUrl = ApiConfig.baseUrl;
+
+    String apiUrl = '$baseUrl/raincheck/myRainChecks?limit=20&page=1';
     final String? token = await secureStorage.read(key: 'accessToken');
 
     try {
@@ -135,8 +138,9 @@ class _TabCardScreenPageState extends State<TabCardScreenPage>
   }
 
   Future<void> fetchGiftCards() async {
-    const String apiUrl =
-        'https://api.dev.driverpos.io/api/v1/giftCard/myGiftCards?limit=20&page=1';
+    final String baseUrl = ApiConfig.baseUrl;
+
+    String apiUrl = '$baseUrl/giftCard/myGiftCards?limit=20&page=1';
     final String? token = await secureStorage.read(key: 'accessToken');
 
     try {

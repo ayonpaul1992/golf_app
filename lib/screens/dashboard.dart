@@ -1,6 +1,7 @@
 // ignore_for_file: deprecated_member_use, use_build_context_synchronously
 
 import 'dart:convert';
+import 'package:driver_pos/services/api_config.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
@@ -82,9 +83,12 @@ class DashboardPageState extends State<DashboardPage> {
     try {
       // Replace with your actual API call logic
       // Example using http package:
+      final String baseUrl = ApiConfig.baseUrl;
+      // final String golfCourseCode = ApiConfig.golfCourseCode;
+
       final response = await http.get(
         Uri.parse(
-            'https://api.dev.driverpos.io/api/v1/teesheet/myBookings?bookingStatus=Booked&page=1&limit=1&isDashboard=true'),
+            '$baseUrl/teesheet/myBookings?bookingStatus=Booked&page=1&limit=1&isDashboard=true'),
         headers: {
           'Authorization':
               'Bearer ${await secureStorage.read(key: "accessToken")}'
