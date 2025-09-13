@@ -395,7 +395,7 @@ class MyEditPageState extends State<MyEditPage> {
       final res = await http.Response.fromStream(response);
 
       if (res.statusCode == 200 || res.statusCode == 204) {
-        // print("Profile updated successfully: ${res.body}");
+        print("Profile updated successfully: ${res.body}");
         await secureStorage.write(
           key: 'userName',
           value: "${fullNmText.text} ${lastNmText.text}",

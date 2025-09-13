@@ -124,7 +124,6 @@ class SignupPageState extends State<SignupPage> {
     print('Form Data: $formData');
 
     final String baseUrl = ApiConfig.baseUrl;
-    // final String golfCourseCode = ApiConfig.golfCourseCode;
     // Example form submission logic, replace with your actual endpoint and logic
     final url = '$baseUrl/auth/sign-up';
 
@@ -753,8 +752,10 @@ class SignupPageState extends State<SignupPage> {
 
                                     if (isValid) {
                                       Map<String, dynamic> formData = {};
+                                      final String golfCourseCode =
+                                          ApiConfig.golfCourseCode;
                                       formData['golfCourseCode'] =
-                                          'Xy1zAb56'; // Example static value
+                                          golfCourseCode; // Example static value
                                       for (var field in formFields.where(
                                           (f) => f['isDisplayed'] == true)) {
                                         formData[field['fieldName']] =
