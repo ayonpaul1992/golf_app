@@ -1388,6 +1388,19 @@ class TeesheetPageState extends State<TeesheetPage> {
                                                 ),
                                               );
                                             }).toList(),
+                                            if (allTeeSheetData.isEmpty)
+                                              Center(
+                                                child: Text(
+                                                  'No Tee time available at this time, please try again later. Tee times are available only between 6 AM to 12 AM',
+                                                  style: GoogleFonts.poppins(
+                                                    color:
+                                                        const Color(0xFF244065),
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                  textAlign: TextAlign.center,
+                                                ),
+                                              ),
                                           ],
                                         )
                                       ],

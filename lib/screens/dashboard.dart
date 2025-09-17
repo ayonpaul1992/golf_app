@@ -46,28 +46,50 @@ class DashboardPageState extends State<DashboardPage> {
   Map<String, dynamic>? upcomingTeeTime;
 
   IconData _getWeatherIcon(String description) {
+    // description = "Haze";
     switch (description.toLowerCase()) {
-      case 'clear sky':
+      case 'clear':
         return WeatherIcons.day_sunny;
       case 'few clouds':
         return WeatherIcons.day_cloudy;
       case 'scattered clouds':
-      case 'broken clouds':
         return WeatherIcons.cloud;
-      case 'overcast clouds':
+      case 'broken clouds':
         return WeatherIcons.cloudy;
-      case 'shower rain':
-      case 'light rain':
-      case 'moderate rain':
+      case 'overcast':
+        return WeatherIcons.cloudy;
+      case 'rain':
         return WeatherIcons.rain;
+      case 'shower':
+        return WeatherIcons.showers;
+      case 'drizzle':
+        return WeatherIcons.sprinkle;
       case 'thunderstorm':
         return WeatherIcons.thunderstorm;
       case 'snow':
         return WeatherIcons.snow;
+      case 'sleet':
+        return WeatherIcons.sleet;
       case 'mist':
         return WeatherIcons.fog;
+      case 'haze':
+        return WeatherIcons.day_haze;
+      case 'fog':
+        return WeatherIcons.fog;
+      case 'smoke':
+        return WeatherIcons.smoke;
+      case 'dust':
+        return WeatherIcons.dust;
+      case 'sand':
+        return WeatherIcons.sandstorm;
+      case 'ash':
+        return WeatherIcons.volcano;
+      case 'squall':
+        return WeatherIcons.strong_wind;
+      case 'tornado':
+        return WeatherIcons.tornado;
       default:
-        return WeatherIcons.na; // fallback icon
+        return WeatherIcons.cloud; // fallback icon
     }
   }
 
