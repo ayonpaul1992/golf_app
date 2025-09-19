@@ -80,6 +80,8 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
 
   String? pendingSlotId;
 
+  String? golfCourseName;
+
   void _startCountdown() {
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (_remaining.inSeconds == 0) {
@@ -134,6 +136,13 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
     super.initState();
     _startCountdown();
     _loadUserName();
+
+    // Initialize golfCourseName asynchronously
+    secureStorage.read(key: 'golfCourseName').then((value) {
+      setState(() {
+        golfCourseName = value ?? '';
+      });
+    });
 
     _controllers = List.generate(
       selectedPlayerCount,
@@ -318,38 +327,36 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
               const SizedBox(
                 height: 15,
               ),
-              Container(
-                child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          width: 40,
-                          height: 1.1,
-                          color: const Color(0xFFB2C1C0),
-                        ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        Text(
-                          "Tee Booking",
-                          style: GoogleFonts.poppins(
-                              color: const Color(0xFF244065),
-                              fontSize: 22,
-                              fontWeight: FontWeight.w600),
-                        ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        Container(
-                          width: 40,
-                          height: 1.1,
-                          color: const Color(0xFFB2C1C0),
-                        ),
-                      ],
-                    )),
-              ),
+              SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        width: 40,
+                        height: 1.1,
+                        color: const Color(0xFFB2C1C0),
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Text(
+                        "Tee Booking",
+                        style: GoogleFonts.poppins(
+                            color: const Color(0xFF244065),
+                            fontSize: 22,
+                            fontWeight: FontWeight.w600),
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Container(
+                        width: 40,
+                        height: 1.1,
+                        color: const Color(0xFFB2C1C0),
+                      ),
+                    ],
+                  )),
               const SizedBox(
                 height: 10,
               ),
@@ -471,7 +478,7 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
                                           SizedBox(
                                             width: 120,
                                             child: Text(
-                                              "Eden Gardens Golf Course",
+                                              golfCourseName ?? '',
                                               style: GoogleFonts.poppins(
                                                 color: const Color(0xFF244065),
                                                 fontSize: 13,
