@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -18,7 +17,7 @@ class MyReservationPage extends StatefulWidget {
 
 class MyReservationPageState extends State<MyReservationPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  final FlutterSecureStorage secureStorage = FlutterSecureStorage();
+  final FlutterSecureStorage secureStorage = const FlutterSecureStorage();
   final TextEditingController _dateController = TextEditingController();
   final searchBarText = TextEditingController();
   bool isLoading = false;
@@ -56,21 +55,21 @@ class MyReservationPageState extends State<MyReservationPage> {
         return Align(
           alignment: const FractionalOffset(0.5, 0.42),
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 15.0),
+            padding: const EdgeInsets.symmetric(horizontal: 15.0),
             child: Container(
               height: 400,
               width: MediaQuery.of(context).size.width,
-              padding: EdgeInsets.all(15),
+              padding: const EdgeInsets.all(15),
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.vertical(
+                borderRadius: const BorderRadius.vertical(
                     top: Radius.circular(20), bottom: Radius.circular(20)),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.2),
                     blurRadius: 10,
                     spreadRadius: 2,
-                    offset: Offset(0, 2),
+                    offset: const Offset(0, 2),
                   ),
                 ],
               ),
@@ -101,12 +100,12 @@ class MyReservationPageState extends State<MyReservationPage> {
                     // <- ADD THIS LINE
                     selectionMode: DateRangePickerSelectionMode.single,
                     backgroundColor: Colors.white,
-                    selectionColor: Color(0xFF9ECF9A),
-                    todayHighlightColor: Color(0xFF9ECF9A),
+                    selectionColor: const Color(0xFF9ECF9A),
+                    todayHighlightColor: const Color(0xFF9ECF9A),
                     headerStyle: DateRangePickerHeaderStyle(
                       backgroundColor: Colors.transparent,
                       textStyle: GoogleFonts.poppins(
-                        color: Color(0xFF3F4B4B),
+                        color: const Color(0xFF3F4B4B),
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
                       ),
@@ -127,23 +126,23 @@ class MyReservationPageState extends State<MyReservationPage> {
                         },
                         style: TextButton.styleFrom(
                           padding:
-                              EdgeInsets.symmetric(horizontal: 20, vertical: 0),
+                              const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20),
-                            side: BorderSide(
+                            side: const BorderSide(
                                 width: 1.5, color: Color(0xFF9ECF9A)),
                           ),
                         ),
                         child: Text(
                           "Cancel",
                           style: GoogleFonts.poppins(
-                            color: Color(0xFF244065),
+                            color: const Color(0xFF244065),
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
                       ),
-                      SizedBox(width: 10),
+                      const SizedBox(width: 10),
                       TextButton(
                         onPressed: () {
                           if (_selectedDate != null) {
@@ -156,12 +155,12 @@ class MyReservationPageState extends State<MyReservationPage> {
                           Navigator.pop(context);
                         },
                         style: TextButton.styleFrom(
-                          backgroundColor: Color(0xFF9ECF9A),
+                          backgroundColor: const Color(0xFF9ECF9A),
                           padding:
-                              EdgeInsets.symmetric(horizontal: 20, vertical: 0),
+                              const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20),
-                            side: BorderSide(
+                            side: const BorderSide(
                                 width: 1.5, color: Color(0xFF9ECF9A)),
                           ),
                         ),
@@ -213,16 +212,16 @@ class MyReservationPageState extends State<MyReservationPage> {
         },
       ),
       body: Container(
-        color: Color(0xFFFAFCFA),
+        color: const Color(0xFFFAFCFA),
         width: double.infinity,
         height: double.infinity,
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 15),
+          padding: const EdgeInsets.symmetric(horizontal: 15),
           child: SingleChildScrollView(
               child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              SizedBox(
+              const SizedBox(
                 height: 15,
               ),
               Container(
@@ -234,33 +233,33 @@ class MyReservationPageState extends State<MyReservationPage> {
                         Container(
                           width: 40,
                           height: 1,
-                          color: Color(0xFFB2C1C0),
+                          color: const Color(0xFFB2C1C0),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 10,
                         ),
                         Text(
                           "My Reservation",
                           style: GoogleFonts.poppins(
-                              color: Color(0xFF244065),
+                              color: const Color(0xFF244065),
                               fontSize: 22,
                               fontWeight: FontWeight.w600),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 10,
                         ),
                         Container(
                           width: 40,
                           height: 1,
-                          color: Color(0xFFB2C1C0),
+                          color: const Color(0xFFB2C1C0),
                         ),
                       ],
                     )),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 15,
               ),
-              Container(
+              SizedBox(
                 width: double.infinity,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -279,11 +278,11 @@ class MyReservationPageState extends State<MyReservationPage> {
                                   BoxShadow(
                                     color: Colors.black.withOpacity(0.1),
                                     blurRadius: 6,
-                                    offset: Offset(0, 3),
+                                    offset: const Offset(0, 3),
                                   ),
                                 ],
                                 border: Border.all(
-                                  color: Color(0xFFB2C1C0),
+                                  color: const Color(0xFFB2C1C0),
                                   width: 1,
                                 ),
                               ),
@@ -316,7 +315,7 @@ class MyReservationPageState extends State<MyReservationPage> {
                                   fillColor: Colors.white,
                                 ),
                                 style: GoogleFonts.poppins(
-                                  color: Color(0xFF244065),
+                                  color: const Color(0xFF244065),
                                   fontWeight: FontWeight.w600,
                                   fontSize: 14,
                                 ),
@@ -342,8 +341,8 @@ class MyReservationPageState extends State<MyReservationPage> {
                       onTap: editingIndex == null
                           ? () => _showDatePicker(context)
                           : null,
-                      child: Padding(
-                        padding: const EdgeInsets.only(right: 20.0),
+                      child: const Padding(
+                        padding: EdgeInsets.only(right: 20.0),
                         child: Icon(
                           Icons.calendar_month_outlined,
                           color: Color(0xFF648683),
@@ -354,14 +353,14 @@ class MyReservationPageState extends State<MyReservationPage> {
                   ],
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 15,
               ),
               Container(
                 width: double.infinity,
                 decoration: BoxDecoration(
-                  border: Border.all(color: Color(0xFF9ECF9A), width: 1),
-                  borderRadius: BorderRadius.all(
+                  border: Border.all(color: const Color(0xFF9ECF9A), width: 1),
+                  borderRadius: const BorderRadius.all(
                     Radius.circular(10), // Correct usage
                   ),
                 ),
@@ -370,27 +369,27 @@ class MyReservationPageState extends State<MyReservationPage> {
                   children: [
                     Container(
                       width: double.infinity,
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         color: Color(0xFFF8F8F8),
                         borderRadius: BorderRadius.only(
                           topLeft: Radius.circular(10),
                           topRight: Radius.circular(10),
                         ),
                       ),
-                      padding: EdgeInsets.all(10),
+                      padding: const EdgeInsets.all(10),
                       child: Text(
                         "My Booking Details",
                         textAlign: TextAlign.center,
                         style: GoogleFonts.poppins(
-                          color: Color(0xFF244065),
+                          color: const Color(0xFF244065),
                           fontWeight: FontWeight.w600,
                           fontSize: 13,
                         ),
                       ),
                     ),
                     Container(
-                      padding: EdgeInsets.only(bottom: 15),
-                      decoration: BoxDecoration(
+                      padding: const EdgeInsets.only(bottom: 15),
+                      decoration: const BoxDecoration(
                         border: Border(
                           bottom: BorderSide(
                             color: Colors.grey, // Customize the color
@@ -401,7 +400,7 @@ class MyReservationPageState extends State<MyReservationPage> {
                       child: Column(
                         children: [
                           Padding(
-                            padding: EdgeInsets.all(10),
+                            padding: const EdgeInsets.all(10),
                             child: Container(
                               child: Stack(
                                 children: [
@@ -416,7 +415,7 @@ class MyReservationPageState extends State<MyReservationPage> {
                                       width: 68,
                                       height: 68,
                                       decoration: BoxDecoration(
-                                          color: Color(0xFFFFFFFF),
+                                          color: const Color(0xFFFFFFFF),
                                           borderRadius:
                                               BorderRadius.circular(10)),
                                       child: Center(
@@ -430,7 +429,7 @@ class MyReservationPageState extends State<MyReservationPage> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.only(
+                            padding: const EdgeInsets.only(
                               left: 10,
                               right: 10,
                             ),
@@ -443,18 +442,18 @@ class MyReservationPageState extends State<MyReservationPage> {
                                   },
                                   child: Container(
                                     decoration: BoxDecoration(
-                                        color: Color(0xFFF7FAF4),
+                                        color: const Color(0xFFF7FAF4),
                                         borderRadius:
                                             BorderRadius.circular(50)),
                                     child: Padding(
-                                      padding: EdgeInsets.symmetric(
+                                      padding: const EdgeInsets.symmetric(
                                           horizontal: 10, vertical: 5),
                                       child: Center(
                                         child: Text(
                                           "Checked In",
                                           style: GoogleFonts.poppins(
                                               fontSize: 12,
-                                              color: Color(0xFF669933),
+                                              color: const Color(0xFF669933),
                                               fontWeight: FontWeight.w600),
                                         ),
                                       ),
@@ -468,16 +467,16 @@ class MyReservationPageState extends State<MyReservationPage> {
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.red,
                                     foregroundColor: Colors.white,
-                                    padding: EdgeInsets.symmetric(
+                                    padding: const EdgeInsets.symmetric(
                                         horizontal: 10,
                                         vertical: 5), // vertical padding
-                                    minimumSize: Size(
+                                    minimumSize: const Size(
                                         0, 0), // disables default min height
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                   ),
-                                  child: Text(
+                                  child: const Text(
                                     "Cancel",
                                     style: TextStyle(
                                         fontSize: 11,
@@ -488,7 +487,7 @@ class MyReservationPageState extends State<MyReservationPage> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.only(
+                            padding: const EdgeInsets.only(
                                 left: 10, right: 10, bottom: 10),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -496,14 +495,14 @@ class MyReservationPageState extends State<MyReservationPage> {
                                 Text(
                                   "Golf Course: ",
                                   style: GoogleFonts.poppins(
-                                      color: Color(0xFF6E7373),
+                                      color: const Color(0xFF6E7373),
                                       fontSize: 13,
                                       fontWeight: FontWeight.w500),
                                 ),
                                 Text(
                                   "Eden Gardens Golf Course",
                                   style: GoogleFonts.poppins(
-                                      color: Color(0xFF244065),
+                                      color: const Color(0xFF244065),
                                       fontSize: 13,
                                       fontWeight: FontWeight.w600),
                                 ),
@@ -511,7 +510,7 @@ class MyReservationPageState extends State<MyReservationPage> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.only(
+                            padding: const EdgeInsets.only(
                                 left: 10, right: 10, bottom: 10),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -519,14 +518,14 @@ class MyReservationPageState extends State<MyReservationPage> {
                                 Text(
                                   "Booking Date: ",
                                   style: GoogleFonts.poppins(
-                                      color: Color(0xFF6E7373),
+                                      color: const Color(0xFF6E7373),
                                       fontSize: 13,
                                       fontWeight: FontWeight.w500),
                                 ),
                                 Text(
                                   "Wed, Apr 16",
                                   style: GoogleFonts.poppins(
-                                      color: Color(0xFF244065),
+                                      color: const Color(0xFF244065),
                                       fontSize: 13,
                                       fontWeight: FontWeight.w600),
                                 ),
@@ -534,7 +533,7 @@ class MyReservationPageState extends State<MyReservationPage> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.only(
+                            padding: const EdgeInsets.only(
                                 left: 10, right: 10, bottom: 10),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -542,14 +541,14 @@ class MyReservationPageState extends State<MyReservationPage> {
                                 Text(
                                   "Booking Time: ",
                                   style: GoogleFonts.poppins(
-                                      color: Color(0xFF6E7373),
+                                      color: const Color(0xFF6E7373),
                                       fontSize: 13,
                                       fontWeight: FontWeight.w500),
                                 ),
                                 Text(
                                   "6:30AM",
                                   style: GoogleFonts.poppins(
-                                      color: Color(0xFF244065),
+                                      color: const Color(0xFF244065),
                                       fontSize: 13,
                                       fontWeight: FontWeight.w600),
                                 ),
@@ -557,7 +556,7 @@ class MyReservationPageState extends State<MyReservationPage> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.only(
+                            padding: const EdgeInsets.only(
                                 left: 10, right: 10, bottom: 10),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -565,14 +564,14 @@ class MyReservationPageState extends State<MyReservationPage> {
                                 Text(
                                   "Amount: ",
                                   style: GoogleFonts.poppins(
-                                      color: Color(0xFF6E7373),
+                                      color: const Color(0xFF6E7373),
                                       fontSize: 13,
                                       fontWeight: FontWeight.w500),
                                 ),
                                 Text(
                                   "\$23.15",
                                   style: GoogleFonts.poppins(
-                                    color: Color(0xFF669933),
+                                    color: const Color(0xFF669933),
                                     fontSize: 16,
                                     fontWeight: FontWeight.w600,
                                   ),
@@ -581,7 +580,7 @@ class MyReservationPageState extends State<MyReservationPage> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.only(
+                            padding: const EdgeInsets.only(
                               left: 10,
                               right: 10,
                             ),
@@ -590,10 +589,10 @@ class MyReservationPageState extends State<MyReservationPage> {
                               children: [
                                 Container(
                                   decoration: BoxDecoration(
-                                      color: Color(0xFFF7FAF4),
+                                      color: const Color(0xFFF7FAF4),
                                       borderRadius: BorderRadius.circular(50)),
                                   child: Padding(
-                                    padding: EdgeInsets.symmetric(
+                                    padding: const EdgeInsets.symmetric(
                                         horizontal: 15, vertical: 6),
                                     child: Center(
                                       child: Row(
@@ -602,14 +601,14 @@ class MyReservationPageState extends State<MyReservationPage> {
                                             "Holes: ",
                                             style: GoogleFonts.poppins(
                                                 fontSize: 14,
-                                                color: Color(0xFF6E7373),
+                                                color: const Color(0xFF6E7373),
                                                 fontWeight: FontWeight.w500),
                                           ),
                                           Text(
                                             "18",
                                             style: GoogleFonts.poppins(
                                                 fontSize: 14,
-                                                color: Color(0xFF244065),
+                                                color: const Color(0xFF244065),
                                                 fontWeight: FontWeight.w600),
                                           ),
                                         ],
@@ -619,10 +618,10 @@ class MyReservationPageState extends State<MyReservationPage> {
                                 ),
                                 Container(
                                   decoration: BoxDecoration(
-                                      color: Color(0xFFF7FAF4),
+                                      color: const Color(0xFFF7FAF4),
                                       borderRadius: BorderRadius.circular(50)),
                                   child: Padding(
-                                    padding: EdgeInsets.symmetric(
+                                    padding: const EdgeInsets.symmetric(
                                         horizontal: 15, vertical: 6),
                                     child: Center(
                                       child: Row(
@@ -631,14 +630,14 @@ class MyReservationPageState extends State<MyReservationPage> {
                                             "Players: ",
                                             style: GoogleFonts.poppins(
                                                 fontSize: 14,
-                                                color: Color(0xFF6E7373),
+                                                color: const Color(0xFF6E7373),
                                                 fontWeight: FontWeight.w500),
                                           ),
                                           Text(
                                             "1",
                                             style: GoogleFonts.poppins(
                                                 fontSize: 14,
-                                                color: Color(0xFF244065),
+                                                color: const Color(0xFF244065),
                                                 fontWeight: FontWeight.w600),
                                           ),
                                         ],
@@ -648,10 +647,10 @@ class MyReservationPageState extends State<MyReservationPage> {
                                 ),
                                 Container(
                                   decoration: BoxDecoration(
-                                      color: Color(0xFFF7FAF4),
+                                      color: const Color(0xFFF7FAF4),
                                       borderRadius: BorderRadius.circular(50)),
                                   child: Padding(
-                                    padding: EdgeInsets.symmetric(
+                                    padding: const EdgeInsets.symmetric(
                                         horizontal: 15, vertical: 6),
                                     child: Center(
                                       child: Row(
@@ -660,14 +659,14 @@ class MyReservationPageState extends State<MyReservationPage> {
                                             "Carts: ",
                                             style: GoogleFonts.poppins(
                                                 fontSize: 14,
-                                                color: Color(0xFF6E7373),
+                                                color: const Color(0xFF6E7373),
                                                 fontWeight: FontWeight.w500),
                                           ),
                                           Text(
                                             "0",
                                             style: GoogleFonts.poppins(
                                                 fontSize: 14,
-                                                color: Color(0xFF244065),
+                                                color: const Color(0xFF244065),
                                                 fontWeight: FontWeight.w600),
                                           ),
                                         ],
@@ -682,8 +681,8 @@ class MyReservationPageState extends State<MyReservationPage> {
                       ),
                     ),
                     Container(
-                      padding: EdgeInsets.only(bottom: 15, top: 10),
-                      decoration: BoxDecoration(
+                      padding: const EdgeInsets.only(bottom: 15, top: 10),
+                      decoration: const BoxDecoration(
                         border: Border(
                           bottom: BorderSide(
                             color: Colors.grey, // Customize the color
@@ -694,7 +693,7 @@ class MyReservationPageState extends State<MyReservationPage> {
                       child: Column(
                         children: [
                           Padding(
-                            padding: EdgeInsets.all(10),
+                            padding: const EdgeInsets.all(10),
                             child: Container(
                               child: Stack(
                                 children: [
@@ -709,7 +708,7 @@ class MyReservationPageState extends State<MyReservationPage> {
                                       width: 68,
                                       height: 68,
                                       decoration: BoxDecoration(
-                                          color: Color(0xFFFFFFFF),
+                                          color: const Color(0xFFFFFFFF),
                                           borderRadius:
                                               BorderRadius.circular(10)),
                                       child: Center(
@@ -723,7 +722,7 @@ class MyReservationPageState extends State<MyReservationPage> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.only(
+                            padding: const EdgeInsets.only(
                               left: 10,
                               right: 10,
                             ),
@@ -736,18 +735,18 @@ class MyReservationPageState extends State<MyReservationPage> {
                                   },
                                   child: Container(
                                     decoration: BoxDecoration(
-                                        color: Color(0xFFFDF2F2),
+                                        color: const Color(0xFFFDF2F2),
                                         borderRadius:
                                             BorderRadius.circular(50)),
                                     child: Padding(
-                                      padding: EdgeInsets.symmetric(
+                                      padding: const EdgeInsets.symmetric(
                                           horizontal: 10, vertical: 5),
                                       child: Center(
                                         child: Text(
                                           "Booked",
                                           style: GoogleFonts.poppins(
                                               fontSize: 12,
-                                              color: Color(0xFFDB0606),
+                                              color: const Color(0xFFDB0606),
                                               fontWeight: FontWeight.w600),
                                         ),
                                       ),
@@ -761,16 +760,16 @@ class MyReservationPageState extends State<MyReservationPage> {
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.red,
                                     foregroundColor: Colors.white,
-                                    padding: EdgeInsets.symmetric(
+                                    padding: const EdgeInsets.symmetric(
                                         horizontal: 10,
                                         vertical: 5), // vertical padding
-                                    minimumSize: Size(
+                                    minimumSize: const Size(
                                         0, 0), // disables default min height
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                   ),
-                                  child: Text(
+                                  child: const Text(
                                     "Cancel",
                                     style: TextStyle(
                                         fontSize: 11,
@@ -781,7 +780,7 @@ class MyReservationPageState extends State<MyReservationPage> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.only(
+                            padding: const EdgeInsets.only(
                                 left: 10, right: 10, bottom: 10),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -789,14 +788,14 @@ class MyReservationPageState extends State<MyReservationPage> {
                                 Text(
                                   "Golf Course: ",
                                   style: GoogleFonts.poppins(
-                                      color: Color(0xFF6E7373),
+                                      color: const Color(0xFF6E7373),
                                       fontSize: 13,
                                       fontWeight: FontWeight.w500),
                                 ),
                                 Text(
                                   "Salt Lake Golf Course",
                                   style: GoogleFonts.poppins(
-                                      color: Color(0xFF244065),
+                                      color: const Color(0xFF244065),
                                       fontSize: 13,
                                       fontWeight: FontWeight.w600),
                                 ),
@@ -804,7 +803,7 @@ class MyReservationPageState extends State<MyReservationPage> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.only(
+                            padding: const EdgeInsets.only(
                                 left: 10, right: 10, bottom: 10),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -812,14 +811,14 @@ class MyReservationPageState extends State<MyReservationPage> {
                                 Text(
                                   "Booking Date: ",
                                   style: GoogleFonts.poppins(
-                                      color: Color(0xFF6E7373),
+                                      color: const Color(0xFF6E7373),
                                       fontSize: 13,
                                       fontWeight: FontWeight.w500),
                                 ),
                                 Text(
                                   "Wed, Apr 16",
                                   style: GoogleFonts.poppins(
-                                      color: Color(0xFF244065),
+                                      color: const Color(0xFF244065),
                                       fontSize: 13,
                                       fontWeight: FontWeight.w600),
                                 ),
@@ -827,7 +826,7 @@ class MyReservationPageState extends State<MyReservationPage> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.only(
+                            padding: const EdgeInsets.only(
                                 left: 10, right: 10, bottom: 10),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -835,14 +834,14 @@ class MyReservationPageState extends State<MyReservationPage> {
                                 Text(
                                   "Booking Time: ",
                                   style: GoogleFonts.poppins(
-                                      color: Color(0xFF6E7373),
+                                      color: const Color(0xFF6E7373),
                                       fontSize: 13,
                                       fontWeight: FontWeight.w500),
                                 ),
                                 Text(
                                   "6:30AM",
                                   style: GoogleFonts.poppins(
-                                      color: Color(0xFF244065),
+                                      color: const Color(0xFF244065),
                                       fontSize: 13,
                                       fontWeight: FontWeight.w600),
                                 ),
@@ -850,7 +849,7 @@ class MyReservationPageState extends State<MyReservationPage> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.only(
+                            padding: const EdgeInsets.only(
                                 left: 10, right: 10, bottom: 10),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -858,14 +857,14 @@ class MyReservationPageState extends State<MyReservationPage> {
                                 Text(
                                   "Amount: ",
                                   style: GoogleFonts.poppins(
-                                      color: Color(0xFF6E7373),
+                                      color: const Color(0xFF6E7373),
                                       fontSize: 13,
                                       fontWeight: FontWeight.w500),
                                 ),
                                 Text(
                                   "\$48.15",
                                   style: GoogleFonts.poppins(
-                                    color: Color(0xFF669933),
+                                    color: const Color(0xFF669933),
                                     fontSize: 16,
                                     fontWeight: FontWeight.w600,
                                   ),
@@ -874,7 +873,7 @@ class MyReservationPageState extends State<MyReservationPage> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.only(
+                            padding: const EdgeInsets.only(
                               left: 10,
                               right: 10,
                             ),
@@ -883,10 +882,10 @@ class MyReservationPageState extends State<MyReservationPage> {
                               children: [
                                 Container(
                                   decoration: BoxDecoration(
-                                      color: Color(0xFFF7FAF4),
+                                      color: const Color(0xFFF7FAF4),
                                       borderRadius: BorderRadius.circular(50)),
                                   child: Padding(
-                                    padding: EdgeInsets.symmetric(
+                                    padding: const EdgeInsets.symmetric(
                                         horizontal: 15, vertical: 6),
                                     child: Center(
                                       child: Row(
@@ -895,14 +894,14 @@ class MyReservationPageState extends State<MyReservationPage> {
                                             "Holes: ",
                                             style: GoogleFonts.poppins(
                                                 fontSize: 14,
-                                                color: Color(0xFF6E7373),
+                                                color: const Color(0xFF6E7373),
                                                 fontWeight: FontWeight.w500),
                                           ),
                                           Text(
                                             "18",
                                             style: GoogleFonts.poppins(
                                                 fontSize: 14,
-                                                color: Color(0xFF244065),
+                                                color: const Color(0xFF244065),
                                                 fontWeight: FontWeight.w600),
                                           ),
                                         ],
@@ -912,10 +911,10 @@ class MyReservationPageState extends State<MyReservationPage> {
                                 ),
                                 Container(
                                   decoration: BoxDecoration(
-                                      color: Color(0xFFF7FAF4),
+                                      color: const Color(0xFFF7FAF4),
                                       borderRadius: BorderRadius.circular(50)),
                                   child: Padding(
-                                    padding: EdgeInsets.symmetric(
+                                    padding: const EdgeInsets.symmetric(
                                         horizontal: 15, vertical: 6),
                                     child: Center(
                                       child: Row(
@@ -924,14 +923,14 @@ class MyReservationPageState extends State<MyReservationPage> {
                                             "Players: ",
                                             style: GoogleFonts.poppins(
                                                 fontSize: 14,
-                                                color: Color(0xFF6E7373),
+                                                color: const Color(0xFF6E7373),
                                                 fontWeight: FontWeight.w500),
                                           ),
                                           Text(
                                             "1",
                                             style: GoogleFonts.poppins(
                                                 fontSize: 14,
-                                                color: Color(0xFF244065),
+                                                color: const Color(0xFF244065),
                                                 fontWeight: FontWeight.w600),
                                           ),
                                         ],
@@ -941,10 +940,10 @@ class MyReservationPageState extends State<MyReservationPage> {
                                 ),
                                 Container(
                                   decoration: BoxDecoration(
-                                      color: Color(0xFFF7FAF4),
+                                      color: const Color(0xFFF7FAF4),
                                       borderRadius: BorderRadius.circular(50)),
                                   child: Padding(
-                                    padding: EdgeInsets.symmetric(
+                                    padding: const EdgeInsets.symmetric(
                                         horizontal: 15, vertical: 6),
                                     child: Center(
                                       child: Row(
@@ -953,14 +952,14 @@ class MyReservationPageState extends State<MyReservationPage> {
                                             "Carts: ",
                                             style: GoogleFonts.poppins(
                                                 fontSize: 14,
-                                                color: Color(0xFF6E7373),
+                                                color: const Color(0xFF6E7373),
                                                 fontWeight: FontWeight.w500),
                                           ),
                                           Text(
                                             "0",
                                             style: GoogleFonts.poppins(
                                                 fontSize: 14,
-                                                color: Color(0xFF244065),
+                                                color: const Color(0xFF244065),
                                                 fontWeight: FontWeight.w600),
                                           ),
                                         ],
@@ -975,11 +974,11 @@ class MyReservationPageState extends State<MyReservationPage> {
                       ),
                     ),
                     Container(
-                      padding: EdgeInsets.only(bottom: 15, top: 10),
+                      padding: const EdgeInsets.only(bottom: 15, top: 10),
                       child: Column(
                         children: [
                           Padding(
-                            padding: EdgeInsets.all(10),
+                            padding: const EdgeInsets.all(10),
                             child: Container(
                               child: Stack(
                                 children: [
@@ -994,7 +993,7 @@ class MyReservationPageState extends State<MyReservationPage> {
                                       width: 68,
                                       height: 68,
                                       decoration: BoxDecoration(
-                                          color: Color(0xFFFFFFFF),
+                                          color: const Color(0xFFFFFFFF),
                                           borderRadius:
                                               BorderRadius.circular(10)),
                                       child: Center(
@@ -1008,7 +1007,7 @@ class MyReservationPageState extends State<MyReservationPage> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.only(
+                            padding: const EdgeInsets.only(
                               left: 10,
                               right: 10,
                             ),
@@ -1019,18 +1018,18 @@ class MyReservationPageState extends State<MyReservationPage> {
                                   onTap: () {},
                                   child: Container(
                                     decoration: BoxDecoration(
-                                        color: Color(0xFFFDF2F2),
+                                        color: const Color(0xFFFDF2F2),
                                         borderRadius:
                                             BorderRadius.circular(50)),
                                     child: Padding(
-                                      padding: EdgeInsets.symmetric(
+                                      padding: const EdgeInsets.symmetric(
                                           horizontal: 10, vertical: 5),
                                       child: Center(
                                         child: Text(
                                           "Booked",
                                           style: GoogleFonts.poppins(
                                               fontSize: 12,
-                                              color: Color(0xFFDB0606),
+                                              color: const Color(0xFFDB0606),
                                               fontWeight: FontWeight.w600),
                                         ),
                                       ),
@@ -1044,16 +1043,16 @@ class MyReservationPageState extends State<MyReservationPage> {
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.red,
                                     foregroundColor: Colors.white,
-                                    padding: EdgeInsets.symmetric(
+                                    padding: const EdgeInsets.symmetric(
                                         horizontal: 10,
                                         vertical: 5), // vertical padding
-                                    minimumSize: Size(
+                                    minimumSize: const Size(
                                         0, 0), // disables default min height
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                   ),
-                                  child: Text(
+                                  child: const Text(
                                     "Cancel",
                                     style: TextStyle(
                                         fontSize: 11,
@@ -1064,7 +1063,7 @@ class MyReservationPageState extends State<MyReservationPage> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.only(
+                            padding: const EdgeInsets.only(
                                 left: 10, right: 10, bottom: 10),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1072,14 +1071,14 @@ class MyReservationPageState extends State<MyReservationPage> {
                                 Text(
                                   "Golf Course: ",
                                   style: GoogleFonts.poppins(
-                                      color: Color(0xFF6E7373),
+                                      color: const Color(0xFF6E7373),
                                       fontSize: 13,
                                       fontWeight: FontWeight.w500),
                                 ),
                                 Text(
                                   "Eden Gardens Golf Course",
                                   style: GoogleFonts.poppins(
-                                      color: Color(0xFF244065),
+                                      color: const Color(0xFF244065),
                                       fontSize: 13,
                                       fontWeight: FontWeight.w600),
                                 ),
@@ -1087,7 +1086,7 @@ class MyReservationPageState extends State<MyReservationPage> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.only(
+                            padding: const EdgeInsets.only(
                                 left: 10, right: 10, bottom: 10),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1095,14 +1094,14 @@ class MyReservationPageState extends State<MyReservationPage> {
                                 Text(
                                   "Booking Date: ",
                                   style: GoogleFonts.poppins(
-                                      color: Color(0xFF6E7373),
+                                      color: const Color(0xFF6E7373),
                                       fontSize: 13,
                                       fontWeight: FontWeight.w500),
                                 ),
                                 Text(
                                   "Wed, Apr 16",
                                   style: GoogleFonts.poppins(
-                                      color: Color(0xFF244065),
+                                      color: const Color(0xFF244065),
                                       fontSize: 13,
                                       fontWeight: FontWeight.w600),
                                 ),
@@ -1110,7 +1109,7 @@ class MyReservationPageState extends State<MyReservationPage> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.only(
+                            padding: const EdgeInsets.only(
                                 left: 10, right: 10, bottom: 10),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1118,14 +1117,14 @@ class MyReservationPageState extends State<MyReservationPage> {
                                 Text(
                                   "Booking Time: ",
                                   style: GoogleFonts.poppins(
-                                      color: Color(0xFF6E7373),
+                                      color: const Color(0xFF6E7373),
                                       fontSize: 13,
                                       fontWeight: FontWeight.w500),
                                 ),
                                 Text(
                                   "6:30AM",
                                   style: GoogleFonts.poppins(
-                                      color: Color(0xFF244065),
+                                      color: const Color(0xFF244065),
                                       fontSize: 13,
                                       fontWeight: FontWeight.w600),
                                 ),
@@ -1133,7 +1132,7 @@ class MyReservationPageState extends State<MyReservationPage> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.only(
+                            padding: const EdgeInsets.only(
                                 left: 10, right: 10, bottom: 10),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1141,14 +1140,14 @@ class MyReservationPageState extends State<MyReservationPage> {
                                 Text(
                                   "Amount: ",
                                   style: GoogleFonts.poppins(
-                                      color: Color(0xFF6E7373),
+                                      color: const Color(0xFF6E7373),
                                       fontSize: 13,
                                       fontWeight: FontWeight.w500),
                                 ),
                                 Text(
                                   "\$23.15",
                                   style: GoogleFonts.poppins(
-                                    color: Color(0xFF669933),
+                                    color: const Color(0xFF669933),
                                     fontSize: 16,
                                     fontWeight: FontWeight.w600,
                                   ),
@@ -1157,7 +1156,7 @@ class MyReservationPageState extends State<MyReservationPage> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.only(
+                            padding: const EdgeInsets.only(
                               left: 10,
                               right: 10,
                             ),
@@ -1166,10 +1165,10 @@ class MyReservationPageState extends State<MyReservationPage> {
                               children: [
                                 Container(
                                   decoration: BoxDecoration(
-                                      color: Color(0xFFF7FAF4),
+                                      color: const Color(0xFFF7FAF4),
                                       borderRadius: BorderRadius.circular(50)),
                                   child: Padding(
-                                    padding: EdgeInsets.symmetric(
+                                    padding: const EdgeInsets.symmetric(
                                         horizontal: 15, vertical: 6),
                                     child: Center(
                                       child: Row(
@@ -1178,14 +1177,14 @@ class MyReservationPageState extends State<MyReservationPage> {
                                             "Holes: ",
                                             style: GoogleFonts.poppins(
                                                 fontSize: 14,
-                                                color: Color(0xFF6E7373),
+                                                color: const Color(0xFF6E7373),
                                                 fontWeight: FontWeight.w500),
                                           ),
                                           Text(
                                             "18",
                                             style: GoogleFonts.poppins(
                                                 fontSize: 14,
-                                                color: Color(0xFF244065),
+                                                color: const Color(0xFF244065),
                                                 fontWeight: FontWeight.w600),
                                           ),
                                         ],
@@ -1195,10 +1194,10 @@ class MyReservationPageState extends State<MyReservationPage> {
                                 ),
                                 Container(
                                   decoration: BoxDecoration(
-                                      color: Color(0xFFF7FAF4),
+                                      color: const Color(0xFFF7FAF4),
                                       borderRadius: BorderRadius.circular(50)),
                                   child: Padding(
-                                    padding: EdgeInsets.symmetric(
+                                    padding: const EdgeInsets.symmetric(
                                         horizontal: 15, vertical: 6),
                                     child: Center(
                                       child: Row(
@@ -1207,14 +1206,14 @@ class MyReservationPageState extends State<MyReservationPage> {
                                             "Players: ",
                                             style: GoogleFonts.poppins(
                                                 fontSize: 14,
-                                                color: Color(0xFF6E7373),
+                                                color: const Color(0xFF6E7373),
                                                 fontWeight: FontWeight.w500),
                                           ),
                                           Text(
                                             "1",
                                             style: GoogleFonts.poppins(
                                                 fontSize: 14,
-                                                color: Color(0xFF244065),
+                                                color: const Color(0xFF244065),
                                                 fontWeight: FontWeight.w600),
                                           ),
                                         ],
@@ -1224,10 +1223,10 @@ class MyReservationPageState extends State<MyReservationPage> {
                                 ),
                                 Container(
                                   decoration: BoxDecoration(
-                                      color: Color(0xFFF7FAF4),
+                                      color: const Color(0xFFF7FAF4),
                                       borderRadius: BorderRadius.circular(50)),
                                   child: Padding(
-                                    padding: EdgeInsets.symmetric(
+                                    padding: const EdgeInsets.symmetric(
                                         horizontal: 15, vertical: 6),
                                     child: Center(
                                       child: Row(
@@ -1236,14 +1235,14 @@ class MyReservationPageState extends State<MyReservationPage> {
                                             "Carts: ",
                                             style: GoogleFonts.poppins(
                                                 fontSize: 14,
-                                                color: Color(0xFF6E7373),
+                                                color: const Color(0xFF6E7373),
                                                 fontWeight: FontWeight.w500),
                                           ),
                                           Text(
                                             "0",
                                             style: GoogleFonts.poppins(
                                                 fontSize: 14,
-                                                color: Color(0xFF244065),
+                                                color: const Color(0xFF244065),
                                                 fontWeight: FontWeight.w600),
                                           ),
                                         ],
@@ -1260,14 +1259,14 @@ class MyReservationPageState extends State<MyReservationPage> {
                   ],
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 20,
               ),
             ],
           )),
         ),
       ),
-      bottomNavigationBar: CustomBottomNavBar(selectedIndex: 0),
+      bottomNavigationBar: const CustomBottomNavBar(selectedIndex: 0),
     );
   }
 

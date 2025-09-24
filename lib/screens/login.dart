@@ -504,8 +504,9 @@ class LoginPageState extends State<LoginPage> {
                                     }
                                   });
 
-                                  if (hasError)
+                                  if (hasError) {
                                     return; // 🚫 Stop if any error exists
+                                  }
 
                                   _loginUser(); // ✅ Call login function if all validations passed
                                 },

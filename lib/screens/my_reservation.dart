@@ -31,12 +31,13 @@ class MyReservationPageState extends State<MyReservationPage> {
   final LayerLink _layerLink = LayerLink();
 
   OverlayEntry? _dropdownOverlay;
-  String _selectedFilter = "This month";
+  String _selectedFilter = "Upcoming";
   final List<String> _filterOptions = [
-    "Today",
-    "This week",
-    "This month",
-    "This year"
+    "Upcoming",
+    "Past",
+    // "This week",
+    // "This month",
+    // "This year"
   ];
 
   List<Map<String, dynamic>> reservations = [];
@@ -47,9 +48,14 @@ class MyReservationPageState extends State<MyReservationPage> {
     late DateTime endDate;
 
     switch (filter) {
-      case 'Today':
+      case 'Upcoming':
         startDate = DateTime(now.year, now.month, now.day);
-        endDate = startDate;
+        endDate = DateTime(now.year + 5); // Arbitrary future date
+        break;
+
+      case 'Past':
+        startDate = DateTime(2000); // Arbitrary past date
+        endDate = DateTime(now.year, now.month, now.day - 1);
         break;
 
       case 'This week':
@@ -130,7 +136,7 @@ class MyReservationPageState extends State<MyReservationPage> {
     print("🔄 Refreshing bookings...");
     await Future.delayed(const Duration(seconds: 1)); // simulate network call
     final now = DateTime.now();
-    _selectedFilter = "This month";
+    _selectedFilter = "Upcoming";
     _dateController.text = DateFormat("MMM dd, yyyy").format(now);
     fetchMyBookings();
   }

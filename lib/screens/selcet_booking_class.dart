@@ -538,8 +538,9 @@ class SelcetBookingClassState extends State<SelcetBookingClass> {
                                             width: double.infinity,
                                             child: ElevatedButton(
                                               onPressed: () {
-                                                if (_selectedTeesheet == null)
+                                                if (_selectedTeesheet == null) {
                                                   return;
+                                                }
 
                                                 Navigator.push(
                                                   context,

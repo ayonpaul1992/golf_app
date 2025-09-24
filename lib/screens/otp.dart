@@ -1,5 +1,4 @@
 // import 'dart:convert';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 // import 'package:http/http.dart' as http;
@@ -18,7 +17,7 @@ class OtpPage extends StatefulWidget {
 class _OtpPageState extends State<OtpPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   // Create a storage instance
-  final FlutterSecureStorage secureStorage = FlutterSecureStorage();
+  final FlutterSecureStorage secureStorage = const FlutterSecureStorage();
   // Function to show the error or success messages
   void _showMessage(String message) {
     ScaffoldMessenger.of(context)
@@ -35,26 +34,26 @@ class _OtpPageState extends State<OtpPage> {
         showLeading: false,
       ),
       body: Container(
-        color: Color(0xFFFAFCFA),
+        color: const Color(0xFFFAFCFA),
         width: double.infinity,
         height: double.infinity,
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              SizedBox(
+              const SizedBox(
                 height: 30,
               ),
               Text(
                 "Quick. Simple. Secure.",
                 style: GoogleFonts.poppins(
-                  color: Color(0xFF669933),
+                  color: const Color(0xFF669933),
                   fontWeight: FontWeight.w600,
                   fontSize: 15,
                 ),
               ),
               Container(
-                margin: EdgeInsets.only(top: 5),
+                margin: const EdgeInsets.only(top: 5),
                 child: SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Row(
@@ -63,37 +62,37 @@ class _OtpPageState extends State<OtpPage> {
                         Container(
                           width: 40,
                           height: 1,
-                          color: Color(0xFFB2C1C0),
+                          color: const Color(0xFFB2C1C0),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 10,
                         ),
                         Text(
                           "Forgot Password",
                           style: GoogleFonts.poppins(
-                              color: Color(0xFF244065),
+                              color: const Color(0xFF244065),
                               fontSize: 22,
                               fontWeight: FontWeight.w600),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 10,
                         ),
                         Container(
                           width: 40,
                           height: 1,
-                          color: Color(0xFFB2C1C0),
+                          color: const Color(0xFFB2C1C0),
                         ),
                       ],
                     )),
               ),
               Padding(
                 padding:
-                    EdgeInsets.only(top: 15, left: 20, right: 20, bottom: 30),
+                    const EdgeInsets.only(top: 15, left: 20, right: 20, bottom: 30),
                 child: Text(
                   "Enter your mobile number to reset new password.",
                   textAlign: TextAlign.center,
                   style: GoogleFonts.poppins(
-                    color: Color(0xFF6E7373),
+                    color: const Color(0xFF6E7373),
                     fontWeight: FontWeight.w400,
                     fontSize: 13,
                   ),
@@ -109,7 +108,7 @@ class _OtpPageState extends State<OtpPage> {
                           BoxShadow(
                             color: Colors.black.withOpacity(0.1),
                             blurRadius: 100,
-                            offset: Offset(0, 0),
+                            offset: const Offset(0, 0),
                           ),
                         ],
                       ),
@@ -140,7 +139,7 @@ class _OtpPageState extends State<OtpPage> {
                           ),
                           textStyle: GoogleFonts.poppins(
                             fontSize: 22,
-                            color: Color(0xFF244065),
+                            color: const Color(0xFF244065),
                             fontWeight: FontWeight.w600,
                           ),
                           onChanged: (value) {
@@ -152,7 +151,7 @@ class _OtpPageState extends State<OtpPage> {
                         ),
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 10,
                     ),
                     Column(
@@ -168,9 +167,9 @@ class _OtpPageState extends State<OtpPage> {
                               style: GoogleFonts.poppins(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w400,
-                                  color: Color(0xFF6E7373)),
+                                  color: const Color(0xFF6E7373)),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               width: 4,
                             ),
                             InkWell(
@@ -192,14 +191,14 @@ class _OtpPageState extends State<OtpPage> {
                         )
                       ],
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 20,
                     ),
                     Padding(
-                      padding: EdgeInsets.only(left: 38, right: 38, bottom: 20),
+                      padding: const EdgeInsets.only(left: 38, right: 38, bottom: 20),
                       child: Stack(
                         children: [
-                          Container(
+                          SizedBox(
                             width: double.infinity,
                             child: ElevatedButton(
                               onPressed: () {
@@ -210,15 +209,15 @@ class _OtpPageState extends State<OtpPage> {
                                 // );
                               },
                               style: ElevatedButton.styleFrom(
-                                  backgroundColor: Color(0xFF9ECF9A)),
+                                  backgroundColor: const Color(0xFF9ECF9A)),
                               child: Padding(
-                                padding: EdgeInsets.symmetric(
+                                padding: const EdgeInsets.symmetric(
                                     horizontal: 15.0, vertical: 10.0),
                                 child: Center(
                                   child: Text(
                                     "Verify",
                                     style: GoogleFonts.poppins(
-                                      color: Color(0xFFFFFFFF),
+                                      color: const Color(0xFFFFFFFF),
                                       fontSize: 16,
                                       fontWeight: FontWeight.w600,
                                     ),
@@ -227,7 +226,7 @@ class _OtpPageState extends State<OtpPage> {
                               ),
                             ),
                           ),
-                          Positioned(
+                          const Positioned(
                             top: 16.5,
                             right: 15,
                             child: Icon(

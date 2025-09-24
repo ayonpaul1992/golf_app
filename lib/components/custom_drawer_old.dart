@@ -197,9 +197,9 @@ class _CustomDrawerState extends State<CustomDrawer> {
         // );
       },
       child: AnimatedContainer(
-        duration: Duration(milliseconds: 200),
+        duration: const Duration(milliseconds: 200),
         decoration: BoxDecoration(
-          color: isActive ? Color(0xFFfee0be) : Colors.transparent,
+          color: isActive ? const Color(0xFFfee0be) : Colors.transparent,
           border: Border(
             bottom: BorderSide(color: Colors.grey.shade400, width: 1.0),
           ),
@@ -207,13 +207,13 @@ class _CustomDrawerState extends State<CustomDrawer> {
         child: ListTile(
           leading: Icon(
             icon,
-            color: isActive ? Color(0xFF0f625c) : Color(0xFF303131),
+            color: isActive ? const Color(0xFF0f625c) : const Color(0xFF303131),
             size: 22, // Slightly increased for better visibility
           ),
           title: Text(
             title,
             style: TextStyle(
-              color: isActive ? Color(0xFF0f625c) : Color(0xFF303131),
+              color: isActive ? const Color(0xFF0f625c) : const Color(0xFF303131),
               fontSize: 15,
               fontWeight: FontWeight.w600,
             ),
@@ -227,13 +227,13 @@ class _CustomDrawerState extends State<CustomDrawer> {
   Widget build(BuildContext context) {
     return Drawer(
       child: Container(
-        color: Color(0xFFfdd1a0),
+        color: const Color(0xFFfdd1a0),
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
             // Header
             DrawerHeader(
-              decoration: BoxDecoration(color: Color(0xFFfdd1a0)),
+              decoration: const BoxDecoration(color: Color(0xFFfdd1a0)),
               child: SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Row(
@@ -252,7 +252,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                       child: Text(
                         loggedInUserName,
                         style: GoogleFonts.poppins(
-                          color: Color(0xFF0f625c),
+                          color: const Color(0xFF0f625c),
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
                         ),
@@ -262,12 +262,12 @@ class _CustomDrawerState extends State<CustomDrawer> {
                       width: 43,
                       height: 43,
                       decoration: BoxDecoration(
-                        color: Color(0xFFfee8d0),
+                        color: const Color(0xFFfee8d0),
                         borderRadius: BorderRadius.circular(100),
                       ),
                       child: Center(
                         child: IconButton(
-                          icon: Icon(Icons.clear, size: 19),
+                          icon: const Icon(Icons.clear, size: 19),
                           onPressed: () => Navigator.pop(context),
                         ),
                       ),
@@ -281,7 +281,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
             _buildDrawerTile(
               title: 'Home',
               icon: Icons.home,
-              destinationScreen: SelcetBookingClass(userId: ''),
+              destinationScreen: const SelcetBookingClass(userId: ''),
             ),
             _buildDrawerTile(
               title: 'My Orders',
@@ -306,7 +306,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
 
             // Logout Button
             Container(
-              margin: EdgeInsets.only(top: 100),
+              margin: const EdgeInsets.only(top: 100),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -323,7 +323,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                         style: GoogleFonts.poppins(
                           fontSize: 17,
                           fontWeight: FontWeight.w600,
-                          color: Color(0xFF222222),
+                          color: const Color(0xFF222222),
                         ),
                       ),
                     ),

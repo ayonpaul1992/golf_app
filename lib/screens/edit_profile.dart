@@ -16,7 +16,6 @@ import 'package:intl/intl.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
-import 'dart:typed_data';
 import 'package:http_parser/http_parser.dart'; // for MediaType
 
 class MyEditPage extends StatefulWidget {

@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '/components/userentry_app_bar.dart';
@@ -102,7 +101,7 @@ class SignupConfirmPageState extends State<SignupConfirmPage> {
                           left: 38, right: 38, bottom: 20),
                       child: Stack(
                         children: [
-                          Container(
+                          SizedBox(
                             width: double.infinity,
                             child: ElevatedButton(
                               onPressed: () {

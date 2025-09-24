@@ -1,10 +1,11 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '/components/userentry_app_bar.dart';
 import "login.dart";
 
 class PasswordConfirmPage extends StatefulWidget {
+  const PasswordConfirmPage({super.key});
+
   @override
   State<StatefulWidget> createState() => PasswordConfirmPageState();
 }
@@ -21,32 +22,32 @@ class PasswordConfirmPageState extends State<PasswordConfirmPage> {
         showLeading: false,
       ),
       body: Container(
-        color: Color(0xFFFAFCFA),
+        color: const Color(0xFFFAFCFA),
         width: double.infinity,
         height: double.infinity,
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              SizedBox(
+              const SizedBox(
                 height: 30,
               ),
               Container(
                 child: Image.asset("assets/images/drvrio.png"),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 20,
               ),
               Text(
                 "Quick. Simple. Secure.",
                 style: GoogleFonts.poppins(
-                  color: Color(0xFF669933),
+                  color: const Color(0xFF669933),
                   fontWeight: FontWeight.w600,
                   fontSize: 15,
                 ),
               ),
               Container(
-                margin: EdgeInsets.only(top: 5),
+                margin: const EdgeInsets.only(top: 5),
                 child: SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Row(
@@ -55,37 +56,37 @@ class PasswordConfirmPageState extends State<PasswordConfirmPage> {
                         Container(
                           width: 40,
                           height: 1,
-                          color: Color(0xFFB2C1C0),
+                          color: const Color(0xFFB2C1C0),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 10,
                         ),
                         Text(
                           "Thank you for register",
                           style: GoogleFonts.poppins(
-                              color: Color(0xFF244065),
+                              color: const Color(0xFF244065),
                               fontSize: 22,
                               fontWeight: FontWeight.w600),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 10,
                         ),
                         Container(
                           width: 40,
                           height: 1,
-                          color: Color(0xFFB2C1C0),
+                          color: const Color(0xFFB2C1C0),
                         ),
                       ],
                     )),
               ),
               Padding(
                 padding:
-                    EdgeInsets.only(top: 15, left: 20, right: 20, bottom: 30),
+                    const EdgeInsets.only(top: 15, left: 20, right: 20, bottom: 30),
                 child: Text(
                   "Your account has been created. Now you can login and join with us.",
                   textAlign: TextAlign.center,
                   style: GoogleFonts.poppins(
-                    color: Color(0xFF6E7373),
+                    color: const Color(0xFF6E7373),
                     fontWeight: FontWeight.w400,
                     fontSize: 13,
                   ),
@@ -96,29 +97,29 @@ class PasswordConfirmPageState extends State<PasswordConfirmPage> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Padding(
-                      padding: EdgeInsets.only(left: 38, right: 38, bottom: 20),
+                      padding: const EdgeInsets.only(left: 38, right: 38, bottom: 20),
                       child: Stack(
                         children: [
-                          Container(
+                          SizedBox(
                             width: double.infinity,
                             child: ElevatedButton(
                               onPressed: () {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => LoginPage()),
+                                      builder: (context) => const LoginPage()),
                                 );
                               },
                               style: ElevatedButton.styleFrom(
-                                  backgroundColor: Color(0xFF9ECF9A)),
+                                  backgroundColor: const Color(0xFF9ECF9A)),
                               child: Padding(
-                                padding: EdgeInsets.symmetric(
+                                padding: const EdgeInsets.symmetric(
                                     horizontal: 15.0, vertical: 10.0),
                                 child: Center(
                                   child: Text(
                                     "Proceed",
                                     style: GoogleFonts.poppins(
-                                      color: Color(0xFFFFFFFF),
+                                      color: const Color(0xFFFFFFFF),
                                       fontSize: 16,
                                       fontWeight: FontWeight.w600,
                                     ),
@@ -127,7 +128,7 @@ class PasswordConfirmPageState extends State<PasswordConfirmPage> {
                               ),
                             ),
                           ),
-                          Positioned(
+                          const Positioned(
                             top: 16.5,
                             right: 15,
                             child: Icon(

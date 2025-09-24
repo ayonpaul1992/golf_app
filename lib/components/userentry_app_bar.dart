@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -31,7 +30,7 @@ class UserentryAppbar extends StatelessWidget implements PreferredSizeWidget {
         'driver.io',
         textAlign: TextAlign.center,
         style: GoogleFonts.poppins(
-          color: Color(0xFF244065),
+          color: const Color(0xFF244065),
           fontSize: 20,
           fontWeight: FontWeight.w600,
         ),

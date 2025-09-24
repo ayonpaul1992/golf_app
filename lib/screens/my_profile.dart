@@ -5,13 +5,13 @@ import 'dart:convert';
 import 'package:driver_pos/services/api_config.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '/main.dart';
 import '/screens/login.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '/components/custom_app_bar.dart';
 import '/components/custom_drawer.dart';
 import '/components/custom_bottom_nav_bar.dart';
-import '/screens/membership_screen.dart';
 import '/screens/tab_card_screens.dart';
 import 'my_reservation.dart';
 import 'my_transaction.dart';
@@ -213,8 +213,36 @@ class MyProfilePageState extends State<MyProfilePage> with RouteAware {
                           ),
                           child: Center(
                               child: GestureDetector(
-                            onTap: () {
-                              print("Help button pressed!");
+                            // onTap: () {
+                            //   print("Help button pressed!");
+                            // },
+                            onTap: () async {
+                              final Uri emailUri = Uri(
+                                scheme: 'mailto',
+                                path: 'support@driverpos.io',
+                                query: Uri.encodeFull(
+                                  'subject=Support Request&body=Please describe your issue here.',
+                                ),
+                              );
+
+                              try {
+                                // Try launching with external application mode
+                                final bool launched = await launchUrl(emailUri,
+                                    mode: LaunchMode.externalApplication);
+
+                                if (!launched) {
+                                  throw 'Could not launch email client.';
+                                }
+                              } catch (e) {
+                                // Show fallback UI or error message
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text(
+                                        'No email app found. Please configure one first.'),
+                                    backgroundColor: Colors.redAccent,
+                                  ),
+                                );
+                              }
                             },
                             child: Text(
                               '?',
@@ -390,11 +418,11 @@ class MyProfilePageState extends State<MyProfilePage> with RouteAware {
                                 const SizedBox(
                                   width: 8,
                                 ), // spacing between text and arrow icon
-                                const Icon(
-                                  Icons.arrow_forward_ios_outlined,
-                                  color: Colors.white,
-                                  size: 13,
-                                ),
+                                // const Icon(
+                                //   Icons.arrow_forward_ios_outlined,
+                                //   color: Colors.white,
+                                //   size: 13,
+                                // ),
                               ],
                             ),
                           ),
@@ -659,7 +687,7 @@ class MyProfilePageState extends State<MyProfilePage> with RouteAware {
                                         width: 6,
                                       ),
                                       Text(
-                                        "My Transaction",
+                                        "My Transactions",
                                         style: GoogleFonts.poppins(
                                           color: const Color(0xFF244065),
                                           fontSize: 14,
@@ -749,7 +777,7 @@ class MyProfilePageState extends State<MyProfilePage> with RouteAware {
                                         width: 6,
                                       ),
                                       Text(
-                                        "My Reservation",
+                                        "My Reservations",
                                         style: GoogleFonts.poppins(
                                           color: const Color(0xFF244065),
                                           fontSize: 14,

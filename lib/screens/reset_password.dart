@@ -103,7 +103,7 @@ class ResetPasswordPageState extends State<ResetPasswordPage> {
       if (emailOrMobile.contains('@')) {
         body['email'] = emailOrMobile;
       } else {
-        body['email'] = '${emailOrMobile}@dummy.com';
+        body['email'] = '$emailOrMobile@dummy.com';
         body['mobile'] = emailOrMobile;
       }
 
@@ -292,7 +292,7 @@ class ResetPasswordPageState extends State<ResetPasswordPage> {
                                 fontWeight: FontWeight.w600,
                                 fontSize: 14,
                               ),
-                              autofillHints: [AutofillHints.password],
+                              autofillHints: const [AutofillHints.password],
                             ),
                           ),
                         ),
@@ -368,7 +368,7 @@ class ResetPasswordPageState extends State<ResetPasswordPage> {
                                 fontWeight: FontWeight.w600,
                                 fontSize: 14,
                               ),
-                              autofillHints: [AutofillHints.password],
+                              autofillHints: const [AutofillHints.password],
                             ),
                           ),
                         ),
@@ -392,7 +392,7 @@ class ResetPasswordPageState extends State<ResetPasswordPage> {
                           left: 38, right: 38, bottom: 20),
                       child: Stack(
                         children: [
-                          Container(
+                          SizedBox(
                             width: double.infinity,
                             child: ElevatedButton(
                               onPressed: _isLoading
