@@ -10,6 +10,7 @@ import 'screens/login.dart';
 import 'screens/dashboard.dart';
 import '/services/token_route_observer.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+// import 'package:sentry_flutter/sentry_flutter.dart';
 
 // Use our custom observer globally
 final RouteObserver<PageRoute> routeObserver = TokenRouteObserver();
@@ -33,6 +34,16 @@ Future<void> main() async {
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
   await dotenv.load(fileName: ".env");
+
+  // await SentryFlutter.init(
+  //   (options) {
+  //     options.dsn = dotenv.env['SENTRY_DSN'];
+  //     // Replace with your actual DSN from Sentry
+  //     options.tracesSampleRate =
+  //         1.0; // capture 100% of transactions (adjust for production)
+  //   },
+  //   appRunner: () => runApp(const MyApp()),
+  // );
 
   runApp(const MyApp());
 }

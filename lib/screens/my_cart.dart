@@ -106,10 +106,12 @@ class MyCartPageState extends State<MyCartPage> {
 
         final responseData = data['data'];
         bookingDate = responseData['teesheet']['date'] ?? '';
-        DateTime parsedDate =
-            DateTime.parse(bookingDate).toLocal(); // Convert to local time
+        String bookingDateRaw = responseData['teesheet']['formattedDate'] ?? '';
+        // print('Booking Date: $bookingDateRaw');
+        // DateTime parsedDate =
+        //     DateTime.parse(bookingDate).toLocal(); // Convert to local time
 
-        fomattedBookingDate = DateFormat('EEE, MMM d').format(parsedDate);
+        fomattedBookingDate = bookingDateRaw;
 
         bookingTime = responseData['teesheet']['startingSlot'] ?? '';
         golfCourseName = responseData['golfCourse']['name'] ?? '';
