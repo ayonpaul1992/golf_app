@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:driver_pos/services/api_config.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import '/components/custom_bottom_nav_bar.dart';
 import '/screens/login.dart';
 import 'package:http/http.dart' as http;
@@ -131,9 +132,19 @@ class SelcetBookingClassState extends State<SelcetBookingClass> {
           _showMessage('Invalid response structure');
         }
       } else {
-        _showMessage('Server error: ${response.statusCode}');
+        //send to sentry
+
+        throw Exception('Server New error: ${response.statusCode}');
+
+        // _showMessage('Server error: ${response.statusCode}');
+      }
+
+      if (response.statusCode >= 400) {
+        throw Exception('Server error: ${response.statusCode}');
       }
     } catch (e) {
+      // send to sentry
+
       _showMessage('Error fetching data: $e');
     } finally {
       setState(() => isLoading = false);

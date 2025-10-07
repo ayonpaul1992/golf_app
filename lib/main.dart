@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -10,7 +13,7 @@ import 'screens/login.dart';
 import 'screens/dashboard.dart';
 import '/services/token_route_observer.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-// import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 // Use our custom observer globally
 final RouteObserver<PageRoute> routeObserver = TokenRouteObserver();
@@ -35,17 +38,39 @@ Future<void> main() async {
 
   await dotenv.load(fileName: ".env");
 
-  // await SentryFlutter.init(
-  //   (options) {
-  //     options.dsn = dotenv.env['SENTRY_DSN'];
-  //     // Replace with your actual DSN from Sentry
-  //     options.tracesSampleRate =
-  //         1.0; // capture 100% of transactions (adjust for production)
-  //   },
-  //   appRunner: () => runApp(const MyApp()),
-  // );
+  await SentryFlutter.init(
+    (options) {
+      options.dsn = dotenv.env['SENTRY_DSN'];
+      // Replace with your actual DSN from Sentry
+      options.sendDefaultPii = true;
+      options.enableLogs = true;
 
-  runApp(const MyApp());
+      options.tracesSampleRate =
+          1.0; // capture 100% of transactions (adjust for production)
+
+      // options.profilesSampleRate = 1.0;
+
+      // if (Platform.isIOS && !Platform.isMacOS) {
+      //   if (defaultTargetPlatform == TargetPlatform.iOS && !isRealDevice()) {
+      //     options.profilesSampleRate = 0.0;
+      //   }
+      // }
+    },
+    // appRunner: () => runApp(MyApp()),
+
+    appRunner: () => runApp(
+      SentryWidget(
+        child: MyApp(),
+      ),
+    ),
+  );
+
+  // runApp(const MyApp());
+}
+
+bool isRealDevice() {
+  // Simulator always has environment variable SIMULATOR_DEVICE_NAME
+  return !Platform.environment.containsKey('SIMULATOR_DEVICE_NAME');
 }
 
 class MyApp extends StatelessWidget {

@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import '/components/dashboard_app_bar.dart';
 import '/components/custom_drawer.dart';
 import '/components/custom_bottom_nav_bar.dart';
@@ -1033,7 +1034,13 @@ class DashboardPageState extends State<DashboardPage> {
                                                   if (!launched) {
                                                     throw 'Could not launch email client.';
                                                   }
-                                                } catch (e) {
+                                                } catch (e, stackTrace) {
+                                                  // Capture the exception with Sentry
+                                                  await Sentry.captureException(
+                                                    e,
+                                                    stackTrace: stackTrace,
+                                                  );
+
                                                   // Show fallback UI or error message
                                                   ScaffoldMessenger.of(context)
                                                       .showSnackBar(

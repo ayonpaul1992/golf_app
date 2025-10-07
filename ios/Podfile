@@ -4,12 +4,7 @@ platform :ios, '15.0'
 # CocoaPods analytics sends network stats synchronously affecting flutter build latency.
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'
 
-project 'Runner', {
-  'Debug' => :debug,
-  'Profile' => :release,
-  'Release' => :release,
-}
-
+# --- Flutter Setup (Standard Boilerplate) ---
 def flutter_root
   generated_xcode_build_settings_path = File.expand_path(File.join('..', 'Flutter', 'Generated.xcconfig'), __FILE__)
   unless File.exist?(generated_xcode_build_settings_path)
@@ -27,21 +22,31 @@ require File.expand_path(File.join('packages', 'flutter_tools', 'bin', 'podhelpe
 
 flutter_ios_podfile_setup
 
+# --- Main Target Configuration ---
 target 'Runner' do
   use_frameworks!
   use_modular_headers!
 
+  # You can uncomment this if you manually manage Sentry, but 'flutter_install_all_ios_pods' usually handles it.
+  # pod 'Sentry', '~> 8.40.0'
+
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
+
   target 'RunnerTests' do
     inherit! :search_paths
   end
 end
 
+# --- Post-Install Hook to Fix Simulator Architecture Error ---
 post_install do |installer|
+  # This block is crucial for fixing the 'unsupported Swift architecture' error 
+  # on Apple Silicon (M1/M2/M3) simulators for certain pods like Sentry.
   installer.pods_project.targets.each do |target|
+    flutter_additional_ios_build_settings(target)
+
+    # Exclude arm64 for all targets when building for the iOS Simulator
     target.build_configurations.each do |config|
       config.build_settings['EXCLUDED_ARCHS[sdk=iphonesimulator*]'] = 'arm64'
-      flutter_additional_ios_build_settings(target)
     end
   end
 end

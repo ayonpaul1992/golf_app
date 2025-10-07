@@ -1,5 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:driver_pos/screens/parchase_giftcard_one.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -294,6 +295,12 @@ class _CustomDrawerState extends State<CustomDrawer> {
               destinationScreen: const TabCardScreenPage(
                 tabcardId: '',
               ), // Placeholder
+            ),
+
+            _buildDrawerTile(
+              title: 'Parchase Gift Card',
+              icon: Icons.add_card_outlined,
+              destinationScreen: const ParchaseGiftCardOnePage(pgCardId: ''),
             ),
 
             // Logout Button
