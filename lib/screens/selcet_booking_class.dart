@@ -194,10 +194,15 @@ class SelcetBookingClassState extends State<SelcetBookingClass> {
                         (element) => element['name'] == item,
                         orElse: () => null,
                       );
+                      print(selectedObject);
                       //change sec to the selected teesheet logo
+                      secureStorage.write(
+                          key: 'golfCourseId',
+                          value: selectedObject?['_id'] ?? '');
                       secureStorage.write(
                           key: 'golfCourseLogo',
                           value: selectedObject?['golfCourseLogo'] ?? '');
+
                       secureStorage.write(
                           key: 'golfCourseName',
                           value: selectedObject?['golfCourse'] ?? '');
