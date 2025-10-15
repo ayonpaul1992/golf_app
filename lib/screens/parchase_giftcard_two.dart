@@ -322,7 +322,7 @@ class ParchaseGiftCardTwoPageState extends State<ParchaseGiftCardTwoPage>
 
   @override
   Widget build(BuildContext context) {
-    final currentImagePath = cardImages[selectedImageIndex];
+    final currentImagePath = widget.selectedCardImage;
     const darkGreenColor = Color(0xFF669933);
     const lightGreenColor = Color(0xFF9ECF9A);
     final buttonColor = _isFormValid ? darkGreenColor : lightGreenColor;

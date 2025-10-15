@@ -170,22 +170,41 @@ class ParchaseGiftCardThreePageState extends State<ParchaseGiftCardThreePage>
                     ),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(15),
-                      child: Image.asset(
-                        widget.selectedCardTrnsImage,
-                        fit: BoxFit.cover,
-                        // Provide a placeholder size if image assets are not loaded
-                        height: 180,
-                        width: double.infinity,
-                        errorBuilder: (context, error, stackTrace) => Container(
-                          height: 180,
-                          width: double.infinity,
-                          color: Colors.grey.shade300,
-                          alignment: Alignment.center,
-                          child: Text(
-                              "Card Image Placeholder\n(${widget.selectedCardTrnsImage})",
-                              textAlign: TextAlign.center),
-                        ),
-                      ),
+                      child: widget.selectedCardTrnsImage.startsWith('http')
+                          ? Image.network(
+                              widget.selectedCardTrnsImage,
+                              fit: BoxFit.cover,
+                              height: 180,
+                              width: double.infinity,
+                              errorBuilder: (context, error, stackTrace) =>
+                                  Container(
+                                height: 180,
+                                width: double.infinity,
+                                color: Colors.grey.shade300,
+                                alignment: Alignment.center,
+                                child: Text(
+                                  "Card Image Placeholder\n(${widget.selectedCardTrnsImage})",
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                            )
+                          : Image.asset(
+                              widget.selectedCardTrnsImage,
+                              fit: BoxFit.cover,
+                              height: 180,
+                              width: double.infinity,
+                              errorBuilder: (context, error, stackTrace) =>
+                                  Container(
+                                height: 180,
+                                width: double.infinity,
+                                color: Colors.grey.shade300,
+                                alignment: Alignment.center,
+                                child: Text(
+                                  "Card Image Placeholder\n(${widget.selectedCardTrnsImage})",
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                            ),
                     ),
                   ),
 
