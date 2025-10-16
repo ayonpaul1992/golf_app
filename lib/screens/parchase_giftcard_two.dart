@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:driver_pos/services/api_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -6,6 +9,7 @@ import '/components/custom_app_bar.dart';
 import '/components/custom_drawer.dart';
 import '/components/custom_bottom_nav_bar.dart';
 import '/screens/parchase_giftcard_three.dart';
+import 'package:http/http.dart' as http;
 
 // Add a global RouteObserver for navigation events
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
@@ -33,6 +37,8 @@ class ParchaseGiftCardTwoPageState extends State<ParchaseGiftCardTwoPage>
     with RouteAware, TickerProviderStateMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final FlutterSecureStorage secureStorage = const FlutterSecureStorage();
+
+  String? userName;
 
   // Controllers for recipient details
   final rcptText = TextEditingController(); // Recipient Name
@@ -82,6 +88,8 @@ class ParchaseGiftCardTwoPageState extends State<ParchaseGiftCardTwoPage>
     "assets/images/prcrd6.png",
     "assets/images/prcrd7.png",
   ];
+
+  List<String> phoneSuggestions = [];
 
   int selectedImageIndex = 0;
 
@@ -179,12 +187,106 @@ class ParchaseGiftCardTwoPageState extends State<ParchaseGiftCardTwoPage>
     });
   }
 
+  fetchUserPhoneSuggestions(String param) async {
+    final String baseUrl = ApiConfig.baseUrl;
+
+    String apiUrl = '$baseUrl/customer/email-or-phone?phoneNumber=$param';
+
+    String? token = await secureStorage.read(key: 'accessToken') ?? '';
+    try {
+      // Replace with your actual API call using http or dio
+      // Example using http package:
+      final response = await http.get(
+        Uri.parse(apiUrl),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+      );
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+
+        final phoneNumber = data['data']['phoneNumber'] ?? '';
+        final name = data['data']['fullName'] ?? '';
+
+        final namePhone = '$phoneNumber - $name';
+
+        setState(() {
+          phoneSuggestions = [namePhone];
+        });
+
+        print(phoneSuggestions);
+      }
+    } catch (e) {}
+  }
+
+  fetchUserDetails(String param) async {
+    // Simulate a network call to fetch user details based on phone number
+    await Future.delayed(const Duration(seconds: 1));
+
+    final String baseUrl = ApiConfig.baseUrl;
+
+    String apiUrl = '$baseUrl/customer/email-or-phone?phoneNumber=$param';
+
+    String? token = await secureStorage.read(key: 'accessToken') ?? '';
+    try {
+      // Replace with your actual API call using http or dio
+      // Example using http package:
+      final response = await http.get(
+        Uri.parse(apiUrl),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+      );
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+
+        print(data);
+
+        // final phoneNumber = data['data']['phoneNumber'] ?? '';
+        // final name = data['data']['fullName'] ?? '';
+
+        // final namePhone = '$phoneNumber - $name';
+
+        setState(() {
+          // phoneSuggestions = [namePhone];
+
+          rcptText.text = data['data']['fullName']; // Fetched recipient name
+          rcptEmText.text = data['data']['email'];
+          // golfCourseId = secureStorage.read(key: 'golfCourseId') as String;
+          // phoneSuggestions =
+          //     List<String>.from(data['data']['phoneNumber'] ?? []);
+        });
+
+        // print(phoneSuggestions);
+
+        // print(giftCardObjects);
+
+        // print('as');
+
+        // print(tabs);
+      }
+    } catch (e) {
+      // Handle error (show snackbar, etc.)
+    }
+
+    // For demonstration, let's assume we fetched the following details
+    // setState(() {
+    //   rcptText.text = "John Doe"; // Fetched recipient name
+    //   rcptEmText.text = " ";
+    // });
+  }
+
   @override
   void initState() {
     super.initState();
 
     selectedFinalAmount = amounts[0]["second"];
+    // userName = 'arnab'; // Placeholder until async fetch completes
+    // rcptFromText.text = userName ?? '';
 
+    loadUserName();
     // Add listeners to controllers for instant validation updates and to clear error flags on typing
     rcptText.addListener(() {
       if (_showNameError && !_isFieldBlank(rcptText)) {
@@ -234,6 +336,14 @@ class ParchaseGiftCardTwoPageState extends State<ParchaseGiftCardTwoPage>
 
     // Initial validation check
     _isFormValid = _checkIfFormValid();
+  }
+
+  Future<void> loadUserName() async {
+    String? name = await secureStorage.read(key: 'userName');
+    setState(() {
+      userName = name ?? '';
+      rcptFromText.text = userName ?? '';
+    });
   }
 
   @override
@@ -391,7 +501,7 @@ class ParchaseGiftCardTwoPageState extends State<ParchaseGiftCardTwoPage>
                         SizedBox(
                           width: 210,
                           child: Text(
-                            "ENTER RECIPIENT DETAILS AND AMOUNT",
+                            "ENTER RECEIPIENT DETAILS AND AMOUNT",
                             style: GoogleFonts.poppins(
                                 color: const Color(0xFF244065),
                                 fontSize: 15,
@@ -576,30 +686,6 @@ class ParchaseGiftCardTwoPageState extends State<ParchaseGiftCardTwoPage>
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Recipient Name
-                      Text(
-                        "Enter Recipient Name*",
-                        style: GoogleFonts.poppins(
-                          color: const Color(0xFF2A4768),
-                          fontSize: 15,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      _buildLabeledInputField(
-                        controller: rcptText,
-                        focusNode: rcptFocusNode,
-                        hintText: "Enter recipient's full name",
-                        keyboardType: TextInputType.text,
-                        onChanged: (_) {
-                          if (_showNameError) {
-                            setState(() => _showNameError = false);
-                          }
-                        },
-                      ),
-                      _buildErrorHint(rcptNameError, _showNameError),
-                      const SizedBox(height: 15),
-
                       // Recipient Phone
                       Text(
                         "Enter Recipient Mobile No*",
@@ -610,6 +696,7 @@ class ParchaseGiftCardTwoPageState extends State<ParchaseGiftCardTwoPage>
                         ),
                       ),
                       const SizedBox(height: 10),
+
                       LayoutBuilder(
                         builder: (context, constraints) {
                           return RawAutocomplete<String>(
@@ -617,19 +704,16 @@ class ParchaseGiftCardTwoPageState extends State<ParchaseGiftCardTwoPage>
                             focusNode: phoneFocusNode,
                             optionsBuilder:
                                 (TextEditingValue textEditingValue) {
-                              final phoneSuggestions = [
-                                "1234567891",
-                                "2234567891",
-                                "3234567891",
-                                "4234567891",
-                                "5234567891",
-                                "6234567891",
-                              ];
+                              final phoneSuggestions = this.phoneSuggestions;
                               final input = textEditingValue.text.trim();
                               if (input.isEmpty)
                                 return const Iterable<String>.empty();
-                              return phoneSuggestions
-                                  .where((option) => option.contains(input));
+
+                              if (input.length == 10) {
+                                return phoneSuggestions
+                                    .where((option) => option.contains(input));
+                              }
+                              return const Iterable<String>.empty();
                             },
                             fieldViewBuilder: (context, textEditingController,
                                 focusNode, onFieldSubmitted) {
@@ -666,9 +750,15 @@ class ParchaseGiftCardTwoPageState extends State<ParchaseGiftCardTwoPage>
                                   ),
                                 ),
                                 onChanged: (val) {
+                                  // print(val);
                                   if (_showPhoneError &&
                                       val.trim().length == 10) {
                                     setState(() => _showPhoneError = false);
+                                  }
+
+                                  if (val.trim().length == 10) {
+                                    // fetchUserDetails(val.trim());
+                                    fetchUserPhoneSuggestions(val.trim());
                                   }
                                 },
                                 onFieldSubmitted: (_) => onFieldSubmitted(),
@@ -713,7 +803,12 @@ class ParchaseGiftCardTwoPageState extends State<ParchaseGiftCardTwoPage>
                                                 color: const Color(0xFF2A4768),
                                               ),
                                             ),
-                                            onTap: () => onSelected(option),
+                                            onTap: () {
+                                              onSelected(
+                                                  option.split(' - ')[0]);
+                                              fetchUserDetails(
+                                                  option.split(' - ')[0]);
+                                            },
                                           ),
                                         );
                                       },
@@ -725,117 +820,6 @@ class ParchaseGiftCardTwoPageState extends State<ParchaseGiftCardTwoPage>
                           );
                         },
                       ),
-
-                      // RawAutocomplete<String>(
-                      //   textEditingController: rcptPhText,
-                      //   focusNode: phoneFocusNode,
-                      //   optionsBuilder: (TextEditingValue textEditingValue) {
-                      //     final phoneSuggestions = [
-                      //       "1234567891",
-                      //       "2234567891",
-                      //       "3234567891",
-                      //       "4234567891",
-                      //       "5234567891",
-                      //       "6234567891"
-                      //     ];
-                      //     if (textEditingValue.text == '') return [];
-                      //     return phoneSuggestions.where((option) =>
-                      //         option.contains(textEditingValue.text));
-                      //   },
-                      //   fieldViewBuilder: (context, textEditingController,
-                      //       focusNode, onFieldSubmitted) {
-                      //     return TextFormField(
-                      //       controller: textEditingController,
-                      //       focusNode: focusNode,
-                      //       keyboardType: TextInputType.phone,
-                      //       inputFormatters: [
-                      //         FilteringTextInputFormatter.allow(
-                      //             RegExp(r'[0-9]')),
-                      //         LengthLimitingTextInputFormatter(10),
-                      //       ],
-                      //       decoration: InputDecoration(
-                      //         hintText: "Enter recipient's phone number",
-                      //         suffixIcon: Icon(Icons.arrow_drop_down,
-                      //             color: Color(0xFF6E7373)),
-                      //         filled: true,
-                      //         fillColor: Colors.white,
-                      //         contentPadding: EdgeInsets.symmetric(
-                      //             vertical: 10, horizontal: 20),
-                      //         enabledBorder: OutlineInputBorder(
-                      //           borderRadius: BorderRadius.circular(50),
-                      //           borderSide: BorderSide(
-                      //               color: Colors.grey.shade300, width: 1),
-                      //         ),
-                      //         focusedBorder: OutlineInputBorder(
-                      //           borderRadius: BorderRadius.circular(50),
-                      //           borderSide: BorderSide(
-                      //               color: Color(0xFF9ECF9A), width: 1),
-                      //         ),
-                      //         hintStyle: GoogleFonts.poppins(
-                      //             color: Color(0xFF6E7373), fontSize: 14),
-                      //       ),
-                      //       onChanged: (val) {
-                      //         if (_showPhoneError && val.trim().length == 10) {
-                      //           setState(() => _showPhoneError = false);
-                      //         }
-                      //       },
-                      //       onFieldSubmitted: (_) => onFieldSubmitted(),
-                      //     );
-                      //   },
-                      //   optionsViewBuilder: (context, onSelected, options) {
-                      //     return Align(
-                      //       alignment:
-                      //           Alignment.topLeft, // Match the input alignment
-                      //       child: Material(
-                      //         elevation: 3,
-                      //         borderRadius: BorderRadius.circular(10),
-                      //         child: ConstrainedBox(
-                      //           constraints: BoxConstraints(
-                      //             maxHeight:
-                      //                 (options.length * 40.0).clamp(0, 180),
-                      //           ),
-                      //           child: Builder(
-                      //             builder: (context) {
-                      //               final renderBox = context.findRenderObject()
-                      //                   as RenderBox?;
-                      //               final width =
-                      //                   renderBox?.constraints.maxWidth ?? 330;
-
-                      //               return SizedBox(
-                      //                 width: width,
-                      //                 child: ListView.builder(
-                      //                   padding: EdgeInsets.zero,
-                      //                   physics:
-                      //                       const NeverScrollableScrollPhysics(),
-                      //                   shrinkWrap: true,
-                      //                   itemCount: options.length,
-                      //                   itemBuilder: (context, index) {
-                      //                     final option =
-                      //                         options.elementAt(index);
-                      //                     return ListTile(
-                      //                       dense: true,
-                      //                       minVerticalPadding: 0,
-                      //                       visualDensity:
-                      //                           VisualDensity.compact,
-                      //                       title: Text(
-                      //                         option,
-                      //                         style: GoogleFonts.poppins(
-                      //                           fontSize: 14,
-                      //                           color: const Color(0xFF2A4768),
-                      //                         ),
-                      //                       ),
-                      //                       onTap: () => onSelected(option),
-                      //                     );
-                      //                   },
-                      //                 ),
-                      //               );
-                      //             },
-                      //           ),
-                      //         ),
-                      //       ),
-                      //     );
-                      //   },
-                      // ),
 
                       _buildErrorHint(phoneError, _showPhoneError),
                       const SizedBox(height: 15),
@@ -949,7 +933,7 @@ class ParchaseGiftCardTwoPageState extends State<ParchaseGiftCardTwoPage>
                                                 color: const Color(0xFF2A4768),
                                               ),
                                             ),
-                                            onTap: () => onSelected(option),
+                                            onTap: () => {onSelected(option)},
                                           ),
                                         );
                                       },
@@ -961,7 +945,32 @@ class ParchaseGiftCardTwoPageState extends State<ParchaseGiftCardTwoPage>
                           );
                         },
                       ),
+
                       _buildErrorHint(emailError, _showEmailError),
+                      const SizedBox(height: 15),
+
+                      // Recipient Name
+                      Text(
+                        "Enter Recipient Name*",
+                        style: GoogleFonts.poppins(
+                          color: const Color(0xFF2A4768),
+                          fontSize: 15,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      _buildLabeledInputField(
+                        controller: rcptText,
+                        focusNode: rcptFocusNode,
+                        hintText: "Enter recipient's full name",
+                        keyboardType: TextInputType.text,
+                        onChanged: (_) {
+                          if (_showNameError) {
+                            setState(() => _showNameError = false);
+                          }
+                        },
+                      ),
+                      _buildErrorHint(rcptNameError, _showNameError),
                       const SizedBox(height: 15),
 
                       // From Name (Sender)
@@ -974,16 +983,16 @@ class ParchaseGiftCardTwoPageState extends State<ParchaseGiftCardTwoPage>
                         ),
                       ),
                       const SizedBox(height: 10),
-                      _buildLabeledInputField(
+                      TextFormField(
                         controller: rcptFromText,
                         focusNode: fromFocusNode,
-                        hintText: "Your name or sender's name",
-                        keyboardType: TextInputType.text,
-                        onChanged: (_) {
-                          if (_showFromError) {
-                            setState(() => _showFromError = false);
-                          }
-                        },
+                        readOnly: true,
+                        decoration:
+                            _inputDecoration("Your name or sender's name"),
+                        style: GoogleFonts.poppins(
+                          color: const Color(0xFF2A4768),
+                          fontSize: 14,
+                        ),
                       ),
                       _buildErrorHint(rcptFromError, _showFromError),
                       const SizedBox(height: 15),
@@ -1129,14 +1138,15 @@ class ParchaseGiftCardTwoPageState extends State<ParchaseGiftCardTwoPage>
                               context,
                               MaterialPageRoute(
                                 builder: (context) => ParchaseGiftCardThreePage(
-                                  pgCardThreeId: '',
+                                  golfCourseId: widget.golfCourseId,
+                                  giftCardId: widget.selectedCardId,
                                   selectedCardTrnsImage: currentImagePath,
-                                  message: rcptText.text,
+                                  recipientName: rcptText.text,
                                   senderName: rcptFromText.text,
                                   amount: selectedFinalAmount!,
                                   recipientEmail: rcptEmText.text,
                                   recipientMobileNo: rcptPhText.text,
-                                  giftMessage: '',
+                                  giftMessage: widget.message,
                                 ),
                               ),
                             );

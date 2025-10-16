@@ -1,5 +1,8 @@
 // ignore_for_file: deprecated_member_use, use_build_context_synchronously
 
+import 'dart:convert';
+
+import 'package:driver_pos/services/api_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -7,14 +10,19 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '/components/custom_app_bar.dart';
 import '/components/custom_drawer.dart';
 import '/components/custom_bottom_nav_bar.dart';
+import 'package:crypto/crypto.dart';
+import 'package:cryptography/cryptography.dart';
+import 'package:http/http.dart' as http;
 
 // Add a global RouteObserver for navigation events
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 
 class ParchaseGiftCardThreePage extends StatefulWidget {
-  final String pgCardThreeId;
+  final String golfCourseId;
+  final String giftCardId;
+
   final String selectedCardTrnsImage;
-  final String message; // Recipient Name
+  final String recipientName; // Recipient Name
   final String senderName; // From Name (Sender)
   final String amount; // NEW: Gift Card Value
   final String recipientEmail; // NEW
@@ -24,9 +32,10 @@ class ParchaseGiftCardThreePage extends StatefulWidget {
 
   const ParchaseGiftCardThreePage({
     Key? key,
-    required this.pgCardThreeId,
+    required this.golfCourseId,
+    required this.giftCardId,
     required this.selectedCardTrnsImage,
-    required this.message,
+    required this.recipientName,
     required this.senderName,
     required this.amount, // NEW required parameter
     required this.recipientEmail, // NEW required parameter
@@ -43,13 +52,99 @@ class ParchaseGiftCardThreePageState extends State<ParchaseGiftCardThreePage>
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final FlutterSecureStorage secureStorage = const FlutterSecureStorage();
 
+  void _showMessage(String message) {
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(message)));
+  }
+
+  purchaseGiftCard() async {
+    final String baseUrl = ApiConfig.baseUrl;
+
+    final String apiUrl = '$baseUrl/giftCard/purchase';
+
+    String? token = await secureStorage.read(key: 'accessToken') ?? '';
+
+    try {
+      final postData = {
+        "golfCourseId": widget.golfCourseId,
+        "amount": widget.amount,
+        "recipient": {
+          "name": widget.recipientName,
+          "email": widget.recipientEmail,
+          "phoneNumber": widget.recipientMobileNo,
+        },
+        "giftCard": widget.giftCardId,
+        "message": widget.giftMessage,
+      };
+
+      final payload = postData;
+
+      // Encrypt the payload
+      final secret =
+          'course1999golf01'; // must match Node backend ENCRYPT_SECRET
+      final keyHash = sha256.convert(utf8.encode(secret)).bytes;
+      final secretKey = SecretKey(keyHash);
+      final algorithm = AesGcm.with256bits();
+      final iv = algorithm.newNonce();
+
+      final secretBox = await algorithm.encrypt(
+        utf8.encode(jsonEncode(payload)),
+        secretKey: secretKey,
+        nonce: iv,
+      );
+
+      final encryptedPayload = {
+        'iv': base64Encode(iv),
+        'data': base64Encode(secretBox.cipherText),
+        'tag': base64Encode(secretBox.mac.bytes),
+      };
+
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode(encryptedPayload),
+      );
+
+      print('sendign');
+      print(response.statusCode);
+      print(response.body);
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = jsonDecode(response.body);
+
+        print('Response data: $data');
+
+        // if (data['success'] == true) {
+        //   _showMessage(data['message'] ?? 'Logged in successfully');
+        // } else {
+        //   _showMessage(data['message'] ?? 'Login failed');
+        // }
+      } else {}
+    } catch (error) {
+      _showMessage('Unexpected error: $error');
+      print('Unexpected error: $error');
+    } finally {}
+
+    // print("POST Data: $postData");
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // purchaseGiftCard();
+    // Any additional initialization if needed
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
       appBar: CustomAppBar(
         scaffoldKey: _scaffoldKey,
-        userId: widget.pgCardThreeId,
+        userId: widget.golfCourseId,
         showLeading: true,
         isOnProfilePage: true,
         onBackPressed: () {
@@ -117,7 +212,7 @@ class ParchaseGiftCardThreePageState extends State<ParchaseGiftCardThreePage>
                   ),
                   // The Recipient Name is displayed prominently
                   Text(
-                    "${widget.message}",
+                    widget.recipientName.toUpperCase(),
                     style: GoogleFonts.greatVibes(
                       color: const Color(0xFF669933),
                       fontSize: 47,
@@ -127,7 +222,7 @@ class ParchaseGiftCardThreePageState extends State<ParchaseGiftCardThreePage>
                   ),
                   // The Sender Name is displayed prominently
                   Text(
-                    "${widget.senderName}".toUpperCase(),
+                    widget.senderName.toUpperCase(),
                     style: GoogleFonts.notoSerif(
                         color: const Color(0xFF244065),
                         fontSize: 35,
@@ -135,15 +230,15 @@ class ParchaseGiftCardThreePageState extends State<ParchaseGiftCardThreePage>
                         letterSpacing: 1.5),
                     textAlign: TextAlign.center,
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 20,
                   ),
                   Image.asset('assets/images/flktop.png'),
-                  SizedBox(
+                  const SizedBox(
                     height: 20,
                   ),
                   Text(
-                    "${widget.giftMessage}".toUpperCase(),
+                    widget.giftMessage.toUpperCase(),
                     style: GoogleFonts.poppins(
                       color: const Color(0xFF2A4768),
                       fontSize: 20,
@@ -245,6 +340,7 @@ class ParchaseGiftCardThreePageState extends State<ParchaseGiftCardThreePage>
                       width: double.infinity,
                       child: ElevatedButton(
                         onPressed: () {
+                          purchaseGiftCard();
                           // TODO: Implement actual purchase/payment logic
                           // Navigator.push(context, MaterialPageRoute(builder: (context) => PaymentConfirmationPage()));
                         },
