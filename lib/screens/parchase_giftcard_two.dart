@@ -90,6 +90,7 @@ class ParchaseGiftCardTwoPageState extends State<ParchaseGiftCardTwoPage>
   ];
 
   List<String> phoneSuggestions = [];
+  List<String> emailSuggestions = [];
 
   int selectedImageIndex = 0;
 
@@ -220,7 +221,40 @@ class ParchaseGiftCardTwoPageState extends State<ParchaseGiftCardTwoPage>
     } catch (e) {}
   }
 
-  fetchUserDetails(String param) async {
+  fetchUserEmailSuggestions(String param) async {
+    final String baseUrl = ApiConfig.baseUrl;
+
+    String apiUrl = '$baseUrl/customer/email-or-phone?email=$param';
+
+    String? token = await secureStorage.read(key: 'accessToken') ?? '';
+    try {
+      // Replace with your actual API call using http or dio
+      // Example using http package:
+      final response = await http.get(
+        Uri.parse(apiUrl),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+      );
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+
+        final email = data['data']['email'] ?? '';
+        final name = data['data']['fullName'] ?? '';
+
+        final nameEmail = '$email - $name';
+
+        setState(() {
+          emailSuggestions = [nameEmail];
+        });
+
+        print(emailSuggestions);
+      }
+    } catch (e) {}
+  }
+
+  fetchUserDetailsByPhone(String param) async {
     // Simulate a network call to fetch user details based on phone number
     await Future.delayed(const Duration(seconds: 1));
 
@@ -276,6 +310,60 @@ class ParchaseGiftCardTwoPageState extends State<ParchaseGiftCardTwoPage>
     //   rcptText.text = "John Doe"; // Fetched recipient name
     //   rcptEmText.text = " ";
     // });
+  }
+
+  fetchUserDetailsByEmail(String param) async {
+    // Simulate a network call to fetch user details based on phone number
+    await Future.delayed(const Duration(seconds: 1));
+
+    final String baseUrl = ApiConfig.baseUrl;
+
+    String apiUrl = '$baseUrl/customer/email-or-phone?email=$param';
+
+    String? token = await secureStorage.read(key: 'accessToken') ?? '';
+    try {
+      // Replace with your actual API call using http or dio
+      // Example using http package:
+      final response = await http.get(
+        Uri.parse(apiUrl),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+      );
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+
+        print(data);
+
+        // final phoneNumber = data['data']['phoneNumber'] ?? '';
+        // final name = data['data']['fullName'] ?? '';
+
+        // final namePhone = '$phoneNumber - $name';
+
+        setState(() {
+          // phoneSuggestions = [namePhone];
+
+          rcptText.text = data['data']['fullName']; // Fetched recipient name
+          rcptPhText.text = data['data']['phoneNumber'];
+
+          // rcptEmText.text = data['data']['email'];
+          // golfCourseId = secureStorage.read(key: 'golfCourseId') as String;
+          // phoneSuggestions =
+          //     List<String>.from(data['data']['phoneNumber'] ?? []);
+        });
+
+        // print(phoneSuggestions);
+
+        // print(giftCardObjects);
+
+        // print('as');
+
+        // print(tabs);
+      }
+    } catch (e) {
+      // Handle error (show snackbar, etc.)
+    }
   }
 
   @override
@@ -757,7 +845,7 @@ class ParchaseGiftCardTwoPageState extends State<ParchaseGiftCardTwoPage>
                                   }
 
                                   if (val.trim().length == 10) {
-                                    // fetchUserDetails(val.trim());
+                                    // fetchUserDetailsByPhone(val.trim());
                                     fetchUserPhoneSuggestions(val.trim());
                                   }
                                 },
@@ -806,7 +894,7 @@ class ParchaseGiftCardTwoPageState extends State<ParchaseGiftCardTwoPage>
                                             onTap: () {
                                               onSelected(
                                                   option.split(' - ')[0]);
-                                              fetchUserDetails(
+                                              fetchUserDetailsByPhone(
                                                   option.split(' - ')[0]);
                                             },
                                           ),
@@ -841,12 +929,7 @@ class ParchaseGiftCardTwoPageState extends State<ParchaseGiftCardTwoPage>
                             focusNode: emailFocusNode,
                             optionsBuilder:
                                 (TextEditingValue textEditingValue) {
-                              final emailSuggestions = [
-                                "ac@yahoo.com",
-                                "ab@yahoo.com",
-                                "d@yahoo.com",
-                                "ae@yahoo.com",
-                              ];
+                              final emailSuggestions = this.emailSuggestions;
                               final input = textEditingValue.text.trim();
                               if (input.isEmpty)
                                 return const Iterable<String>.empty();
@@ -884,11 +967,16 @@ class ParchaseGiftCardTwoPageState extends State<ParchaseGiftCardTwoPage>
                                   ),
                                 ),
                                 onChanged: (val) {
+                                  print(val);
                                   if (_showEmailError &&
                                       val.contains('@') &&
                                       val.contains('.') &&
                                       val.indexOf('@') < val.lastIndexOf('.')) {
                                     setState(() => _showEmailError = false);
+                                  }
+
+                                  if (val.contains('@') && val.contains('.')) {
+                                    fetchUserEmailSuggestions(val.trim());
                                   }
                                 },
                                 onFieldSubmitted: (_) => onFieldSubmitted(),
@@ -933,7 +1021,10 @@ class ParchaseGiftCardTwoPageState extends State<ParchaseGiftCardTwoPage>
                                                 color: const Color(0xFF2A4768),
                                               ),
                                             ),
-                                            onTap: () => {onSelected(option)},
+                                            onTap: () => {
+                                              onSelected(option),
+                                              fetchUserDetailsByEmail(option),
+                                            },
                                           ),
                                         );
                                       },

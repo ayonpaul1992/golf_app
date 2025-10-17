@@ -7,6 +7,8 @@ import 'package:http/http.dart' as http;
 import '/components/userentry_app_bar.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'login.dart';
+import 'package:crypto/crypto.dart';
+import 'package:cryptography/cryptography.dart';
 
 class ResetPasswordPage extends StatefulWidget {
   final String emailOrMobile;
@@ -49,7 +51,7 @@ class ResetPasswordPageState extends State<ResetPasswordPage> {
     String password = passText.text.trim();
     String confirmPassword = repassText.text.trim();
     String emailOrMobile = widget.emailOrMobile.trim();
-    String userId = widget.userId.trim();
+    // String userId = widget.userId.trim();
 
     bool hasError = false;
 
@@ -96,16 +98,38 @@ class ResetPasswordPageState extends State<ResetPasswordPage> {
       Map<String, dynamic> body = {
         'newPassword': password,
         'confirmPassword': confirmPassword,
-        'userId': userId,
+        // 'userId': userId,
         'golfCourseCode': widget.golfCourseCode,
+        'email': emailOrMobile
       };
 
-      if (emailOrMobile.contains('@')) {
-        body['email'] = emailOrMobile;
-      } else {
-        body['email'] = '$emailOrMobile@dummy.com';
-        body['mobile'] = emailOrMobile;
-      }
+      final payload = body;
+
+      final secret =
+          'course1999golf01'; // must match Node backend ENCRYPT_SECRET
+      final keyHash = sha256.convert(utf8.encode(secret)).bytes;
+      final secretKey = SecretKey(keyHash);
+      final algorithm = AesGcm.with256bits();
+      final iv = algorithm.newNonce();
+
+      final secretBox = await algorithm.encrypt(
+        utf8.encode(jsonEncode(payload)),
+        secretKey: secretKey,
+        nonce: iv,
+      );
+
+      final encryptedPayload = {
+        'iv': base64Encode(iv),
+        'data': base64Encode(secretBox.cipherText),
+        'tag': base64Encode(secretBox.mac.bytes),
+      };
+
+      // if (emailOrMobile.contains('@')) {
+      //   body['email'] = emailOrMobile;
+      // } else {
+      //   body['email'] = '$emailOrMobile@dummy.com';
+      //   body['mobile'] = emailOrMobile;
+      // }
 
       final String baseUrl = ApiConfig.baseUrl;
 
@@ -114,7 +138,7 @@ class ResetPasswordPageState extends State<ResetPasswordPage> {
       final response = await http.put(
         Uri.parse(url),
         headers: headers,
-        body: json.encode(body),
+        body: json.encode(encryptedPayload),
       );
 
       print('Response Status: ${response.statusCode}');
@@ -156,6 +180,7 @@ class ResetPasswordPageState extends State<ResetPasswordPage> {
   }
 
   bool _isPassVisible = false;
+  bool _isREPassVisible = false;
   String? passError;
   String? repassError;
 
@@ -270,23 +295,30 @@ class ResetPasswordPageState extends State<ResetPasswordPage> {
                             ),
                             child: TextField(
                               controller: passText,
-                              decoration:
-                                  _inputDecoration('**********').copyWith(
-                                suffixIcon: IconButton(
-                                  icon: Icon(
-                                    _isPassVisible
-                                        ? Icons.visibility
-                                        : Icons.visibility_off,
-                                    color: const Color(0xFF648683),
-                                  ),
-                                  onPressed: () {
-                                    setState(() {
-                                      _isPassVisible =
-                                          !_isPassVisible; // Toggle visibility
-                                    });
-                                  },
-                                ),
+                              obscureText: !_isPassVisible,
+                              decoration: _inputDecoration(
+                                '**********',
+                                _isPassVisible,
+                                () => setState(
+                                    () => _isPassVisible = !_isPassVisible),
                               ),
+                              // decoration:
+                              //     _inputDecoration('**********').copyWith(
+                              //   suffixIcon: IconButton(
+                              //     icon: Icon(
+                              //       _isPassVisible
+                              //           ? Icons.visibility
+                              //           : Icons.visibility_off,
+                              //       color: const Color(0xFF648683),
+                              //     ),
+                              //     onPressed: () {
+                              //       setState(() {
+                              //         _isPassVisible =
+                              //             !_isPassVisible; // Toggle visibility
+                              //       });
+                              //     },
+                              //   ),
+                              // ),
                               style: GoogleFonts.poppins(
                                 color: const Color(0xFF244065),
                                 fontWeight: FontWeight.w600,
@@ -346,23 +378,30 @@ class ResetPasswordPageState extends State<ResetPasswordPage> {
                             ),
                             child: TextField(
                               controller: repassText,
-                              decoration:
-                                  _inputDecoration('**********').copyWith(
-                                suffixIcon: IconButton(
-                                  icon: Icon(
-                                    _isPassVisible
-                                        ? Icons.visibility
-                                        : Icons.visibility_off,
-                                    color: const Color(0xFF648683),
-                                  ),
-                                  onPressed: () {
-                                    setState(() {
-                                      _isPassVisible =
-                                          !_isPassVisible; // Toggle visibility
-                                    });
-                                  },
-                                ),
+                              obscureText: !_isREPassVisible,
+                              decoration: _inputDecoration(
+                                '**********',
+                                _isREPassVisible,
+                                () => setState(
+                                    () => _isREPassVisible = !_isREPassVisible),
                               ),
+                              // decoration:
+                              //     _inputDecoration('**********').copyWith(
+                              //   suffixIcon: IconButton(
+                              //     icon: Icon(
+                              //       _isPassVisible
+                              //           ? Icons.visibility
+                              //           : Icons.visibility_off,
+                              //       color: const Color(0xFF648683),
+                              //     ),
+                              //     onPressed: () {
+                              //       setState(() {
+                              //         _isPassVisible =
+                              //             !_isPassVisible; // Toggle visibility
+                              //       });
+                              //     },
+                              //   ),
+                              // ),
                               style: GoogleFonts.poppins(
                                 color: const Color(0xFF244065),
                                 fontWeight: FontWeight.w600,
@@ -446,7 +485,8 @@ class ResetPasswordPageState extends State<ResetPasswordPage> {
     );
   }
 
-  InputDecoration _inputDecoration(String hintText) {
+  InputDecoration _inputDecoration(
+      String hintText, bool isVisible, VoidCallback onToggle) {
     return InputDecoration(
       filled: true,
       fillColor: Colors.white,
@@ -469,6 +509,13 @@ class ResetPasswordPageState extends State<ResetPasswordPage> {
       hintStyle: GoogleFonts.poppins(
         color: const Color(0xFF6E7373),
         fontSize: 14,
+      ),
+      suffixIcon: IconButton(
+        icon: Icon(
+          isVisible ? Icons.visibility : Icons.visibility_off,
+          color: const Color(0xFF648683),
+        ),
+        onPressed: onToggle,
       ),
     );
   }
