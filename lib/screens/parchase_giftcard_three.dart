@@ -2,6 +2,7 @@
 
 import 'dart:convert';
 
+import 'package:driver_pos/screens/new_test_cart.dart';
 import 'package:driver_pos/services/api_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -116,6 +117,15 @@ class ParchaseGiftCardThreePageState extends State<ParchaseGiftCardThreePage>
         final Map<String, dynamic> data = jsonDecode(response.body);
 
         print('Response data: $data');
+
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const NewTestCartPage(
+              nwTstId: '',
+            ),
+          ),
+        );
 
         // if (data['success'] == true) {
         //   _showMessage(data['message'] ?? 'Logged in successfully');
@@ -341,8 +351,6 @@ class ParchaseGiftCardThreePageState extends State<ParchaseGiftCardThreePage>
                       child: ElevatedButton(
                         onPressed: () {
                           purchaseGiftCard();
-                          // TODO: Implement actual purchase/payment logic
-                          // Navigator.push(context, MaterialPageRoute(builder: (context) => PaymentConfirmationPage()));
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor:
