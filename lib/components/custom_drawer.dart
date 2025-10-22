@@ -1,6 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:driver_pos/screens/browser_screen.dart';
+import 'package:driver_pos/screens/congratulations.dart';
 import 'package:driver_pos/screens/new_test_cart.dart';
 import 'package:driver_pos/screens/parchase_giftcard_one.dart';
 import 'package:flutter/material.dart';
@@ -315,6 +316,12 @@ class _CustomDrawerState extends State<CustomDrawer> {
               title: 'New Testing Cart',
               icon: Icons.add_card_outlined,
               destinationScreen: const NewTestCartPage(nwTstId: ''),
+            ),
+
+            _buildDrawerTile(
+              title: 'Congratulations!',
+              icon: Icons.event_available,
+              destinationScreen: const CongratulationsPage(cngsId: ''),
             ),
 
             // Logout Button

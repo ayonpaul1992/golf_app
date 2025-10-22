@@ -1,8 +1,9 @@
-// ignore_for_file: deprecated_member_use, use_build_context_synchronously
+// ignore_for_file: deprecated_member_use, use_build_context_synchronously, library_private_types_in_public_api
 import 'dart:async';
 import 'dart:convert';
 // import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -190,6 +191,13 @@ class NewTestCartPageState extends State<NewTestCartPage> {
 
   String selectedOption = "A"; // Default selected radio
   bool isChecked = false; // Default checkbox state
+
+  void _showPaymentPopup() {
+    showDialog(
+      context: context,
+      builder: (context) => _PaymentDialog(),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -690,7 +698,7 @@ class NewTestCartPageState extends State<NewTestCartPage> {
                                                 color: const Color(0xFF244065),
                                               ),
                                             ),
-                                            value: "A",
+                                            value: "newCard",
                                             groupValue: selectedOption,
                                             activeColor:
                                                 const Color(0xFF669933),
@@ -836,14 +844,32 @@ class NewTestCartPageState extends State<NewTestCartPage> {
                             onTap: (!isChecked || isBookButtonDisabled)
                                 ? null // 🔒 disabled when unchecked or already booked
                                 : () async {
+                                    // Show payment confirmation dialog
+
+                                    if (selectedOption == "newCard") {
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return _PaymentDialog();
+                                        },
+                                      );
+                                    } else {
+                                      // otp flow for saved card
+
+                                      showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return const OtpDialog();
+                                          });
+                                    }
                                     // setState(() {
                                     //   isBookButtonDisabled =
                                     //       true; // Disable button
                                     // });
 
-                                    _openInAppBrowser(
-                                      "https://flutter.dev",
-                                    ); // Your URL here
+                                    // _openInAppBrowser(
+                                    //   "https://flutter.dev",
+                                    // ); // Your URL here
 
                                     print(
                                         '✅ Proceeding to payment with option: $selectedOption');
@@ -899,6 +925,147 @@ class NewTestCartPageState extends State<NewTestCartPage> {
               ),
             ),
       bottomNavigationBar: const CustomBottomNavBar(selectedIndex: -1),
+    );
+  }
+}
+
+class _PaymentDialog extends StatefulWidget {
+  @override
+  State<_PaymentDialog> createState() => _PaymentDialogState();
+}
+
+class _PaymentDialogState extends State<_PaymentDialog> {
+  bool saveCard = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      title: const Text("Payment Confirmation"),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text("You are paying for \$25.00"),
+          const SizedBox(height: 8),
+          const Text("Do you want to proceed?"),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              Checkbox(
+                value: saveCard,
+                onChanged: (value) {
+                  setState(() {
+                    saveCard = value!;
+                  });
+                },
+              ),
+              const Expanded(
+                child: Text("Save this card for future payment?"),
+              ),
+            ],
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () {
+            Navigator.of(context).pop(); // Close popup
+          },
+          child: const Text("Cancel"),
+        ),
+        ElevatedButton(
+          onPressed: () {
+            // Handle proceed action
+            print("Proceed clicked, saveCard: $saveCard");
+            Navigator.of(context).pop(); // Close popup
+          },
+          child: const Text("Proceed"),
+        ),
+      ],
+    );
+  }
+}
+
+class OtpDialog extends StatefulWidget {
+  const OtpDialog({super.key});
+
+  @override
+  _OtpDialogState createState() => _OtpDialogState();
+}
+
+class _OtpDialogState extends State<OtpDialog> {
+  final List<TextEditingController> _controllers =
+      List.generate(6, (_) => TextEditingController());
+  final List<FocusNode> _focusNodes = List.generate(6, (_) => FocusNode());
+
+  @override
+  void dispose() {
+    for (var c in _controllers) {
+      c.dispose();
+    }
+    for (var f in _focusNodes) {
+      f.dispose();
+    }
+    super.dispose();
+  }
+
+  void _submitOtp() {
+    String otp = _controllers.map((c) => c.text).join();
+    print("Entered OTP: $otp");
+    Navigator.of(context).pop(); // Close popup
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      title: const Text("Enter One Time Password"),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: List.generate(6, (index) {
+              return SizedBox(
+                width: 40,
+                child: TextField(
+                  controller: _controllers[index],
+                  focusNode: _focusNodes[index],
+                  keyboardType: TextInputType.number,
+                  textAlign: TextAlign.center,
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                  maxLength: 1,
+                  decoration: const InputDecoration(
+                    counterText: '',
+                    border: OutlineInputBorder(),
+                  ),
+                  onChanged: (value) {
+                    if (value.length == 1 && index < 5) {
+                      _focusNodes[index + 1].requestFocus();
+                    }
+                    if (value.isEmpty && index > 0) {
+                      _focusNodes[index - 1].requestFocus();
+                    }
+                  },
+                ),
+              );
+            }),
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () {
+            Navigator.of(context).pop(); // Cancel
+          },
+          child: const Text("Cancel"),
+        ),
+        ElevatedButton(
+          onPressed: _submitOtp,
+          child: const Text("Proceed"),
+        ),
+      ],
     );
   }
 }
