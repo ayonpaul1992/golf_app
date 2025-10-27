@@ -1,7 +1,11 @@
 // ignore_for_file: deprecated_member_use, use_build_context_synchronously, library_private_types_in_public_api
 import 'dart:async';
+import 'dart:io';
+
 import 'dart:convert';
 // import 'package:flutter/cupertino.dart';
+import 'package:driver_pos/screens/congratulations.dart';
+import 'package:driver_pos/services/api_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -15,6 +19,19 @@ import 'package:crypto/crypto.dart';
 import 'package:cryptography/cryptography.dart';
 
 import 'package:url_launcher/url_launcher.dart';
+
+/// Global variables accessible across all classes in this file.
+/// Use with care: prefer passing data via constructors or state unless truly global.
+
+String selectedCardToken = "";
+num globalTotalAmount = 0.0;
+num globalAmount = 0.0;
+String globalCardType = "";
+String globalOtp = "";
+String globalPaymentType = "";
+bool globalCanSaveCard = false;
+bool globalOnlyBookingFee = false;
+Map<String, dynamic> globalUserData = {};
 
 class NewTestCartPage extends StatefulWidget {
   final String nwTstId;
@@ -68,6 +85,11 @@ class NewTestCartPageState extends State<NewTestCartPage> {
     super.dispose();
   }
 
+  void _showMessage(String message) {
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(message)));
+  }
+
   void _openInAppBrowser(String url) async {
     final Uri uri = Uri.parse(url);
 
@@ -80,24 +102,6 @@ class NewTestCartPageState extends State<NewTestCartPage> {
     )) {
       throw 'Could not launch $url';
     }
-  }
-
-  void _startCountdown() {
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (_remaining.inSeconds == 0) {
-        timer.cancel();
-        // Navigator.pop(context);
-      } else {
-        setState(() {
-          _remaining = _remaining - const Duration(seconds: 1);
-        });
-      }
-    });
-  }
-
-  String _formatDuration(Duration duration) {
-    String twoDigits(int n) => n.toString().padLeft(2, '0');
-    return '${twoDigits(duration.inMinutes.remainder(60))}:${twoDigits(duration.inSeconds.remainder(60))}';
   }
 
   void _fetchCustomerCart() async {
@@ -146,6 +150,7 @@ class NewTestCartPageState extends State<NewTestCartPage> {
         // carts = responseData['teesheet']['carts'] ?? 0;
 
         totalCartAmount = data['data']['totalCartAmount'] ?? 0.0;
+        globalTotalAmount = totalCartAmount;
         totalTaxAmount = data['data']['totalTaxAmount'] ?? 0.0;
 
         // customers = List<Map<String, dynamic>>.from(
@@ -190,6 +195,7 @@ class NewTestCartPageState extends State<NewTestCartPage> {
   }
 
   String selectedOption = "A"; // Default selected radio
+  // String selectedCardToken = ""; // To
   bool isChecked = false; // Default checkbox state
 
   void _showPaymentPopup() {
@@ -197,6 +203,85 @@ class NewTestCartPageState extends State<NewTestCartPage> {
       context: context,
       builder: (context) => _PaymentDialog(),
     );
+  }
+
+  getOtp() async {
+    final String baseUrl = ApiConfig.baseUrl;
+
+    final String apiUrl = '$baseUrl/transaction/sendOtp';
+
+    var secureStorage = const FlutterSecureStorage();
+    String? token = await secureStorage.read(key: 'accessToken') ?? '';
+    final String golfCourseCode = ApiConfig.golfCourseCode;
+
+    try {
+      final postData = {
+        "golfCourseCode": golfCourseCode,
+      };
+
+      final payload = postData;
+
+      // Encrypt the payload
+      final secret =
+          'course1999golf01'; // must match Node backend ENCRYPT_SECRET
+      final keyHash = sha256.convert(utf8.encode(secret)).bytes;
+      final secretKey = SecretKey(keyHash);
+      final algorithm = AesGcm.with256bits();
+      final iv = algorithm.newNonce();
+
+      final secretBox = await algorithm.encrypt(
+        utf8.encode(jsonEncode(payload)),
+        secretKey: secretKey,
+        nonce: iv,
+      );
+
+      final encryptedPayload = {
+        'iv': base64Encode(iv),
+        'data': base64Encode(secretBox.cipherText),
+        'tag': base64Encode(secretBox.mac.bytes),
+      };
+
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode(encryptedPayload),
+      );
+
+      print('sendign');
+      print(response.statusCode);
+      print(response.body);
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = jsonDecode(response.body);
+        _showMessage(data['message'] ?? 'OTP sent successfully');
+
+        print('Response data: $data');
+
+        // Navigator.push(
+        //   context,
+        //   MaterialPageRoute(
+        //     builder: (context) => const NewTestCartPage(
+        //       nwTstId: '',
+        //     ),
+        //   ),
+        // );
+
+        // if (data['success'] == true) {
+        //   _showMessage(data['message'] ?? 'Logged in successfully');
+        // } else {
+        //   _showMessage(data['message'] ?? 'Login failed');
+        // }
+      } else {}
+    } catch (error) {
+      _showMessage("Failed to send OTP. Please try again.");
+      // print('Unexpected error: $error');
+      print('Unexpected error: $error');
+    } finally {}
+
+    // print("POST Data: $postData");
   }
 
   @override
@@ -719,8 +804,11 @@ class NewTestCartPageState extends State<NewTestCartPage> {
                                           ...savedCards.map((card) {
                                             final cardLabel =
                                                 "${card['first4Digit'] ?? ''} ${card['last4Digit'] ?? ''}";
-                                            final cardId =
-                                                card['cardId']?.toString() ??
+                                            // final cardId =
+                                            //     card['cardId']?.toString() ??
+                                            //         '';
+                                            final cardToken =
+                                                card['cardToken']?.toString() ??
                                                     '';
                                             return RadioListTile<String>(
                                               title: Text(
@@ -732,7 +820,7 @@ class NewTestCartPageState extends State<NewTestCartPage> {
                                                       const Color(0xFF244065),
                                                 ),
                                               ),
-                                              value: cardId,
+                                              value: cardToken,
                                               groupValue: selectedOption,
                                               activeColor:
                                                   const Color(0xFF669933),
@@ -747,10 +835,11 @@ class NewTestCartPageState extends State<NewTestCartPage> {
                                               onChanged: (value) {
                                                 setState(() {
                                                   selectedOption = value!;
+                                                  selectedCardToken = cardToken;
                                                 });
                                               },
                                             );
-                                          }).toList(),
+                                          }),
                                         ],
                                       ),
                                     ],
@@ -855,6 +944,8 @@ class NewTestCartPageState extends State<NewTestCartPage> {
                                       );
                                     } else {
                                       // otp flow for saved card
+
+                                      getOtp();
 
                                       showDialog(
                                           context: context,
@@ -1010,10 +1101,87 @@ class _OtpDialogState extends State<OtpDialog> {
     super.dispose();
   }
 
-  void _submitOtp() {
+  _submitOtp() async {
     String otp = _controllers.map((c) => c.text).join();
     print("Entered OTP: $otp");
     Navigator.of(context).pop(); // Close popup
+
+    final String baseUrl = ApiConfig.baseUrl;
+
+    final String apiUrl = '$baseUrl/transaction/payment';
+
+    var secureStorage = const FlutterSecureStorage();
+    String? token = await secureStorage.read(key: 'accessToken') ?? '';
+    final String golfCourseCode = ApiConfig.golfCourseCode;
+
+    try {
+      final postData = {
+        "golfCourseCode": golfCourseCode,
+        "totalAmount": globalTotalAmount,
+        "amount": globalTotalAmount,
+        "cardType": "savedCard",
+        "otp": otp,
+        "paymentType": "FullPayment",
+        "cardToken": selectedCardToken,
+        // "canSaveCard": true,
+        // "onlyBookinFee": true,
+      };
+
+      final payload = postData;
+
+      // Encrypt the payload
+      final secret =
+          'course1999golf01'; // must match Node backend ENCRYPT_SECRET
+      final keyHash = sha256.convert(utf8.encode(secret)).bytes;
+      final secretKey = SecretKey(keyHash);
+      final algorithm = AesGcm.with256bits();
+      final iv = algorithm.newNonce();
+
+      final secretBox = await algorithm.encrypt(
+        utf8.encode(jsonEncode(payload)),
+        secretKey: secretKey,
+        nonce: iv,
+      );
+
+      final encryptedPayload = {
+        'iv': base64Encode(iv),
+        'data': base64Encode(secretBox.cipherText),
+        'tag': base64Encode(secretBox.mac.bytes),
+      };
+
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode(encryptedPayload),
+      );
+
+      print('sendign');
+      print(response.statusCode);
+      print(response.body);
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = jsonDecode(response.body);
+        print(data['message'] ?? 'OTP sent successfully');
+
+        print('Response data: $data');
+
+        if (data['success'] == true && data['thankYouPage'] == true) {
+          // _showMessage(data['message'] ?? 'Payment successful');
+          print('Payment successful, navigating to CongratulationsPage');
+        } else {
+          // _showMessage(data['message'] ?? 'Payment failed');
+        }
+
+        // }
+      } else {}
+    } catch (error) {
+      print("Failed to send OTP. Please try again.");
+      // print('Unexpected error: $error');
+      print('Unexpected error: $error');
+    } finally {}
   }
 
   @override
