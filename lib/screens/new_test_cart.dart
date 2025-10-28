@@ -26,12 +26,124 @@ import 'package:url_launcher/url_launcher.dart';
 String selectedCardToken = "";
 num globalTotalAmount = 0.0;
 num globalAmount = 0.0;
-String globalCardType = "";
+String globalCardType = "savedCard"; // "savedCard" or "newCard"
 String globalOtp = "";
-String globalPaymentType = "";
+String globalPaymentType = "FullPayment"; // "FullPayment" or "BookingFee"
 bool globalCanSaveCard = false;
 bool globalOnlyBookingFee = false;
 Map<String, dynamic> globalUserData = {};
+
+// void _showMessage(String message) {
+//   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+// }
+
+void _openInAppBrowser(String url) async {
+  final Uri uri = Uri.parse(url);
+
+  if (!await launchUrl(
+    uri,
+    mode: LaunchMode.inAppBrowserView, // opens inside app
+    webViewConfiguration: const WebViewConfiguration(
+      enableJavaScript: true, // optional: enable JS
+    ),
+  )) {
+    throw 'Could not launch $url';
+  }
+}
+
+Future<void> submitOtpAndPay(String otp) async {
+  var secureStorage = const FlutterSecureStorage();
+  final String baseUrl = ApiConfig.baseUrl;
+  final String golfCourseCode = ApiConfig.golfCourseCode;
+  String? token = await secureStorage.read(key: 'accessToken') ?? '';
+
+  final String apiUrl = '$baseUrl/transaction/payment';
+
+  try {
+    var postData = {};
+    if (globalCardType == "savedCard") {
+      postData = {
+        "golfCourseCode": golfCourseCode,
+        "totalAmount": globalTotalAmount,
+        "amount": globalTotalAmount,
+        "cardType": globalCardType,
+        "paymentType": globalPaymentType,
+        "otp": otp,
+        "cardToken": selectedCardToken,
+      };
+    } else {
+      postData = {
+        "golfCourseCode": golfCourseCode,
+        "totalAmount": globalTotalAmount,
+        "amount": globalTotalAmount,
+        "cardType": globalCardType,
+        "paymentType": globalPaymentType,
+        "canSaveCard": globalCanSaveCard,
+        // "onlyBookinFee": true,
+      };
+    }
+
+    final payload = postData;
+
+    // Encrypt the payload
+    final secret = 'course1999golf01'; // must match Node backend ENCRYPT_SECRET
+    final keyHash = sha256.convert(utf8.encode(secret)).bytes;
+    final secretKey = SecretKey(keyHash);
+    final algorithm = AesGcm.with256bits();
+    final iv = algorithm.newNonce();
+
+    final secretBox = await algorithm.encrypt(
+      utf8.encode(jsonEncode(payload)),
+      secretKey: secretKey,
+      nonce: iv,
+    );
+
+    final encryptedPayload = {
+      'iv': base64Encode(iv),
+      'data': base64Encode(secretBox.cipherText),
+      'tag': base64Encode(secretBox.mac.bytes),
+    };
+
+    final response = await http.post(
+      Uri.parse(apiUrl),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode(encryptedPayload),
+    );
+
+    print(response.statusCode);
+    print(response.body);
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = jsonDecode(response.body);
+      print(data['message'] ?? 'OTP sent successfully');
+
+      print('Response data: $data');
+
+      if (data['success'] == true && data['thankYouPage'] == true) {
+        // _showMessage(data['message'] ?? 'Payment successful');
+        print('Payment successful, navigating to CongratulationsPage');
+      } else if (data['success'] == true && data['thankYouPage'] == false) {
+        // _showMessage("Redirecting to payment gateway...");
+        // ScaffoldMessenger.of(navigatorKey.currentContext ?? context).showSnackBar(
+        //   SnackBar(content: Text(data['message'] ?? 'Redirecting to payment gateway...')),
+        // );
+        print('Redirecting to payment gateway ..');
+        print(data['redirectURL'] ?? '');
+        _openInAppBrowser(data['redirectURL'] ?? '');
+        // _showMessage(data['message'] ?? 'Payment failed');
+      }
+
+      // }
+    } else {}
+  } catch (error) {
+    print("Failed to send OTP. Please try again.");
+    // print('Unexpected error: $error');
+    print('Unexpected error: $error');
+  } finally {}
+}
 
 class NewTestCartPage extends StatefulWidget {
   final String nwTstId;
@@ -83,25 +195,6 @@ class NewTestCartPageState extends State<NewTestCartPage> {
   void dispose() {
     _timer.cancel();
     super.dispose();
-  }
-
-  void _showMessage(String message) {
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text(message)));
-  }
-
-  void _openInAppBrowser(String url) async {
-    final Uri uri = Uri.parse(url);
-
-    if (!await launchUrl(
-      uri,
-      mode: LaunchMode.inAppBrowserView, // opens inside app
-      webViewConfiguration: const WebViewConfiguration(
-        enableJavaScript: true, // optional: enable JS
-      ),
-    )) {
-      throw 'Could not launch $url';
-    }
   }
 
   void _fetchCustomerCart() async {
@@ -198,13 +291,6 @@ class NewTestCartPageState extends State<NewTestCartPage> {
   // String selectedCardToken = ""; // To
   bool isChecked = false; // Default checkbox state
 
-  void _showPaymentPopup() {
-    showDialog(
-      context: context,
-      builder: (context) => _PaymentDialog(),
-    );
-  }
-
   getOtp() async {
     final String baseUrl = ApiConfig.baseUrl;
 
@@ -256,7 +342,7 @@ class NewTestCartPageState extends State<NewTestCartPage> {
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = jsonDecode(response.body);
-        _showMessage(data['message'] ?? 'OTP sent successfully');
+        // _showMessage(data['message'] ?? 'OTP sent successfully');
 
         print('Response data: $data');
 
@@ -276,7 +362,7 @@ class NewTestCartPageState extends State<NewTestCartPage> {
         // }
       } else {}
     } catch (error) {
-      _showMessage("Failed to send OTP. Please try again.");
+      // _showMessage("Failed to send OTP. Please try again.");
       // print('Unexpected error: $error');
       print('Unexpected error: $error');
     } finally {}
@@ -796,6 +882,7 @@ class NewTestCartPageState extends State<NewTestCartPage> {
                                             onChanged: (value) {
                                               setState(() {
                                                 selectedOption = value!;
+                                                globalCardType = "newCard";
                                               });
                                             },
                                           ),
@@ -1048,7 +1135,11 @@ class _PaymentDialogState extends State<_PaymentDialog> {
                 onChanged: (value) {
                   setState(() {
                     saveCard = value!;
+                    globalCanSaveCard = value;
+                    globalCardType = "newCard";
                   });
+
+                  print("Save card option: $globalCanSaveCard");
                 },
               ),
               const Expanded(
@@ -1070,6 +1161,8 @@ class _PaymentDialogState extends State<_PaymentDialog> {
             // Handle proceed action
             print("Proceed clicked, saveCard: $saveCard");
             Navigator.of(context).pop(); // Close popup
+
+            submitOtpAndPay("");
           },
           child: const Text("Proceed"),
         ),
@@ -1106,82 +1199,7 @@ class _OtpDialogState extends State<OtpDialog> {
     print("Entered OTP: $otp");
     Navigator.of(context).pop(); // Close popup
 
-    final String baseUrl = ApiConfig.baseUrl;
-
-    final String apiUrl = '$baseUrl/transaction/payment';
-
-    var secureStorage = const FlutterSecureStorage();
-    String? token = await secureStorage.read(key: 'accessToken') ?? '';
-    final String golfCourseCode = ApiConfig.golfCourseCode;
-
-    try {
-      final postData = {
-        "golfCourseCode": golfCourseCode,
-        "totalAmount": globalTotalAmount,
-        "amount": globalTotalAmount,
-        "cardType": "savedCard",
-        "otp": otp,
-        "paymentType": "FullPayment",
-        "cardToken": selectedCardToken,
-        // "canSaveCard": true,
-        // "onlyBookinFee": true,
-      };
-
-      final payload = postData;
-
-      // Encrypt the payload
-      final secret =
-          'course1999golf01'; // must match Node backend ENCRYPT_SECRET
-      final keyHash = sha256.convert(utf8.encode(secret)).bytes;
-      final secretKey = SecretKey(keyHash);
-      final algorithm = AesGcm.with256bits();
-      final iv = algorithm.newNonce();
-
-      final secretBox = await algorithm.encrypt(
-        utf8.encode(jsonEncode(payload)),
-        secretKey: secretKey,
-        nonce: iv,
-      );
-
-      final encryptedPayload = {
-        'iv': base64Encode(iv),
-        'data': base64Encode(secretBox.cipherText),
-        'tag': base64Encode(secretBox.mac.bytes),
-      };
-
-      final response = await http.post(
-        Uri.parse(apiUrl),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-        body: jsonEncode(encryptedPayload),
-      );
-
-      print('sendign');
-      print(response.statusCode);
-      print(response.body);
-
-      if (response.statusCode == 200) {
-        final Map<String, dynamic> data = jsonDecode(response.body);
-        print(data['message'] ?? 'OTP sent successfully');
-
-        print('Response data: $data');
-
-        if (data['success'] == true && data['thankYouPage'] == true) {
-          // _showMessage(data['message'] ?? 'Payment successful');
-          print('Payment successful, navigating to CongratulationsPage');
-        } else {
-          // _showMessage(data['message'] ?? 'Payment failed');
-        }
-
-        // }
-      } else {}
-    } catch (error) {
-      print("Failed to send OTP. Please try again.");
-      // print('Unexpected error: $error');
-      print('Unexpected error: $error');
-    } finally {}
+    await submitOtpAndPay(otp);
   }
 
   @override

@@ -443,67 +443,101 @@ class MyTransactionPageState extends State<MyTransactionPage> {
                                                 vertical: 7, horizontal: 12),
                                             child: Column(
                                               children: [
-                                                if (products.isNotEmpty)
-                                                  Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                    children: [
-                                                      Text(
-                                                        "${products['name'] ?? 'Products'}${products['quantity'] != null ? ' (${products['quantity']})' : ''}",
-                                                        style:
-                                                            GoogleFonts.poppins(
-                                                          fontSize: 13,
-                                                          fontWeight:
-                                                              FontWeight.w500,
-                                                          color: const Color(
-                                                              0xFF244065),
+                                                // if (products.isNotEmpty)
+                                                //   Row(
+                                                //     mainAxisAlignment:
+                                                //         MainAxisAlignment
+                                                //             .spaceBetween,
+                                                //     children: [
+                                                //       Text(
+                                                //         "${products['name'] ?? 'Products'}${products['quantity'] != null ? ' (${products['quantity']})' : ''}",
+                                                //         style:
+                                                //             GoogleFonts.poppins(
+                                                //           fontSize: 13,
+                                                //           fontWeight:
+                                                //               FontWeight.w500,
+                                                //           color: const Color(
+                                                //               0xFF244065),
+                                                //         ),
+                                                //       ),
+                                                //       Text(
+                                                //         "\$${(products['amount'] ?? 0).toStringAsFixed(2)}",
+                                                //         style:
+                                                //             GoogleFonts.poppins(
+                                                //           color: const Color(
+                                                //               0xFF669933),
+                                                //           fontSize: 13,
+                                                //           fontWeight:
+                                                //               FontWeight.w500,
+                                                //         ),
+                                                //       ),
+                                                //     ],
+                                                //   ),
+                                                // if (tipsAndFees.isNotEmpty)
+                                                //   Row(
+                                                //     mainAxisAlignment:
+                                                //         MainAxisAlignment
+                                                //             .spaceBetween,
+                                                //     children: [
+                                                //       Text(
+                                                //         tipsAndFees['name'] ??
+                                                //             'Tips and Fees',
+                                                //         style:
+                                                //             GoogleFonts.poppins(
+                                                //           fontSize: 13,
+                                                //           fontWeight:
+                                                //               FontWeight.w500,
+                                                //           color: const Color(
+                                                //               0xFF244065),
+                                                //         ),
+                                                //       ),
+                                                //       Text(
+                                                //         "\$${(tipsAndFees['amount'] ?? 0).toStringAsFixed(2)}",
+                                                //         style:
+                                                //             GoogleFonts.poppins(
+                                                //           color: const Color(
+                                                //               0xFF669933),
+                                                //           fontSize: 13,
+                                                //           fontWeight:
+                                                //               FontWeight.w500,
+                                                //         ),
+                                                //       ),
+                                                //     ],
+                                                //   ),
+
+                                                if (orderItems.isNotEmpty)
+                                                  ...orderItems
+                                                      .map<Widget>((item) {
+                                                    return Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
+                                                      children: [
+                                                        Text(
+                                                          "${item['name'] ?? 'Item'}${item['quantity'] != null ? ' (${item['quantity']})' : ''}",
+                                                          style: GoogleFonts
+                                                              .poppins(
+                                                            fontSize: 13,
+                                                            fontWeight:
+                                                                FontWeight.w500,
+                                                            color: const Color(
+                                                                0xFF244065),
+                                                          ),
                                                         ),
-                                                      ),
-                                                      Text(
-                                                        "\$${(products['amount'] ?? 0).toStringAsFixed(2)}",
-                                                        style:
-                                                            GoogleFonts.poppins(
-                                                          color: const Color(
-                                                              0xFF669933),
-                                                          fontSize: 13,
-                                                          fontWeight:
-                                                              FontWeight.w500,
+                                                        Text(
+                                                          "\$${(item['amount'] ?? 0).toStringAsFixed(2)}",
+                                                          style: GoogleFonts
+                                                              .poppins(
+                                                            color: const Color(
+                                                                0xFF669933),
+                                                            fontSize: 13,
+                                                            fontWeight:
+                                                                FontWeight.w500,
+                                                          ),
                                                         ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                if (tipsAndFees.isNotEmpty)
-                                                  Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                    children: [
-                                                      Text(
-                                                        tipsAndFees['name'] ??
-                                                            'Tips and Fees',
-                                                        style:
-                                                            GoogleFonts.poppins(
-                                                          fontSize: 13,
-                                                          fontWeight:
-                                                              FontWeight.w500,
-                                                          color: const Color(
-                                                              0xFF244065),
-                                                        ),
-                                                      ),
-                                                      Text(
-                                                        "\$${(tipsAndFees['amount'] ?? 0).toStringAsFixed(2)}",
-                                                        style:
-                                                            GoogleFonts.poppins(
-                                                          color: const Color(
-                                                              0xFF669933),
-                                                          fontSize: 13,
-                                                          fontWeight:
-                                                              FontWeight.w500,
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
+                                                      ],
+                                                    );
+                                                  }),
                                               ],
                                             ),
                                           ),
