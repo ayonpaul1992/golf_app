@@ -1,5 +1,6 @@
 // ignore_for_file: deprecated_member_use, use_build_context_synchronously
 // import 'package:flutter/cupertino.dart';
+import 'package:driver_pos/screens/selcet_booking_class.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -101,6 +102,15 @@ class CongratulationsPageState extends State<CongratulationsPage> {
                       GestureDetector(
                         onTap: () {
                           print("Book Now tapped!");
+
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const SelcetBookingClass(
+                                userId: '',
+                              ),
+                            ),
+                          );
                         },
                         child: AnimatedContainer(
                           duration: const Duration(milliseconds: 300),
@@ -144,7 +154,7 @@ class CongratulationsPageState extends State<CongratulationsPage> {
                           ),
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
                     ],

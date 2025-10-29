@@ -19,6 +19,7 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 final RouteObserver<PageRoute> routeObserver = TokenRouteObserver();
 final GlobalKey<ScaffoldMessengerState> rootScaffoldMessengerKey =
     GlobalKey<ScaffoldMessengerState>();
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 // Handles background push notifications
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -47,14 +48,6 @@ Future<void> main() async {
 
       options.tracesSampleRate =
           1.0; // capture 100% of transactions (adjust for production)
-
-      // options.profilesSampleRate = 1.0;
-
-      // if (Platform.isIOS && !Platform.isMacOS) {
-      //   if (defaultTargetPlatform == TargetPlatform.iOS && !isRealDevice()) {
-      //     options.profilesSampleRate = 0.0;
-      //   }
-      // }
     },
     // appRunner: () => runApp(MyApp()),
 
@@ -96,7 +89,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         scaffoldMessengerKey: rootScaffoldMessengerKey, // ✅ global snackbar key
-
+        navigatorKey: navigatorKey,
         navigatorObservers: [routeObserver],
         theme: ThemeData(
           textTheme: GoogleFonts.poppinsTextTheme(),

@@ -19,9 +19,12 @@ import 'package:crypto/crypto.dart';
 import 'package:cryptography/cryptography.dart';
 
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
 /// Global variables accessible across all classes in this file.
 /// Use with care: prefer passing data via constructors or state unless truly global.
+
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 String selectedCardToken = "";
 num globalTotalAmount = 0.0;
@@ -51,7 +54,7 @@ void _openInAppBrowser(String url) async {
   }
 }
 
-Future<void> submitOtpAndPay(String otp) async {
+Future<bool> submitOtpAndPay(String otp) async {
   var secureStorage = const FlutterSecureStorage();
   final String baseUrl = ApiConfig.baseUrl;
   final String golfCourseCode = ApiConfig.golfCourseCode;
@@ -70,6 +73,7 @@ Future<void> submitOtpAndPay(String otp) async {
         "paymentType": globalPaymentType,
         "otp": otp,
         "cardToken": selectedCardToken,
+        "isMobile": true
       };
     } else {
       postData = {
@@ -79,6 +83,8 @@ Future<void> submitOtpAndPay(String otp) async {
         "cardType": globalCardType,
         "paymentType": globalPaymentType,
         "canSaveCard": globalCanSaveCard,
+        "isMobile": true
+
         // "onlyBookinFee": true,
       };
     }
@@ -125,6 +131,8 @@ Future<void> submitOtpAndPay(String otp) async {
       if (data['success'] == true && data['thankYouPage'] == true) {
         // _showMessage(data['message'] ?? 'Payment successful');
         print('Payment successful, navigating to CongratulationsPage');
+
+        return true;
       } else if (data['success'] == true && data['thankYouPage'] == false) {
         // _showMessage("Redirecting to payment gateway...");
         // ScaffoldMessenger.of(navigatorKey.currentContext ?? context).showSnackBar(
@@ -135,14 +143,14 @@ Future<void> submitOtpAndPay(String otp) async {
         _openInAppBrowser(data['redirectURL'] ?? '');
         // _showMessage(data['message'] ?? 'Payment failed');
       }
-
-      // }
-    } else {}
+    }
+    return false;
   } catch (error) {
     print("Failed to send OTP. Please try again.");
     // print('Unexpected error: $error');
     print('Unexpected error: $error');
-  } finally {}
+    return false;
+  }
 }
 
 class NewTestCartPage extends StatefulWidget {
@@ -1160,7 +1168,7 @@ class _PaymentDialogState extends State<_PaymentDialog> {
           onPressed: () {
             // Handle proceed action
             print("Proceed clicked, saveCard: $saveCard");
-            Navigator.of(context).pop(); // Close popup
+            // Navigator.of(context).pop(); // Close popup
 
             submitOtpAndPay("");
           },
@@ -1197,9 +1205,10 @@ class _OtpDialogState extends State<OtpDialog> {
   _submitOtp() async {
     String otp = _controllers.map((c) => c.text).join();
     print("Entered OTP: $otp");
-    Navigator.of(context).pop(); // Close popup
+    // Navigator.of(context).pop(); // Close popup
 
-    await submitOtpAndPay(otp);
+    bool res = await submitOtpAndPay(otp);
+    return res;
   }
 
   @override
@@ -1248,7 +1257,87 @@ class _OtpDialogState extends State<OtpDialog> {
           child: const Text("Cancel"),
         ),
         ElevatedButton(
-          onPressed: _submitOtp,
+          onPressed: () async {
+            // 1. Get the validation result first
+            final isOtpValid = await _submitOtp(); // wait for response
+            print("Is OTP valid: $isOtpValid");
+
+            if (isOtpValid) {
+              // Check mounted state before any context-dependent operations after 'await'
+              if (!mounted) {
+                print("Widget unmounted, cannot navigate.");
+                return;
+              }
+
+              // 2. SUCCESS! First, close the current dialog using its context.
+              // This must happen BEFORE the push.
+              Navigator.of(context).pop();
+
+              // 3. Navigate to the new page using the same context.
+              // We don't need a GlobalKey or WidgetsBinding.instance.addPostFrameCallback
+              // if the navigation is performed immediately after the pop.
+              // If you were previously using a GlobalKey, this simpler context-based push
+              // is often less error-prone.
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const CongratulationsPage(cngsId: ''),
+                ),
+              );
+            } else {
+              // OPTIONAL: Handle invalid OTP, e.g., show an error message
+              print("OTP is invalid. Stay on the dialog.");
+            }
+          },
+          // onPressed: () async {
+          //   // 1. Ensure the dialog context is still valid before popping
+          //   // This is the simplest fix for the 'Navigator.of(context).pop()' issue
+          //   if (!mounted) {
+          //     print("Widget unmounted, cannot proceed.");
+          //     return;
+          //   }
+
+          //   final isOtpValid = await _submitOtp(); // wait for response
+
+          //   print("Is OTP valid: $isOtpValid");
+          // },
+          // onPressed: () async {
+          //   final isOtpValid = await _submitOtp(); // wait for response
+
+          //   print("Is OTP valid: $isOtpValid");
+
+          //   if (isOtpValid) {
+          //     Navigator.of(context).pop(); // close the dialog first
+
+          //     WidgetsBinding.instance.addPostFrameCallback((_) {
+          //       navigatorKey.currentState?.push(
+          //         MaterialPageRoute(
+          //           builder: (context) => const CongratulationsPage(cngsId: ''),
+          //         ),
+          //       );
+          //     });
+          //     // navigatorKey.currentState?.push(
+          //     //   MaterialPageRoute(
+          //     //     builder: (context) => const CongratulationsPage(cngsId: ''),
+          //     //   ),
+          //     // );
+
+          //     // ✅ Only navigate if OTP is correct
+          //     // if (!mounted) return;
+          //     // Navigator.push(
+          //     //   context,
+          //     //   MaterialPageRoute(
+          //     //     builder: (context) => const CongratulationsPage(cngsId: ''),
+          //     //   ),
+          //     // );
+          //   } else {
+          //     // ❌ Handle invalid OTP
+          //     ScaffoldMessenger.of(context).showSnackBar(
+          //       const SnackBar(content: Text('Invalid OTP. Please try again.')),
+          //     );
+          //   }
+          // },
+
           child: const Text("Proceed"),
         ),
       ],
