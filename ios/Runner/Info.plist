@@ -74,8 +74,10 @@
 	<dict>
 		<key>CFBundleURLSchemes</key>
 		<array>
-		<string>myapp</string>
+		<string>driverpos</string>
 		</array>
+		<key>CFBundleURLName</key>
+		<string>com.golfpro.new</string>
 	</dict>
 	</array>
 

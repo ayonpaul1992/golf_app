@@ -306,23 +306,23 @@ class _CustomDrawerState extends State<CustomDrawer> {
               destinationScreen: const ParchaseGiftCardOnePage(pgCardId: ''),
             ),
 
-            _buildDrawerTile(
-              title: 'Browser Screen',
-              icon: Icons.add_card_outlined,
-              destinationScreen: const BrowserScreen(),
-            ),
+            // _buildDrawerTile(
+            //   title: 'Browser Screen',
+            //   icon: Icons.add_card_outlined,
+            //   destinationScreen: const BrowserScreen(),
+            // ),
 
-            _buildDrawerTile(
-              title: 'New Testing Cart',
-              icon: Icons.add_card_outlined,
-              destinationScreen: const NewTestCartPage(nwTstId: ''),
-            ),
+            // _buildDrawerTile(
+            //   title: 'New Testing Cart',
+            //   icon: Icons.add_card_outlined,
+            //   destinationScreen: const NewTestCartPage(nwTstId: ''),
+            // ),
 
-            _buildDrawerTile(
-              title: 'Congratulations!',
-              icon: Icons.event_available,
-              destinationScreen: const CongratulationsPage(cngsId: ''),
-            ),
+            // _buildDrawerTile(
+            //   title: 'Congratulations!',
+            //   icon: Icons.event_available,
+            //   destinationScreen: const CongratulationsPage(cngsId: ''),
+            // ),
 
             // Logout Button
             Container(

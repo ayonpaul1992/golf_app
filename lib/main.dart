@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:driver_pos/screens/congratulations.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -15,11 +16,15 @@ import '/services/token_route_observer.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
+import 'services/deep_link_service.dart';
+
 // Use our custom observer globally
 final RouteObserver<PageRoute> routeObserver = TokenRouteObserver();
 final GlobalKey<ScaffoldMessengerState> rootScaffoldMessengerKey =
     GlobalKey<ScaffoldMessengerState>();
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
+final DeepLinkService deepLinkService = DeepLinkService();
 
 // Handles background push notifications
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -91,6 +96,10 @@ class MyApp extends StatelessWidget {
         scaffoldMessengerKey: rootScaffoldMessengerKey, // ✅ global snackbar key
         navigatorKey: navigatorKey,
         navigatorObservers: [routeObserver],
+        routes: {
+          '/payment-success': (context) =>
+              const CongratulationsPage(cngsId: ''),
+        },
         theme: ThemeData(
           textTheme: GoogleFonts.poppinsTextTheme(),
         ),

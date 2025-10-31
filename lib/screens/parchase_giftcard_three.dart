@@ -386,7 +386,7 @@ class ParchaseGiftCardThreePageState extends State<ParchaseGiftCardThreePage>
               ),
             )),
       ),
-      bottomNavigationBar: const CustomBottomNavBar(selectedIndex: 4),
+      bottomNavigationBar: const CustomBottomNavBar(selectedIndex: -1),
     );
   }
 

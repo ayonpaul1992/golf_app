@@ -1282,7 +1282,7 @@ class ParchaseGiftCardTwoPageState extends State<ParchaseGiftCardTwoPage>
           ),
         ),
       ),
-      bottomNavigationBar: const CustomBottomNavBar(selectedIndex: 4),
+      bottomNavigationBar: const CustomBottomNavBar(selectedIndex: -1),
     );
   }
 }

@@ -1,6 +1,9 @@
 PODS:
+  - app_links (6.4.1):
+    - Flutter
   - connectivity_plus (0.0.1):
     - Flutter
+  - DeepLinkNow (0.4.0)
   - Firebase/CoreOnly (12.4.0):
     - FirebaseCore (~> 12.4.0)
   - Firebase/Messaging (12.4.0):
@@ -101,7 +104,9 @@ PODS:
     - Flutter
 
 DEPENDENCIES:
+  - app_links (from `.symlinks/plugins/app_links/ios`)
   - connectivity_plus (from `.symlinks/plugins/connectivity_plus/ios`)
+  - DeepLinkNow (~> 0.4)
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
   - firebase_messaging (from `.symlinks/plugins/firebase_messaging/ios`)
   - Flutter (from `Flutter`)
@@ -118,6 +123,7 @@ DEPENDENCIES:
 
 SPEC REPOS:
   trunk:
+    - DeepLinkNow
     - Firebase
     - FirebaseCore
     - FirebaseCoreInternal
@@ -131,6 +137,8 @@ SPEC REPOS:
     - Sentry
 
 EXTERNAL SOURCES:
+  app_links:
+    :path: ".symlinks/plugins/app_links/ios"
   connectivity_plus:
     :path: ".symlinks/plugins/connectivity_plus/ios"
   firebase_core:
@@ -161,7 +169,9 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/url_launcher_ios/ios"
 
 SPEC CHECKSUMS:
+  app_links: 585674be3c6661708e6cd794ab4f39fb9d8356f9
   connectivity_plus: 2a701ffec2c0ae28a48cf7540e279787e77c447d
+  DeepLinkNow: 48d26a53d439c62151c8975dfda73c1f26923f42
   Firebase: f07b15ae5a6ec0f93713e30b923d9970d144af3e
   firebase_core: 49ffe9d2c7a2659f6e9e8d4a406e966bc084268e
   firebase_messaging: 42938d0635a4ec080de4cca24216d8a428ab0398
@@ -187,6 +197,6 @@ SPEC CHECKSUMS:
   shared_preferences_foundation: fcdcbc04712aee1108ac7fda236f363274528f78
   url_launcher_ios: 5334b05cef931de560670eeae103fd3e431ac3fe
 
-PODFILE CHECKSUM: 5a3d71bebfe68be1911e6c9f135d2ca1721d9bc7
+PODFILE CHECKSUM: cc7c7029ac8389988deb6fd13ca188a3015fd1fb
 
 COCOAPODS: 1.16.2

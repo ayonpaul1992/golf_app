@@ -27,6 +27,10 @@ target 'Runner' do
   use_frameworks!
   use_modular_headers!
 
+
+  # Pods for your app
+  pod 'DeepLinkNow', '~> 0.4'
+
   # You can uncomment this if you manually manage Sentry, but 'flutter_install_all_ios_pods' usually handles it.
   # pod 'Sentry', '~> 8.40.0'
 
