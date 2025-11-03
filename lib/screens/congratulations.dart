@@ -1,6 +1,8 @@
 // ignore_for_file: deprecated_member_use, use_build_context_synchronously
 // import 'package:flutter/cupertino.dart';
+import 'package:driver_pos/main.dart';
 import 'package:driver_pos/screens/selcet_booking_class.dart';
+import 'package:driver_pos/services/deep_link_service.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -23,6 +25,17 @@ class CongratulationsPageState extends State<CongratulationsPage> {
   bool isLoading = false;
 
   @override
+  void initState() {
+    super.initState();
+    Future.microtask(() {
+      DeepLinkService.clearCachedLink();
+    });
+    // DeepLinkService.clearCachedLink();
+
+    // Add any initialization logic here
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
@@ -34,7 +47,6 @@ class CongratulationsPageState extends State<CongratulationsPage> {
       drawer: CustomDrawer(
         activeTile: 'Home',
         onTileTap: (selectedTile) {
-          //print("Navigating to $selectedTile");
           // Handle navigation logic
         },
       ),
@@ -57,16 +69,11 @@ class CongratulationsPageState extends State<CongratulationsPage> {
                       child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      // const SizedBox(
-                      //   height: 15,
-                      // ),
                       Container(
                         width: 80,
                         height: 80,
-                        child: CircleAvatar(
+                        child: const CircleAvatar(
                           backgroundColor: Color(0xFF9ECF9A),
-
-                          // ✅ Correct property name
                           child: Center(
                             child: Icon(
                               Icons.event_available,
@@ -76,27 +83,27 @@ class CongratulationsPageState extends State<CongratulationsPage> {
                           ),
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 15,
                       ),
                       Text(
                         "Congratulations!",
                         style: GoogleFonts.poppins(
-                            color: Color(0xFF244065),
+                            color: const Color(0xFF244065),
                             fontWeight: FontWeight.w600,
                             fontSize: 20),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 4,
                       ),
                       Text(
                         "Your payment has been received",
                         style: GoogleFonts.poppins(
-                            color: Color(0xFF244065),
+                            color: const Color(0xFF244065),
                             fontWeight: FontWeight.w600,
                             fontSize: 14),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 11,
                       ),
                       GestureDetector(
@@ -133,8 +140,7 @@ class CongratulationsPageState extends State<CongratulationsPage> {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 15, vertical: 7),
                           child: Row(
-                            mainAxisSize: MainAxisSize
-                                .min, // ✅ Only take the space needed
+                            mainAxisSize: MainAxisSize.min,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Text(
@@ -145,9 +151,7 @@ class CongratulationsPageState extends State<CongratulationsPage> {
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
-                              const SizedBox(
-                                  width:
-                                      5), // Add some spacing between text and icon
+                              const SizedBox(width: 5),
                               const Icon(Icons.arrow_forward_ios,
                                   size: 14, color: Colors.white),
                             ],

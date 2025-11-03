@@ -4,8 +4,10 @@ import 'dart:io';
 
 import 'dart:convert';
 // import 'package:flutter/cupertino.dart';
+import 'package:driver_pos/screens/TermsAndConditionsScreen.dart';
 import 'package:driver_pos/screens/congratulations.dart';
 import 'package:driver_pos/services/api_config.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -45,13 +47,20 @@ void _openInAppBrowser(String url) async {
 
   if (!await launchUrl(
     uri,
-    mode: LaunchMode.inAppBrowserView, // opens inside app
-    webViewConfiguration: const WebViewConfiguration(
-      enableJavaScript: true, // optional: enable JS
-    ),
+    mode: LaunchMode.externalApplication, // ✅ Opens in Safari
   )) {
     throw 'Could not launch $url';
   }
+
+  // if (!await launchUrl(
+  //   uri,
+  //   mode: LaunchMode.inAppBrowserView, // opens inside app
+  //   webViewConfiguration: const WebViewConfiguration(
+  //     enableJavaScript: true, // optional: enable JS
+  //   ),
+  // )) {
+  //   throw 'Could not launch $url';
+  // }
 }
 
 Future<bool> submitOtpAndPay(String otp) async {
@@ -954,12 +963,36 @@ class NewTestCartPageState extends State<NewTestCartPage> {
                           Column(
                             children: [
                               CheckboxListTile(
-                                title: Text(
-                                  "Agree Terms and Conditions",
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w500,
-                                    color: const Color(0xFF244065),
+                                title: RichText(
+                                  text: TextSpan(
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w500,
+                                      color: const Color(0xFF244065),
+                                    ),
+                                    children: [
+                                      const TextSpan(text: "Agree "),
+                                      TextSpan(
+                                        text: "terms and Conditions",
+                                        style: const TextStyle(
+                                          color: Color(0xFF669933),
+                                          decoration: TextDecoration.underline,
+                                        ),
+                                        recognizer: TapGestureRecognizer()
+                                          ..onTap = () {
+                                            // 👇 Navigate or open link here
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    const TermsAndConditionsScreen(
+                                                        tncId: ''),
+                                              ),
+                                            );
+                                            // OR: launchUrl(Uri.parse('https://your-website.com/terms'));
+                                          },
+                                      ),
+                                    ],
                                   ),
                                 ),
                                 value: isChecked,
@@ -977,6 +1010,31 @@ class NewTestCartPageState extends State<NewTestCartPage> {
                                   });
                                 },
                               ),
+
+                              // CheckboxListTile(
+                              //   title: Text(
+                              //     "Agree Terms and Conditions",
+                              //     style: GoogleFonts.poppins(
+                              //       fontSize: 13,
+                              //       fontWeight: FontWeight.w500,
+                              //       color: const Color(0xFF244065),
+                              //     ),
+                              //   ),
+                              //   value: isChecked,
+                              //   activeColor: const Color(0xFF669933),
+                              //   visualDensity: const VisualDensity(
+                              //       horizontal: -4, vertical: -4),
+                              //   materialTapTargetSize:
+                              //       MaterialTapTargetSize.shrinkWrap,
+                              //   contentPadding: EdgeInsets.zero,
+                              //   controlAffinity:
+                              //       ListTileControlAffinity.leading,
+                              //   onChanged: (value) {
+                              //     setState(() {
+                              //       isChecked = value!;
+                              //     });
+                              //   },
+                              // ),
                             ],
                           )
                         ],

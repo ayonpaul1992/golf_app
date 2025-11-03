@@ -1,7 +1,9 @@
 // ignore_for_file: deprecated_member_use, use_build_context_synchronously
 
 import 'dart:convert';
+import 'package:driver_pos/screens/congratulations.dart';
 import 'package:driver_pos/services/api_config.dart';
+import 'package:driver_pos/services/deep_link_service.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
@@ -17,6 +19,7 @@ import '../services/location_service.dart';
 import '../services/weather_service.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:app_links/app_links.dart';
 
 class DashboardPage extends StatefulWidget {
   // final String dshbId;
@@ -146,23 +149,51 @@ class DashboardPageState extends State<DashboardPage> {
   void initState() {
     super.initState();
     isLoading = true; // Set loading state to true initially
-    _loadUserName();
-    _loadWeather();
-    fetchUpcomingTeeTime().then((teeTime) {
-      if (teeTime != null) {
-        // Handle the fetched tee time if needed
-        setState(() {
-          upcomingTeeTime = teeTime;
-        });
-        // print("Upcoming Tee Time: $teeTime");
-      } else {
-        print("No upcoming tee time found.");
-      }
 
-      setState(() {
-        isLoading = false; // Set loading state to false after fetching
+    // check for cached deep link and print if present
+    DeepLinkService.checkInitialLink();
+    final isLinkPending = DeepLinkService.isLinkPending;
+
+    
+
+    print("✅ DashboardPage initState - isLinkPending: $isLinkPending");
+    if (isLinkPending) {
+      // _handleDeepLink();
+
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _handleDeepLink();
+        DeepLinkService.clearCachedLink();
       });
-    });
+    } else {
+      print("ℹ️ No pending deep link to handle.");
+      _loadUserName();
+      _loadWeather();
+      fetchUpcomingTeeTime().then((teeTime) {
+        if (teeTime != null) {
+          // Handle the fetched tee time if needed
+          setState(() {
+            upcomingTeeTime = teeTime;
+          });
+          // print("Upcoming Tee Time: $teeTime");
+        } else {
+          print("No upcoming tee time found.");
+        }
+
+        setState(() {
+          isLoading = false; // Set loading state to false after fetching
+        });
+      });
+    }
+  }
+
+  void _handleDeepLink() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const CongratulationsPage(cngsId: ''),
+      ),
+    );
+    print("✅ DashboardPage detected pending deep link on init.");
   }
 
   Future<void> _loadUserName() async {

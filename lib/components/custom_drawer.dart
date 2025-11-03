@@ -1,5 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:driver_pos/screens/TermsAndConditionsScreen.dart';
 import 'package:driver_pos/screens/browser_screen.dart';
 import 'package:driver_pos/screens/congratulations.dart';
 import 'package:driver_pos/screens/new_test_cart.dart';
@@ -304,6 +305,12 @@ class _CustomDrawerState extends State<CustomDrawer> {
               title: 'Purchase Gift Card',
               icon: Icons.add_card_outlined,
               destinationScreen: const ParchaseGiftCardOnePage(pgCardId: ''),
+            ),
+
+            _buildDrawerTile(
+              title: 'Terms & Conditions',
+              icon: Icons.event_available,
+              destinationScreen: const TermsAndConditionsScreen(tncId: ''),
             ),
 
             // _buildDrawerTile(

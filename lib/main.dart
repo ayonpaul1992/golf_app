@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:io';
 
 import 'package:driver_pos/screens/congratulations.dart';
@@ -109,6 +111,10 @@ class MyApp extends StatelessWidget {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const SplashScreen();
             } else if (snapshot.hasData) {
+              // ✅ Initialize deep links after app starts
+              Future.microtask(() {
+                deepLinkService.initDeepLinks();
+              });
               return snapshot.data!;
             }
             return const LoginPage();

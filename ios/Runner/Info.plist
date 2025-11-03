@@ -22,6 +22,18 @@
 	<string>$(FLUTTER_BUILD_NAME)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>com.golfpro.new</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>driverpos</string>
+			</array>
+		</dict>
+		<dict/>
+	</array>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSApplicationQueriesSchemes</key>
@@ -32,10 +44,10 @@
 	<true/>
 	<key>NSCameraUsageDescription</key>
 	<string>We use the camera to let you upload your profile picture for your account.</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>We need your location to fetch weather data.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>We need your location to provide continuous location-based services, even when the app is in the background.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>We need your location to fetch weather data.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>We need access to save photos to your library.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
@@ -67,19 +79,5 @@
 	</array>
 	<key>com.apple.security.files.user-selected.read-only</key>
 	<true/>
-
-
-	<key>CFBundleURLTypes</key>
-	<array>
-	<dict>
-		<key>CFBundleURLSchemes</key>
-		<array>
-		<string>driverpos</string>
-		</array>
-		<key>CFBundleURLName</key>
-		<string>com.golfpro.new</string>
-	</dict>
-	</array>
-
 </dict>
 </plist>
