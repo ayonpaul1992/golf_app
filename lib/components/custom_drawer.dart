@@ -307,11 +307,11 @@ class _CustomDrawerState extends State<CustomDrawer> {
               destinationScreen: const ParchaseGiftCardOnePage(pgCardId: ''),
             ),
 
-            _buildDrawerTile(
-              title: 'Terms & Conditions',
-              icon: Icons.event_available,
-              destinationScreen: const TermsAndConditionsScreen(tncId: ''),
-            ),
+            // _buildDrawerTile(
+            //   title: 'Terms & Conditions',
+            //   icon: Icons.event_available,
+            //   destinationScreen: const TermsAndConditionsScreen(tncId: ''),
+            // ),
 
             // _buildDrawerTile(
             //   title: 'Browser Screen',

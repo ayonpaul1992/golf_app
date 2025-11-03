@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:app_links/app_links.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import '../main.dart';
 
@@ -20,6 +21,11 @@ class DeepLinkService {
   // 💡 NEW STATIC METHOD: Checks and caches the initial link on cold start
   static Future<void> checkInitialLink() async {
     print("Cache : $_cachedInitialUri");
+
+    final FlutterSecureStorage secureStorage = const FlutterSecureStorage();
+    await secureStorage.write(
+        key: 'cachedUrl', value: _cachedInitialUri.toString());
+    // _cachedInitialUri = await secureStorage.read('cachedInitialUri');
     // Only check for the initial link once per app session (process)
     if (_cachedInitialUri != null) return;
 

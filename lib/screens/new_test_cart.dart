@@ -1,6 +1,5 @@
-// ignore_for_file: deprecated_member_use, use_build_context_synchronously, library_private_types_in_public_api
+// ignore_for_file: deprecated_member_use, use_build_context_synchronously, library_private_types_in_public_api, depend_on_referenced_packages
 import 'dart:async';
-import 'dart:io';
 
 import 'dart:convert';
 // import 'package:flutter/cupertino.dart';
@@ -16,12 +15,10 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '/components/custom_app_bar.dart';
 import '/components/custom_drawer.dart';
 import '/components/custom_bottom_nav_bar.dart';
-import 'package:intl/intl.dart';
 import 'package:crypto/crypto.dart';
 import 'package:cryptography/cryptography.dart';
 
 import 'package:url_launcher/url_launcher.dart';
-import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
 /// Global variables accessible across all classes in this file.
 /// Use with care: prefer passing data via constructors or state unless truly global.
@@ -38,9 +35,9 @@ bool globalCanSaveCard = false;
 bool globalOnlyBookingFee = false;
 Map<String, dynamic> globalUserData = {};
 
-// void _showMessage(String message) {
-//   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
-// }
+void _showMessage(BuildContext context, String message) {
+  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+}
 
 void _openInAppBrowser(String url) async {
   final Uri uri = Uri.parse(url);
@@ -63,7 +60,7 @@ void _openInAppBrowser(String url) async {
   // }
 }
 
-Future<bool> submitOtpAndPay(String otp) async {
+Future<bool> submitOtpAndPay(BuildContext context, String otp) async {
   var secureStorage = const FlutterSecureStorage();
   final String baseUrl = ApiConfig.baseUrl;
   final String golfCourseCode = ApiConfig.golfCourseCode;
@@ -155,6 +152,8 @@ Future<bool> submitOtpAndPay(String otp) async {
     }
     return false;
   } catch (error) {
+    _showMessage(context, "Something went wrong. Please try again.");
+
     print("Failed to send OTP. Please try again.");
     // print('Unexpected error: $error');
     print('Unexpected error: $error');
@@ -566,88 +565,95 @@ class NewTestCartPageState extends State<NewTestCartPage> {
                                                   height: 6,
                                                 ),
                                                 Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
                                                   children: [
-                                                    Row(
-                                                      children: [
-                                                        Text(
-                                                          "Qty:",
-                                                          style: GoogleFonts.poppins(
-                                                              color: const Color(
-                                                                  0xFF6E7373),
-                                                              fontSize: 13.5,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w400),
-                                                        ),
-                                                        const SizedBox(
-                                                            width: 5),
-                                                        Text(
-                                                          "$qty",
-                                                          style: GoogleFonts.poppins(
-                                                              color: const Color(
-                                                                  0xFF244065),
-                                                              fontSize: 13,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w500),
-                                                        )
-                                                      ],
-                                                    ),
-                                                    const SizedBox(width: 25),
-                                                    Row(
-                                                      children: [
-                                                        Text(
-                                                          "Price:",
-                                                          style: GoogleFonts.poppins(
-                                                              color: const Color(
-                                                                  0xFF6E7373),
-                                                              fontSize: 13.5,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w400),
-                                                        ),
-                                                        const SizedBox(
-                                                            width: 5),
-                                                        Text(
-                                                          "\$${amt.toStringAsFixed(2)}",
-                                                          style: GoogleFonts.poppins(
-                                                              color: const Color(
-                                                                  0xFF244065),
-                                                              fontSize: 13,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w500),
-                                                        )
-                                                      ],
-                                                    ),
-                                                    const SizedBox(width: 25),
-                                                    Row(
-                                                      children: [
-                                                        Text(
-                                                          "Tax:",
-                                                          style: GoogleFonts.poppins(
-                                                              color: const Color(
-                                                                  0xFF6E7373),
-                                                              fontSize: 13.5,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w400),
-                                                        ),
-                                                        const SizedBox(
-                                                            width: 5),
-                                                        Text(
-                                                          "\$${tax.toStringAsFixed(2)}",
-                                                          style: GoogleFonts.poppins(
-                                                              color: const Color(
-                                                                  0xFF244065),
-                                                              fontSize: 13,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w500),
-                                                        )
-                                                      ],
-                                                    ),
-                                                    const SizedBox(width: 60),
+                                                    Row(children: [
+                                                      Row(
+                                                        children: [
+                                                          Text(
+                                                            "Qty:",
+                                                            style: GoogleFonts.poppins(
+                                                                color: const Color(
+                                                                    0xFF6E7373),
+                                                                fontSize: 13.5,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w400),
+                                                          ),
+                                                          const SizedBox(
+                                                              width: 5),
+                                                          Text(
+                                                            "$qty",
+                                                            style: GoogleFonts.poppins(
+                                                                color: const Color(
+                                                                    0xFF244065),
+                                                                fontSize: 13,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500),
+                                                          )
+                                                        ],
+                                                      ),
+                                                      const SizedBox(width: 25),
+                                                      Row(
+                                                        children: [
+                                                          Text(
+                                                            "Price:",
+                                                            style: GoogleFonts.poppins(
+                                                                color: const Color(
+                                                                    0xFF6E7373),
+                                                                fontSize: 13.5,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w400),
+                                                          ),
+                                                          const SizedBox(
+                                                              width: 5),
+                                                          Text(
+                                                            "\$${amt.toStringAsFixed(2)}",
+                                                            style: GoogleFonts.poppins(
+                                                                color: const Color(
+                                                                    0xFF244065),
+                                                                fontSize: 13,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500),
+                                                          )
+                                                        ],
+                                                      ),
+                                                      const SizedBox(width: 25),
+                                                      Row(
+                                                        children: [
+                                                          Text(
+                                                            "Tax:",
+                                                            style: GoogleFonts.poppins(
+                                                                color: const Color(
+                                                                    0xFF6E7373),
+                                                                fontSize: 13.5,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w400),
+                                                          ),
+                                                          const SizedBox(
+                                                              width: 5),
+                                                          Text(
+                                                            "\$${tax.toStringAsFixed(2)}",
+                                                            style: GoogleFonts.poppins(
+                                                                color: const Color(
+                                                                    0xFF244065),
+                                                                fontSize: 13,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500),
+                                                          )
+                                                        ],
+                                                      ),
+                                                    ]),
+
+                                                    // const SizedBox(width: 50),
+
                                                     Row(
                                                       mainAxisAlignment:
                                                           MainAxisAlignment.end,
@@ -973,7 +979,7 @@ class NewTestCartPageState extends State<NewTestCartPage> {
                                     children: [
                                       const TextSpan(text: "Agree "),
                                       TextSpan(
-                                        text: "terms and Conditions",
+                                        text: "Terms and Conditions",
                                         style: const TextStyle(
                                           color: Color(0xFF669933),
                                           decoration: TextDecoration.underline,
@@ -1052,6 +1058,18 @@ class NewTestCartPageState extends State<NewTestCartPage> {
                           GestureDetector(
                             onTap: () async {
                               // Your onTap action here
+                              // if (!isChecked) {
+                              //   // Don't proceed if terms not accepted
+                              //   ScaffoldMessenger.of(context)
+                              //       .showSnackBar(const SnackBar(
+                              //     content: Text(
+                              //         'Please accept the terms and conditions'),
+                              //   ));
+                              //   return;
+                              // }
+
+                              Navigator.pop(
+                                  context); // Go back to previous screen
                             },
                             child: Container(
                               decoration: BoxDecoration(
@@ -1190,7 +1208,7 @@ class _PaymentDialogState extends State<_PaymentDialog> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text("You are paying for \$25.00"),
+          Text("You are paying for \$${globalTotalAmount.toStringAsFixed(2)}"),
           const SizedBox(height: 8),
           const Text("Do you want to proceed?"),
           const SizedBox(height: 8),
@@ -1228,7 +1246,7 @@ class _PaymentDialogState extends State<_PaymentDialog> {
             print("Proceed clicked, saveCard: $saveCard");
             // Navigator.of(context).pop(); // Close popup
 
-            submitOtpAndPay("");
+            submitOtpAndPay(context, "");
           },
           child: const Text("Proceed"),
         ),
@@ -1265,7 +1283,7 @@ class _OtpDialogState extends State<OtpDialog> {
     print("Entered OTP: $otp");
     // Navigator.of(context).pop(); // Close popup
 
-    bool res = await submitOtpAndPay(otp);
+    bool res = await submitOtpAndPay(context, otp);
     return res;
   }
 
@@ -1305,6 +1323,18 @@ class _OtpDialogState extends State<OtpDialog> {
               );
             }),
           ),
+
+          const SizedBox(height: 16), // spacing
+
+          // Tagline text
+          const Text(
+            "Enter the OTP sent to your registered email address.",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.grey,
+            ),
+          ),
         ],
       ),
       actions: [
@@ -1327,15 +1357,8 @@ class _OtpDialogState extends State<OtpDialog> {
                 return;
               }
 
-              // 2. SUCCESS! First, close the current dialog using its context.
-              // This must happen BEFORE the push.
               Navigator.of(context).pop();
 
-              // 3. Navigate to the new page using the same context.
-              // We don't need a GlobalKey or WidgetsBinding.instance.addPostFrameCallback
-              // if the navigation is performed immediately after the pop.
-              // If you were previously using a GlobalKey, this simpler context-based push
-              // is often less error-prone.
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -1345,57 +1368,12 @@ class _OtpDialogState extends State<OtpDialog> {
             } else {
               // OPTIONAL: Handle invalid OTP, e.g., show an error message
               print("OTP is invalid. Stay on the dialog.");
+              Navigator.of(context).pop();
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Invalid OTP. Please try again.')),
+              );
             }
           },
-          // onPressed: () async {
-          //   // 1. Ensure the dialog context is still valid before popping
-          //   // This is the simplest fix for the 'Navigator.of(context).pop()' issue
-          //   if (!mounted) {
-          //     print("Widget unmounted, cannot proceed.");
-          //     return;
-          //   }
-
-          //   final isOtpValid = await _submitOtp(); // wait for response
-
-          //   print("Is OTP valid: $isOtpValid");
-          // },
-          // onPressed: () async {
-          //   final isOtpValid = await _submitOtp(); // wait for response
-
-          //   print("Is OTP valid: $isOtpValid");
-
-          //   if (isOtpValid) {
-          //     Navigator.of(context).pop(); // close the dialog first
-
-          //     WidgetsBinding.instance.addPostFrameCallback((_) {
-          //       navigatorKey.currentState?.push(
-          //         MaterialPageRoute(
-          //           builder: (context) => const CongratulationsPage(cngsId: ''),
-          //         ),
-          //       );
-          //     });
-          //     // navigatorKey.currentState?.push(
-          //     //   MaterialPageRoute(
-          //     //     builder: (context) => const CongratulationsPage(cngsId: ''),
-          //     //   ),
-          //     // );
-
-          //     // ✅ Only navigate if OTP is correct
-          //     // if (!mounted) return;
-          //     // Navigator.push(
-          //     //   context,
-          //     //   MaterialPageRoute(
-          //     //     builder: (context) => const CongratulationsPage(cngsId: ''),
-          //     //   ),
-          //     // );
-          //   } else {
-          //     // ❌ Handle invalid OTP
-          //     ScaffoldMessenger.of(context).showSnackBar(
-          //       const SnackBar(content: Text('Invalid OTP. Please try again.')),
-          //     );
-          //   }
-          // },
-
           child: const Text("Proceed"),
         ),
       ],
