@@ -247,8 +247,6 @@ class ParchaseGiftCardTwoPageState extends State<ParchaseGiftCardTwoPage>
 
         setState(() {
           emailSuggestions = [nameEmail];
-          // rcptText.text = name; // Fetched recipient name
-          // rcptEmText.text = email;
         });
 
         print(emailSuggestions);
@@ -337,7 +335,6 @@ class ParchaseGiftCardTwoPageState extends State<ParchaseGiftCardTwoPage>
         final data = jsonDecode(response.body);
 
         print(data);
-        print('fetchUserDetailsByEmail');
 
         // final phoneNumber = data['data']['phoneNumber'] ?? '';
         // final name = data['data']['fullName'] ?? '';
@@ -350,7 +347,7 @@ class ParchaseGiftCardTwoPageState extends State<ParchaseGiftCardTwoPage>
           rcptText.text = data['data']['fullName']; // Fetched recipient name
           rcptPhText.text = data['data']['phoneNumber'];
 
-          rcptEmText.text = data['data']['email'];
+          // rcptEmText.text = data['data']['email'];
           // golfCourseId = secureStorage.read(key: 'golfCourseId') as String;
           // phoneSuggestions =
           //     List<String>.from(data['data']['phoneNumber'] ?? []);
@@ -437,8 +434,6 @@ class ParchaseGiftCardTwoPageState extends State<ParchaseGiftCardTwoPage>
     });
   }
 
-  List<String> backendData = [];
-
   @override
   void dispose() {
     rcptText.dispose();
@@ -454,39 +449,6 @@ class ParchaseGiftCardTwoPageState extends State<ParchaseGiftCardTwoPage>
     customAmountFocusNode.dispose();
 
     super.dispose();
-  }
-
-  Future<void> fetchPhoneFromBackend(String phone) async {
-    debugPrint("📞 Checking phone in backend: $phone");
-    try {
-      final response = await http.post(
-        Uri.parse("http://10.0.2.2:5000/check-phone"),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'phone': phone}),
-      );
-
-      if (!mounted) return;
-
-      if (response.statusCode == 200) {
-        debugPrint("✅ Backend response: ${response.body}");
-        final data = jsonDecode(response.body);
-
-        setState(() {
-          backendData = List<String>.from(data);
-        });
-
-        // 🔽 Force dropdown to open by focusing the field
-        Future.delayed(const Duration(milliseconds: 150), () {
-          if (mounted) {
-            FocusScope.of(context).requestFocus(phoneFocusNode);
-          }
-        });
-      } else {
-        debugPrint("⚠️ Server error: ${response.statusCode}");
-      }
-    } catch (e) {
-      debugPrint("❗ Error fetching phone: $e");
-    }
   }
 
   Widget _buildErrorHint(String errorMessage, bool showError) {
@@ -830,14 +792,14 @@ class ParchaseGiftCardTwoPageState extends State<ParchaseGiftCardTwoPage>
                             focusNode: phoneFocusNode,
                             optionsBuilder:
                                 (TextEditingValue textEditingValue) {
+                              final phoneSuggestions = this.phoneSuggestions;
                               final input = textEditingValue.text.trim();
+                              if (input.isEmpty)
+                                return const Iterable<String>.empty();
+
                               if (input.length == 10) {
-                                if (backendData.isNotEmpty) {
-                                  return backendData;
-                                } else {
-                                  // Show the entered phone number as a selectable suggestion
-                                  return [input];
-                                }
+                                return phoneSuggestions
+                                    .where((option) => option.contains(input));
                               }
                               return const Iterable<String>.empty();
                             },
@@ -875,24 +837,16 @@ class ParchaseGiftCardTwoPageState extends State<ParchaseGiftCardTwoPage>
                                     fontSize: 14,
                                   ),
                                 ),
-                                onChanged: (val) async {
-                                  // Hide error if input is valid length
+                                onChanged: (val) {
+                                  // print(val);
                                   if (_showPhoneError &&
                                       val.trim().length == 10) {
                                     setState(() => _showPhoneError = false);
                                   }
 
-                                  // Call backend only if exactly 10 digits entered
                                   if (val.trim().length == 10) {
-                                    await fetchPhoneFromBackend(val.trim());
-                                    // 🔽 Force dropdown open after backendData populated
-                                    if (backendData.isNotEmpty && mounted) {
-                                      FocusScope.of(context)
-                                          .requestFocus(phoneFocusNode);
-                                      // Optionally, you might want to call setState(() {}); here if UI does not rebuild
-                                    }
-                                  } else {
-                                    setState(() => backendData.clear());
+                                    // fetchUserDetailsByPhone(val.trim());
+                                    fetchUserPhoneSuggestions(val.trim());
                                   }
                                 },
                                 onFieldSubmitted: (_) => onFieldSubmitted(),
@@ -912,12 +866,14 @@ class ParchaseGiftCardTwoPageState extends State<ParchaseGiftCardTwoPage>
                                   borderRadius: BorderRadius.circular(10),
                                   child: ConstrainedBox(
                                     constraints: BoxConstraints(
+                                      // ✅ constraints is now available from LayoutBuilder
                                       maxWidth: constraints.maxWidth,
                                       maxHeight: listHeight,
                                     ),
                                     child: ListView.builder(
                                       padding: EdgeInsets.zero,
                                       shrinkWrap: true,
+                                      physics: const ClampingScrollPhysics(),
                                       itemCount: options.length,
                                       itemBuilder: (context, index) {
                                         final option = options.elementAt(index);
@@ -925,6 +881,9 @@ class ParchaseGiftCardTwoPageState extends State<ParchaseGiftCardTwoPage>
                                           height: itemHeight,
                                           child: ListTile(
                                             dense: true,
+                                            minVerticalPadding: 0,
+                                            visualDensity:
+                                                VisualDensity.compact,
                                             title: Text(
                                               option,
                                               style: GoogleFonts.poppins(
@@ -932,7 +891,12 @@ class ParchaseGiftCardTwoPageState extends State<ParchaseGiftCardTwoPage>
                                                 color: const Color(0xFF2A4768),
                                               ),
                                             ),
-                                            onTap: () => onSelected(option),
+                                            onTap: () {
+                                              onSelected(
+                                                  option.split(' - ')[0]);
+                                              fetchUserDetailsByPhone(
+                                                  option.split(' - ')[0]);
+                                            },
                                           ),
                                         );
                                       },
@@ -944,147 +908,6 @@ class ParchaseGiftCardTwoPageState extends State<ParchaseGiftCardTwoPage>
                           );
                         },
                       ),
-
-                      // LayoutBuilder(
-                      //   builder: (context, constraints) {
-                      //     return RawAutocomplete<String>(
-                      //       textEditingController: rcptPhText,
-                      //       focusNode: phoneFocusNode,
-                      //       optionsBuilder:
-                      //           (TextEditingValue textEditingValue) {
-                      //         final phoneSuggestions = this.phoneSuggestions;
-                      //         final input = textEditingValue.text.trim();
-
-                      //         // ✅ Do not show any dropdown when input is empty or < 3 digits
-                      //         if (input.isEmpty || input.length < 10) {
-                      //           return const Iterable<String>.empty();
-                      //         }
-
-                      //         // ✅ Filter list only if length >= 10
-                      //         final matches = phoneSuggestions
-                      //             .where((option) => option.contains(input));
-
-                      //         // ✅ Only show if matches found
-                      //         if (matches.isEmpty) {
-                      //           return const Iterable<String>.empty();
-                      //         }
-
-                      //         return matches;
-
-                      //         // if (input.isEmpty)
-                      //         //   return const Iterable<String>.empty();
-
-                      //         // if (input.length == 10) {
-                      //         //   return phoneSuggestions
-                      //         //       .where((option) => option.contains(input));
-                      //         // }
-                      //         // return const Iterable<String>.empty();
-                      //       },
-                      //       fieldViewBuilder: (context, textEditingController,
-                      //           focusNode, onFieldSubmitted) {
-                      //         return TextFormField(
-                      //           controller: textEditingController,
-                      //           focusNode: focusNode,
-                      //           keyboardType: TextInputType.phone,
-                      //           inputFormatters: [
-                      //             FilteringTextInputFormatter.allow(
-                      //                 RegExp(r'[0-9]')),
-                      //             LengthLimitingTextInputFormatter(10),
-                      //           ],
-                      //           decoration: InputDecoration(
-                      //             hintText: "Enter recipient's phone number",
-                      //             suffixIcon: const Icon(Icons.arrow_drop_down,
-                      //                 color: Color(0xFF6E7373)),
-                      //             filled: true,
-                      //             fillColor: Colors.white,
-                      //             contentPadding: const EdgeInsets.symmetric(
-                      //                 vertical: 10, horizontal: 20),
-                      //             enabledBorder: OutlineInputBorder(
-                      //               borderRadius: BorderRadius.circular(50),
-                      //               borderSide: BorderSide(
-                      //                   color: Colors.grey.shade300, width: 1),
-                      //             ),
-                      //             focusedBorder: OutlineInputBorder(
-                      //               borderRadius: BorderRadius.circular(50),
-                      //               borderSide: const BorderSide(
-                      //                   color: Color(0xFF9ECF9A), width: 1),
-                      //             ),
-                      //             hintStyle: GoogleFonts.poppins(
-                      //               color: const Color(0xFF6E7373),
-                      //               fontSize: 14,
-                      //             ),
-                      //           ),
-                      //           onChanged: (val) {
-                      //             // print(val);
-                      //             if (_showPhoneError &&
-                      //                 val.trim().length == 10) {
-                      //               setState(() => _showPhoneError = false);
-                      //             }
-
-                      //             if (val.trim().length == 10) {
-                      //               // fetchUserDetailsByPhone(val.trim());
-                      //               fetchUserPhoneSuggestions(val.trim());
-                      //             }
-                      //           },
-                      //           onFieldSubmitted: (_) => onFieldSubmitted(),
-                      //         );
-                      //       },
-                      //       optionsViewBuilder: (context, onSelected, options) {
-                      //         const double itemHeight = 40.0;
-                      //         final double listHeight =
-                      //             (options.length * itemHeight)
-                      //                 .clamp(0, 180)
-                      //                 .toDouble();
-
-                      //         return Align(
-                      //           alignment: Alignment.topLeft,
-                      //           child: Material(
-                      //             elevation: 4,
-                      //             borderRadius: BorderRadius.circular(10),
-                      //             child: ConstrainedBox(
-                      //               constraints: BoxConstraints(
-                      //                 // ✅ constraints is now available from LayoutBuilder
-                      //                 maxWidth: constraints.maxWidth,
-                      //                 maxHeight: listHeight,
-                      //               ),
-                      //               child: ListView.builder(
-                      //                 padding: EdgeInsets.zero,
-                      //                 shrinkWrap: true,
-                      //                 physics: const ClampingScrollPhysics(),
-                      //                 itemCount: options.length,
-                      //                 itemBuilder: (context, index) {
-                      //                   final option = options.elementAt(index);
-                      //                   return SizedBox(
-                      //                     height: itemHeight,
-                      //                     child: ListTile(
-                      //                       dense: true,
-                      //                       minVerticalPadding: 0,
-                      //                       visualDensity:
-                      //                           VisualDensity.compact,
-                      //                       title: Text(
-                      //                         option,
-                      //                         style: GoogleFonts.poppins(
-                      //                           fontSize: 14,
-                      //                           color: const Color(0xFF2A4768),
-                      //                         ),
-                      //                       ),
-                      //                       onTap: () {
-                      //                         onSelected(
-                      //                             option.split(' - ')[0]);
-                      //                         fetchUserDetailsByPhone(
-                      //                             option.split(' - ')[0]);
-                      //                       },
-                      //                     ),
-                      //                   );
-                      //                 },
-                      //               ),
-                      //             ),
-                      //           ),
-                      //         );
-                      //       },
-                      //     );
-                      //   },
-                      // ),
 
                       _buildErrorHint(phoneError, _showPhoneError),
                       const SizedBox(height: 15),
@@ -1199,7 +1022,6 @@ class ParchaseGiftCardTwoPageState extends State<ParchaseGiftCardTwoPage>
                                               ),
                                             ),
                                             onTap: () => {
-                                              print('email option selected'),
                                               onSelected(option),
                                               fetchUserDetailsByEmail(option),
                                             },
