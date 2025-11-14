@@ -1,4 +1,4 @@
-package com.example.gulf_app
+package com.driverpos.gulf_app
 
 import io.flutter.embedding.android.FlutterActivity
 
