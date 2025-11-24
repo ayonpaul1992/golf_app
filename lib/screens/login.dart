@@ -1,4 +1,4 @@
-// ignore_for_file: deprecated_member_use
+// ignore_for_file: deprecated_member_use, use_build_context_synchronously
 
 import 'dart:convert';
 import 'dart:io';
@@ -6,6 +6,7 @@ import 'package:driver_pos/services/api_config.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '/screens/dashboard.dart';
 import 'package:http/http.dart' as http;
 import '/components/userentry_app_bar.dart';
@@ -17,6 +18,8 @@ import 'package:crypto/crypto.dart';
 import 'package:cryptography/cryptography.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/services.dart';
+
+import '../services/biometric_auth.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -162,6 +165,58 @@ class LoginPageState extends State<LoginPage> {
                 },
               ),
             );
+
+            print('Login successful. User ID: $userId');
+
+            SharedPreferences prefs = await SharedPreferences.getInstance();
+
+            bool setupDone = prefs.getBool('biometric_setup_done') ?? false;
+
+            if (!setupDone) {
+              final enableBiometric = await showDialog<bool>(
+                context: context,
+                builder: (ctx) => AlertDialog(
+                  title: const Text("Enable Biometric Login?"),
+                  content: const Text(
+                    "Would you like to use fingerprint or face ID to quickly log in next time?",
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(ctx, false),
+                      child: const Text("No"),
+                    ),
+                    ElevatedButton(
+                      onPressed: () => Navigator.pop(ctx, true),
+                      child: const Text("Yes"),
+                    ),
+                  ],
+                ),
+              );
+
+              final prefs = await SharedPreferences.getInstance();
+
+              if (enableBiometric == true) {
+                final biometric = BiometricAuth();
+                final success = await biometric.enableBiometricAuth();
+
+                if (success) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("Biometric login enabled"),
+                    ),
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("Failed to enable biometric login"),
+                    ),
+                  );
+                }
+              }
+
+              // Mark that the setup prompt was shown (regardless of user choice)
+              await prefs.setBool('biometric_setup_done', true);
+            }
           }
 
           _showMessage(data['message'] ?? 'Logged in successfully');

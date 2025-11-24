@@ -1,8 +1,8 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'dart:io';
-
 import 'package:driver_pos/screens/congratulations.dart';
+import 'package:driver_pos/screens/startup_gate.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -19,10 +19,8 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 import 'services/deep_link_service.dart';
-
 import 'services/biometric_auth.dart';
 
-// Use our custom observer globally
 final RouteObserver<PageRoute> routeObserver = TokenRouteObserver();
 final GlobalKey<ScaffoldMessengerState> rootScaffoldMessengerKey =
     GlobalKey<ScaffoldMessengerState>();
@@ -43,7 +41,6 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  // Handle background messages
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
   await dotenv.load(fileName: ".env");
@@ -51,69 +48,24 @@ Future<void> main() async {
   await SentryFlutter.init(
     (options) {
       options.dsn = dotenv.env['SENTRY_DSN'];
-      // Replace with your actual DSN from Sentry
       options.sendDefaultPii = true;
       options.enableLogs = true;
-
-      options.tracesSampleRate =
-          1.0; // capture 100% of transactions (adjust for production)
+      options.tracesSampleRate = 1.0;
     },
-    // appRunner: () => runApp(MyApp()),
-
     appRunner: () => runApp(
       SentryWidget(
         child: MyApp(),
       ),
     ),
   );
-
-  // runApp(const MyApp());
 }
 
 bool isRealDevice() {
-  // Simulator always has environment variable SIMULATOR_DEVICE_NAME
   return !Platform.environment.containsKey('SIMULATOR_DEVICE_NAME');
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
-  Future<Widget> _getInitialScreen() async {
-    final storage = const FlutterSecureStorage();
-    final isLoggedIn = await storage.read(key: 'isLoggedIn');
-    final token = await storage.read(key: 'accessToken');
-
-    if (isLoggedIn == 'true' && token != null) {
-      // Check biometrics
-      final bio = BiometricAuth();
-      final isBioEnabled = await bio.isBiometricEnabled();
-
-      if (isBioEnabled) {
-        final authenticated = await bio.authenticate(
-          reason: "Authenticate to continue",
-        );
-
-        if (!authenticated) {
-          return const LoginPage(); // fallback
-        }
-      }
-
-      return const DashboardPage();
-    }
-
-    return const SplashScreen();
-  }
-
-  // Future<Widget> _getInitialScreen() async {
-  //   final storage = const FlutterSecureStorage();
-  //   final isLoggedIn = await storage.read(key: 'isLoggedIn');
-  //   final token = await storage.read(key: 'accessToken');
-
-  //   if (isLoggedIn == 'true' && token != null) {
-  //     return const DashboardPage();
-  //   }
-  //   return const SplashScreen();
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -123,7 +75,7 @@ class MyApp extends StatelessWidget {
       ),
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        scaffoldMessengerKey: rootScaffoldMessengerKey, // ✅ global snackbar key
+        scaffoldMessengerKey: rootScaffoldMessengerKey,
         navigatorKey: navigatorKey,
         navigatorObservers: [routeObserver],
         routes: {
@@ -133,22 +85,87 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           textTheme: GoogleFonts.poppinsTextTheme(),
         ),
-        home: FutureBuilder<Widget>(
-          future: _getInitialScreen(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const SplashScreen();
-            } else if (snapshot.hasData) {
-              // ✅ Initialize deep links after app starts
-              Future.microtask(() {
-                deepLinkService.initDeepLinks();
-              });
-              return snapshot.data!;
-            }
-            return const LoginPage();
-          },
-        ),
+        // home: const BiometricSplashGate(),
+        home: const StartupGate(),
       ),
+    );
+  }
+}
+
+//////////////////////////////////////////////////////////////////
+/// BIOMETRIC SPLASH GATE → Forces biometrics before dashboard ///
+//////////////////////////////////////////////////////////////////
+
+class BiometricSplashGate extends StatefulWidget {
+  const BiometricSplashGate({super.key});
+
+  @override
+  State<BiometricSplashGate> createState() => _BiometricSplashGateState();
+}
+
+class _BiometricSplashGateState extends State<BiometricSplashGate> {
+  final bio = BiometricAuth();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _startAppFlow();
+    });
+  }
+
+  Future<void> _startAppFlow() async {
+    final storage = const FlutterSecureStorage();
+    final isLoggedIn = await storage.read(key: 'isLoggedIn') == 'true';
+    final token = await storage.read(key: 'accessToken');
+
+    // ---------------------------------------------
+    // USER NOT LOGGED IN → GO TO LOGIN
+    // ---------------------------------------------
+    if (!isLoggedIn || token == null) {
+      _goTo(const LoginPage());
+      return;
+    }
+
+    // ---------------------------------------------
+    // USER LOGGED IN → BIOMETRIC CHECK IF ENABLED
+    // ---------------------------------------------
+    final enabled = await bio.isBiometricEnabled();
+
+    if (enabled) {
+      final ok = await bio.authenticate(
+        reason: "Authenticate to continue",
+      );
+
+      if (!ok) {
+        print("Biometric failed → going to Login");
+        _goTo(const LoginPage());
+        return;
+      }
+    }
+
+    // ---------------------------------------------
+    // AUTH OK → PROCEED TO DASHBOARD
+    // ---------------------------------------------
+    _goTo(const DashboardPage());
+
+    Future.microtask(() {
+      deepLinkService.initDeepLinks();
+    });
+  }
+
+  void _goTo(Widget page) {
+    if (!mounted) return;
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => page),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(
+      body: Center(child: CircularProgressIndicator()),
     );
   }
 }
