@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:driver_pos/screens/congratulations.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -94,7 +95,10 @@ class MyApp extends StatelessWidget {
         );
 
         if (!authenticated) {
-          return const LoginPage(); // fallback
+          // return const LoginPage(); // fallback
+          Future.delayed(const Duration(milliseconds: 100), () {
+            SystemNavigator.pop(); // Fully closes the app
+          });
         }
       }
 

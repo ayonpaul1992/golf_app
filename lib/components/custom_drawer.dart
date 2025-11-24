@@ -8,6 +8,7 @@ import 'package:driver_pos/screens/parchase_giftcard_one.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '/screens/dashboard.dart';
 import '/screens/login.dart';
 import '/screens/my_profile.dart';
@@ -371,6 +372,9 @@ class _CustomDrawerState extends State<CustomDrawer> {
                               return;
                             }
                             await secureStorage.deleteAll();
+                            final prefs = await SharedPreferences.getInstance();
+                            prefs.remove('biometric_setup_done');
+                            prefs.remove('isBiometricEnabled');
                             if (!mounted) return;
                             Navigator.pushAndRemoveUntil(
                               context,

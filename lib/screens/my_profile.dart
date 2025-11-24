@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'package:driver_pos/services/api_config.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '/main.dart';
 import '/screens/login.dart';
@@ -1188,6 +1189,10 @@ class MyProfilePageState extends State<MyProfilePage> with RouteAware {
                                   return;
                                 }
                                 await secureStorage.deleteAll();
+                                final prefs =
+                                    await SharedPreferences.getInstance();
+                                prefs.remove('biometric_setup_done');
+                                prefs.remove('isBiometricEnabled');
                                 if (!mounted) return;
                                 Navigator.pushAndRemoveUntil(
                                   context,
