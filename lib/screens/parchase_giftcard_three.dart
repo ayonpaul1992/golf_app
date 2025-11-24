@@ -162,7 +162,7 @@ class ParchaseGiftCardThreePageState extends State<ParchaseGiftCardThreePage>
         },
       ),
       drawer: CustomDrawer(
-        activeTile: 'Home',
+        activeTile: 'Purchase Gift Card',
         onTileTap: (selectedTile) {
           // Handle navigation logic
         },

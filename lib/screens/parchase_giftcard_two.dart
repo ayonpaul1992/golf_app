@@ -554,7 +554,7 @@ class ParchaseGiftCardTwoPageState extends State<ParchaseGiftCardTwoPage>
         onBackPressed: () => Navigator.pop(context),
       ),
       drawer: CustomDrawer(
-        activeTile: 'Home',
+        activeTile: 'Purchase Gift Card',
         onTileTap: (selectedTile) {
           // Your navigation logic here
         },
