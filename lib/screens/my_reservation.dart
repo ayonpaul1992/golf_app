@@ -396,10 +396,11 @@ class MyReservationPageState extends State<MyReservationPage> {
                                     else
                                       ...reservations.map((reservation) {
                                         final courseName =
-                                            reservation['golfCourse'] ??
+                                            reservation['golfCourse']['name'] ??
                                                 'Unknown Course';
                                         final courseLogo =
-                                            reservation['golfCourseLogo'];
+                                            reservation['golfCourse']
+                                                ['logo'];
                                         final bookingDateRaw =
                                             reservation['date'];
                                         final bookingTimeRaw =

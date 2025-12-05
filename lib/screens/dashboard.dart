@@ -840,9 +840,9 @@ class DashboardPageState extends State<DashboardPage> {
                                                                             Center(
                                                                           child:
                                                                               Image(
-                                                                            image: upcomingTeeTime!['golfCourseLogo'] != null
+                                                                            image: upcomingTeeTime!['golfCourse']['logo'] != null
                                                                                 ? NetworkImage(
-                                                                                    upcomingTeeTime!['golfCourseLogo'],
+                                                                                    upcomingTeeTime!['golfCourse']['logo'],
                                                                                   )
                                                                                 : const AssetImage(
                                                                                     "assets/images/bkdu2.png",
@@ -884,7 +884,7 @@ class DashboardPageState extends State<DashboardPage> {
                                                                             ),
                                                                             const SizedBox(height: 5),
                                                                             Text(
-                                                                              upcomingTeeTime!['golfCourse'],
+                                                                              upcomingTeeTime!['golfCourse']['name'],
                                                                               style: GoogleFonts.poppins(
                                                                                 color: const Color(0xFF244065),
                                                                                 fontSize: 13,
