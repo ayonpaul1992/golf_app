@@ -76,8 +76,21 @@ bool isRealDevice() {
   return !Platform.environment.containsKey('SIMULATOR_DEVICE_NAME');
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  late Future<Widget> _initialScreenFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _initialScreenFuture = _getInitialScreen();
+  }
 
   Future<Widget> _getInitialScreen() async {
     final storage = const FlutterSecureStorage();
@@ -85,7 +98,6 @@ class MyApp extends StatelessWidget {
     final token = await storage.read(key: 'accessToken');
 
     if (isLoggedIn == 'true' && token != null) {
-      // Check biometrics
       final bio = BiometricAuth();
       final isBioEnabled = await bio.isBiometricEnabled();
 
@@ -95,9 +107,8 @@ class MyApp extends StatelessWidget {
         );
 
         if (!authenticated) {
-          // return const LoginPage(); // fallback
           Future.delayed(const Duration(milliseconds: 100), () {
-            SystemNavigator.pop(); // Fully closes the app
+            SystemNavigator.pop();
           });
         }
       }
@@ -108,51 +119,114 @@ class MyApp extends StatelessWidget {
     return const SplashScreen();
   }
 
-  // Future<Widget> _getInitialScreen() async {
-  //   final storage = const FlutterSecureStorage();
-  //   final isLoggedIn = await storage.read(key: 'isLoggedIn');
-  //   final token = await storage.read(key: 'accessToken');
-
-  //   if (isLoggedIn == 'true' && token != null) {
-  //     return const DashboardPage();
-  //   }
-  //   return const SplashScreen();
-  // }
-
   @override
   Widget build(BuildContext context) {
-    return MediaQuery(
-      data: MediaQuery.of(context).copyWith(
-        textScaler: const TextScaler.linear(1.0),
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      scaffoldMessengerKey: rootScaffoldMessengerKey,
+      navigatorKey: navigatorKey,
+      navigatorObservers: [routeObserver],
+      routes: {
+        '/payment-success': (context) => const CongratulationsPage(cngsId: ''),
+      },
+      theme: ThemeData(
+        textTheme: GoogleFonts.poppinsTextTheme(),
       ),
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        scaffoldMessengerKey: rootScaffoldMessengerKey, // ✅ global snackbar key
-        navigatorKey: navigatorKey,
-        navigatorObservers: [routeObserver],
-        routes: {
-          '/payment-success': (context) =>
-              const CongratulationsPage(cngsId: ''),
+      home: FutureBuilder<Widget>(
+        future: _initialScreenFuture, // 🔥 now stable
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const SplashScreen();
+          } else if (snapshot.hasData) {
+            Future.microtask(() {
+              deepLinkService.initDeepLinks();
+            });
+            return snapshot.data!;
+          }
+          return const LoginPage();
         },
-        theme: ThemeData(
-          textTheme: GoogleFonts.poppinsTextTheme(),
-        ),
-        home: FutureBuilder<Widget>(
-          future: _getInitialScreen(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const SplashScreen();
-            } else if (snapshot.hasData) {
-              // ✅ Initialize deep links after app starts
-              Future.microtask(() {
-                deepLinkService.initDeepLinks();
-              });
-              return snapshot.data!;
-            }
-            return const LoginPage();
-          },
-        ),
       ),
     );
   }
 }
+
+// class MyApp extends StatelessWidget {
+//   const MyApp({super.key});
+
+//   Future<Widget> _getInitialScreen() async {
+//     final storage = const FlutterSecureStorage();
+//     final isLoggedIn = await storage.read(key: 'isLoggedIn');
+//     final token = await storage.read(key: 'accessToken');
+
+//     if (isLoggedIn == 'true' && token != null) {
+//       // Check biometrics
+//       final bio = BiometricAuth();
+//       final isBioEnabled = await bio.isBiometricEnabled();
+
+//       if (isBioEnabled) {
+//         final authenticated = await bio.authenticate(
+//           reason: "Authenticate to continue",
+//         );
+
+//         if (!authenticated) {
+//           // return const LoginPage(); // fallback
+//           Future.delayed(const Duration(milliseconds: 100), () {
+//             SystemNavigator.pop(); // Fully closes the app
+//           });
+//         }
+//       }
+
+//       return const DashboardPage();
+//     }
+
+//     return const SplashScreen();
+//   }
+
+//   // Future<Widget> _getInitialScreen() async {
+//   //   final storage = const FlutterSecureStorage();
+//   //   final isLoggedIn = await storage.read(key: 'isLoggedIn');
+//   //   final token = await storage.read(key: 'accessToken');
+
+//   //   if (isLoggedIn == 'true' && token != null) {
+//   //     return const DashboardPage();
+//   //   }
+//   //   return const SplashScreen();
+//   // }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return MediaQuery(
+//       data: MediaQuery.of(context).copyWith(
+//         textScaler: const TextScaler.linear(1.0),
+//       ),
+//       child: MaterialApp(
+//         debugShowCheckedModeBanner: false,
+//         scaffoldMessengerKey: rootScaffoldMessengerKey, // ✅ global snackbar key
+//         navigatorKey: navigatorKey,
+//         navigatorObservers: [routeObserver],
+//         routes: {
+//           '/payment-success': (context) =>
+//               const CongratulationsPage(cngsId: ''),
+//         },
+//         theme: ThemeData(
+//           textTheme: GoogleFonts.poppinsTextTheme(),
+//         ),
+//         home: FutureBuilder<Widget>(
+//           future: _getInitialScreen(),
+//           builder: (context, snapshot) {
+//             if (snapshot.connectionState == ConnectionState.waiting) {
+//               return const SplashScreen();
+//             } else if (snapshot.hasData) {
+//               // ✅ Initialize deep links after app starts
+//               Future.microtask(() {
+//                 deepLinkService.initDeepLinks();
+//               });
+//               return snapshot.data!;
+//             }
+//             return const LoginPage();
+//           },
+//         ),
+//       ),
+//     );
+//   }
+// }

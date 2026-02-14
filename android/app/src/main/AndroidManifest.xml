@@ -44,10 +44,7 @@
             android:hardwareAccelerated="true"
             android:windowSoftInputMode="adjustResize"
 
-            android:alwaysRetainTaskState="false"
-            android:clearTaskOnLaunch="true"
-            android:finishOnTaskLaunch="true"
-
+           
             
             
             >
@@ -89,3 +86,8 @@
         </intent>
     </queries>
 </manifest>
+
+<!-- 
+ android:alwaysRetainTaskState="false"
+            android:clearTaskOnLaunch="true"
+            android:finishOnTaskLaunch="true" -->

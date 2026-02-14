@@ -145,44 +145,72 @@ class DashboardPageState extends State<DashboardPage> {
     return Color(int.parse(buffer.toString(), radix: 16));
   }
 
+  // @override
   @override
   void initState() {
     super.initState();
-    isLoading = true; // Set loading state to true initially
+    isLoading = true;
 
     print("No pending deep link to handle.");
+
     _loadUserName();
     _loadWeather();
-    fetchUpcomingTeeTime().then((teeTime) {
-      if (teeTime != null) {
-        // Handle the fetched tee time if needed
-        setState(() {
-          upcomingTeeTime = teeTime;
-        });
-        // print("Upcoming Tee Time: $teeTime");
-      } else {
-        print("No upcoming tee time found.");
-      }
-
-      setState(() {
-        isLoading = false; // Set loading state to false after fetching
-      });
-    });
-
-    // check for cached deep link and print if present
-    // DeepLinkService.checkInitialLink();
-    // final isLinkPending = DeepLinkService.isLinkPending;
-
-    // print("✅ DashboardPage initState - isLinkPending: $isLinkPending");
-    // if (isLinkPending) {
-    //   WidgetsBinding.instance.addPostFrameCallback((_) {
-    //     _handleDeepLink();
-    //     DeepLinkService.clearCachedLink();
-    //   });
-    // } else {
-
-    // }
+    _loadTeeTime();
   }
+
+  Future<void> _loadTeeTime() async {
+    final teeTime = await fetchUpcomingTeeTime();
+
+    if (!mounted) return;
+
+    if (teeTime != null) {
+      upcomingTeeTime = teeTime;
+    } else {
+      print("No upcoming tee time found.");
+    }
+
+    setState(() {
+      isLoading = false;
+    });
+  }
+
+  // void initState() {
+  //   super.initState();
+  //   isLoading = true; // Set loading state to true initially
+
+  //   print("No pending deep link to handle.");
+  //   _loadUserName();
+  //   _loadWeather();
+  //   fetchUpcomingTeeTime().then((teeTime) {
+  //     if (teeTime != null) {
+  //       // Handle the fetched tee time if needed
+  //       setState(() {
+  //         upcomingTeeTime = teeTime;
+  //       });
+  //       // print("Upcoming Tee Time: $teeTime");
+  //     } else {
+  //       print("No upcoming tee time found.");
+  //     }
+
+  //     setState(() {
+  //       isLoading = false; // Set loading state to false after fetching
+  //     });
+  //   });
+
+  //   // check for cached deep link and print if present
+  //   // DeepLinkService.checkInitialLink();
+  //   // final isLinkPending = DeepLinkService.isLinkPending;
+
+  //   // print("✅ DashboardPage initState - isLinkPending: $isLinkPending");
+  //   // if (isLinkPending) {
+  //   //   WidgetsBinding.instance.addPostFrameCallback((_) {
+  //   //     _handleDeepLink();
+  //   //     DeepLinkService.clearCachedLink();
+  //   //   });
+  //   // } else {
+
+  //   // }
+  // }
 
   void _handleDeepLink() {
     Navigator.push(
