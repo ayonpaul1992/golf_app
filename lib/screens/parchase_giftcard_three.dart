@@ -156,7 +156,7 @@ class ParchaseGiftCardThreePageState extends State<ParchaseGiftCardThreePage>
         scaffoldKey: _scaffoldKey,
         userId: widget.golfCourseId,
         showLeading: true,
-        isOnProfilePage: true,
+        isOnProfilePage: false,
         onBackPressed: () {
           Navigator.pop(context);
         },

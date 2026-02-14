@@ -228,7 +228,7 @@ class ParchaseGiftCardOnePageState extends State<ParchaseGiftCardOnePage>
         scaffoldKey: _scaffoldKey,
         userId: '',
         showLeading: true,
-        isOnProfilePage: true,
+        isOnProfilePage: false,
         onBackPressed: () {
           Navigator.pop(context);
         },

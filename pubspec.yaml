@@ -18,10 +18,10 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 # of the product and file versions while build-number is used as the build suffix.
 
 # for ios
-# version: 1.0.11
+version: 1.0.12
 
 # for android
-version: 1.0.0+7
+# version: 1.0.0+7
 
 environment:
   sdk: ^3.6.1
@@ -38,7 +38,7 @@ dependencies:
 
   cupertino_icons: ^1.0.8
   http: ^1.3.0
-  google_fonts: ^6.2.1
+  google_fonts: any
   shared_preferences: ^2.5.3
   flutter_secure_storage: ^9.2.4
   pin_code_fields: ^8.0.1
@@ -65,13 +65,11 @@ dependencies:
   firebase_messaging: ^16.0.0
   pull_to_refresh_flutter3: ^2.0.2
   flutter_dotenv: ^6.0.0
-  sentry_flutter: ^9.6.0
+  sentry_flutter: any
   flutter_inappwebview: ^6.1.5
   app_links: ^6.4.1
   go_router: ^16.1.0
   local_auth: ^2.3.0
-
-  # sentry_flutter: ^9.6.0
 
 dev_dependencies:
   flutter_test:

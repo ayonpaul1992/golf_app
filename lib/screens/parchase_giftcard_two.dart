@@ -550,7 +550,7 @@ class ParchaseGiftCardTwoPageState extends State<ParchaseGiftCardTwoPage>
         scaffoldKey: _scaffoldKey,
         userId: '',
         showLeading: true,
-        isOnProfilePage: true,
+        isOnProfilePage: false,
         onBackPressed: () => Navigator.pop(context),
       ),
       drawer: CustomDrawer(
