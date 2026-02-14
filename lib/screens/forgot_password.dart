@@ -197,7 +197,7 @@ class ForgotPasswordPageState extends State<ForgotPasswordPage> {
                                           fontSize: 14,
                                         ),
                                       ),
-                                      keyboardType: TextInputType.phone,
+                                      keyboardType: TextInputType.emailAddress,
                                       style: const TextStyle(
                                         color: Color(0xFF244065),
                                         fontWeight: FontWeight.w600,

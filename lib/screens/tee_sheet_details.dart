@@ -237,6 +237,7 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
   }
 
   void _onFocusChange() {
+    // print('Focus changed. Current states:');
     setState(() {}); // Rebuild to update border color
   }
 
