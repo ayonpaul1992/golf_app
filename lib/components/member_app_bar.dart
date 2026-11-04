@@ -1,9 +1,10 @@
+import 'package:driver_pos/theme/app_theme.dart';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:http/http.dart' as http;
+import 'package:driver_pos/services/api_http.dart' as http;
 
 class MemberShipAppBar extends StatefulWidget implements PreferredSizeWidget {
   final GlobalKey<ScaffoldState> scaffoldKey;
@@ -154,7 +155,7 @@ class _MemberShipAppBarState extends State<MemberShipAppBar> {
                           borderRadius: BorderRadius.circular(100),
                           border: Border.all(
                             color:
-                                const Color(0xFFE2E4E4), // 👈 your border color
+                                AppColors.outline, // 👈 your border color
                             width: 1.5, // 👈 border width
                           ),
                         ),
@@ -178,7 +179,7 @@ class _MemberShipAppBarState extends State<MemberShipAppBar> {
                       title: Text(
                         golfCourseName,
                         style: GoogleFonts.poppins(
-                          color: const Color(0xFF244065),
+                          color: AppColors.ink,
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
                         ),
@@ -189,7 +190,7 @@ class _MemberShipAppBarState extends State<MemberShipAppBar> {
                       },
                     ),
                     const Divider(
-                      color: Color(0xFFE2E4E4),
+                      color: AppColors.outline,
                     ),
                     ...allGolfCourses.map((course) {
                       if (course['name'] == golfCourseName) {
@@ -207,7 +208,7 @@ class _MemberShipAppBarState extends State<MemberShipAppBar> {
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(100),
                                 border: Border.all(
-                                  color: const Color(0xFFE2E4E4),
+                                  color: AppColors.outline,
                                   width: 1.5,
                                 ),
                               ),
@@ -236,7 +237,7 @@ class _MemberShipAppBarState extends State<MemberShipAppBar> {
                             title: Text(
                               name,
                               style: GoogleFonts.poppins(
-                                color: const Color(0xFF244065),
+                                color: AppColors.ink,
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
                               ),
@@ -247,7 +248,7 @@ class _MemberShipAppBarState extends State<MemberShipAppBar> {
                             },
                           ),
                           const Divider(
-                            color: Color(0xFFE2E4E4),
+                            color: AppColors.outline,
                           ),
                         ],
                       );
@@ -277,7 +278,7 @@ class _MemberShipAppBarState extends State<MemberShipAppBar> {
       backgroundColor: Colors.white,
       leading: widget.showLeading
           ? IconButton(
-              icon: const Icon(Icons.arrow_back_ios, color: Color(0xFF9ECF9A)),
+              icon: const Icon(Icons.arrow_back_ios, color: AppColors.primary),
               onPressed: widget.onBackPressed ??
                   () {
                     if (Navigator.of(context).canPop()) {
@@ -286,7 +287,7 @@ class _MemberShipAppBarState extends State<MemberShipAppBar> {
                   },
             )
           : IconButton(
-              icon: const Icon(Icons.menu, color: Color(0xFF9ECF9A)),
+              icon: const Icon(Icons.menu, color: AppColors.primary),
               onPressed: () {
                 widget.scaffoldKey.currentState?.openDrawer();
               },
@@ -298,7 +299,7 @@ class _MemberShipAppBarState extends State<MemberShipAppBar> {
             golfCourseName,
             textAlign: TextAlign.center,
             style: GoogleFonts.poppins(
-              color: const Color(0xFF244065),
+              color: AppColors.ink,
               fontSize: 14,
               fontWeight: FontWeight.w600,
             ),
@@ -307,7 +308,7 @@ class _MemberShipAppBarState extends State<MemberShipAppBar> {
             'Membership Plans',
             textAlign: TextAlign.center,
             style: GoogleFonts.poppins(
-              color: const Color(0xFF6E7373),
+              color: AppColors.textMuted,
               fontSize: 12,
               fontWeight: FontWeight.w400,
             ),
@@ -351,7 +352,7 @@ class _MemberShipAppBarState extends State<MemberShipAppBar> {
                     ? Icons.keyboard_arrow_up_sharp
                     : Icons.keyboard_arrow_down_sharp,
                 size: 20,
-                color: const Color(0xFF669933),
+                color: AppColors.accent,
               ),
               const SizedBox(width: 10),
             ],

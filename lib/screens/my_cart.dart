@@ -1,19 +1,15 @@
+import 'package:driver_pos/repositories/feature_repositories.dart';
+import 'package:driver_pos/theme/app_theme.dart';
 // ignore_for_file: deprecated_member_use, use_build_context_synchronously
 import 'dart:async';
-import 'dart:convert';
 // import 'package:flutter/cupertino.dart';
-import 'package:driver_pos/services/api_config.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '/screens/my_reservation.dart';
-import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '/components/custom_app_bar.dart';
 import '/components/custom_drawer.dart';
 import '/components/custom_bottom_nav_bar.dart';
-import 'package:intl/intl.dart';
-import 'package:crypto/crypto.dart';
-import 'package:cryptography/cryptography.dart';
 
 class MyCartPage extends StatefulWidget {
   final String myCartId;
@@ -87,22 +83,12 @@ class MyCartPageState extends State<MyCartPage> {
       isLoading = true;
     });
     try {
-      String token = await secureStorage.read(key: 'accessToken') ?? '';
 
-      final String baseUrl = ApiConfig.baseUrl;
 
-      final response = await http.get(
-        Uri.parse(
-          '$baseUrl/sales/customer',
-        ),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token', // if needed
-        },
-      );
+      final response = await checkoutRepository.summary();
 
       if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
+        final data = response.json;
 
         final responseData = data['data'];
         bookingDate = responseData['teesheet']['date'] ?? '';
@@ -144,7 +130,6 @@ class MyCartPageState extends State<MyCartPage> {
         });
       } else {
         // Handle API error
-        print('❌ API Error: ${response.body}');
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Failed to fetch cart'),
@@ -181,14 +166,14 @@ class MyCartPageState extends State<MyCartPage> {
           ? const Center(
               child: CircularProgressIndicator(
                 valueColor: AlwaysStoppedAnimation<Color>(
-                  Color(0xFF9ECF9A),
+                  AppColors.primary,
                 ),
               ),
             )
           : Padding(
               padding: const EdgeInsets.symmetric(),
               child: Container(
-                color: const Color(0xFFFAFCFA),
+                color: AppColors.pageBackground,
                 width: double.infinity,
                 height: double.infinity,
                 child: SingleChildScrollView(
@@ -206,7 +191,7 @@ class MyCartPageState extends State<MyCartPage> {
                             Container(
                               width: 40,
                               height: 1.1,
-                              color: const Color(0xFFB2C1C0),
+                              color: AppColors.border,
                             ),
                             const SizedBox(
                               width: 10,
@@ -214,7 +199,7 @@ class MyCartPageState extends State<MyCartPage> {
                             Text(
                               "My Cart",
                               style: GoogleFonts.poppins(
-                                  color: const Color(0xFF244065),
+                                  color: AppColors.ink,
                                   fontSize: 22,
                                   fontWeight: FontWeight.w600),
                             ),
@@ -224,7 +209,7 @@ class MyCartPageState extends State<MyCartPage> {
                             Container(
                               width: 40,
                               height: 1.1,
-                              color: const Color(0xFFB2C1C0),
+                              color: AppColors.border,
                             ),
                           ],
                         )),
@@ -238,14 +223,14 @@ class MyCartPageState extends State<MyCartPage> {
                         children: [
                           Container(
                             decoration: BoxDecoration(
-                              color: const Color(0xFFFFFFFF),
+                              color: AppColors.surface,
                               border: Border.all(
-                                  color: const Color(0xFF9ECF9A), width: 1.5),
+                                  color: AppColors.primary, width: 1.5),
                               borderRadius: BorderRadius.circular(15),
                               boxShadow: [
                                 BoxShadow(
-                                  color: const Color(0xFF9ECF9A)
-                                      .withOpacity(0.2), // soft shadow
+                                  color: AppColors.primary
+                                      .withValues(alpha: 0.2), // soft shadow
                                   spreadRadius: 2,
                                   blurRadius: 20,
                                   offset: const Offset(
@@ -258,7 +243,7 @@ class MyCartPageState extends State<MyCartPage> {
                                 Container(
                                   width: double.infinity,
                                   decoration: const BoxDecoration(
-                                    color: Color(0xFFF8F8F8),
+                                    color: AppColors.surfaceMuted,
                                     borderRadius: BorderRadius.only(
                                       topLeft: Radius.circular(15),
                                       topRight: Radius.circular(15),
@@ -275,7 +260,7 @@ class MyCartPageState extends State<MyCartPage> {
                                           Text(
                                             "Booking Details",
                                             style: GoogleFonts.poppins(
-                                              color: const Color(0xFF244065),
+                                              color: AppColors.ink,
                                               fontSize: 13,
                                               fontWeight: FontWeight.w600,
                                             ),
@@ -283,7 +268,7 @@ class MyCartPageState extends State<MyCartPage> {
                                           Text(
                                             _formatDuration(_remaining),
                                             style: GoogleFonts.poppins(
-                                              color: const Color(0xFFDB0606),
+                                              color: AppColors.error,
                                               fontSize: 13,
                                               fontWeight: FontWeight.w600,
                                             ),
@@ -304,14 +289,14 @@ class MyCartPageState extends State<MyCartPage> {
                                       Text(
                                         "Date & Time:",
                                         style: GoogleFonts.poppins(
-                                            color: const Color(0xFF6E7373),
+                                            color: AppColors.textMuted,
                                             fontSize: 13,
                                             fontWeight: FontWeight.w500),
                                       ),
                                       Text(
                                         "$fomattedBookingDate, $bookingTime",
                                         style: GoogleFonts.poppins(
-                                            color: const Color(0xFF244065),
+                                            color: AppColors.ink,
                                             fontSize: 13,
                                             fontWeight: FontWeight.w600),
                                       ),
@@ -329,14 +314,14 @@ class MyCartPageState extends State<MyCartPage> {
                                       Text(
                                         "Golf Course:",
                                         style: GoogleFonts.poppins(
-                                            color: const Color(0xFF6E7373),
+                                            color: AppColors.textMuted,
                                             fontSize: 13,
                                             fontWeight: FontWeight.w500),
                                       ),
                                       Text(
                                         golfCourseName,
                                         style: GoogleFonts.poppins(
-                                            color: const Color(0xFF244065),
+                                            color: AppColors.ink,
                                             fontSize: 13,
                                             fontWeight: FontWeight.w600),
                                       ),
@@ -356,14 +341,14 @@ class MyCartPageState extends State<MyCartPage> {
                                           Text(
                                             "Rotation:",
                                             style: GoogleFonts.poppins(
-                                                color: const Color(0xFF6E7373),
+                                                color: AppColors.textMuted,
                                                 fontSize: 13,
                                                 fontWeight: FontWeight.w500),
                                           ),
                                           Text(
                                             rotation,
                                             style: GoogleFonts.poppins(
-                                                color: const Color(0xFF244065),
+                                                color: AppColors.ink,
                                                 fontSize: 13,
                                                 fontWeight: FontWeight.w600),
                                           ),
@@ -375,14 +360,14 @@ class MyCartPageState extends State<MyCartPage> {
                                           Text(
                                             "Holes",
                                             style: GoogleFonts.poppins(
-                                                color: const Color(0xFF6E7373),
+                                                color: AppColors.textMuted,
                                                 fontSize: 13,
                                                 fontWeight: FontWeight.w500),
                                           ),
                                           Text(
                                             "$holes",
                                             style: GoogleFonts.poppins(
-                                                color: const Color(0xFF244065),
+                                                color: AppColors.ink,
                                                 fontSize: 13,
                                                 fontWeight: FontWeight.w600),
                                           ),
@@ -422,14 +407,14 @@ class MyCartPageState extends State<MyCartPage> {
                                           Text(
                                             "Players:",
                                             style: GoogleFonts.poppins(
-                                                color: const Color(0xFF6E7373),
+                                                color: AppColors.textMuted,
                                                 fontSize: 13,
                                                 fontWeight: FontWeight.w500),
                                           ),
                                           Text(
                                             "$players",
                                             style: GoogleFonts.poppins(
-                                                color: const Color(0xFF244065),
+                                                color: AppColors.ink,
                                                 fontSize: 13,
                                                 fontWeight: FontWeight.w600),
                                           ),
@@ -458,14 +443,14 @@ class MyCartPageState extends State<MyCartPage> {
                                           Text(
                                             "Carts:",
                                             style: GoogleFonts.poppins(
-                                                color: const Color(0xFF6E7373),
+                                                color: AppColors.textMuted,
                                                 fontSize: 13,
                                                 fontWeight: FontWeight.w500),
                                           ),
                                           Text(
                                             "$carts",
                                             style: GoogleFonts.poppins(
-                                                color: const Color(0xFF244065),
+                                                color: AppColors.ink,
                                                 fontSize: 13,
                                                 fontWeight: FontWeight.w600),
                                           ),
@@ -490,14 +475,14 @@ class MyCartPageState extends State<MyCartPage> {
                         children: [
                           Container(
                             decoration: BoxDecoration(
-                              color: const Color(0xFFFFFFFF),
+                              color: AppColors.surface,
                               border: Border.all(
-                                  color: const Color(0xFF9ECF9A), width: 1.5),
+                                  color: AppColors.primary, width: 1.5),
                               borderRadius: BorderRadius.circular(15),
                               boxShadow: [
                                 BoxShadow(
-                                  color: const Color(0xFF9ECF9A)
-                                      .withOpacity(0.2), // soft shadow
+                                  color: AppColors.primary
+                                      .withValues(alpha: 0.2), // soft shadow
                                   spreadRadius: 2,
                                   blurRadius: 20,
                                   offset: const Offset(
@@ -510,7 +495,7 @@ class MyCartPageState extends State<MyCartPage> {
                                 Container(
                                   width: double.infinity,
                                   decoration: const BoxDecoration(
-                                    color: Color(0xFFF8F8F8),
+                                    color: AppColors.surfaceMuted,
                                     borderRadius: BorderRadius.only(
                                       topLeft: Radius.circular(15),
                                       topRight: Radius.circular(15),
@@ -525,7 +510,7 @@ class MyCartPageState extends State<MyCartPage> {
                                           "Booking Summary",
                                           textAlign: TextAlign.center,
                                           style: GoogleFonts.poppins(
-                                            color: const Color(0xFF244065),
+                                            color: AppColors.ink,
                                             fontSize: 13,
                                             fontWeight: FontWeight.w600,
                                           ),
@@ -773,7 +758,7 @@ class MyCartPageState extends State<MyCartPage> {
                                 }),
                                 Container(
                                   width: double.infinity,
-                                  color: const Color(0xFFF8F8F8),
+                                  color: AppColors.surfaceMuted,
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 12, vertical: 8),
                                   child: Row(
@@ -791,15 +776,14 @@ class MyCartPageState extends State<MyCartPage> {
                                               "Total: ",
                                               style: GoogleFonts.poppins(
                                                   color:
-                                                      const Color(0xFF6E7373),
+                                                      AppColors.textMuted,
                                                   fontSize: 14,
                                                   fontWeight: FontWeight.w500),
                                             ),
                                             Text(
                                               " \$${totalCartAmount - totalTaxAmount}",
                                               style: GoogleFonts.poppins(
-                                                  color:
-                                                      const Color(0xFF244065),
+                                                  color: AppColors.ink,
                                                   fontSize: 14,
                                                   fontWeight: FontWeight.w600),
                                             ),
@@ -821,7 +805,7 @@ class MyCartPageState extends State<MyCartPage> {
                                         Text(
                                           "Total tax: ",
                                           style: GoogleFonts.poppins(
-                                            color: const Color(0xFF6E7373),
+                                            color: AppColors.textMuted,
                                             fontSize: 14,
                                             fontWeight: FontWeight.w500,
                                           ),
@@ -829,7 +813,7 @@ class MyCartPageState extends State<MyCartPage> {
                                         Text(
                                           " \$$totalTaxAmount",
                                           style: GoogleFonts.poppins(
-                                            color: const Color(0xFF244065),
+                                            color: AppColors.ink,
                                             fontSize: 14,
                                             fontWeight: FontWeight.w600,
                                           ),
@@ -841,7 +825,7 @@ class MyCartPageState extends State<MyCartPage> {
                                 Container(
                                   width: double.infinity,
                                   decoration: const BoxDecoration(
-                                    color: Color(0xFFEAB308),
+                                    color: AppColors.warning,
                                     borderRadius: BorderRadius.only(
                                       bottomLeft: Radius.circular(15),
                                       bottomRight: Radius.circular(15),
@@ -861,14 +845,14 @@ class MyCartPageState extends State<MyCartPage> {
                                           Text(
                                             "Total payble: ",
                                             style: GoogleFonts.poppins(
-                                                color: const Color(0xFFFFFFFF),
+                                                color: AppColors.surface,
                                                 fontSize: 16,
                                                 fontWeight: FontWeight.w500),
                                           ),
                                           Text(
                                             " \$$totalCartAmount",
                                             style: GoogleFonts.poppins(
-                                                color: const Color(0xFFFFFFFF),
+                                                color: AppColors.surface,
                                                 fontSize: 16,
                                                 fontWeight: FontWeight.w600),
                                           ),
@@ -903,19 +887,9 @@ class MyCartPageState extends State<MyCartPage> {
                                   throw Exception('Access token not found');
                                 }
 
-                                final String baseUrl = ApiConfig.baseUrl;
 
-                                final uri = Uri.parse(
-                                  '$baseUrl/sales/clear?cartState=customerCart',
-                                );
 
-                                final response = await http.delete(
-                                  uri,
-                                  headers: {
-                                    'Authorization': 'Bearer $token',
-                                    'Content-Type': 'application/json',
-                                  },
-                                );
+                                final response = await checkoutRepository.clear();
 
                                 if (response.statusCode == 200) {
                                   print('🧹 Cart cleared successfully');
@@ -936,13 +910,13 @@ class MyCartPageState extends State<MyCartPage> {
                             },
                             child: Container(
                               decoration: BoxDecoration(
-                                color: const Color(0xFFFFFFFF),
+                                color: AppColors.surface,
                                 borderRadius: BorderRadius.circular(50),
                                 border: Border.all(
-                                    color: const Color(0xFF9ECF9A), width: 1),
+                                    color: AppColors.primary, width: 1),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.black.withOpacity(0.1),
+                                    color: Colors.black.withValues(alpha: 0.1),
                                     blurRadius: 3,
                                     spreadRadius: 1,
                                     offset: const Offset(0, 2),
@@ -955,7 +929,7 @@ class MyCartPageState extends State<MyCartPage> {
                                 child: Text(
                                   "Cancel",
                                   style: GoogleFonts.poppins(
-                                    color: const Color(0xFF244065),
+                                    color: AppColors.ink,
                                     fontSize: 13,
                                     fontWeight: FontWeight.w600,
                                   ),
@@ -968,9 +942,6 @@ class MyCartPageState extends State<MyCartPage> {
                                 ? null // 🔒 Disable tap when API call is successful
                                 : () async {
                                     try {
-                                      String token = await secureStorage.read(
-                                              key: 'accessToken') ??
-                                          '';
 
                                       final bookingPayload = {
                                         'golfCourseCode': golfCourseCode,
@@ -979,46 +950,16 @@ class MyCartPageState extends State<MyCartPage> {
                                         'paymentType': 'Book',
                                       };
 
-                                      const secret =
-                                          'course1999golf01'; // same as backend
+                                      final requestPayload =
 
-                                      final keyHash = sha256
-                                          .convert(utf8.encode(secret))
-                                          .bytes;
-                                      final secretKey = SecretKey(keyHash);
-                                      final algorithm = AesGcm.with256bits();
-                                      final iv = algorithm.newNonce();
+                                              Map<String, dynamic>.from(
+                                                  bookingPayload);
 
-                                      final secretBox = await algorithm.encrypt(
-                                        utf8.encode(jsonEncode(bookingPayload)),
-                                        secretKey: secretKey,
-                                        nonce: iv,
-                                      );
 
-                                      final encryptedPayload = {
-                                        'iv': base64Encode(iv),
-                                        'data':
-                                            base64Encode(secretBox.cipherText),
-                                        'tag':
-                                            base64Encode(secretBox.mac.bytes),
-                                      };
-
-                                      final String baseUrl = ApiConfig.baseUrl;
-
-                                      final response = await http.post(
-                                        Uri.parse(
-                                          '$baseUrl/transaction/payment',
-                                        ),
-                                        headers: {
-                                          'Content-Type': 'application/json',
-                                          'Authorization':
-                                              'Bearer $token', // if needed
-                                        },
-                                        body: jsonEncode(encryptedPayload),
-                                      );
+                                      final response = await checkoutRepository.pay(requestPayload);
 
                                       if (response.statusCode == 200) {
-                                        final data = jsonDecode(response.body);
+                                        final data = response.json;
                                         // print('✅ Booking API Response: $data');
 
                                         if (data['success'] == true) {
@@ -1102,7 +1043,6 @@ class MyCartPageState extends State<MyCartPage> {
                                         }
                                       } else {
                                         // Handle API error
-                                        print('❌ API Error: ${response.body}');
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(
                                           const SnackBar(
@@ -1134,13 +1074,13 @@ class MyCartPageState extends State<MyCartPage> {
                                   },
                             child: Container(
                               decoration: BoxDecoration(
-                                color: const Color(0xFF9ECF9A),
+                                color: AppColors.primary,
                                 borderRadius: BorderRadius.circular(50),
                                 border: Border.all(
-                                    color: const Color(0xFF9ECF9A), width: 1),
+                                    color: AppColors.primary, width: 1),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.black.withOpacity(0.1),
+                                    color: Colors.black.withValues(alpha: 0.1),
                                     blurRadius: 3,
                                     spreadRadius: 1,
                                     offset: const Offset(0, 2),

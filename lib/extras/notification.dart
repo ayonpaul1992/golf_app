@@ -1,3 +1,4 @@
+import 'package:driver_pos/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -37,7 +38,7 @@ class NotificationPageState extends State<NotificationPage> {
         },
       ),
       body: Container(
-        color: const Color(0xFFFAFCFA),
+        color: AppColors.pageBackground,
         width: double.infinity,
         height: double.infinity,
         child: SingleChildScrollView(
@@ -47,38 +48,36 @@ class NotificationPageState extends State<NotificationPage> {
               const SizedBox(
                 height: 30,
               ),
-              Container(
-                child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          width: 40,
-                          height: 1,
-                          color: const Color(0xFFB2C1C0),
-                        ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        Text(
-                          "Notification",
-                          style: GoogleFonts.poppins(
-                              color: const Color(0xFF244065),
-                              fontSize: 22,
-                              fontWeight: FontWeight.w600),
-                        ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        Container(
-                          width: 40,
-                          height: 1,
-                          color: const Color(0xFFB2C1C0),
-                        ),
-                      ],
-                    )),
-              ),
+              SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        width: 40,
+                        height: 1,
+                        color: AppColors.border,
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Text(
+                        "Notification",
+                        style: GoogleFonts.poppins(
+                            color: AppColors.ink,
+                            fontSize: 22,
+                            fontWeight: FontWeight.w600),
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Container(
+                        width: 40,
+                        height: 1,
+                        color: AppColors.border,
+                      ),
+                    ],
+                  )),
               Container(
                 padding: const EdgeInsets.only(
                     left: 10, right: 10, top: 15, bottom: 20),
@@ -91,13 +90,13 @@ class NotificationPageState extends State<NotificationPage> {
                           top: 10, left: 10, right: 30, bottom: 10),
                       width: double.infinity,
                       decoration: BoxDecoration(
-                        border: Border.all(
-                            color: const Color(0xFF9ECF9A), width: 1.5),
+                        border:
+                            Border.all(color: AppColors.primary, width: 1.5),
                         borderRadius: BorderRadius.circular(15),
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFF9ECF9A)
-                                .withOpacity(0.2), // soft shadow
+                            color: AppColors.primary
+                                .withValues(alpha: 0.2), // soft shadow
                             spreadRadius: 2,
                             blurRadius: 20,
                             offset: const Offset(
@@ -115,15 +114,15 @@ class NotificationPageState extends State<NotificationPage> {
                               width: 28,
                               height: 28,
                               decoration: BoxDecoration(
-                                color: const Color(0xFF9ECF9A),
+                                color: AppColors.primary,
                                 border: Border.all(
-                                    color: const Color(0xFF9ECF9A), width: 1),
+                                    color: AppColors.primary, width: 1),
                                 borderRadius: BorderRadius.circular(50),
                               ),
                               child: const Center(
                                 child: Icon(
                                   Icons.campaign,
-                                  color: Color(0xFFFFFFFF),
+                                  color: AppColors.surface,
                                   size: 20,
                                 ),
                               ),
@@ -138,7 +137,7 @@ class NotificationPageState extends State<NotificationPage> {
                                   child: Text(
                                     "Please complete the reservation process today.",
                                     style: GoogleFonts.poppins(
-                                      color: const Color(0xFF244065),
+                                      color: AppColors.ink,
                                       fontSize: 13,
                                       fontWeight: FontWeight.w600,
                                     ),
@@ -152,7 +151,7 @@ class NotificationPageState extends State<NotificationPage> {
                                   child: Text(
                                     "Your time, 6:30AM, will be held for 5 minutes. You have 00:00 remaining.",
                                     style: GoogleFonts.poppins(
-                                      color: const Color(0xFF6E7373),
+                                      color: AppColors.textMuted,
                                       fontSize: 13,
                                       fontWeight: FontWeight.w400,
                                     ),
@@ -166,14 +165,14 @@ class NotificationPageState extends State<NotificationPage> {
                                   child: Wrap(
                                     children: [
                                       const Icon(Icons.access_time_sharp,
-                                          color: Color(0xFF6E7373), size: 17),
+                                          color: AppColors.textMuted, size: 17),
                                       const SizedBox(
                                         width: 1.5,
                                       ),
                                       Text(
                                         "10 min ago",
                                         style: GoogleFonts.poppins(
-                                            color: const Color(0xFF6E7373),
+                                            color: AppColors.textMuted,
                                             fontSize: 12,
                                             fontWeight: FontWeight.w600),
                                       )
@@ -191,13 +190,13 @@ class NotificationPageState extends State<NotificationPage> {
                           top: 10, left: 10, right: 30, bottom: 10),
                       width: double.infinity,
                       decoration: BoxDecoration(
-                        border: Border.all(
-                            color: const Color(0xFF9ECF9A), width: 1.5),
+                        border:
+                            Border.all(color: AppColors.primary, width: 1.5),
                         borderRadius: BorderRadius.circular(15),
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFF9ECF9A)
-                                .withOpacity(0.2), // soft shadow
+                            color: AppColors.primary
+                                .withValues(alpha: 0.2), // soft shadow
                             spreadRadius: 2,
                             blurRadius: 20,
                             offset: const Offset(
@@ -215,15 +214,15 @@ class NotificationPageState extends State<NotificationPage> {
                               width: 28,
                               height: 28,
                               decoration: BoxDecoration(
-                                color: const Color(0xFFEAB308),
+                                color: AppColors.warning,
                                 border: Border.all(
-                                    color: const Color(0xFFEAB308), width: 1),
+                                    color: AppColors.warning, width: 1),
                                 borderRadius: BorderRadius.circular(50),
                               ),
                               child: const Center(
                                 child: Icon(
                                   Icons.campaign,
-                                  color: Color(0xFFFFFFFF),
+                                  color: AppColors.surface,
                                   size: 20,
                                 ),
                               ),
@@ -238,7 +237,7 @@ class NotificationPageState extends State<NotificationPage> {
                                   child: Text(
                                     "Please arrive 15 minutes early to check in.",
                                     style: GoogleFonts.poppins(
-                                      color: const Color(0xFF244065),
+                                      color: AppColors.ink,
                                       fontSize: 13,
                                       fontWeight: FontWeight.w600,
                                     ),
@@ -252,7 +251,7 @@ class NotificationPageState extends State<NotificationPage> {
                                   child: Text(
                                     "Cart and range balls are included.",
                                     style: GoogleFonts.poppins(
-                                      color: const Color(0xFF6E7373),
+                                      color: AppColors.textMuted,
                                       fontSize: 13,
                                       fontWeight: FontWeight.w400,
                                     ),
@@ -266,14 +265,14 @@ class NotificationPageState extends State<NotificationPage> {
                                   child: Wrap(
                                     children: [
                                       const Icon(Icons.access_time_sharp,
-                                          color: Color(0xFF6E7373), size: 17),
+                                          color: AppColors.textMuted, size: 17),
                                       const SizedBox(
                                         width: 1.5,
                                       ),
                                       Text(
                                         "1 hour 15 min ago",
                                         style: GoogleFonts.poppins(
-                                            color: const Color(0xFF6E7373),
+                                            color: AppColors.textMuted,
                                             fontSize: 12,
                                             fontWeight: FontWeight.w600),
                                       )
@@ -291,13 +290,13 @@ class NotificationPageState extends State<NotificationPage> {
                           top: 10, left: 10, right: 30, bottom: 10),
                       width: double.infinity,
                       decoration: BoxDecoration(
-                        border: Border.all(
-                            color: const Color(0xFF9ECF9A), width: 1.5),
+                        border:
+                            Border.all(color: AppColors.primary, width: 1.5),
                         borderRadius: BorderRadius.circular(15),
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFFFFFFFF)
-                                .withOpacity(0.2), // soft shadow
+                            color: AppColors.surface
+                                .withValues(alpha: 0.2), // soft shadow
                             spreadRadius: 2,
                             blurRadius: 20,
                             offset: const Offset(
@@ -315,15 +314,15 @@ class NotificationPageState extends State<NotificationPage> {
                               width: 28,
                               height: 28,
                               decoration: BoxDecoration(
-                                color: const Color(0xFFDB0606),
+                                color: AppColors.error,
                                 border: Border.all(
-                                    color: const Color(0xFFDB0606), width: 1),
+                                    color: AppColors.error, width: 1),
                                 borderRadius: BorderRadius.circular(50),
                               ),
                               child: const Center(
                                 child: Icon(
                                   Icons.campaign,
-                                  color: Color(0xFFFFFFFF),
+                                  color: AppColors.surface,
                                   size: 20,
                                 ),
                               ),
@@ -338,7 +337,7 @@ class NotificationPageState extends State<NotificationPage> {
                                   child: Text(
                                     "Please complete the reservation process today.",
                                     style: GoogleFonts.poppins(
-                                      color: const Color(0xFF244065),
+                                      color: AppColors.ink,
                                       fontSize: 13,
                                       fontWeight: FontWeight.w600,
                                     ),
@@ -352,7 +351,7 @@ class NotificationPageState extends State<NotificationPage> {
                                   child: Text(
                                     "Your time, 6:30AM, will be held for 5 minutes. You have 00:00 remaining.",
                                     style: GoogleFonts.poppins(
-                                      color: const Color(0xFF6E7373),
+                                      color: AppColors.textMuted,
                                       fontSize: 13,
                                       fontWeight: FontWeight.w400,
                                     ),
@@ -366,14 +365,14 @@ class NotificationPageState extends State<NotificationPage> {
                                   child: Wrap(
                                     children: [
                                       const Icon(Icons.access_time_sharp,
-                                          color: Color(0xFF6E7373), size: 17),
+                                          color: AppColors.textMuted, size: 17),
                                       const SizedBox(
                                         width: 1.5,
                                       ),
                                       Text(
                                         "10 min ago",
                                         style: GoogleFonts.poppins(
-                                            color: const Color(0xFF6E7373),
+                                            color: AppColors.textMuted,
                                             fontSize: 12,
                                             fontWeight: FontWeight.w600),
                                       )
@@ -391,13 +390,13 @@ class NotificationPageState extends State<NotificationPage> {
                           top: 10, left: 10, right: 30, bottom: 10),
                       width: double.infinity,
                       decoration: BoxDecoration(
-                        border: Border.all(
-                            color: const Color(0xFF9ECF9A), width: 1.5),
+                        border:
+                            Border.all(color: AppColors.primary, width: 1.5),
                         borderRadius: BorderRadius.circular(15),
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFFFFFFFF)
-                                .withOpacity(0.2), // soft shadow
+                            color: AppColors.surface
+                                .withValues(alpha: 0.2), // soft shadow
                             spreadRadius: 2,
                             blurRadius: 20,
                             offset: const Offset(
@@ -415,15 +414,15 @@ class NotificationPageState extends State<NotificationPage> {
                               width: 28,
                               height: 28,
                               decoration: BoxDecoration(
-                                color: const Color(0xFF9ECF9A),
+                                color: AppColors.primary,
                                 border: Border.all(
-                                    color: const Color(0xFF9ECF9A), width: 1),
+                                    color: AppColors.primary, width: 1),
                                 borderRadius: BorderRadius.circular(50),
                               ),
                               child: const Center(
                                 child: Icon(
                                   Icons.campaign,
-                                  color: Color(0xFFFFFFFF),
+                                  color: AppColors.surface,
                                   size: 20,
                                 ),
                               ),
@@ -438,7 +437,7 @@ class NotificationPageState extends State<NotificationPage> {
                                   child: Text(
                                     "Please arrive 15 minutes early to check in.",
                                     style: GoogleFonts.poppins(
-                                      color: const Color(0xFF244065),
+                                      color: AppColors.ink,
                                       fontSize: 13,
                                       fontWeight: FontWeight.w600,
                                     ),
@@ -452,7 +451,7 @@ class NotificationPageState extends State<NotificationPage> {
                                   child: Text(
                                     "Cart and range balls are included.",
                                     style: GoogleFonts.poppins(
-                                      color: const Color(0xFF6E7373),
+                                      color: AppColors.textMuted,
                                       fontSize: 13,
                                       fontWeight: FontWeight.w400,
                                     ),
@@ -466,14 +465,14 @@ class NotificationPageState extends State<NotificationPage> {
                                   child: Wrap(
                                     children: [
                                       const Icon(Icons.access_time_sharp,
-                                          color: Color(0xFF6E7373), size: 17),
+                                          color: AppColors.textMuted, size: 17),
                                       const SizedBox(
                                         width: 1.5,
                                       ),
                                       Text(
                                         "1 hour 15 min ago",
                                         style: GoogleFonts.poppins(
-                                            color: const Color(0xFF6E7373),
+                                            color: AppColors.textMuted,
                                             fontSize: 12,
                                             fontWeight: FontWeight.w600),
                                       )
@@ -491,13 +490,13 @@ class NotificationPageState extends State<NotificationPage> {
                           top: 10, left: 10, right: 30, bottom: 10),
                       width: double.infinity,
                       decoration: BoxDecoration(
-                        border: Border.all(
-                            color: const Color(0xFF9ECF9A), width: 1.5),
+                        border:
+                            Border.all(color: AppColors.primary, width: 1.5),
                         borderRadius: BorderRadius.circular(15),
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFFFFFFFF)
-                                .withOpacity(0.2), // soft shadow
+                            color: AppColors.surface
+                                .withValues(alpha: 0.2), // soft shadow
                             spreadRadius: 2,
                             blurRadius: 20,
                             offset: const Offset(
@@ -515,15 +514,15 @@ class NotificationPageState extends State<NotificationPage> {
                               width: 28,
                               height: 28,
                               decoration: BoxDecoration(
-                                color: const Color(0xFFDB0606),
+                                color: AppColors.error,
                                 border: Border.all(
-                                    color: const Color(0xFFDB0606), width: 1),
+                                    color: AppColors.error, width: 1),
                                 borderRadius: BorderRadius.circular(50),
                               ),
                               child: const Center(
                                 child: Icon(
                                   Icons.campaign,
-                                  color: Color(0xFFFFFFFF),
+                                  color: AppColors.surface,
                                   size: 20,
                                 ),
                               ),
@@ -538,7 +537,7 @@ class NotificationPageState extends State<NotificationPage> {
                                   child: Text(
                                     "Please complete the reservation process today.",
                                     style: GoogleFonts.poppins(
-                                      color: const Color(0xFF244065),
+                                      color: AppColors.ink,
                                       fontSize: 13,
                                       fontWeight: FontWeight.w600,
                                     ),
@@ -552,7 +551,7 @@ class NotificationPageState extends State<NotificationPage> {
                                   child: Text(
                                     "Your time, 6:30AM, will be held for 5 minutes. You have 00:00 remaining.",
                                     style: GoogleFonts.poppins(
-                                      color: const Color(0xFF6E7373),
+                                      color: AppColors.textMuted,
                                       fontSize: 13,
                                       fontWeight: FontWeight.w400,
                                     ),
@@ -566,14 +565,14 @@ class NotificationPageState extends State<NotificationPage> {
                                   child: Wrap(
                                     children: [
                                       const Icon(Icons.access_time_sharp,
-                                          color: Color(0xFF6E7373), size: 17),
+                                          color: AppColors.textMuted, size: 17),
                                       const SizedBox(
                                         width: 1.5,
                                       ),
                                       Text(
                                         "10 min ago",
                                         style: GoogleFonts.poppins(
-                                            color: const Color(0xFF6E7373),
+                                            color: AppColors.textMuted,
                                             fontSize: 12,
                                             fontWeight: FontWeight.w600),
                                       )

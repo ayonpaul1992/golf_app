@@ -3,7 +3,6 @@
 import 'dart:io';
 import 'package:driver_pos/screens/congratulations.dart';
 import 'package:driver_pos/screens/startup_gate.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -11,7 +10,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
 import 'firebase_options.dart';
-import 'screens/splash_screen.dart';
 import 'screens/login.dart';
 import 'screens/dashboard.dart';
 import '/services/token_route_observer.dart';
@@ -54,7 +52,7 @@ Future<void> main() async {
     },
     appRunner: () => runApp(
       SentryWidget(
-        child: MyApp(),
+        child: const MyApp(),
       ),
     ),
   );

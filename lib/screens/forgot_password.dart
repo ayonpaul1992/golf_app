@@ -1,3 +1,5 @@
+import 'package:driver_pos/repositories/feature_repositories.dart';
+import 'package:driver_pos/theme/app_theme.dart';
 // ignore_for_file: deprecated_member_use, use_build_context_synchronously
 
 import 'package:driver_pos/services/api_config.dart';
@@ -6,10 +8,6 @@ import 'package:google_fonts/google_fonts.dart';
 import '/components/userentry_app_bar.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-import 'package:crypto/crypto.dart';
-import 'package:cryptography/cryptography.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 
 class ForgotPasswordPage extends StatefulWidget {
   const ForgotPasswordPage({super.key});
@@ -45,7 +43,7 @@ class ForgotPasswordPageState extends State<ForgotPasswordPage> {
         showLeading: false,
       ),
       body: Container(
-        color: const Color(0xFFFAFCFA),
+        color: AppColors.pageBackground,
         width: double.infinity,
         height: double.infinity,
         child: SingleChildScrollView(
@@ -58,7 +56,7 @@ class ForgotPasswordPageState extends State<ForgotPasswordPage> {
               Text(
                 "Quick. Simple. Secure.",
                 style: GoogleFonts.poppins(
-                  color: const Color(0xFF669933),
+                  color: AppColors.accent,
                   fontWeight: FontWeight.w600,
                   fontSize: 15,
                 ),
@@ -73,7 +71,7 @@ class ForgotPasswordPageState extends State<ForgotPasswordPage> {
                         Container(
                           width: 40,
                           height: 1,
-                          color: const Color(0xFFB2C1C0),
+                          color: AppColors.border,
                         ),
                         const SizedBox(
                           width: 10,
@@ -81,7 +79,7 @@ class ForgotPasswordPageState extends State<ForgotPasswordPage> {
                         Text(
                           "Forgot Password",
                           style: GoogleFonts.poppins(
-                              color: const Color(0xFF244065),
+                              color: AppColors.ink,
                               fontSize: 22,
                               fontWeight: FontWeight.w600),
                         ),
@@ -91,7 +89,7 @@ class ForgotPasswordPageState extends State<ForgotPasswordPage> {
                         Container(
                           width: 40,
                           height: 1,
-                          color: const Color(0xFFB2C1C0),
+                          color: AppColors.border,
                         ),
                       ],
                     )),
@@ -103,7 +101,7 @@ class ForgotPasswordPageState extends State<ForgotPasswordPage> {
                   "Enter your email address to reset new password.",
                   textAlign: TextAlign.center,
                   style: GoogleFonts.poppins(
-                    color: const Color(0xFF6E7373),
+                    color: AppColors.textMuted,
                     fontWeight: FontWeight.w400,
                     fontSize: 13,
                   ),
@@ -117,7 +115,7 @@ class ForgotPasswordPageState extends State<ForgotPasswordPage> {
                       Text(
                         'Enter Email Address',
                         style: GoogleFonts.poppins(
-                          color: const Color(0xFF6E7373),
+                          color: AppColors.textMuted,
                           fontSize: 14,
                           fontWeight: FontWeight.w400,
                         ),
@@ -140,14 +138,14 @@ class ForgotPasswordPageState extends State<ForgotPasswordPage> {
                                 borderRadius: BorderRadius.circular(50),
                                 border: Border.all(
                                   color: isPhoneFocused
-                                      ? const Color(0xFF9ECF9A)
-                                      : const Color(0xFFB2C1C0),
+                                      ? AppColors.primary
+                                      : AppColors.border,
                                   width: 1,
                                 ),
                                 boxShadow: [
                                   BoxShadow(
                                     color: Colors.black
-                                        .withOpacity(0.1), // Shadow color
+                                        .withValues(alpha: 0.1), // Shadow color
                                     blurRadius: 6,
                                     offset:
                                         const Offset(0, 3), // Shadow position
@@ -162,9 +160,9 @@ class ForgotPasswordPageState extends State<ForgotPasswordPage> {
                                   //   child: DropdownButton<String>(
                                   //     value: selectedCountryCode,
                                   //     icon: const Icon(Icons.arrow_drop_down,
-                                  //         color: Color(0xFF244065)),
+                                  //         color: AppColors.ink),
                                   //     style: GoogleFonts.poppins(
-                                  //       color: const Color(0xFF244065),
+                                  //       color: AppColors.ink,
                                   //       fontWeight: FontWeight.w600,
                                   //       fontSize: 14,
                                   //     ),
@@ -192,14 +190,14 @@ class ForgotPasswordPageState extends State<ForgotPasswordPage> {
                                         border: InputBorder.none,
                                         hintText: '',
                                         hintStyle: TextStyle(
-                                          color: Color(0xFF244065),
+                                          color: AppColors.ink,
                                           fontWeight: FontWeight.w600,
                                           fontSize: 14,
                                         ),
                                       ),
                                       keyboardType: TextInputType.emailAddress,
                                       style: const TextStyle(
-                                        color: Color(0xFF244065),
+                                        color: AppColors.ink,
                                         fontWeight: FontWeight.w600,
                                         fontSize: 14,
                                       ),
@@ -269,46 +267,19 @@ class ForgotPasswordPageState extends State<ForgotPasswordPage> {
                               }
 
                               try {
-                                final String baseUrl = ApiConfig.baseUrl;
                                 final String golfCourseCode =
                                     ApiConfig.golfCourseCode;
 
-                                final url =
-                                    '$baseUrl/auth/password/forgot?role=customer';
 
                                 final payload = {
                                   'email': email,
                                   'golfCourseCode': golfCourseCode,
                                 };
 
-                                final secret =
-                                    'course1999golf01'; // must match Node backend ENCRYPT_SECRET
-                                final keyHash =
-                                    sha256.convert(utf8.encode(secret)).bytes;
-                                final secretKey = SecretKey(keyHash);
-                                final algorithm = AesGcm.with256bits();
-                                final iv = algorithm.newNonce();
+                                final requestPayload =
 
-                                final secretBox = await algorithm.encrypt(
-                                  utf8.encode(
-                                    jsonEncode(payload),
-                                  ),
-                                  secretKey: secretKey,
-                                  nonce: iv,
-                                );
-
-                                final encryptedPayload = {
-                                  'iv': base64Encode(iv),
-                                  'data': base64Encode(secretBox.cipherText),
-                                  'tag': base64Encode(secretBox.mac.bytes),
-                                };
-                                final response = await http.post(
-                                  Uri.parse(url),
-                                  headers: {
-                                    'Content-Type': 'application/json',
-                                  },
-                                  body: jsonEncode(encryptedPayload),
-                                );
+                                        Map<String, dynamic>.from(payload);
+                                final response = await authRepository.forgotPassword(requestPayload);
 
                                 if (response.statusCode == 200) {
                                   showDialog(
@@ -337,7 +308,7 @@ class ForgotPasswordPageState extends State<ForgotPasswordPage> {
                                   // );
                                 } else {
                                   final Map<String, dynamic> responseBody =
-                                      jsonDecode(response.body);
+                                      response.json;
                                   final String message = responseBody[
                                           'message'] ??
                                       'Failed to send password reset email.';
@@ -367,7 +338,7 @@ class ForgotPasswordPageState extends State<ForgotPasswordPage> {
                               // );
                             },
                             style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFF9ECF9A)),
+                                backgroundColor: AppColors.primary),
                             child: Padding(
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 15.0, vertical: 10.0),
@@ -375,7 +346,7 @@ class ForgotPasswordPageState extends State<ForgotPasswordPage> {
                                 child: Text(
                                   "Get Mail",
                                   style: GoogleFonts.poppins(
-                                    color: const Color(0xFFFFFFFF),
+                                    color: AppColors.surface,
                                     fontSize: 16,
                                     fontWeight: FontWeight.w600,
                                   ),
@@ -389,7 +360,7 @@ class ForgotPasswordPageState extends State<ForgotPasswordPage> {
                           right: 15,
                           child: Icon(
                             Icons.arrow_forward,
-                            color: Color(0xFFFFFFFF),
+                            color: AppColors.surface,
                             size: 18,
                           ),
                         )

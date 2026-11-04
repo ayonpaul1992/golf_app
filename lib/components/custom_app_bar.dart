@@ -1,3 +1,4 @@
+import 'package:driver_pos/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -53,7 +54,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             children: [
               IconButton(
                 icon:
-                    const Icon(Icons.arrow_back_ios, color: Color(0xFF9ECF9A)),
+                    const Icon(Icons.arrow_back_ios, color: AppColors.primary),
                 onPressed: onBackPressed ??
                     () {
                       if (Navigator.of(context).canPop()) {
@@ -62,7 +63,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                     },
               ),
               IconButton(
-                icon: const Icon(Icons.menu, color: Color(0xFF9ECF9A)),
+                icon: const Icon(Icons.menu, color: AppColors.primary),
                 onPressed: () {
                   scaffoldKey.currentState?.openDrawer();
                 },
@@ -109,7 +110,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               child: Container(
                 padding: const EdgeInsets.all(5),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF244065),
+                  color: AppColors.ink,
                   borderRadius: BorderRadius.circular(50),
                 ),
                 child: FittedBox(

@@ -1,3 +1,5 @@
+import 'package:driver_pos/repositories/feature_repositories.dart';
+import 'package:driver_pos/theme/app_theme.dart';
 // ignore_for_file: deprecated_member_use, use_build_context_synchronously
 
 import 'dart:convert';
@@ -6,7 +8,7 @@ import 'package:driver_pos/services/api_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:http/http.dart' as http;
+import 'package:driver_pos/services/api_http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '/components/custom_app_bar.dart';
 import '/components/custom_drawer.dart';
@@ -83,18 +85,10 @@ class MyEditPageState extends State<MyEditPage> {
       isLoading = true;
     });
     try {
-      final token = await secureStorage.read(key: 'accessToken');
-      final String baseUrl = ApiConfig.baseUrl;
 
-      final response = await http.get(
-        Uri.parse('$baseUrl/customer/myProfile'),
-        headers: {
-          'Content-Type': 'application/json',
-          if (token != null) 'Authorization': 'Bearer $token',
-        },
-      );
+      final response = await profileRepository.profile();
       if (response.statusCode == 200) {
-        final dataJson = json.decode(response.body);
+        final dataJson = response.json;
         final data = dataJson['data'] as Map<String, dynamic>;
         // print("Fetched data: $data");
         setState(() {
@@ -137,14 +131,12 @@ class MyEditPageState extends State<MyEditPage> {
   }
 
   Future<void> fetchPostalCodeData(String postalCode) async {
-    String url =
-        'http://api.geonames.org/postalCodeLookupJSON?postalcode=$postalCode&country=US&username=tuhinkapri';
 
     try {
-      final response = await http.get(Uri.parse(url));
+      final response = await profileRepository.postalCode(postalCode);
 
       if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
+        final data = response.json;
         // print("✅ API Response: $data");
 
         cityController.text = data['postalcodes'][0]['placeName'] ?? '';
@@ -162,7 +154,7 @@ class MyEditPageState extends State<MyEditPage> {
       context: context,
       barrierDismissible: true,
       barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
-      barrierColor: Colors.black.withOpacity(0.5),
+      barrierColor: Colors.black.withValues(alpha: 0.5),
       transitionDuration: const Duration(milliseconds: 300),
       transitionBuilder: (context, animation, secondaryAnimation, child) {
         const begin = Offset(0.0, -1.0);
@@ -188,7 +180,7 @@ class MyEditPageState extends State<MyEditPage> {
                     top: Radius.circular(20), bottom: Radius.circular(20)),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.2),
+                    color: Colors.black.withValues(alpha: 0.2),
                     blurRadius: 10,
                     spreadRadius: 2,
                     offset: const Offset(0, 2),
@@ -202,12 +194,12 @@ class MyEditPageState extends State<MyEditPage> {
                     initialSelectedDate: _selectedDate,
                     selectionMode: DateRangePickerSelectionMode.single,
                     backgroundColor: Colors.white,
-                    selectionColor: const Color(0xFF9ECF9A),
-                    todayHighlightColor: const Color(0xFF9ECF9A),
+                    selectionColor: AppColors.primary,
+                    todayHighlightColor: AppColors.primary,
                     headerStyle: DateRangePickerHeaderStyle(
                       backgroundColor: Colors.transparent,
                       textStyle: GoogleFonts.poppins(
-                        color: const Color(0xFF3F4B4B),
+                        color: AppColors.textBody,
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
                       ),
@@ -234,13 +226,13 @@ class MyEditPageState extends State<MyEditPage> {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20),
                             side: const BorderSide(
-                                width: 1.5, color: Color(0xFF9ECF9A)),
+                                width: 1.5, color: AppColors.primary),
                           ),
                         ),
                         child: Text(
                           "Cancel",
                           style: GoogleFonts.poppins(
-                            color: const Color(0xFF244065),
+                            color: AppColors.ink,
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
                           ),
@@ -260,13 +252,13 @@ class MyEditPageState extends State<MyEditPage> {
                           Navigator.pop(context);
                         },
                         style: TextButton.styleFrom(
-                          backgroundColor: const Color(0xFF9ECF9A),
+                          backgroundColor: AppColors.primary,
                           padding: const EdgeInsets.symmetric(
                               horizontal: 20, vertical: 0),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20),
                             side: const BorderSide(
-                                width: 1.5, color: Color(0xFF9ECF9A)),
+                                width: 1.5, color: AppColors.primary),
                           ),
                         ),
                         child: Text(
@@ -390,11 +382,10 @@ class MyEditPageState extends State<MyEditPage> {
 
     // --- Send request ---
     try {
-      final response = await request.send();
+      final response = await profileRepository.upload(request);
       final res = await http.Response.fromStream(response);
 
       if (res.statusCode == 200 || res.statusCode == 204) {
-        print("Profile updated successfully: ${res.body}");
         await secureStorage.write(
           key: 'userName',
           value: "${fullNmText.text} ${lastNmText.text}",
@@ -500,11 +491,11 @@ class MyEditPageState extends State<MyEditPage> {
       body: isLoading
           ? const Center(
               child: CircularProgressIndicator(
-                color: Color(0xFF9ECF9A),
+                color: AppColors.primary,
               ),
             )
           : Container(
-              color: const Color(0xFFFAFCFA),
+              color: AppColors.pageBackground,
               width: double.infinity,
               height: double.infinity,
               child: Padding(
@@ -524,7 +515,7 @@ class MyEditPageState extends State<MyEditPage> {
                             Container(
                               width: 40,
                               height: 1,
-                              color: const Color(0xFFB2C1C0),
+                              color: AppColors.border,
                             ),
                             const SizedBox(
                               width: 10,
@@ -532,7 +523,7 @@ class MyEditPageState extends State<MyEditPage> {
                             Text(
                               "Edit Profile",
                               style: GoogleFonts.poppins(
-                                  color: const Color(0xFF244065),
+                                  color: AppColors.ink,
                                   fontSize: 22,
                                   fontWeight: FontWeight.w600),
                             ),
@@ -542,7 +533,7 @@ class MyEditPageState extends State<MyEditPage> {
                             Container(
                               width: 40,
                               height: 1,
-                              color: const Color(0xFFB2C1C0),
+                              color: AppColors.border,
                             ),
                           ],
                         )),
@@ -669,7 +660,7 @@ class MyEditPageState extends State<MyEditPage> {
                                       width: 40,
                                       height: 40,
                                       decoration: const BoxDecoration(
-                                        color: Color(0xFF9ECF9A),
+                                        color: AppColors.primary,
                                         borderRadius: BorderRadius.all(
                                             Radius.circular(100)),
                                       ),
@@ -708,7 +699,7 @@ class MyEditPageState extends State<MyEditPage> {
                             decoration: const BoxDecoration(
                               border: Border(
                                 bottom: BorderSide(
-                                  color: Color(0xFFB2C1C0),
+                                  color: AppColors.border,
                                   width: 1,
                                 ),
                               ),
@@ -719,7 +710,7 @@ class MyEditPageState extends State<MyEditPage> {
                                 Text(
                                   "Account information",
                                   style: GoogleFonts.poppins(
-                                    color: const Color(0xFF244065),
+                                    color: AppColors.ink,
                                     fontWeight: FontWeight.w600,
                                     fontSize: 14,
                                   ),
@@ -729,7 +720,7 @@ class MyEditPageState extends State<MyEditPage> {
                                       ? Icons.keyboard_arrow_up
                                       : Icons.keyboard_arrow_down,
                                   size: 22,
-                                  color: const Color(0xFF669933),
+                                  color: AppColors.accent,
                                 ),
                               ],
                             ),
@@ -882,15 +873,15 @@ class MyEditPageState extends State<MyEditPage> {
                               borderRadius: BorderRadius.circular(50),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black.withOpacity(0.1),
+                                  color: Colors.black.withValues(alpha: 0.1),
                                   blurRadius: 6,
                                   offset: const Offset(0, 3),
                                 ),
                               ],
                               border: Border.all(
                                 color: isDateFieldFocused
-                                    ? const Color(0xFF9ECF9A)
-                                    : const Color(0xFFB2C1C0),
+                                    ? AppColors.primary
+                                    : AppColors.border,
                                 width: 1,
                               ),
                             ),
@@ -911,7 +902,8 @@ class MyEditPageState extends State<MyEditPage> {
                                     borderRadius: BorderRadius.circular(50),
                                     boxShadow: [
                                       BoxShadow(
-                                        color: Colors.black.withOpacity(0.1),
+                                        color:
+                                            Colors.black.withValues(alpha: 0.1),
                                         blurRadius: 5,
                                       )
                                     ],
@@ -925,13 +917,13 @@ class MyEditPageState extends State<MyEditPage> {
                                             ? _dateController.text
                                             : "Select Date",
                                         style: GoogleFonts.poppins(
-                                            color: const Color(0xFF244065),
+                                            color: AppColors.ink,
                                             fontSize: 14,
                                             fontWeight: FontWeight.w600),
                                       ),
                                       const Icon(
                                         Icons.calendar_month_outlined,
-                                        color: Color(0xFF648683),
+                                        color: AppColors.textSubtle,
                                         size: 20,
                                       ),
                                     ],
@@ -1181,13 +1173,13 @@ class MyEditPageState extends State<MyEditPage> {
                             },
                             child: Container(
                               decoration: BoxDecoration(
-                                color: const Color(0xFF9ECF9A),
+                                color: AppColors.primary,
                                 borderRadius: BorderRadius.circular(50),
                                 border: Border.all(
-                                    color: const Color(0xFF9ECF9A), width: 1),
+                                    color: AppColors.primary, width: 1),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.black.withOpacity(0.1),
+                                    color: Colors.black.withValues(alpha: 0.1),
                                     blurRadius: 3,
                                     spreadRadius: 1,
                                     offset: const Offset(0, 2),
@@ -1230,7 +1222,7 @@ class MyEditPageState extends State<MyEditPage> {
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(50),
         borderSide: const BorderSide(
-          color: Color(0xFF9ECF9A),
+          color: AppColors.primary,
           width: 1,
         ),
       ),
@@ -1243,7 +1235,7 @@ class MyEditPageState extends State<MyEditPage> {
       ),
       hintText: hintText,
       hintStyle: GoogleFonts.poppins(
-        color: const Color(0xFF6E7373),
+        color: AppColors.textMuted,
         fontSize: 14,
       ),
     );
@@ -1256,7 +1248,7 @@ class MyEditPageState extends State<MyEditPage> {
       child: Text(
         label,
         style: GoogleFonts.poppins(
-          color: const Color(0xFF6E7373),
+          color: AppColors.textMuted,
           fontSize: 14,
           fontWeight: FontWeight.w400,
         ),
@@ -1286,13 +1278,13 @@ class MyEditPageState extends State<MyEditPage> {
               borderRadius: BorderRadius.circular(50),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
+                  color: Colors.black.withValues(alpha: 0.1),
                   blurRadius: 6,
                   offset: const Offset(0, 3),
                 ),
               ],
               border: Border.all(
-                color: errorText != null ? Colors.red : const Color(0xFFB2C1C0),
+                color: errorText != null ? Colors.red : AppColors.border,
                 width: 1,
               ),
             ),
@@ -1357,7 +1349,7 @@ class MyEditPageState extends State<MyEditPage> {
                     ? IconButton(
                         icon: Icon(
                           obscureText ? Icons.visibility_off : Icons.visibility,
-                          color: const Color(0xFF648683),
+                          color: AppColors.textSubtle,
                         ),
                         onPressed: onToggleVisibility,
                       )
@@ -1368,19 +1360,19 @@ class MyEditPageState extends State<MyEditPage> {
                             ? null
                             : const Icon(
                                 Icons.edit,
-                                color: Color(0xFF6B7280),
+                                color: AppColors.textSecondary,
                                 size: 18,
                               ),
 
                         // child: Icon(
                         //   Icons.edit,
-                        //   color: Color(0xFF6B7280),
+                        //   color: AppColors.textSecondary,
                         //   size: 18,
                         // ),
                       ),
               ),
               style: GoogleFonts.poppins(
-                color: const Color(0xFF244065),
+                color: AppColors.ink,
                 fontWeight: FontWeight.w600,
                 fontSize: 14,
               ),
@@ -1416,13 +1408,13 @@ class MyEditPageState extends State<MyEditPage> {
               borderRadius: BorderRadius.circular(50),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
+                  color: Colors.black.withValues(alpha: 0.1),
                   blurRadius: 6,
                   offset: const Offset(0, 3),
                 ),
               ],
               border: Border.all(
-                color: errorText != null ? Colors.red : const Color(0xFFB2C1C0),
+                color: errorText != null ? Colors.red : AppColors.border,
                 width: 1,
               ),
             ),
@@ -1438,7 +1430,7 @@ class MyEditPageState extends State<MyEditPage> {
                       30), // Add this line for the 30-letter limit
                 ],
                 style: GoogleFonts.poppins(
-                  color: const Color(0xFF244065),
+                  color: AppColors.ink,
                   fontWeight: FontWeight.w600,
                   fontSize: 14,
                 ),
@@ -1450,7 +1442,7 @@ class MyEditPageState extends State<MyEditPage> {
                         ? null
                         : const Icon(
                             Icons.edit,
-                            color: Color(0xFF6B7280),
+                            color: AppColors.textSecondary,
                             size: 18,
                           ),
                   ),

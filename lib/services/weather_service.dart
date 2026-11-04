@@ -1,20 +1,31 @@
 import 'dart:convert';
-import 'package:http/http.dart' as http;
+import 'api_config.dart';
+import 'package:driver_pos/services/api_http.dart' as http;
 
 class WeatherService {
-  static const String _apiKey = '3795744d43a72c72b4cac99cd2c6ad52';
-
-  static Future<Map<String, dynamic>> fetchWeather(
-      double lat, double lon) async {
-    final url =
-        'https://api.openweathermap.org/data/2.5/weather?lat=$lat&lon=$lon&units=imperial&appid=$_apiKey';
-
-    final response = await http.get(Uri.parse(url));
-    if (response.statusCode == 200) {
-      // print("🌤 Weather data fetched successfully ${response.body}");
-      return json.decode(response.body);
-    } else {
+  static Future<Map<String, dynamic>> fetchWeather(double lat, double lon,
+      {http.Client? client,
+      bool? useProxy,
+      String? apiKey,
+      String? baseUrl}) async {
+    final proxy = useProxy ?? ApiConfig.useWeatherProxy;
+    final url = proxy
+        ? Uri.parse('${baseUrl ?? ApiConfig.baseUrl}/public/weather').replace(
+            queryParameters: {
+                'lat': '$lat',
+                'lon': '$lon',
+                'units': 'imperial'
+              })
+        : Uri.https('api.openweathermap.org', '/data/2.5/weather', {
+            'lat': '$lat',
+            'lon': '$lon',
+            'units': 'imperial',
+            'appid': apiKey ?? ApiConfig.weatherApiKey
+          });
+    final response = await (client?.get(url) ?? http.get(url));
+    if (response.statusCode != 200) {
       throw Exception('Failed to load weather data');
     }
+    return Map<String, dynamic>.from(jsonDecode(response.body) as Map);
   }
 }

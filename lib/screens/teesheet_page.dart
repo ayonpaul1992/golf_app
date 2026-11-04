@@ -1,3 +1,4 @@
+import 'package:driver_pos/theme/app_theme.dart';
 // ignore_for_file: deprecated_member_use, library_prefixes, unnecessary_string_interpolations
 
 import 'package:flutter/material.dart';
@@ -288,7 +289,7 @@ class TeesheetPageState extends State<TeesheetPage> {
       context: context,
       barrierDismissible: true,
       barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
-      barrierColor: Colors.black.withOpacity(0.5),
+      barrierColor: Colors.black.withValues(alpha: 0.5),
       transitionDuration: const Duration(milliseconds: 300),
       transitionBuilder: (context, animation, secondaryAnimation, child) {
         const begin = Offset(0.0, -1.0);
@@ -318,7 +319,7 @@ class TeesheetPageState extends State<TeesheetPage> {
                     top: Radius.circular(20), bottom: Radius.circular(20)),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.2),
+                    color: Colors.black.withValues(alpha: 0.2),
                     blurRadius: 10,
                     spreadRadius: 2,
                     offset: const Offset(0, 2),
@@ -332,8 +333,8 @@ class TeesheetPageState extends State<TeesheetPage> {
                     initialSelectedDate: _selectedDate,
                     selectionMode: DateRangePickerSelectionMode.single,
                     backgroundColor: Colors.white,
-                    selectionColor: const Color(0xFF9ECF9A),
-                    todayHighlightColor: const Color(0xFF9ECF9A),
+                    selectionColor: AppColors.primary,
+                    todayHighlightColor: AppColors.primary,
                     minDate: DateTime.now(), // Set your desired start date
                     maxDate: DateTime.now().add(
                       Duration(days: bookingWindowDays - 1),
@@ -341,7 +342,7 @@ class TeesheetPageState extends State<TeesheetPage> {
                     headerStyle: DateRangePickerHeaderStyle(
                       backgroundColor: Colors.transparent,
                       textStyle: GoogleFonts.poppins(
-                        color: const Color(0xFF3F4B4B),
+                        color: AppColors.textBody,
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
                       ),
@@ -367,13 +368,13 @@ class TeesheetPageState extends State<TeesheetPage> {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20),
                             side: const BorderSide(
-                                width: 1.5, color: Color(0xFF9ECF9A)),
+                                width: 1.5, color: AppColors.primary),
                           ),
                         ),
                         child: Text(
                           "Cancel",
                           style: GoogleFonts.poppins(
-                            color: const Color(0xFF244065),
+                            color: AppColors.ink,
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
                           ),
@@ -409,13 +410,13 @@ class TeesheetPageState extends State<TeesheetPage> {
                           Navigator.pop(context);
                         },
                         style: TextButton.styleFrom(
-                          backgroundColor: const Color(0xFF9ECF9A),
+                          backgroundColor: AppColors.primary,
                           padding: const EdgeInsets.symmetric(
                               horizontal: 20, vertical: 0),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20),
                             side: const BorderSide(
-                                width: 1.5, color: Color(0xFF9ECF9A)),
+                                width: 1.5, color: AppColors.primary),
                           ),
                         ),
                         child: Text(
@@ -455,7 +456,7 @@ class TeesheetPageState extends State<TeesheetPage> {
           ? const Center(
               child: CircularProgressIndicator(
                 valueColor: AlwaysStoppedAnimation<Color>(
-                  Color(0xFF9ECF9A),
+                  AppColors.primary,
                 ),
               ),
             )
@@ -470,7 +471,7 @@ class TeesheetPageState extends State<TeesheetPage> {
                         minHeight: constraints.maxHeight,
                       ),
                       child: Container(
-                        color: const Color(0xFFFAFCFA),
+                        color: AppColors.pageBackground,
                         width: double.infinity,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -478,7 +479,7 @@ class TeesheetPageState extends State<TeesheetPage> {
                             if (teesheetConfigHolidays['isHoliday'] == true)
                               Container(
                                 decoration: const BoxDecoration(
-                                  color: Color(0xFFFFFFFF),
+                                  color: AppColors.surface,
                                 ),
                                 child: Stack(
                                   children: [
@@ -489,7 +490,7 @@ class TeesheetPageState extends State<TeesheetPage> {
                                           boxShadow: [
                                             BoxShadow(
                                               color: const Color(0xFFBAB8B3)
-                                                  .withOpacity(0.1),
+                                                  .withValues(alpha: 0.1),
                                               blurRadius: 0,
                                               spreadRadius: 0,
                                               offset: const Offset(0, 1),
@@ -509,7 +510,7 @@ class TeesheetPageState extends State<TeesheetPage> {
                                           gradient: LinearGradient(
                                             colors: [
                                               const Color(0xFFC9C9C7)
-                                                  .withOpacity(0.10),
+                                                  .withValues(alpha: 0.10),
                                               Colors.transparent,
                                             ],
                                             begin: Alignment.bottomCenter,
@@ -528,7 +529,7 @@ class TeesheetPageState extends State<TeesheetPage> {
                                                   'holidayName'] ??
                                               "",
                                           style: GoogleFonts.poppins(
-                                            color: const Color(0xFF244065),
+                                            color: AppColors.ink,
                                             fontSize: 14,
                                             fontWeight: FontWeight.w600,
                                           ),
@@ -543,7 +544,7 @@ class TeesheetPageState extends State<TeesheetPage> {
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 15),
                               child: Container(
-                                color: const Color(0xFFFAFCFA),
+                                color: AppColors.pageBackground,
                                 width: double.infinity,
                                 // Remove the inner SingleChildScrollView to avoid nested scroll views
                                 child: Column(
@@ -566,7 +567,7 @@ class TeesheetPageState extends State<TeesheetPage> {
                                                 "Date",
                                                 style: GoogleFonts.poppins(
                                                   color:
-                                                      const Color(0xFF6E7373),
+                                                      AppColors.textMuted,
                                                   fontSize: 13,
                                                   fontWeight: FontWeight.w500,
                                                 ),
@@ -595,7 +596,7 @@ class TeesheetPageState extends State<TeesheetPage> {
                                                           Icons
                                                               .calendar_month_outlined,
                                                           color:
-                                                              Color(0xFF648683),
+                                                              AppColors.textSubtle,
                                                           size: 20,
                                                         ),
                                                       ],
@@ -694,7 +695,8 @@ class TeesheetPageState extends State<TeesheetPage> {
                                                     boxShadow: [
                                                       BoxShadow(
                                                         color: Colors.black
-                                                            .withOpacity(0.1),
+                                                            .withValues(
+                                                                alpha: 0.1),
                                                         blurRadius: 3,
                                                         spreadRadius: 1,
                                                         offset:
@@ -761,7 +763,7 @@ class TeesheetPageState extends State<TeesheetPage> {
                                                 "Players",
                                                 style: GoogleFonts.poppins(
                                                   color:
-                                                      const Color(0xFF6E7373),
+                                                      AppColors.textMuted,
                                                   fontSize: 13,
                                                   fontWeight: FontWeight.w500,
                                                 ),
@@ -833,7 +835,7 @@ class TeesheetPageState extends State<TeesheetPage> {
                                                 "Holes",
                                                 style: GoogleFonts.poppins(
                                                   color:
-                                                      const Color(0xFF6E7373),
+                                                      AppColors.textMuted,
                                                   fontSize: 13,
                                                   fontWeight: FontWeight.w500,
                                                 ),
@@ -894,7 +896,7 @@ class TeesheetPageState extends State<TeesheetPage> {
                                           Container(
                                             width: 40,
                                             height: 1,
-                                            color: const Color(0xFFB2C1C0),
+                                            color: AppColors.border,
                                           ),
                                           const SizedBox(
                                             width: 10,
@@ -902,7 +904,7 @@ class TeesheetPageState extends State<TeesheetPage> {
                                           Text(
                                             widget.name,
                                             style: GoogleFonts.poppins(
-                                                color: const Color(0xFF244065),
+                                                color: AppColors.ink,
                                                 fontSize: 22,
                                                 fontWeight: FontWeight.w600),
                                           ),
@@ -912,7 +914,7 @@ class TeesheetPageState extends State<TeesheetPage> {
                                           Container(
                                             width: 40,
                                             height: 1,
-                                            color: const Color(0xFFB2C1C0),
+                                            color: AppColors.border,
                                           ),
                                         ],
                                       ),
@@ -1085,7 +1087,8 @@ class TeesheetPageState extends State<TeesheetPage> {
                                                       boxShadow: [
                                                         BoxShadow(
                                                           color: Colors.black
-                                                              .withOpacity(0.1),
+                                                              .withValues(
+                                                                  alpha: 0.1),
                                                           blurRadius: 3,
                                                           spreadRadius: 1,
                                                           offset: const Offset(
@@ -1176,7 +1179,7 @@ class TeesheetPageState extends State<TeesheetPage> {
                                                                           slot['players']?.toString() ??
                                                                               '',
                                                                           style: GoogleFonts.poppins(
-                                                                              color: const Color(0xFFFFFFFF),
+                                                                              color: AppColors.surface,
                                                                               fontSize: 13,
                                                                               fontWeight: FontWeight.w400),
                                                                         ),
@@ -1230,7 +1233,7 @@ class TeesheetPageState extends State<TeesheetPage> {
                                                                             size:
                                                                                 16,
                                                                             color:
-                                                                                Color(0xFF669933),
+                                                                                AppColors.accent,
                                                                           ),
                                                                         ],
                                                                       ),
@@ -1253,7 +1256,7 @@ class TeesheetPageState extends State<TeesheetPage> {
                                                                             height:
                                                                                 16,
                                                                             color:
-                                                                                const Color(0xFF669933),
+                                                                                AppColors.accent,
                                                                           ),
                                                                         ],
                                                                       ),
@@ -1287,7 +1290,7 @@ class TeesheetPageState extends State<TeesheetPage> {
                                                                                 .map<Widget>((hole) => Text(
                                                                                       hole.toString(),
                                                                                       style: GoogleFonts.poppins(
-                                                                                        color: const Color(0xFF244065),
+                                                                                        color: AppColors.ink,
                                                                                         fontSize: 13,
                                                                                         fontWeight: FontWeight.w400,
                                                                                       ),
@@ -1297,7 +1300,7 @@ class TeesheetPageState extends State<TeesheetPage> {
                                                                                 Text(
                                                                                   '',
                                                                                   style: GoogleFonts.poppins(
-                                                                                    color: const Color(0xFF244065),
+                                                                                    color: AppColors.ink,
                                                                                     fontSize: 13,
                                                                                     fontWeight: FontWeight.w400,
                                                                                   ),
@@ -1322,7 +1325,7 @@ class TeesheetPageState extends State<TeesheetPage> {
                                                                                   (hole) => Text(
                                                                                     hole == 9 ? '\$${((slot['fees']['nineHole']['greenFee']).toStringAsFixed(2) ?? '0.00')}' : '\$${(slot['fees']['eighteenHole']['greenFee'].toStringAsFixed(2) ?? '0.00')}',
                                                                                     style: GoogleFonts.poppins(
-                                                                                      color: const Color(0xFF244065),
+                                                                                      color: AppColors.ink,
                                                                                       fontSize: 13,
                                                                                       fontWeight: FontWeight.w400,
                                                                                     ),
@@ -1333,7 +1336,7 @@ class TeesheetPageState extends State<TeesheetPage> {
                                                                                 Text(
                                                                                   '',
                                                                                   style: GoogleFonts.poppins(
-                                                                                    color: const Color(0xFF244065),
+                                                                                    color: AppColors.ink,
                                                                                     fontSize: 13,
                                                                                     fontWeight: FontWeight.w400,
                                                                                   ),
@@ -1357,7 +1360,7 @@ class TeesheetPageState extends State<TeesheetPage> {
                                                                                 .map<Widget>((hole) => Text(
                                                                                       hole == 9 ? '\$${((slot['fees']['nineHole']['cartFee']).toStringAsFixed(2) ?? '0.00')}' : '\$${(slot['fees']['eighteenHole']['cartFee'].toStringAsFixed(2) ?? '0.00')}',
                                                                                       style: GoogleFonts.poppins(
-                                                                                        color: const Color(0xFF244065),
+                                                                                        color: AppColors.ink,
                                                                                         fontSize: 13,
                                                                                         fontWeight: FontWeight.w400,
                                                                                       ),
@@ -1367,7 +1370,7 @@ class TeesheetPageState extends State<TeesheetPage> {
                                                                                 Text(
                                                                                   '',
                                                                                   style: GoogleFonts.poppins(
-                                                                                    color: const Color(0xFF244065),
+                                                                                    color: AppColors.ink,
                                                                                     fontSize: 13,
                                                                                     fontWeight: FontWeight.w400,
                                                                                   ),
@@ -1393,8 +1396,7 @@ class TeesheetPageState extends State<TeesheetPage> {
                                                 child: Text(
                                                   'No Tee time available at this time, please try again later. Tee times are available only between 6 AM to 12 AM',
                                                   style: GoogleFonts.poppins(
-                                                    color:
-                                                        const Color(0xFF244065),
+                                                    color: AppColors.ink,
                                                     fontSize: 16,
                                                     fontWeight: FontWeight.w500,
                                                   ),
@@ -1431,10 +1433,10 @@ class TeesheetPageState extends State<TeesheetPage> {
         width: 30,
         height: 30,
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFF9ECF9A) : Colors.white,
+          color: isSelected ? AppColors.primary : Colors.white,
           shape: BoxShape.circle,
           border: Border.all(
-            color: const Color(0xFF9ECF9A),
+            color: AppColors.primary,
             width: 1,
           ),
         ),
@@ -1442,9 +1444,7 @@ class TeesheetPageState extends State<TeesheetPage> {
         child: Text(
           label,
           style: GoogleFonts.poppins(
-            color: isSelected
-                ? Colors.white
-                : const Color(0xFF244065), // 👈 Change here
+            color: isSelected ? Colors.white : AppColors.ink, // 👈 Change here
             fontWeight: FontWeight.w600,
             fontSize: 13,
           ),
@@ -1467,14 +1467,13 @@ class TeesheetPageState extends State<TeesheetPage> {
         width: 85,
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
         decoration: BoxDecoration(
-          color: isSelected
-              ? const Color(0xFF9ECF9A)
-              : Colors.white, // Red for active
-          border: Border.all(color: const Color(0xFF9ECF9A), width: 1),
+          color:
+              isSelected ? AppColors.primary : Colors.white, // Red for active
+          border: Border.all(color: AppColors.primary, width: 1),
           borderRadius: BorderRadius.circular(50),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withValues(alpha: 0.1),
               blurRadius: 3,
               spreadRadius: 1,
               offset: const Offset(0, 0),
@@ -1485,7 +1484,7 @@ class TeesheetPageState extends State<TeesheetPage> {
           child: Text(
             label,
             style: GoogleFonts.poppins(
-              color: isSelected ? Colors.white : const Color(0xFF244065),
+              color: isSelected ? Colors.white : AppColors.ink,
               fontWeight: FontWeight.w600,
               fontSize: 13,
             ),

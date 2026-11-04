@@ -1,3 +1,5 @@
+import 'package:driver_pos/services/session_service.dart';
+import 'package:driver_pos/theme/app_theme.dart';
 // ignore_for_file: deprecated_member_use
 
 import 'package:flutter/material.dart';
@@ -69,7 +71,7 @@ class MySettingPageState extends State<MySettingPage> {
         },
       ),
       body: Container(
-        color: const Color(0xFFFAFCFA),
+        color: AppColors.pageBackground,
         width: double.infinity,
         height: double.infinity,
         child: Padding(
@@ -89,7 +91,7 @@ class MySettingPageState extends State<MySettingPage> {
                       Container(
                         width: 40,
                         height: 1,
-                        color: const Color(0xFFB2C1C0),
+                        color: AppColors.border,
                       ),
                       const SizedBox(
                         width: 10,
@@ -97,7 +99,7 @@ class MySettingPageState extends State<MySettingPage> {
                       Text(
                         "Settings",
                         style: GoogleFonts.poppins(
-                            color: const Color(0xFF244065),
+                            color: AppColors.ink,
                             fontSize: 22,
                             fontWeight: FontWeight.w600),
                       ),
@@ -107,7 +109,7 @@ class MySettingPageState extends State<MySettingPage> {
                       Container(
                         width: 40,
                         height: 1,
-                        color: const Color(0xFFB2C1C0),
+                        color: AppColors.border,
                       ),
                     ],
                   )),
@@ -123,8 +125,8 @@ class MySettingPageState extends State<MySettingPage> {
                     decoration: BoxDecoration(
                       boxShadow: [
                         BoxShadow(
-                          color: const Color(0xFF9ECF9A)
-                              .withOpacity(0.15), // make it visible
+                          color: AppColors.primary
+                              .withValues(alpha: 0.15), // make it visible
                           blurRadius: 30, // soft edges
                           spreadRadius:
                               1, // controls how far the shadow spreads
@@ -144,7 +146,7 @@ class MySettingPageState extends State<MySettingPage> {
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(50),
                               border: Border.all(
-                                color: const Color(0xFF9ECF9A),
+                                color: AppColors.primary,
                                 width: 1,
                               ),
                             ),
@@ -180,7 +182,7 @@ class MySettingPageState extends State<MySettingPage> {
                                               ? userName!
                                               : "Guest User",
                                           style: GoogleFonts.poppins(
-                                            color: const Color(0xFF244065),
+                                            color: AppColors.ink,
                                             fontSize: 16,
                                             fontWeight: FontWeight.w600,
                                           ),
@@ -189,7 +191,7 @@ class MySettingPageState extends State<MySettingPage> {
                                           decoration: BoxDecoration(
                                             borderRadius:
                                                 BorderRadius.circular(20),
-                                            color: const Color(0xFFF7FAF4),
+                                            color: AppColors.surfaceTint,
                                           ),
                                           padding: const EdgeInsets.symmetric(
                                               horizontal: 10, vertical: 5),
@@ -199,7 +201,7 @@ class MySettingPageState extends State<MySettingPage> {
                                                 ? "$accountNumber"
                                                 : "Account: N/A",
                                             style: GoogleFonts.poppins(
-                                                color: const Color(0xFF669933),
+                                                color: AppColors.accent,
                                                 fontSize: 12,
                                                 fontWeight: FontWeight.w600),
                                           ),
@@ -224,7 +226,7 @@ class MySettingPageState extends State<MySettingPage> {
                                     width: 40,
                                     height: 40,
                                     decoration: const BoxDecoration(
-                                      color: Color(0xFF9ECF9A),
+                                      color: AppColors.primary,
                                       borderRadius: BorderRadius.all(
                                           Radius.circular(
                                               100)), // Use Radius.circular
@@ -233,7 +235,7 @@ class MySettingPageState extends State<MySettingPage> {
                                       child: Icon(
                                         Icons.edit,
                                         size: 17,
-                                        color: Color(0xFFFFFFFF),
+                                        color: AppColors.surface,
                                       ),
                                     ),
                                   ),
@@ -250,8 +252,8 @@ class MySettingPageState extends State<MySettingPage> {
                   //   decoration: BoxDecoration(
                   //     boxShadow: [
                   //       BoxShadow(
-                  //         color: const Color(0xFF9ECF9A)
-                  //             .withOpacity(0.15), // make it visible
+                  //         color: AppColors.primary
+                  //             .withValues(alpha: 0.15), // make it visible
                   //         blurRadius: 30, // soft edges
                   //         spreadRadius:
                   //             1, // controls how far the shadow spreads
@@ -271,7 +273,7 @@ class MySettingPageState extends State<MySettingPage> {
                   //           decoration: BoxDecoration(
                   //             borderRadius: BorderRadius.circular(50),
                   //             border: Border.all(
-                  //               color: const Color(0xFF9ECF9A),
+                  //               color: AppColors.primary,
                   //               width: 1,
                   //             ),
                   //           ),
@@ -285,7 +287,7 @@ class MySettingPageState extends State<MySettingPage> {
                   //                     width: 40,
                   //                     height: 40,
                   //                     decoration: const BoxDecoration(
-                  //                       color: Color(0xFFF8F8F8),
+                  //                       color: AppColors.surfaceMuted,
                   //                       borderRadius: BorderRadius.all(
                   //                           Radius.circular(
                   //                               100)), // Use Radius.circular
@@ -294,7 +296,7 @@ class MySettingPageState extends State<MySettingPage> {
                   //                       child: Icon(
                   //                         Icons.edit,
                   //                         size: 17,
-                  //                         color: Color(0xFF6B7280),
+                  //                         color: AppColors.textSecondary,
                   //                       ),
                   //                     ),
                   //                   ),
@@ -304,7 +306,7 @@ class MySettingPageState extends State<MySettingPage> {
                   //                   Text(
                   //                     "Change Password",
                   //                     style: GoogleFonts.poppins(
-                  //                       color: const Color(0xFF244065),
+                  //                       color: AppColors.ink,
                   //                       fontSize: 14,
                   //                       fontWeight: FontWeight.w600,
                   //                     ),
@@ -314,7 +316,7 @@ class MySettingPageState extends State<MySettingPage> {
                   //               const Icon(
                   //                 Icons.arrow_forward_ios_outlined,
                   //                 size: 13,
-                  //                 color: Color(0xFF9ECF9A),
+                  //                 color: AppColors.primary,
                   //               )
                   //             ],
                   //           ),
@@ -329,8 +331,8 @@ class MySettingPageState extends State<MySettingPage> {
                     decoration: BoxDecoration(
                       boxShadow: [
                         BoxShadow(
-                          color: const Color(0xFF9ECF9A)
-                              .withOpacity(0.15), // make it visible
+                          color: AppColors.primary
+                              .withValues(alpha: 0.15), // make it visible
                           blurRadius: 30, // soft edges
                           spreadRadius:
                               1, // controls how far the shadow spreads
@@ -359,7 +361,7 @@ class MySettingPageState extends State<MySettingPage> {
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(50),
                               border: Border.all(
-                                color: const Color(0xFF9ECF9A),
+                                color: AppColors.primary,
                                 width: 1,
                               ),
                             ),
@@ -373,7 +375,7 @@ class MySettingPageState extends State<MySettingPage> {
                                       width: 40,
                                       height: 40,
                                       decoration: const BoxDecoration(
-                                        color: Color(0xFFF8F8F8),
+                                        color: AppColors.surfaceMuted,
                                         borderRadius: BorderRadius.all(
                                             Radius.circular(
                                                 100)), // Use Radius.circular
@@ -382,7 +384,7 @@ class MySettingPageState extends State<MySettingPage> {
                                         child: Icon(
                                           Icons.card_giftcard,
                                           size: 17,
-                                          color: Color(0xFF6B7280),
+                                          color: AppColors.textSecondary,
                                         ),
                                       ),
                                     ),
@@ -392,7 +394,7 @@ class MySettingPageState extends State<MySettingPage> {
                                     Text(
                                       "Notification",
                                       style: GoogleFonts.poppins(
-                                        color: const Color(0xFF244065),
+                                        color: AppColors.ink,
                                         fontSize: 14,
                                         fontWeight: FontWeight.w600,
                                       ),
@@ -402,7 +404,7 @@ class MySettingPageState extends State<MySettingPage> {
                                 const Icon(
                                   Icons.arrow_forward_ios_outlined,
                                   size: 13,
-                                  color: Color(0xFF9ECF9A),
+                                  color: AppColors.primary,
                                 )
                               ],
                             ),
@@ -417,8 +419,8 @@ class MySettingPageState extends State<MySettingPage> {
                   //   decoration: BoxDecoration(
                   //     boxShadow: [
                   //       BoxShadow(
-                  //         color: const Color(0xFF9ECF9A)
-                  //             .withOpacity(0.15), // make it visible
+                  //         color: AppColors.primary
+                  //             .withValues(alpha: 0.15), // make it visible
                   //         blurRadius: 30, // soft edges
                   //         spreadRadius:
                   //             1, // controls how far the shadow spreads
@@ -447,7 +449,7 @@ class MySettingPageState extends State<MySettingPage> {
                   //           decoration: BoxDecoration(
                   //             borderRadius: BorderRadius.circular(50),
                   //             border: Border.all(
-                  //               color: const Color(0xFF9ECF9A),
+                  //               color: AppColors.primary,
                   //               width: 1,
                   //             ),
                   //           ),
@@ -461,7 +463,7 @@ class MySettingPageState extends State<MySettingPage> {
                   //                     width: 40,
                   //                     height: 40,
                   //                     decoration: const BoxDecoration(
-                  //                       color: Color(0xFFF8F8F8),
+                  //                       color: AppColors.surfaceMuted,
                   //                       borderRadius: BorderRadius.all(
                   //                           Radius.circular(
                   //                               100)), // Use Radius.circular
@@ -470,7 +472,7 @@ class MySettingPageState extends State<MySettingPage> {
                   //                       child: Icon(
                   //                         Icons.fact_check,
                   //                         size: 17,
-                  //                         color: Color(0xFF6B7280),
+                  //                         color: AppColors.textSecondary,
                   //                       ),
                   //                     ),
                   //                   ),
@@ -480,7 +482,7 @@ class MySettingPageState extends State<MySettingPage> {
                   //                   Text(
                   //                     "Membership",
                   //                     style: GoogleFonts.poppins(
-                  //                       color: const Color(0xFF244065),
+                  //                       color: AppColors.ink,
                   //                       fontSize: 14,
                   //                       fontWeight: FontWeight.w600,
                   //                     ),
@@ -490,7 +492,7 @@ class MySettingPageState extends State<MySettingPage> {
                   //               const Icon(
                   //                 Icons.arrow_forward_ios_outlined,
                   //                 size: 13,
-                  //                 color: Color(0xFF9ECF9A),
+                  //                 color: AppColors.primary,
                   //               )
                   //             ],
                   //           ),
@@ -505,8 +507,8 @@ class MySettingPageState extends State<MySettingPage> {
                     decoration: BoxDecoration(
                       boxShadow: [
                         BoxShadow(
-                          color: const Color(0xFF9ECF9A)
-                              .withOpacity(0.15), // make it visible
+                          color: AppColors.primary
+                              .withValues(alpha: 0.15), // make it visible
                           blurRadius: 30, // soft edges
                           spreadRadius:
                               1, // controls how far the shadow spreads
@@ -535,7 +537,7 @@ class MySettingPageState extends State<MySettingPage> {
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(50),
                               border: Border.all(
-                                color: const Color(0xFF9ECF9A),
+                                color: AppColors.primary,
                                 width: 1,
                               ),
                             ),
@@ -549,7 +551,7 @@ class MySettingPageState extends State<MySettingPage> {
                                       width: 40,
                                       height: 40,
                                       decoration: const BoxDecoration(
-                                        color: Color(0xFFF8F8F8),
+                                        color: AppColors.surfaceMuted,
                                         borderRadius: BorderRadius.all(
                                             Radius.circular(
                                                 100)), // Use Radius.circular
@@ -558,7 +560,7 @@ class MySettingPageState extends State<MySettingPage> {
                                         child: Icon(
                                           Icons.card_giftcard,
                                           size: 17,
-                                          color: Color(0xFF6B7280),
+                                          color: AppColors.textSecondary,
                                         ),
                                       ),
                                     ),
@@ -568,7 +570,7 @@ class MySettingPageState extends State<MySettingPage> {
                                     Text(
                                       "My Wallet",
                                       style: GoogleFonts.poppins(
-                                        color: const Color(0xFF244065),
+                                        color: AppColors.ink,
                                         fontSize: 14,
                                         fontWeight: FontWeight.w600,
                                       ),
@@ -578,7 +580,7 @@ class MySettingPageState extends State<MySettingPage> {
                                 const Icon(
                                   Icons.arrow_forward_ios_outlined,
                                   size: 13,
-                                  color: Color(0xFF9ECF9A),
+                                  color: AppColors.primary,
                                 )
                               ],
                             ),
@@ -592,8 +594,8 @@ class MySettingPageState extends State<MySettingPage> {
                     decoration: BoxDecoration(
                       boxShadow: [
                         BoxShadow(
-                          color: const Color(0xFF9ECF9A)
-                              .withOpacity(0.15), // make it visible
+                          color: AppColors.primary
+                              .withValues(alpha: 0.15), // make it visible
                           blurRadius: 30, // soft edges
                           spreadRadius:
                               1, // controls how far the shadow spreads
@@ -622,7 +624,7 @@ class MySettingPageState extends State<MySettingPage> {
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(50),
                               border: Border.all(
-                                color: const Color(0xFF9ECF9A),
+                                color: AppColors.primary,
                                 width: 1,
                               ),
                             ),
@@ -636,7 +638,7 @@ class MySettingPageState extends State<MySettingPage> {
                                       width: 40,
                                       height: 40,
                                       decoration: const BoxDecoration(
-                                        color: Color(0xFFF8F8F8),
+                                        color: AppColors.surfaceMuted,
                                         borderRadius: BorderRadius.all(
                                             Radius.circular(
                                                 100)), // Use Radius.circular
@@ -645,7 +647,7 @@ class MySettingPageState extends State<MySettingPage> {
                                         child: Icon(
                                           Icons.fact_check,
                                           size: 17,
-                                          color: Color(0xFF6B7280),
+                                          color: AppColors.textSecondary,
                                         ),
                                       ),
                                     ),
@@ -655,7 +657,7 @@ class MySettingPageState extends State<MySettingPage> {
                                     Text(
                                       "My Transactions",
                                       style: GoogleFonts.poppins(
-                                        color: const Color(0xFF244065),
+                                        color: AppColors.ink,
                                         fontSize: 14,
                                         fontWeight: FontWeight.w600,
                                       ),
@@ -665,7 +667,7 @@ class MySettingPageState extends State<MySettingPage> {
                                 const Icon(
                                   Icons.arrow_forward_ios_outlined,
                                   size: 13,
-                                  color: Color(0xFF9ECF9A),
+                                  color: AppColors.primary,
                                 )
                               ],
                             ),
@@ -679,8 +681,8 @@ class MySettingPageState extends State<MySettingPage> {
                     decoration: BoxDecoration(
                       boxShadow: [
                         BoxShadow(
-                          color: const Color(0xFF9ECF9A)
-                              .withOpacity(0.15), // make it visible
+                          color: AppColors.primary
+                              .withValues(alpha: 0.15), // make it visible
                           blurRadius: 30, // soft edges
                           spreadRadius:
                               1, // controls how far the shadow spreads
@@ -709,7 +711,7 @@ class MySettingPageState extends State<MySettingPage> {
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(50),
                               border: Border.all(
-                                color: const Color(0xFF9ECF9A),
+                                color: AppColors.primary,
                                 width: 1,
                               ),
                             ),
@@ -723,7 +725,7 @@ class MySettingPageState extends State<MySettingPage> {
                                       width: 40,
                                       height: 40,
                                       decoration: const BoxDecoration(
-                                        color: Color(0xFFF8F8F8),
+                                        color: AppColors.surfaceMuted,
                                         borderRadius: BorderRadius.all(
                                             Radius.circular(
                                                 100)), // Use Radius.circular
@@ -732,7 +734,7 @@ class MySettingPageState extends State<MySettingPage> {
                                         child: Icon(
                                           Icons.fact_check,
                                           size: 17,
-                                          color: Color(0xFF6B7280),
+                                          color: AppColors.textSecondary,
                                         ),
                                       ),
                                     ),
@@ -742,7 +744,7 @@ class MySettingPageState extends State<MySettingPage> {
                                     Text(
                                       "My Gift Cards",
                                       style: GoogleFonts.poppins(
-                                        color: const Color(0xFF244065),
+                                        color: AppColors.ink,
                                         fontSize: 14,
                                         fontWeight: FontWeight.w600,
                                       ),
@@ -752,7 +754,7 @@ class MySettingPageState extends State<MySettingPage> {
                                 const Icon(
                                   Icons.arrow_forward_ios_outlined,
                                   size: 13,
-                                  color: Color(0xFF9ECF9A),
+                                  color: AppColors.primary,
                                 )
                               ],
                             ),
@@ -767,8 +769,8 @@ class MySettingPageState extends State<MySettingPage> {
                   //   decoration: BoxDecoration(
                   //     boxShadow: [
                   //       BoxShadow(
-                  //         color: const Color(0xFF9ECF9A)
-                  //             .withOpacity(0.15), // make it visible
+                  //         color: AppColors.primary
+                  //             .withValues(alpha: 0.15), // make it visible
                   //         blurRadius: 30, // soft edges
                   //         spreadRadius:
                   //             1, // controls how far the shadow spreads
@@ -796,7 +798,7 @@ class MySettingPageState extends State<MySettingPage> {
                   //           decoration: BoxDecoration(
                   //             borderRadius: BorderRadius.circular(50),
                   //             border: Border.all(
-                  //               color: const Color(0xFF9ECF9A),
+                  //               color: AppColors.primary,
                   //               width: 1,
                   //             ),
                   //           ),
@@ -810,7 +812,7 @@ class MySettingPageState extends State<MySettingPage> {
                   //                     width: 40,
                   //                     height: 40,
                   //                     decoration: const BoxDecoration(
-                  //                       color: Color(0xFFF8F8F8),
+                  //                       color: AppColors.surfaceMuted,
                   //                       borderRadius: BorderRadius.all(
                   //                           Radius.circular(
                   //                               100)), // Use Radius.circular
@@ -819,7 +821,7 @@ class MySettingPageState extends State<MySettingPage> {
                   //                       child: Icon(
                   //                         Icons.date_range_outlined,
                   //                         size: 17,
-                  //                         color: Color(0xFF6B7280),
+                  //                         color: AppColors.textSecondary,
                   //                       ),
                   //                     ),
                   //                   ),
@@ -829,7 +831,7 @@ class MySettingPageState extends State<MySettingPage> {
                   //                   Text(
                   //                     "FAQs",
                   //                     style: GoogleFonts.poppins(
-                  //                       color: const Color(0xFF244065),
+                  //                       color: AppColors.ink,
                   //                       fontSize: 14,
                   //                       fontWeight: FontWeight.w600,
                   //                     ),
@@ -839,7 +841,7 @@ class MySettingPageState extends State<MySettingPage> {
                   //               const Icon(
                   //                 Icons.arrow_forward_ios_outlined,
                   //                 size: 13,
-                  //                 color: Color(0xFF9ECF9A),
+                  //                 color: AppColors.primary,
                   //               )
                   //             ],
                   //           ),
@@ -853,8 +855,8 @@ class MySettingPageState extends State<MySettingPage> {
                   //   decoration: BoxDecoration(
                   //     boxShadow: [
                   //       BoxShadow(
-                  //         color: const Color(0xFF9ECF9A)
-                  //             .withOpacity(0.15), // make it visible
+                  //         color: AppColors.primary
+                  //             .withValues(alpha: 0.15), // make it visible
                   //         blurRadius: 30, // soft edges
                   //         spreadRadius:
                   //             1, // controls how far the shadow spreads
@@ -882,7 +884,7 @@ class MySettingPageState extends State<MySettingPage> {
                   //           decoration: BoxDecoration(
                   //             borderRadius: BorderRadius.circular(50),
                   //             border: Border.all(
-                  //               color: const Color(0xFF9ECF9A),
+                  //               color: AppColors.primary,
                   //               width: 1,
                   //             ),
                   //           ),
@@ -896,7 +898,7 @@ class MySettingPageState extends State<MySettingPage> {
                   //                     width: 40,
                   //                     height: 40,
                   //                     decoration: const BoxDecoration(
-                  //                       color: Color(0xFFF8F8F8),
+                  //                       color: AppColors.surfaceMuted,
                   //                       borderRadius: BorderRadius.all(
                   //                         Radius.circular(100),
                   //                       ), // Use Radius.circular
@@ -905,7 +907,7 @@ class MySettingPageState extends State<MySettingPage> {
                   //                       child: Icon(
                   //                         Icons.settings,
                   //                         size: 17,
-                  //                         color: Color(0xFF6B7280),
+                  //                         color: AppColors.textSecondary,
                   //                       ),
                   //                     ),
                   //                   ),
@@ -915,7 +917,7 @@ class MySettingPageState extends State<MySettingPage> {
                   //                   Text(
                   //                     "Term and Conditions",
                   //                     style: GoogleFonts.poppins(
-                  //                       color: const Color(0xFF244065),
+                  //                       color: AppColors.ink,
                   //                       fontSize: 14,
                   //                       fontWeight: FontWeight.w600,
                   //                     ),
@@ -925,7 +927,7 @@ class MySettingPageState extends State<MySettingPage> {
                   //               const Icon(
                   //                 Icons.arrow_forward_ios_outlined,
                   //                 size: 13,
-                  //                 color: Color(0xFF9ECF9A),
+                  //                 color: AppColors.primary,
                   //               )
                   //             ],
                   //           ),
@@ -939,8 +941,8 @@ class MySettingPageState extends State<MySettingPage> {
                   //   decoration: BoxDecoration(
                   //     boxShadow: [
                   //       BoxShadow(
-                  //         color: const Color(0xFF9ECF9A)
-                  //             .withOpacity(0.15), // make it visible
+                  //         color: AppColors.primary
+                  //             .withValues(alpha: 0.15), // make it visible
                   //         blurRadius: 30, // soft edges
                   //         spreadRadius:
                   //             1, // controls how far the shadow spreads
@@ -969,7 +971,7 @@ class MySettingPageState extends State<MySettingPage> {
                   //           decoration: BoxDecoration(
                   //             borderRadius: BorderRadius.circular(50),
                   //             border: Border.all(
-                  //               color: const Color(0xFF9ECF9A),
+                  //               color: AppColors.primary,
                   //               width: 1,
                   //             ),
                   //           ),
@@ -983,7 +985,7 @@ class MySettingPageState extends State<MySettingPage> {
                   //                     width: 40,
                   //                     height: 40,
                   //                     decoration: const BoxDecoration(
-                  //                       color: Color(0xFFF8F8F8),
+                  //                       color: AppColors.surfaceMuted,
                   //                       borderRadius: BorderRadius.all(
                   //                           Radius.circular(
                   //                               100)), // Use Radius.circular
@@ -992,7 +994,7 @@ class MySettingPageState extends State<MySettingPage> {
                   //                       child: Icon(
                   //                         Icons.settings,
                   //                         size: 17,
-                  //                         color: Color(0xFF6B7280),
+                  //                         color: AppColors.textSecondary,
                   //                       ),
                   //                     ),
                   //                   ),
@@ -1002,7 +1004,7 @@ class MySettingPageState extends State<MySettingPage> {
                   //                   Text(
                   //                     "Help and Support",
                   //                     style: GoogleFonts.poppins(
-                  //                       color: const Color(0xFF244065),
+                  //                       color: AppColors.ink,
                   //                       fontSize: 14,
                   //                       fontWeight: FontWeight.w600,
                   //                     ),
@@ -1012,7 +1014,7 @@ class MySettingPageState extends State<MySettingPage> {
                   //               const Icon(
                   //                 Icons.arrow_forward_ios_outlined,
                   //                 size: 13,
-                  //                 color: Color(0xFF9ECF9A),
+                  //                 color: AppColors.primary,
                   //               )
                   //             ],
                   //           ),
@@ -1056,8 +1058,8 @@ class MySettingPageState extends State<MySettingPage> {
                               if (confirm != true) {
                                 return;
                               }
-                              await secureStorage.deleteAll();
-                              if (!mounted) return;
+                              await SessionService().logout();
+                              if (!mounted || !context.mounted) return;
                               Navigator.pushAndRemoveUntil(
                                 context,
                                 MaterialPageRoute(
@@ -1066,7 +1068,7 @@ class MySettingPageState extends State<MySettingPage> {
                               );
                             },
                             style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFF9ECF9A)),
+                                backgroundColor: AppColors.primary),
                             child: Padding(
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 15.0, vertical: 10.0),
@@ -1074,7 +1076,7 @@ class MySettingPageState extends State<MySettingPage> {
                                 child: Text(
                                   "Logout",
                                   style: GoogleFonts.poppins(
-                                    color: const Color(0xFFFFFFFF),
+                                    color: AppColors.surface,
                                     fontSize: 16,
                                     fontWeight: FontWeight.w600,
                                   ),
@@ -1088,7 +1090,7 @@ class MySettingPageState extends State<MySettingPage> {
                           right: 15,
                           child: Icon(
                             Icons.arrow_forward,
-                            color: Color(0xFFFFFFFF),
+                            color: AppColors.surface,
                             size: 18,
                           ),
                         )

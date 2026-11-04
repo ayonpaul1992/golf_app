@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../services/biometric_auth.dart';
+import '../services/session_service.dart';
 import 'dashboard.dart';
 import 'login.dart';
 import 'splash_screen.dart';
@@ -22,32 +22,15 @@ class _StartupGateState extends State<StartupGate> {
   }
 
   Future<void> _startFlow() async {
-    final storage = const FlutterSecureStorage();
-    final isLoggedIn = await storage.read(key: 'isLoggedIn');
-    final token = await storage.read(key: 'accessToken');
-
-    final loggedIn = (isLoggedIn == 'true' && token != null);
-
-    if (!loggedIn) {
-      _go(const LoginPage());
-      return;
-    }
-
-    final bioEnabled = await bio.isBiometricEnabled();
-
-    // Ask biometric if enabled
-    if (bioEnabled) {
-      final ok = await bio.authenticate(
-          reason: "Please authenticate to access your account");
-
-      if (!ok) {
-        _go(const LoginPage());
-        return;
-      }
-    }
-
-    // Go to dashboard after successful biometric
-    _go(const DashboardPage());
+    final destination = await SessionService().resolveStartup(
+      isBiometricEnabled: bio.isBiometricEnabled,
+      authenticate: () => bio.authenticate(
+        reason: 'Please authenticate to access your account',
+      ),
+    );
+    _go(destination == SessionDestination.dashboard
+        ? const DashboardPage()
+        : const LoginPage());
   }
 
   void _go(Widget screen) {

@@ -1,17 +1,16 @@
+import 'package:driver_pos/repositories/feature_repositories.dart';
+import 'package:driver_pos/theme/app_theme.dart';
+import '../models/history_page.dart';
+import '../repositories/history_repository.dart';
 // ignore_for_file: deprecated_member_use, use_build_context_synchronously
 
-import 'dart:convert';
-import 'package:driver_pos/services/api_config.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '/components/custom_app_bar.dart';
 import '/components/custom_drawer.dart';
 import '/components/custom_bottom_nav_bar.dart';
 import 'package:intl/intl.dart';
-import 'package:crypto/crypto.dart';
-import 'package:cryptography/cryptography.dart';
 
 class MyReservationPage extends StatefulWidget {
   final String myRsvId;
@@ -87,49 +86,57 @@ class MyReservationPageState extends State<MyReservationPage> {
     };
   }
 
-  Future<void> fetchMyBookings() async {
-    try {
-      // Read the access token
-      final token = await secureStorage.read(key: 'accessToken');
-      if (token == null) {
-        throw Exception('Access token not found');
-      }
+  final _historyRepository = HistoryRepository();
+  HistoryPage? _historyPage;
+  bool _loadingMore = false;
+  int _historyRequest = 0;
 
-      final String baseUrl = ApiConfig.baseUrl;
-
-      // Construct the URL
-      final Uri uri = Uri.parse(
-          '$baseUrl/teesheet/myBookings?limit=50&startDate=${getDateRange(_selectedFilter)['startDate']}&endDate=${getDateRange(_selectedFilter)['endDate']}');
-
-      // Send GET request with Authorization header
-      final response = await http.get(
-        uri,
-        headers: {
-          'Authorization': 'Bearer $token',
-          'Content-Type': 'application/json',
-        },
-      );
-
-      if (response.statusCode == 200) {
-        // Parse the JSON response
-        final data = json.decode(response.body);
-        final reservationsList = data['data'] as List<dynamic>;
-
-        setState(() {
-          reservations = reservationsList
-              .map((reservation) => reservation as Map<String, dynamic>)
-              .toList();
-          isLoading = false; // Set loading to false after fetching
-        });
-        // print('📦 Bookings data: $reservations');
-      } else {
-        print('❌ Failed to fetch bookings: ${response.statusCode}');
-        // Optionally show an error message to the user
-      }
-    } catch (e) {
-      print('❗ Error fetching bookings: $e');
-      // Optionally handle error gracefully
+  Future<void> fetchMyBookings({bool append = false}) async {
+    if (append && (_loadingMore || _historyPage?.hasMore != true)) return;
+    final request = ++_historyRequest;
+    if (mounted) {
+      setState(() {
+        if (append) {
+          _loadingMore = true;
+        } else {
+          isLoading = true;
+        }
+      });
     }
+    try {
+      final page = await _historyRepository.fetch(
+        'teesheet/myBookings',
+        page: append ? _historyPage!.page + 1 : 1,
+        filters: Map<String, String>.from(getDateRange(_selectedFilter)),
+      );
+      if (!mounted || request != _historyRequest) return;
+      setState(() {
+        reservations = append ? [...reservations, ...page.items] : page.items;
+        _historyPage = page;
+      });
+    } catch (_) {
+      if (mounted && request == _historyRequest) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content: Text('Unable to load history. Please retry.')),
+        );
+      }
+    } finally {
+      if (mounted && request == _historyRequest) {
+        setState(() {
+          isLoading = false;
+          _loadingMore = false;
+        });
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _historyRequest++;
+    _historyRepository.dispose();
+    _dateController.dispose();
+    super.dispose();
   }
 
   Future<void> _handleRefresh() async {
@@ -180,7 +187,7 @@ class MyReservationPageState extends State<MyReservationPage> {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   border: Border.all(
-                    color: const Color(0xFFB2C1C0),
+                    color: AppColors.border,
                   ),
                   borderRadius: BorderRadius.circular(8),
                 ),
@@ -204,8 +211,8 @@ class MyReservationPageState extends State<MyReservationPage> {
                           style: GoogleFonts.poppins(
                             fontSize: 13,
                             color: option == _selectedFilter
-                                ? const Color(0xFF669933)
-                                : const Color(0xFF244065),
+                                ? AppColors.accent
+                                : AppColors.ink,
                             fontWeight: option == _selectedFilter
                                 ? FontWeight.w600
                                 : FontWeight.w500,
@@ -244,6 +251,14 @@ class MyReservationPageState extends State<MyReservationPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: !isLoading && _historyPage?.hasMore == true
+          ? FloatingActionButton.extended(
+              onPressed:
+                  _loadingMore ? null : () => fetchMyBookings(append: true),
+              label: Text(_loadingMore ? 'Loading…' : 'Load more'),
+              icon: const Icon(Icons.expand_more),
+            )
+          : null,
       key: _scaffoldKey,
       appBar: CustomAppBar(
         scaffoldKey: _scaffoldKey,
@@ -275,12 +290,12 @@ class MyReservationPageState extends State<MyReservationPage> {
                         height: MediaQuery.of(context).size.height * 0.7,
                         child: const Center(
                           child: CircularProgressIndicator(
-                            color: Color(0xFF9ECF9A),
+                            color: AppColors.primary,
                           ),
                         ),
                       )
                     : Container(
-                        color: const Color(0xFFF8F8F8),
+                        color: AppColors.surfaceMuted,
                         width: double.infinity,
                         // ⚠️ Removed the fixed height to allow the content to determine the height
                         // and become scrollable.
@@ -304,7 +319,7 @@ class MyReservationPageState extends State<MyReservationPage> {
                                       Text(
                                         "My Reservation",
                                         style: GoogleFonts.poppins(
-                                            color: const Color(0xFF244065),
+                                            color: AppColors.ink,
                                             fontSize: 17,
                                             fontWeight: FontWeight.w600),
                                       ),
@@ -318,7 +333,7 @@ class MyReservationPageState extends State<MyReservationPage> {
                                                   fontSize: 13,
                                                   fontWeight: FontWeight.w500,
                                                   color:
-                                                      const Color(0xFF6E7373)),
+                                                      AppColors.textMuted),
                                             ),
                                             const SizedBox(width: 5),
                                             Text(
@@ -326,8 +341,7 @@ class MyReservationPageState extends State<MyReservationPage> {
                                               style: GoogleFonts.poppins(
                                                   fontSize: 13,
                                                   fontWeight: FontWeight.w600,
-                                                  color:
-                                                      const Color(0xFF244065)),
+                                                  color: AppColors.ink),
                                             ),
                                             Icon(
                                               _dropdownOverlay == null
@@ -336,7 +350,7 @@ class MyReservationPageState extends State<MyReservationPage> {
                                                   : Icons
                                                       .keyboard_arrow_up_rounded,
                                               size: 22,
-                                              color: const Color(0xFF669933),
+                                              color: AppColors.accent,
                                             )
                                           ],
                                         ),
@@ -352,7 +366,7 @@ class MyReservationPageState extends State<MyReservationPage> {
                                 width: double.infinity,
                                 decoration: BoxDecoration(
                                   border: Border.all(
-                                      color: const Color(0xFF9ECF9A), width: 1),
+                                      color: AppColors.primary, width: 1),
                                   borderRadius: const BorderRadius.all(
                                     Radius.circular(10), // Correct usage
                                   ),
@@ -363,7 +377,7 @@ class MyReservationPageState extends State<MyReservationPage> {
                                     Container(
                                       width: double.infinity,
                                       decoration: const BoxDecoration(
-                                        color: Color(0xFFF8F8F8),
+                                        color: AppColors.surfaceMuted,
                                         borderRadius: BorderRadius.only(
                                           topLeft: Radius.circular(10),
                                           topRight: Radius.circular(10),
@@ -374,7 +388,7 @@ class MyReservationPageState extends State<MyReservationPage> {
                                         "My Booking Summary",
                                         textAlign: TextAlign.center,
                                         style: GoogleFonts.poppins(
-                                          color: const Color(0xFF244065),
+                                          color: AppColors.ink,
                                           fontWeight: FontWeight.w600,
                                           fontSize: 13,
                                         ),
@@ -387,7 +401,7 @@ class MyReservationPageState extends State<MyReservationPage> {
                                         child: Text(
                                           "No Reservations Found",
                                           style: GoogleFonts.poppins(
-                                            color: const Color(0xFF244065),
+                                            color: AppColors.ink,
                                             fontSize: 15,
                                             fontWeight: FontWeight.w600,
                                           ),
@@ -399,8 +413,7 @@ class MyReservationPageState extends State<MyReservationPage> {
                                             reservation['golfCourse']['name'] ??
                                                 'Unknown Course';
                                         final courseLogo =
-                                            reservation['golfCourse']
-                                                ['logo'];
+                                            reservation['golfCourse']['logo'];
                                         final bookingDateRaw =
                                             reservation['date'];
                                         final bookingTimeRaw =
@@ -557,7 +570,7 @@ class MyReservationPageState extends State<MyReservationPage> {
                                                                                 25,
                                                                             decoration:
                                                                                 BoxDecoration(
-                                                                              color: const Color(0xFFF8F8F8),
+                                                                              color: AppColors.surfaceMuted,
                                                                               borderRadius: BorderRadius.circular(50),
                                                                             ),
                                                                             child:
@@ -565,7 +578,7 @@ class MyReservationPageState extends State<MyReservationPage> {
                                                                               child: Icon(
                                                                                 Icons.edit,
                                                                                 size: 16,
-                                                                                color: Color(0xFF669933),
+                                                                                color: AppColors.accent,
                                                                               ),
                                                                             ),
                                                                           ),
@@ -606,48 +619,20 @@ class MyReservationPageState extends State<MyReservationPage> {
                                                                                                 final secureStorage = const FlutterSecureStorage();
                                                                                                 final token = await secureStorage.read(key: 'accessToken');
                                                                                                 if (token == null) throw Exception('Access token not found');
-                                                                                                final String baseUrl = ApiConfig.baseUrl;
 
-                                                                                                final uri = Uri.parse(
-                                                                                                  '$baseUrl/teesheet/myBookings/cancel/$slotId',
-                                                                                                );
 
                                                                                                 final payload = {
                                                                                                   "process": "Cancel"
                                                                                                 };
-                                                                                                const secret = 'course1999golf01';
+                                                                                                final requestPayload = Map<String, dynamic>.from(payload);
 
-                                                                                                final keyHash = sha256.convert(utf8.encode(secret)).bytes;
-                                                                                                final secretKey = SecretKey(keyHash);
-                                                                                                final algorithm = AesGcm.with256bits();
-                                                                                                final iv = algorithm.newNonce();
-
-                                                                                                final secretBox = await algorithm.encrypt(
-                                                                                                  utf8.encode(jsonEncode(payload)),
-                                                                                                  secretKey: secretKey,
-                                                                                                  nonce: iv,
-                                                                                                );
-
-                                                                                                final encryptedPayload = {
-                                                                                                  'iv': base64Encode(iv),
-                                                                                                  'data': base64Encode(secretBox.cipherText),
-                                                                                                  'tag': base64Encode(secretBox.mac.bytes),
-                                                                                                };
-
-                                                                                                final response = await http.delete(
-                                                                                                  uri,
-                                                                                                  headers: {
-                                                                                                    'Authorization': 'Bearer $token',
-                                                                                                    'Content-Type': 'application/json',
-                                                                                                  },
-                                                                                                  body: jsonEncode(encryptedPayload),
-                                                                                                );
+                                                                                                final response = await bookingRepository.cancel(slotId, requestPayload);
 
                                                                                                 if (response.statusCode == 200) {
                                                                                                   messenger.showSnackBar(
                                                                                                     const SnackBar(
                                                                                                       content: Text('Tee time cancelled successfully'),
-                                                                                                      backgroundColor: Color(0xFF9ECF9A),
+                                                                                                      backgroundColor: AppColors.primary,
                                                                                                     ),
                                                                                                   );
 
@@ -676,7 +661,7 @@ class MyReservationPageState extends State<MyReservationPage> {
                                                                               },
 
                                                                               style: ElevatedButton.styleFrom(
-                                                                                backgroundColor: const Color(0xFF9ECF9A),
+                                                                                backgroundColor: AppColors.primary,
                                                                                 foregroundColor: Colors.white,
                                                                                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5), // vertical padding
                                                                                 minimumSize: const Size(0, 0), // disables default min height

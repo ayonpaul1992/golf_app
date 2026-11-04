@@ -1,7 +1,7 @@
+import 'package:driver_pos/repositories/feature_repositories.dart';
+import 'package:driver_pos/theme/app_theme.dart';
 // ignore_for_file: deprecated_member_use, use_build_context_synchronously
 
-import 'dart:convert';
-import 'package:driver_pos/services/api_config.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -13,10 +13,7 @@ import 'package:intl/intl.dart';
 import 'dart:async';
 // ignore: library_prefixes
 import 'package:socket_io_client/socket_io_client.dart' as IO;
-import 'package:http/http.dart' as http;
 // ignore: depend_on_referenced_packages
-import 'package:crypto/crypto.dart';
-import 'package:cryptography/cryptography.dart';
 
 class TeeSheetDtls extends StatefulWidget {
   final String teesheetPageId;
@@ -171,7 +168,6 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
   Future<void> fetchSuggestions() async {
     try {
       print('Fetching suggestions from API...');
-      String token = await secureStorage.read(key: 'accessToken') ?? '';
       // golfCourse, date, and time will come from secure storage or widget properties
 
       String golfCourse = await secureStorage.read(key: 'golfCourseName') ??
@@ -184,19 +180,10 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
       print(
           'Fetching suggestions for golfCourse: $golfCourse, date: $date, time: $time');
 
-      final String baseUrl = ApiConfig.baseUrl;
 
-      final response = await http.get(
-        Uri.parse(
-          '$baseUrl/customer/players?golfCourse=$golfCourse&date=$date&time=$time',
-        ),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-      );
+      final response = await bookingRepository.players(golfCourse, date, time);
       if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
+        final data = response.json;
         if (data['data'] is List) {
           if (mounted) {
             setState(() {
@@ -318,7 +305,7 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 15),
         child: Container(
-          color: const Color(0xFFFAFCFA),
+          color: AppColors.pageBackground,
           width: double.infinity,
           height: double.infinity,
           child: SingleChildScrollView(
@@ -336,7 +323,7 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
                       Container(
                         width: 40,
                         height: 1.1,
-                        color: const Color(0xFFB2C1C0),
+                        color: AppColors.border,
                       ),
                       const SizedBox(
                         width: 10,
@@ -344,7 +331,7 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
                       Text(
                         "Tee Booking",
                         style: GoogleFonts.poppins(
-                            color: const Color(0xFF244065),
+                            color: AppColors.ink,
                             fontSize: 22,
                             fontWeight: FontWeight.w600),
                       ),
@@ -354,7 +341,7 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
                       Container(
                         width: 40,
                         height: 1.1,
-                        color: const Color(0xFFB2C1C0),
+                        color: AppColors.border,
                       ),
                     ],
                   )),
@@ -369,8 +356,8 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
                         color: const Color(0xFFF1FFF0),
-                        border: Border.all(
-                            color: const Color(0xFF9ECF9A), width: 1.5),
+                        border:
+                            Border.all(color: AppColors.primary, width: 1.5),
                         borderRadius: BorderRadius.circular(15),
                       ),
                       child: Row(
@@ -380,7 +367,7 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
                             margin: const EdgeInsets.only(top: 2),
                             child: Image.asset(
                               "assets/images/ftr_hstry.png",
-                              color: const Color(0xFF6B7280),
+                              color: AppColors.textSecondary,
                               width: 18,
                             ),
                           ),
@@ -393,7 +380,7 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
                                   TextSpan(
                                     text: "Your time, ",
                                     style: GoogleFonts.poppins(
-                                      color: const Color(0xFF244065),
+                                      color: AppColors.ink,
                                       fontSize: 13,
                                       fontWeight: FontWeight.w500,
                                     ),
@@ -401,7 +388,7 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
                                   TextSpan(
                                     text: widget.time,
                                     style: GoogleFonts.poppins(
-                                      color: const Color(0xFF669933),
+                                      color: AppColors.accent,
                                       fontSize: 13,
                                       fontWeight: FontWeight.w500,
                                     ),
@@ -410,7 +397,7 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
                                     text:
                                         ", will be held for 5 minutes. You have ",
                                     style: GoogleFonts.poppins(
-                                      color: const Color(0xFF244065),
+                                      color: AppColors.ink,
                                       fontSize: 13,
                                       fontWeight: FontWeight.w500,
                                     ),
@@ -418,7 +405,7 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
                                   TextSpan(
                                     text: _formatDuration(_remaining),
                                     style: GoogleFonts.poppins(
-                                      color: const Color(0xFFDB0606),
+                                      color: AppColors.error,
                                       fontSize: 13,
                                       fontWeight: FontWeight.w500,
                                     ),
@@ -427,7 +414,7 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
                                     text:
                                         " remaining. Please complete the reservation process.",
                                     style: GoogleFonts.poppins(
-                                      color: const Color(0xFF244065),
+                                      color: AppColors.ink,
                                       fontSize: 13,
                                       fontWeight: FontWeight.w500,
                                     ),
@@ -445,8 +432,8 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
                     Container(
                       decoration: BoxDecoration(
                         color: const Color(0xFFF1FFF0),
-                        border: Border.all(
-                            color: const Color(0xFF9ECF9A), width: 1.5),
+                        border:
+                            Border.all(color: AppColors.primary, width: 1.5),
                         borderRadius: BorderRadius.circular(15),
                       ),
                       child: Column(
@@ -454,7 +441,7 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
                           Container(
                             width: double.infinity,
                             decoration: BoxDecoration(
-                              color: const Color(0xFFF8F8F8),
+                              color: AppColors.surfaceMuted,
                               borderRadius: BorderRadius.circular(15),
                             ),
                             child: SingleChildScrollView(
@@ -471,7 +458,7 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
                                         children: [
                                           Image.asset(
                                             "assets/images/solar_golf-bold.png",
-                                            color: const Color(0xFF6B7280),
+                                            color: AppColors.textSecondary,
                                             width: 18,
                                           ),
                                           const SizedBox(
@@ -481,7 +468,7 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
                                             child: Text(
                                               golfCourseName ?? '',
                                               style: GoogleFonts.poppins(
-                                                color: const Color(0xFF244065),
+                                                color: AppColors.ink,
                                                 fontSize: 13,
                                                 fontWeight: FontWeight.w600,
                                               ),
@@ -496,7 +483,7 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
                                     Container(
                                       width: 1,
                                       height: 70,
-                                      color: const Color(0xFFB2C1C0),
+                                      color: AppColors.border,
                                     ),
                                     const SizedBox(
                                       width: 10,
@@ -511,7 +498,7 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
                                             children: [
                                               Image.asset(
                                                 "assets/images/lets-icons_date-fill.png",
-                                                color: const Color(0xFF6B7280),
+                                                color: AppColors.textSecondary,
                                                 width: 18,
                                               ),
                                               const SizedBox(
@@ -523,8 +510,7 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
                                                       .parse(widget.date),
                                                 ),
                                                 style: GoogleFonts.poppins(
-                                                  color:
-                                                      const Color(0xFF244065),
+                                                  color: AppColors.ink,
                                                   fontWeight: FontWeight.w600,
                                                   fontSize: 13,
                                                 ),
@@ -538,15 +524,14 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
                                             children: [
                                               Image.asset(
                                                 "assets/images/ftr_hstry.png",
-                                                color: const Color(0xFF6B7280),
+                                                color: AppColors.textSecondary,
                                                 width: 18,
                                               ),
                                               const SizedBox(width: 6),
                                               Text(
                                                 widget.time,
                                                 style: GoogleFonts.poppins(
-                                                  color:
-                                                      const Color(0xFF244065),
+                                                  color: AppColors.ink,
                                                   fontWeight: FontWeight.w600,
                                                   fontSize: 13,
                                                 ),
@@ -578,7 +563,7 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
                                       Text(
                                         "Players",
                                         style: GoogleFonts.poppins(
-                                          color: const Color(0xFF6E7373),
+                                          color: AppColors.textMuted,
                                           fontSize: 12,
                                           fontWeight: FontWeight.w500,
                                         ),
@@ -673,7 +658,7 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
                                                     onPressed: null,
                                                     icon: const Icon(
                                                       Icons.keyboard_arrow_down,
-                                                      color: Color(0xFF244065),
+                                                      color: AppColors.ink,
                                                       size: 20,
                                                     ),
                                                   ),
@@ -695,7 +680,7 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
                                       Text(
                                         "Holes",
                                         style: GoogleFonts.poppins(
-                                          color: const Color(0xFF6E7373),
+                                          color: AppColors.textMuted,
                                           fontSize: 12,
                                           fontWeight: FontWeight.w500,
                                         ),
@@ -742,7 +727,7 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
                                       Text(
                                         "Riders",
                                         style: GoogleFonts.poppins(
-                                          color: const Color(0xFF6E7373),
+                                          color: AppColors.textMuted,
                                           fontSize: 12,
                                           fontWeight: FontWeight.w500,
                                         ),
@@ -788,7 +773,7 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
                                             //         onPressed: null,
                                             //         icon: const Icon(
                                             //           Icons.keyboard_arrow_down,
-                                            //           color: Color(0xFF244065),
+                                            //           color: AppColors.ink,
                                             //           size: 20,
                                             //         ),
                                             //       ),
@@ -810,7 +795,7 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
                                         "Rental set of club",
                                         overflow: TextOverflow.ellipsis,
                                         style: GoogleFonts.poppins(
-                                          color: const Color(0xFF6E7373),
+                                          color: AppColors.textMuted,
                                           fontSize: 11,
                                           fontWeight: FontWeight.w500,
                                         ),
@@ -831,7 +816,7 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
                                             borderRadius:
                                                 BorderRadius.circular(20),
                                             border: Border.all(
-                                                color: const Color(0xFF9ECF9A)),
+                                                color: AppColors.primary),
                                           ),
                                           child: Stack(
                                             children: [
@@ -846,8 +831,7 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
                                                   width: 50,
                                                   height: 36,
                                                   decoration: BoxDecoration(
-                                                    color:
-                                                        const Color(0xFF9ECF9A),
+                                                    color: AppColors.primary,
                                                     borderRadius:
                                                         BorderRadius.circular(
                                                             20),
@@ -940,13 +924,13 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
                             },
                             child: Container(
                               decoration: BoxDecoration(
-                                color: const Color(0xFFFFFFFF),
+                                color: AppColors.surface,
                                 borderRadius: BorderRadius.circular(50),
                                 border: Border.all(
-                                    color: const Color(0xFF9ECF9A), width: 1),
+                                    color: AppColors.primary, width: 1),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.black.withOpacity(0.1),
+                                    color: Colors.black.withValues(alpha: 0.1),
                                     blurRadius: 3,
                                     spreadRadius: 1,
                                     offset: const Offset(0, 2),
@@ -959,7 +943,7 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
                                 child: Text(
                                   "Cancel",
                                   style: GoogleFonts.poppins(
-                                    color: const Color(0xFF244065),
+                                    color: AppColors.ink,
                                     fontSize: 13,
                                     fontWeight: FontWeight.w600,
                                   ),
@@ -994,12 +978,8 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
                                   }
                                 }
 
-                                String token = await secureStorage.read(
-                                        key: 'accessToken') ??
-                                    '';
 
                                 // ---------------------------------------------
-                                // 🔐 AES-256-GCM encryption begins here
                                 // ---------------------------------------------
                                 final bookingPayload = {
                                   "teeSheetId": widget.teesheetPageId,
@@ -1016,45 +996,19 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
                                   "customers": selectedPlayersIdsObjects,
                                 };
 
-                                const secret =
-                                    'course1999golf01'; // same as backend
+                                final requestPayload =
 
-                                final keyHash =
-                                    sha256.convert(utf8.encode(secret)).bytes;
-                                final secretKey = SecretKey(keyHash);
-                                final algorithm = AesGcm.with256bits();
-                                final iv = algorithm.newNonce();
-
-                                final secretBox = await algorithm.encrypt(
-                                  utf8.encode(jsonEncode(bookingPayload)),
-                                  secretKey: secretKey,
-                                  nonce: iv,
-                                );
-
-                                final encryptedPayload = {
-                                  'iv': base64Encode(iv),
-                                  'data': base64Encode(secretBox.cipherText),
-                                  'tag': base64Encode(secretBox.mac.bytes),
-                                };
+                                        Map<String, dynamic>.from(
+                                            bookingPayload);
                                 // ---------------------------------------------
-                                // 🔐 AES encryption ends
+                                // Request payload prepared
                                 // ---------------------------------------------
 
-                                final String baseUrl = ApiConfig.baseUrl;
 
-                                final response = await http.post(
-                                  Uri.parse(
-                                    '$baseUrl/teesheet/book-teesheet',
-                                  ),
-                                  headers: {
-                                    'Content-Type': 'application/json',
-                                    'Authorization': 'Bearer $token',
-                                  },
-                                  body: jsonEncode(encryptedPayload),
-                                );
+                                final response = await bookingRepository.book(requestPayload);
 
                                 if (response.statusCode == 200) {
-                                  final data = jsonDecode(response.body);
+                                  final data = response.json;
                                   if (data['success'] == true) {
                                     Navigator.push(
                                       context,
@@ -1072,11 +1026,10 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
                                     );
                                   }
                                 } else {
-                                  print('❌ API Error: ${response.body}');
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
                                       content: Text(
-                                          jsonDecode(response.body)['message']),
+                                          response.json['message']),
                                     ),
                                   );
                                 }
@@ -1090,13 +1043,13 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
                             },
                             child: Container(
                               decoration: BoxDecoration(
-                                color: const Color(0xFF9ECF9A),
+                                color: AppColors.primary,
                                 borderRadius: BorderRadius.circular(50),
                                 border: Border.all(
-                                    color: const Color(0xFF9ECF9A), width: 1),
+                                    color: AppColors.primary, width: 1),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.black.withOpacity(0.1),
+                                    color: Colors.black.withValues(alpha: 0.1),
                                     blurRadius: 3,
                                     spreadRadius: 1,
                                     offset: const Offset(0, 2),
@@ -1138,10 +1091,10 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
         width: 30,
         height: 30,
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFF9ECF9A) : Colors.white,
+          color: isSelected ? AppColors.primary : Colors.white,
           shape: BoxShape.circle,
           border: Border.all(
-            color: const Color(0xFF9ECF9A),
+            color: AppColors.primary,
             width: 1,
           ),
         ),
@@ -1149,9 +1102,7 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
         child: Text(
           label,
           style: GoogleFonts.poppins(
-            color: isSelected
-                ? Colors.white
-                : const Color(0xFF244065), // 👈 Change here
+            color: isSelected ? Colors.white : AppColors.ink, // 👈 Change here
             fontWeight: FontWeight.w600,
             fontSize: 13,
           ),
@@ -1182,11 +1133,11 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
               margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
-                color: const Color(0xFFF8F8F8),
+                color: AppColors.surfaceMuted,
                 borderRadius: BorderRadius.circular(30),
                 border: Border.all(
                   color: _focusNodes[index].hasFocus
-                      ? const Color(0xFF9ECF9A)
+                      ? AppColors.primary
                       : Colors.transparent,
                   width: 1,
                 ),
@@ -1208,7 +1159,7 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
                       style: GoogleFonts.poppins(
                         fontSize: 13,
                         fontWeight: FontWeight.w700,
-                        color: const Color(0xFF669933),
+                        color: AppColors.accent,
                       ),
                     ),
                   ),
@@ -1291,8 +1242,8 @@ class TeeSheetDtlsState extends State<TeeSheetDtls> {
                                               BorderRadius.circular(8),
                                           boxShadow: [
                                             BoxShadow(
-                                              color:
-                                                  Colors.black.withOpacity(0.2),
+                                              color: Colors.black
+                                                  .withValues(alpha: 0.2),
                                               offset: const Offset(0, 3),
                                               blurRadius: 6,
                                               spreadRadius: 1,

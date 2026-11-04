@@ -1,14 +1,14 @@
 import 'dart:async';
 
 import 'package:driver_pos/services/api_config.dart';
-import 'package:socket_io_client/socket_io_client.dart' as IO;
+import 'package:socket_io_client/socket_io_client.dart' as io;
 
 class SocketService {
   static final SocketService _instance = SocketService._internal();
   factory SocketService() => _instance;
   SocketService._internal();
 
-  IO.Socket? socket;
+  io.Socket? socket;
   bool isConnected = false;
   Completer<void> _readyCompleter = Completer<void>();
 
@@ -18,7 +18,7 @@ class SocketService {
     final String baseUrl = ApiConfig.socketUrl;
 
     // Initialize socket connection
-    socket = IO.io(
+    socket = io.io(
       baseUrl,
       <String, dynamic>{
         'transports': ['websocket'],
@@ -45,6 +45,14 @@ class SocketService {
   }
 
   Future<void> waitUntilConnected() => _readyCompleter.future;
+
+  /// Reauthenticate an existing connection without dropping feature listeners.
+  void updateToken(String token) {
+    if (socket == null) return;
+    socket!.auth = {'token': token};
+    socket!.disconnect();
+    socket!.connect();
+  }
 
   /// Clean up listeners and close socket connection
   void dispose() {

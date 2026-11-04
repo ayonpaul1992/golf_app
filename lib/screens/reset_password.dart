@@ -1,14 +1,11 @@
-import 'dart:convert';
+import 'package:driver_pos/repositories/feature_repositories.dart';
+import 'package:driver_pos/theme/app_theme.dart';
 import 'dart:io';
-import 'package:driver_pos/services/api_config.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:http/http.dart' as http;
 import '/components/userentry_app_bar.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'login.dart';
-import 'package:crypto/crypto.dart';
-import 'package:cryptography/cryptography.dart';
 
 class ResetPasswordPage extends StatefulWidget {
   final String emailOrMobile;
@@ -91,9 +88,6 @@ class ResetPasswordPageState extends State<ResetPasswordPage> {
     }
 
     try {
-      var headers = {
-        'Content-Type': 'application/json',
-      };
 
       Map<String, dynamic> body = {
         'newPassword': password,
@@ -105,24 +99,8 @@ class ResetPasswordPageState extends State<ResetPasswordPage> {
 
       final payload = body;
 
-      final secret =
-          'course1999golf01'; // must match Node backend ENCRYPT_SECRET
-      final keyHash = sha256.convert(utf8.encode(secret)).bytes;
-      final secretKey = SecretKey(keyHash);
-      final algorithm = AesGcm.with256bits();
-      final iv = algorithm.newNonce();
-
-      final secretBox = await algorithm.encrypt(
-        utf8.encode(jsonEncode(payload)),
-        secretKey: secretKey,
-        nonce: iv,
-      );
-
-      final encryptedPayload = {
-        'iv': base64Encode(iv),
-        'data': base64Encode(secretBox.cipherText),
-        'tag': base64Encode(secretBox.mac.bytes),
-      };
+      final requestPayload =
+          Map<String, dynamic>.from(payload);
 
       // if (emailOrMobile.contains('@')) {
       //   body['email'] = emailOrMobile;
@@ -131,21 +109,14 @@ class ResetPasswordPageState extends State<ResetPasswordPage> {
       //   body['mobile'] = emailOrMobile;
       // }
 
-      final String baseUrl = ApiConfig.baseUrl;
 
-      final String url = '$baseUrl/auth/password?role=customer';
 
-      final response = await http.put(
-        Uri.parse(url),
-        headers: headers,
-        body: json.encode(encryptedPayload),
-      );
+      final response = await authRepository.resetPassword(requestPayload);
 
       print('Response Status: ${response.statusCode}');
-      print('Response Body: ${response.body}');
 
       if (response.statusCode == 200) {
-        var data = json.decode(response.body);
+        var data = response.json;
         if (data['success'] == true) {
           _showMessage("Password changed successfully! Please log in.");
           passText.clear();
@@ -160,7 +131,7 @@ class ResetPasswordPageState extends State<ResetPasswordPage> {
           _showMessage(data['message'] ?? "Failed to change password.");
         }
       } else {
-        var data = json.decode(response.body);
+        var data = response.json;
         _showMessage(
             data['message'] ?? "Failed to change password. Please try again.");
       }
@@ -194,7 +165,7 @@ class ResetPasswordPageState extends State<ResetPasswordPage> {
         showLeading: false,
       ),
       body: Container(
-        color: const Color(0xFFFAFCFA),
+        color: AppColors.pageBackground,
         width: double.infinity,
         height: double.infinity,
         child: SingleChildScrollView(
@@ -207,7 +178,7 @@ class ResetPasswordPageState extends State<ResetPasswordPage> {
               Text(
                 "Quick. Simple. Secure.",
                 style: GoogleFonts.poppins(
-                  color: const Color(0xFF669933),
+                  color: AppColors.accent,
                   fontWeight: FontWeight.w600,
                   fontSize: 15,
                 ),
@@ -222,7 +193,7 @@ class ResetPasswordPageState extends State<ResetPasswordPage> {
                         Container(
                           width: 40,
                           height: 1,
-                          color: const Color(0xFFB2C1C0),
+                          color: AppColors.border,
                         ),
                         const SizedBox(
                           width: 10,
@@ -230,7 +201,7 @@ class ResetPasswordPageState extends State<ResetPasswordPage> {
                         Text(
                           "Reset Password",
                           style: GoogleFonts.poppins(
-                              color: const Color(0xFF244065),
+                              color: AppColors.ink,
                               fontSize: 22,
                               fontWeight: FontWeight.w600),
                         ),
@@ -240,7 +211,7 @@ class ResetPasswordPageState extends State<ResetPasswordPage> {
                         Container(
                           width: 40,
                           height: 1,
-                          color: const Color(0xFFB2C1C0),
+                          color: AppColors.border,
                         ),
                       ],
                     )),
@@ -252,231 +223,229 @@ class ResetPasswordPageState extends State<ResetPasswordPage> {
                   "As you are not verified setup your new password and secure your account.",
                   textAlign: TextAlign.center,
                   style: GoogleFonts.poppins(
-                    color: const Color(0xFF6E7373),
+                    color: AppColors.textMuted,
                     fontWeight: FontWeight.w400,
                     fontSize: 13,
                   ),
                 ),
               ),
-              Container(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Column(
-                      children: [
-                        Text(
-                          'Password',
-                          style: GoogleFonts.poppins(
-                            color: const Color(0xFF6E7373),
-                            fontSize: 14,
-                            fontWeight: FontWeight.w400,
-                          ),
-                          textAlign: TextAlign.center,
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Column(
+                    children: [
+                      Text(
+                        'Password',
+                        style: GoogleFonts.poppins(
+                          color: AppColors.textMuted,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w400,
                         ),
-                        const SizedBox(height: 20),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 38.0),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: Colors.white, // Background color
-                              borderRadius: BorderRadius.circular(50),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.1),
-                                  blurRadius: 6,
-                                  offset: const Offset(0, 3),
-                                ),
-                              ],
-                              border: Border.all(
-                                color:
-                                    const Color(0xFFB2C1C0), // Add a color here
-                                width: 1, // Optional: set the border width
-                              ),
-                            ),
-                            child: TextField(
-                              controller: passText,
-                              obscureText: !_isPassVisible,
-                              decoration: _inputDecoration(
-                                '**********',
-                                _isPassVisible,
-                                () => setState(
-                                    () => _isPassVisible = !_isPassVisible),
-                              ),
-                              // decoration:
-                              //     _inputDecoration('**********').copyWith(
-                              //   suffixIcon: IconButton(
-                              //     icon: Icon(
-                              //       _isPassVisible
-                              //           ? Icons.visibility
-                              //           : Icons.visibility_off,
-                              //       color: const Color(0xFF648683),
-                              //     ),
-                              //     onPressed: () {
-                              //       setState(() {
-                              //         _isPassVisible =
-                              //             !_isPassVisible; // Toggle visibility
-                              //       });
-                              //     },
-                              //   ),
-                              // ),
-                              style: GoogleFonts.poppins(
-                                color: const Color(0xFF244065),
-                                fontWeight: FontWeight.w600,
-                                fontSize: 14,
-                              ),
-                              autofillHints: const [AutofillHints.password],
-                            ),
-                          ),
-                        ),
-                        if (passError != null)
-                          Padding(
-                            padding: const EdgeInsets.only(left: 8.0, top: 5),
-                            child: Text(
-                              passError!,
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                  color: Colors.red, fontSize: 12),
-                            ),
-                          ),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 25,
-                    ),
-                    Column(
-                      children: [
-                        Text(
-                          'Confirm Password',
-                          style: GoogleFonts.poppins(
-                            color: const Color(0xFF6E7373),
-                            fontSize: 14,
-                            fontWeight: FontWeight.w400,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(height: 20),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 38.0),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: Colors
-                                  .white, // Set background color if needed
-                              borderRadius: BorderRadius.circular(50),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black
-                                      .withOpacity(0.1), // Shadow color
-                                  blurRadius: 6,
-                                  offset: const Offset(0, 3), // Shadow position
-                                ),
-                              ],
-                              border: Border.all(
-                                color:
-                                    const Color(0xFFB2C1C0), // Add a color here
-                                width: 1, // Optional: set the border width
-                              ),
-                            ),
-                            child: TextField(
-                              controller: repassText,
-                              obscureText: !_isREPassVisible,
-                              decoration: _inputDecoration(
-                                '**********',
-                                _isREPassVisible,
-                                () => setState(
-                                    () => _isREPassVisible = !_isREPassVisible),
-                              ),
-                              // decoration:
-                              //     _inputDecoration('**********').copyWith(
-                              //   suffixIcon: IconButton(
-                              //     icon: Icon(
-                              //       _isPassVisible
-                              //           ? Icons.visibility
-                              //           : Icons.visibility_off,
-                              //       color: const Color(0xFF648683),
-                              //     ),
-                              //     onPressed: () {
-                              //       setState(() {
-                              //         _isPassVisible =
-                              //             !_isPassVisible; // Toggle visibility
-                              //       });
-                              //     },
-                              //   ),
-                              // ),
-                              style: GoogleFonts.poppins(
-                                color: const Color(0xFF244065),
-                                fontWeight: FontWeight.w600,
-                                fontSize: 14,
-                              ),
-                              autofillHints: const [AutofillHints.password],
-                            ),
-                          ),
-                        ),
-                        if (repassError != null)
-                          Padding(
-                            padding: const EdgeInsets.only(left: 8.0, top: 5),
-                            child: Text(
-                              repassError!,
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                  color: Colors.red, fontSize: 12),
-                            ),
-                          ),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 25,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          left: 38, right: 38, bottom: 20),
-                      child: Stack(
-                        children: [
-                          SizedBox(
-                            width: double.infinity,
-                            child: ElevatedButton(
-                              onPressed: _isLoading
-                                  ? null
-                                  : _resetPassword, // Disable button when loading
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFF9ECF9A),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 15.0, vertical: 10.0),
-                                child: Center(
-                                  child: _isLoading
-                                      ? const CircularProgressIndicator(
-                                          color: Colors.white,
-                                        )
-                                      : Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Text(
-                                              "Reset password",
-                                              style: GoogleFonts.poppins(
-                                                color: const Color(0xFFFFFFFF),
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.w600,
-                                              ),
-                                            ),
-                                            const SizedBox(width: 8),
-                                            const Icon(
-                                              Icons.arrow_forward,
-                                              color: Color(0xFFFFFFFF),
-                                              size: 18,
-                                            ),
-                                          ],
-                                        ),
-                                ),
-                              ),
-                            ),
-                          )
-                        ],
+                        textAlign: TextAlign.center,
                       ),
+                      const SizedBox(height: 20),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 38.0),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white, // Background color
+                            borderRadius: BorderRadius.circular(50),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.1),
+                                blurRadius: 6,
+                                offset: const Offset(0, 3),
+                              ),
+                            ],
+                            border: Border.all(
+                              color:
+                                  AppColors.border, // Add a color here
+                              width: 1, // Optional: set the border width
+                            ),
+                          ),
+                          child: TextField(
+                            controller: passText,
+                            obscureText: !_isPassVisible,
+                            decoration: _inputDecoration(
+                              '**********',
+                              _isPassVisible,
+                              () => setState(
+                                  () => _isPassVisible = !_isPassVisible),
+                            ),
+                            // decoration:
+                            //     _inputDecoration('**********').copyWith(
+                            //   suffixIcon: IconButton(
+                            //     icon: Icon(
+                            //       _isPassVisible
+                            //           ? Icons.visibility
+                            //           : Icons.visibility_off,
+                            //       color: AppColors.textSubtle,
+                            //     ),
+                            //     onPressed: () {
+                            //       setState(() {
+                            //         _isPassVisible =
+                            //             !_isPassVisible; // Toggle visibility
+                            //       });
+                            //     },
+                            //   ),
+                            // ),
+                            style: GoogleFonts.poppins(
+                              color: AppColors.ink,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 14,
+                            ),
+                            autofillHints: const [AutofillHints.password],
+                          ),
+                        ),
+                      ),
+                      if (passError != null)
+                        Padding(
+                          padding: const EdgeInsets.only(left: 8.0, top: 5),
+                          child: Text(
+                            passError!,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                                color: Colors.red, fontSize: 12),
+                          ),
+                        ),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 25,
+                  ),
+                  Column(
+                    children: [
+                      Text(
+                        'Confirm Password',
+                        style: GoogleFonts.poppins(
+                          color: AppColors.textMuted,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w400,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 20),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 38.0),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color:
+                                Colors.white, // Set background color if needed
+                            borderRadius: BorderRadius.circular(50),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black
+                                    .withValues(alpha: 0.1), // Shadow color
+                                blurRadius: 6,
+                                offset: const Offset(0, 3), // Shadow position
+                              ),
+                            ],
+                            border: Border.all(
+                              color:
+                                  AppColors.border, // Add a color here
+                              width: 1, // Optional: set the border width
+                            ),
+                          ),
+                          child: TextField(
+                            controller: repassText,
+                            obscureText: !_isREPassVisible,
+                            decoration: _inputDecoration(
+                              '**********',
+                              _isREPassVisible,
+                              () => setState(
+                                  () => _isREPassVisible = !_isREPassVisible),
+                            ),
+                            // decoration:
+                            //     _inputDecoration('**********').copyWith(
+                            //   suffixIcon: IconButton(
+                            //     icon: Icon(
+                            //       _isPassVisible
+                            //           ? Icons.visibility
+                            //           : Icons.visibility_off,
+                            //       color: AppColors.textSubtle,
+                            //     ),
+                            //     onPressed: () {
+                            //       setState(() {
+                            //         _isPassVisible =
+                            //             !_isPassVisible; // Toggle visibility
+                            //       });
+                            //     },
+                            //   ),
+                            // ),
+                            style: GoogleFonts.poppins(
+                              color: AppColors.ink,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 14,
+                            ),
+                            autofillHints: const [AutofillHints.password],
+                          ),
+                        ),
+                      ),
+                      if (repassError != null)
+                        Padding(
+                          padding: const EdgeInsets.only(left: 8.0, top: 5),
+                          child: Text(
+                            repassError!,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                                color: Colors.red, fontSize: 12),
+                          ),
+                        ),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 25,
+                  ),
+                  Padding(
+                    padding:
+                        const EdgeInsets.only(left: 38, right: 38, bottom: 20),
+                    child: Stack(
+                      children: [
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            onPressed: _isLoading
+                                ? null
+                                : _resetPassword, // Disable button when loading
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.primary,
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 15.0, vertical: 10.0),
+                              child: Center(
+                                child: _isLoading
+                                    ? const CircularProgressIndicator(
+                                        color: Colors.white,
+                                      )
+                                    : Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            "Reset password",
+                                            style: GoogleFonts.poppins(
+                                              color: AppColors.surface,
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                          const SizedBox(width: 8),
+                                          const Icon(
+                                            Icons.arrow_forward,
+                                            color: AppColors.surface,
+                                            size: 18,
+                                          ),
+                                        ],
+                                      ),
+                              ),
+                            ),
+                          ),
+                        )
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ],
           ),
@@ -494,7 +463,7 @@ class ResetPasswordPageState extends State<ResetPasswordPage> {
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(50),
         borderSide: const BorderSide(
-          color: Color(0xFF9ECF9A),
+          color: AppColors.primary,
           width: 1,
         ),
       ),
@@ -507,13 +476,13 @@ class ResetPasswordPageState extends State<ResetPasswordPage> {
       ),
       hintText: hintText,
       hintStyle: GoogleFonts.poppins(
-        color: const Color(0xFF6E7373),
+        color: AppColors.textMuted,
         fontSize: 14,
       ),
       suffixIcon: IconButton(
         icon: Icon(
           isVisible ? Icons.visibility : Icons.visibility_off,
-          color: const Color(0xFF648683),
+          color: AppColors.textSubtle,
         ),
         onPressed: onToggle,
       ),

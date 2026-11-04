@@ -1,11 +1,11 @@
 // body: isLoading
 //           ? const Center(
 //               child: CircularProgressIndicator(
-//                 color: Color(0xFF9ECF9A),
+//                 color: AppColors.primary,
 //               ),
 //             )
 //           : Container(
-//               color: const Color(0xFFFAFCFA),
+//               color: AppColors.pageBackground,
 //               width: double.infinity,
 //               height: double.infinity,
 //               child: SingleChildScrollView(
@@ -23,7 +23,7 @@
 //                             Container(
 //                               width: 40,
 //                               height: 1,
-//                               color: const Color(0xFFB2C1C0),
+//                               color: AppColors.border,
 //                             ),
 //                             const SizedBox(
 //                               width: 10,
@@ -31,7 +31,7 @@
 //                             Text(
 //                               "Select a Tee sheet",
 //                               style: GoogleFonts.poppins(
-//                                   color: const Color(0xFF244065),
+//                                   color: AppColors.ink,
 //                                   fontSize: 22,
 //                                   fontWeight: FontWeight.w600),
 //                             ),
@@ -41,7 +41,7 @@
 //                             Container(
 //                               width: 40,
 //                               height: 1,
-//                               color: const Color(0xFFB2C1C0),
+//                               color: AppColors.border,
 //                             ),
 //                           ],
 //                         )),
@@ -52,7 +52,7 @@
 //                         "Select a tee sheet to book a tee time or enjoy other activities.",
 //                         textAlign: TextAlign.center,
 //                         style: GoogleFonts.poppins(
-//                           color: const Color(0xFF6E7373),
+//                           color: AppColors.textMuted,
 //                           fontWeight: FontWeight.w400,
 //                           fontSize: 13,
 //                         ),
@@ -90,7 +90,7 @@
 //                             Text(
 //                               'Select Facility',
 //                               style: GoogleFonts.poppins(
-//                                 color: const Color(0xFF6E7373),
+//                                 color: AppColors.textMuted,
 //                                 fontSize: 14,
 //                                 fontWeight: FontWeight.w400,
 //                               ),
@@ -129,7 +129,7 @@
 //                                               selectedItem,
 //                                               style: GoogleFonts.poppins(
 //                                                 fontSize: 14,
-//                                                 color: const Color(0xFF244065),
+//                                                 color: AppColors.ink,
 //                                                 fontWeight: FontWeight.w600,
 //                                               ),
 //                                             ),
@@ -205,7 +205,7 @@
 //                                       },
 //                                       style: ElevatedButton.styleFrom(
 //                                         backgroundColor:
-//                                             const Color(0xFF9ECF9A),
+//                                             AppColors.primary,
 //                                       ),
 //                                       child: Padding(
 //                                         padding: const EdgeInsets.symmetric(

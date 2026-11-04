@@ -1,3 +1,4 @@
+import 'package:driver_pos/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../extras/notification.dart';
@@ -38,7 +39,7 @@ class DashboardAppBar extends StatelessWidget implements PreferredSizeWidget {
           leading: showLeading
               ? IconButton(
                   icon: const Icon(Icons.arrow_back_ios,
-                      color: Color(0xFF9ECF9A)),
+                      color: AppColors.primary),
                   onPressed: onBackPressed ??
                       () {
                         if (Navigator.of(context).canPop()) {
@@ -49,7 +50,7 @@ class DashboardAppBar extends StatelessWidget implements PreferredSizeWidget {
               : IconButton(
                   icon: const Icon(
                     Icons.menu,
-                    color: Color(0xFF9ECF9A),
+                    color: AppColors.primary,
                   ),
                   onPressed: () {
                     scaffoldKey.currentState?.openDrawer();
@@ -60,7 +61,7 @@ class DashboardAppBar extends StatelessWidget implements PreferredSizeWidget {
             title,
             textAlign: TextAlign.center,
             style: GoogleFonts.poppins(
-              color: const Color(0xFF244065),
+              color: AppColors.ink,
               fontSize: 20,
               fontWeight: FontWeight.w600,
             ),

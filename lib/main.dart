@@ -1,13 +1,11 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'dart:io';
+import 'dart:async';
 
 import 'package:driver_pos/screens/congratulations.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'theme/app_theme.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
@@ -22,6 +20,8 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 import 'services/deep_link_service.dart';
 
 import 'services/biometric_auth.dart';
+import 'services/session_service.dart';
+import 'screens/payment_failed.dart';
 
 // Use our custom observer globally
 final RouteObserver<PageRoute> routeObserver = TokenRouteObserver();
@@ -30,6 +30,10 @@ final GlobalKey<ScaffoldMessengerState> rootScaffoldMessengerKey =
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 final DeepLinkService deepLinkService = DeepLinkService();
+final Map<String, WidgetBuilder> paymentRoutes = {
+  '/payment-success': (_) => const CongratulationsPage(cngsId: ''),
+  '/payment-failed': (_) => const PaymentFailedPage(),
+};
 
 // Handles background push notifications
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -53,17 +57,19 @@ Future<void> main() async {
     (options) {
       options.dsn = dotenv.env['SENTRY_DSN'];
       // Replace with your actual DSN from Sentry
-      options.sendDefaultPii = true;
-      options.enableLogs = true;
-
+      options.sendDefaultPii = dotenv.env['SENTRY_SEND_DEFAULT_PII'] == 'true';
+      options.enableLogs = dotenv.env['SENTRY_ENABLE_LOGS'] == 'true';
       options.tracesSampleRate =
-          1.0; // capture 100% of transactions (adjust for production)
+          (double.tryParse(dotenv.env['SENTRY_TRACES_SAMPLE_RATE'] ?? '') ??
+                  0.1)
+              .clamp(0.0, 1.0)
+              .toDouble();
     },
     // appRunner: () => runApp(MyApp()),
 
     appRunner: () => runApp(
       SentryWidget(
-        child: MyApp(),
+        child: const MyApp(),
       ),
     ),
   );
@@ -85,38 +91,44 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   late Future<Widget> _initialScreenFuture;
+  bool _deepLinksStarted = false;
+  StreamSubscription<void>? _sessionSubscription;
 
   @override
   void initState() {
     super.initState();
     _initialScreenFuture = _getInitialScreen();
+    _sessionSubscription = SessionService.expired.listen((_) async {
+      if (await SessionService().hasValidSession() || !mounted) return;
+      final navigator = navigatorKey.currentState;
+      if (navigator == null || !navigator.mounted) return;
+      rootScaffoldMessengerKey.currentState?.showSnackBar(
+        const SnackBar(content: Text('Session expired, please log in again.')),
+      );
+      navigator.pushAndRemoveUntil(
+        MaterialPageRoute(builder: (_) => const LoginPage()),
+        (_) => false,
+      );
+    });
+  }
+
+  @override
+  void dispose() {
+    _sessionSubscription?.cancel();
+    super.dispose();
   }
 
   Future<Widget> _getInitialScreen() async {
-    final storage = const FlutterSecureStorage();
-    final isLoggedIn = await storage.read(key: 'isLoggedIn');
-    final token = await storage.read(key: 'accessToken');
-
-    if (isLoggedIn == 'true' && token != null) {
-      final bio = BiometricAuth();
-      final isBioEnabled = await bio.isBiometricEnabled();
-
-      if (isBioEnabled) {
-        final authenticated = await bio.authenticate(
-          reason: "Authenticate to continue",
-        );
-
-        if (!authenticated) {
-          Future.delayed(const Duration(milliseconds: 100), () {
-            SystemNavigator.pop();
-          });
-        }
-      }
-
-      return const DashboardPage();
-    }
-
-    return const SplashScreen();
+    final bio = BiometricAuth();
+    final destination = await SessionService().resolveStartup(
+      isBiometricEnabled: bio.isBiometricEnabled,
+      authenticate: () => bio.authenticate(reason: 'Authenticate to continue'),
+    );
+    return switch (destination) {
+      SessionDestination.dashboard => const DashboardPage(),
+      SessionDestination.login => const LoginPage(),
+      SessionDestination.welcome => const SplashScreen(),
+    };
   }
 
   @override
@@ -126,21 +138,20 @@ class _MyAppState extends State<MyApp> {
       scaffoldMessengerKey: rootScaffoldMessengerKey,
       navigatorKey: navigatorKey,
       navigatorObservers: [routeObserver],
-      routes: {
-        '/payment-success': (context) => const CongratulationsPage(cngsId: ''),
-      },
-      theme: ThemeData(
-        textTheme: GoogleFonts.poppinsTextTheme(),
-      ),
+      routes: paymentRoutes,
+      theme: AppTheme.light(),
       home: FutureBuilder<Widget>(
         future: _initialScreenFuture, // 🔥 now stable
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const SplashScreen();
           } else if (snapshot.hasData) {
-            Future.microtask(() {
-              deepLinkService.initDeepLinks();
-            });
+            if (!_deepLinksStarted) {
+              _deepLinksStarted = true;
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (mounted) deepLinkService.initDeepLinks();
+              });
+            }
             return snapshot.data!;
           }
           return const LoginPage();
@@ -149,84 +160,3 @@ class _MyAppState extends State<MyApp> {
     );
   }
 }
-
-// class MyApp extends StatelessWidget {
-//   const MyApp({super.key});
-
-//   Future<Widget> _getInitialScreen() async {
-//     final storage = const FlutterSecureStorage();
-//     final isLoggedIn = await storage.read(key: 'isLoggedIn');
-//     final token = await storage.read(key: 'accessToken');
-
-//     if (isLoggedIn == 'true' && token != null) {
-//       // Check biometrics
-//       final bio = BiometricAuth();
-//       final isBioEnabled = await bio.isBiometricEnabled();
-
-//       if (isBioEnabled) {
-//         final authenticated = await bio.authenticate(
-//           reason: "Authenticate to continue",
-//         );
-
-//         if (!authenticated) {
-//           // return const LoginPage(); // fallback
-//           Future.delayed(const Duration(milliseconds: 100), () {
-//             SystemNavigator.pop(); // Fully closes the app
-//           });
-//         }
-//       }
-
-//       return const DashboardPage();
-//     }
-
-//     return const SplashScreen();
-//   }
-
-//   // Future<Widget> _getInitialScreen() async {
-//   //   final storage = const FlutterSecureStorage();
-//   //   final isLoggedIn = await storage.read(key: 'isLoggedIn');
-//   //   final token = await storage.read(key: 'accessToken');
-
-//   //   if (isLoggedIn == 'true' && token != null) {
-//   //     return const DashboardPage();
-//   //   }
-//   //   return const SplashScreen();
-//   // }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return MediaQuery(
-//       data: MediaQuery.of(context).copyWith(
-//         textScaler: const TextScaler.linear(1.0),
-//       ),
-//       child: MaterialApp(
-//         debugShowCheckedModeBanner: false,
-//         scaffoldMessengerKey: rootScaffoldMessengerKey, // ✅ global snackbar key
-//         navigatorKey: navigatorKey,
-//         navigatorObservers: [routeObserver],
-//         routes: {
-//           '/payment-success': (context) =>
-//               const CongratulationsPage(cngsId: ''),
-//         },
-//         theme: ThemeData(
-//           textTheme: GoogleFonts.poppinsTextTheme(),
-//         ),
-//         home: FutureBuilder<Widget>(
-//           future: _getInitialScreen(),
-//           builder: (context, snapshot) {
-//             if (snapshot.connectionState == ConnectionState.waiting) {
-//               return const SplashScreen();
-//             } else if (snapshot.hasData) {
-//               // ✅ Initialize deep links after app starts
-//               Future.microtask(() {
-//                 deepLinkService.initDeepLinks();
-//               });
-//               return snapshot.data!;
-//             }
-//             return const LoginPage();
-//           },
-//         ),
-//       ),
-//     );
-//   }
-// }

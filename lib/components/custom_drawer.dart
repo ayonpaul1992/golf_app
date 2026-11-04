@@ -1,9 +1,7 @@
+import 'package:driver_pos/services/session_service.dart';
+import 'package:driver_pos/theme/app_theme.dart';
 // ignore_for_file: use_build_context_synchronously
 
-import 'package:driver_pos/screens/TermsAndConditionsScreen.dart';
-import 'package:driver_pos/screens/browser_screen.dart';
-import 'package:driver_pos/screens/congratulations.dart';
-import 'package:driver_pos/screens/new_test_cart.dart';
 import 'package:driver_pos/screens/parchase_giftcard_one.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -124,17 +122,15 @@ class _CustomDrawerState extends State<CustomDrawer> {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(100),
               border: Border.all(
-                  color: isActive
-                      ? const Color(0xFF669933)
-                      : const Color(0xFF9ECF9A),
+                  color: isActive ? AppColors.accent : AppColors.primary,
                   width: 1),
             ),
             child: Center(
               child: Icon(
                 icon,
                 color: isActive
-                    ? const Color(0xFFffffff)
-                    : const Color(0xFFffffff),
+                    ? AppColors.surface
+                    : AppColors.surface,
                 size: 22, // Slightly increased for better visibility
               ),
             ),
@@ -143,7 +139,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
             title,
             style: TextStyle(
               color:
-                  isActive ? const Color(0xFFffffff) : const Color(0xFFffffff),
+                  isActive ? AppColors.surface : AppColors.surface,
               fontSize: 15,
               fontWeight: FontWeight.w600,
             ),
@@ -157,13 +153,13 @@ class _CustomDrawerState extends State<CustomDrawer> {
   Widget build(BuildContext context) {
     return Drawer(
       child: Container(
-        color: const Color(0xFF9ECF9A),
+        color: AppColors.primary,
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
             // Header
             DrawerHeader(
-              decoration: const BoxDecoration(color: Color(0xFF9ECF9A)),
+              decoration: const BoxDecoration(color: AppColors.primary),
               child: SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Column(
@@ -179,14 +175,14 @@ class _CustomDrawerState extends State<CustomDrawer> {
                           const Icon(
                             Icons.arrow_back_ios_sharp,
                             size: 19,
-                            color: Color(0xFFffffff),
+                            color: AppColors.surface,
                           ),
                           Text(
                             loggedInGolfCourse.isNotEmpty
                                 ? loggedInGolfCourse
                                 : 'Golf Course',
                             style: GoogleFonts.poppins(
-                                color: const Color(0xFFFFFFFF),
+                                color: AppColors.surface,
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600),
                           )
@@ -228,7 +224,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                               child: Text(
                                 loggedInUserName,
                                 style: GoogleFonts.poppins(
-                                  color: const Color(0xFFFFFFFF),
+                                  color: AppColors.surface,
                                   fontSize: 18,
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -240,7 +236,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                               child: Text(
                                 '+1 ${loggedInUserPhone.replaceFirstMapped(RegExp(r'^(\d{5})(\d+)'), (m) => '${m[1]} ${m[2]}')}',
                                 style: GoogleFonts.poppins(
-                                  color: const Color(0xFFFFFFFF),
+                                  color: AppColors.surface,
                                   fontSize: 15,
                                   fontWeight: FontWeight.w400,
                                 ),
@@ -371,7 +367,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                             if (confirm != true) {
                               return;
                             }
-                            await secureStorage.deleteAll();
+                            await SessionService().clearSession(clearAll: true);
                             final prefs = await SharedPreferences.getInstance();
                             prefs.remove('biometric_setup_done');
                             prefs.remove('isBiometricEnabled');
@@ -385,7 +381,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                             );
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF244065),
+                            backgroundColor: AppColors.ink,
                             elevation: 5,
                           ),
                           child: Text(
@@ -393,7 +389,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                             style: GoogleFonts.poppins(
                               fontSize: 17,
                               fontWeight: FontWeight.w600,
-                              color: const Color(0xFFFFFFFF),
+                              color: AppColors.surface,
                             ),
                           ),
                         ),
@@ -403,7 +399,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                           right: 12,
                           child: Icon(
                             Icons.arrow_forward,
-                            color: Color(0xFFffffff),
+                            color: AppColors.surface,
                             size: 20,
                           )),
                     ]),

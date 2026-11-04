@@ -1,6 +1,6 @@
+import 'package:driver_pos/theme/app_theme.dart';
 // ignore_for_file: deprecated_member_use, use_build_context_synchronously
 // import 'package:flutter/cupertino.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -40,14 +40,14 @@ class TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
           ? const Center(
               child: CircularProgressIndicator(
                 valueColor: AlwaysStoppedAnimation<Color>(
-                  Color(0xFF9ECF9A),
+                  AppColors.primary,
                 ),
               ),
             )
           : Padding(
               padding: const EdgeInsets.symmetric(),
               child: Container(
-                color: const Color(0xFFFAFCFA),
+                color: AppColors.pageBackground,
                 width: double.infinity,
                 height: double.infinity,
                 child: SingleChildScrollView(
@@ -65,7 +65,7 @@ class TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
                             Container(
                               width: 40,
                               height: 1.1,
-                              color: const Color(0xFFB2C1C0),
+                              color: AppColors.border,
                             ),
                             const SizedBox(
                               width: 10,
@@ -73,7 +73,7 @@ class TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
                             Text(
                               "Terms & Conditions",
                               style: GoogleFonts.poppins(
-                                  color: const Color(0xFF244065),
+                                  color: AppColors.ink,
                                   fontSize: 22,
                                   fontWeight: FontWeight.w600),
                             ),
@@ -83,7 +83,7 @@ class TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
                             Container(
                               width: 40,
                               height: 1.1,
-                              color: const Color(0xFFB2C1C0),
+                              color: AppColors.border,
                             ),
                           ],
                         )),
@@ -97,14 +97,14 @@ class TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
                         children: [
                           Container(
                             decoration: BoxDecoration(
-                              color: const Color(0xFFFFFFFF),
+                              color: AppColors.surface,
                               border: Border.all(
-                                  color: const Color(0xFF9ECF9A), width: 1.5),
+                                  color: AppColors.primary, width: 1.5),
                               borderRadius: BorderRadius.circular(15),
                               boxShadow: [
                                 BoxShadow(
-                                  color: const Color(0xFF9ECF9A)
-                                      .withOpacity(0.2), // soft shadow
+                                  color: AppColors.primary
+                                      .withValues(alpha: 0.2), // soft shadow
                                   spreadRadius: 2,
                                   blurRadius: 20,
                                   offset: const Offset(
@@ -117,7 +117,7 @@ class TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
                                 Container(
                                   width: double.infinity,
                                   decoration: const BoxDecoration(
-                                    color: Color(0xFFF8F8F8),
+                                    color: AppColors.surfaceMuted,
                                     borderRadius: BorderRadius.only(
                                       topLeft: Radius.circular(15),
                                       topRight: Radius.circular(15),
@@ -139,15 +139,14 @@ class TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
                                                 "Disclaimer for Non-Refundable Booking Fee",
                                                 textAlign: TextAlign.start,
                                                 style: GoogleFonts.poppins(
-                                                  color:
-                                                      const Color(0xFF244065),
+                                                  color: AppColors.ink,
                                                   fontSize: 15,
                                                   fontWeight: FontWeight.w600,
                                                 ),
                                               ),
                                               Padding(
-                                                padding:
-                                                    EdgeInsets.only(left: 8.0),
+                                                padding: const EdgeInsets.only(
+                                                    left: 8.0),
                                                 child: Column(
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.start,
@@ -166,7 +165,7 @@ class TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
                                               ),
                                             ],
                                           ),
-                                          SizedBox(
+                                          const SizedBox(
                                             height: 10,
                                           ),
                                           Wrap(
@@ -177,8 +176,7 @@ class TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
                                                 "Tee Time Policies",
                                                 textAlign: TextAlign.start,
                                                 style: GoogleFonts.poppins(
-                                                  color:
-                                                      const Color(0xFF244065),
+                                                  color: AppColors.ink,
                                                   fontSize: 15,
                                                   fontWeight: FontWeight.w600,
                                                 ),
@@ -198,7 +196,7 @@ class TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
                                                       height: 1.5,
                                                     ),
                                                   ),
-                                                  SizedBox(height: 8),
+                                                  const SizedBox(height: 8),
                                                   Text(
                                                     'We appreciate your cooperation in following these policies to ensure a smooth and fair reservation process for all golfers. By making a reservation, you acknowledge that you have read, understood, and agreed to the following terms:',
                                                     style: GoogleFonts.poppins(
@@ -214,7 +212,7 @@ class TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
                                               ),
                                             ],
                                           ),
-                                          SizedBox(
+                                          const SizedBox(
                                             height: 10,
                                           ),
                                           Wrap(
@@ -225,15 +223,14 @@ class TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
                                                 "Booking Window",
                                                 textAlign: TextAlign.start,
                                                 style: GoogleFonts.poppins(
-                                                  color:
-                                                      const Color(0xFF244065),
+                                                  color: AppColors.ink,
                                                   fontSize: 13,
                                                   fontWeight: FontWeight.w600,
                                                 ),
                                               ),
                                               Padding(
-                                                padding:
-                                                    EdgeInsets.only(left: 8.0),
+                                                padding: const EdgeInsets.only(
+                                                    left: 8.0),
                                                 child: Column(
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.start,
@@ -242,68 +239,65 @@ class TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
                                                       "No booking fee is applied when tee times are reserved within the 7-day booking window.",
                                                     ),
                                                     const SizedBox(height: 8),
-                                                    Container(
-                                                      child: Row(
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          Text(
-                                                            "•  ", // 👈 must be 'text:' not just a string
+                                                    Row(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Text(
+                                                          "•  ", // 👈 must be 'text:' not just a string
+                                                          style: GoogleFonts
+                                                              .poppins(
+                                                            fontSize: 14,
+                                                            color: const Color(
+                                                                0xFF244065),
+                                                            height: 1.5,
+                                                          ),
+                                                        ),
+                                                        SizedBox(
+                                                          width: 310,
+                                                          child: RichText(
+                                                              text: TextSpan(
                                                             style: GoogleFonts
                                                                 .poppins(
-                                                              fontSize: 14,
+                                                              fontSize: 13,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w400,
                                                               color: const Color(
                                                                   0xFF244065),
                                                               height: 1.5,
                                                             ),
-                                                          ),
-                                                          Container(
-                                                            width: 310,
-                                                            child: RichText(
-                                                                text: TextSpan(
-                                                              style: GoogleFonts
-                                                                  .poppins(
-                                                                fontSize: 13,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w400,
-                                                                color: const Color(
-                                                                    0xFF244065),
-                                                                height: 1.5,
+                                                            children: const [
+                                                              TextSpan(
+                                                                text: "A ",
                                                               ),
-                                                              children: [
-                                                                const TextSpan(
-                                                                  text: "A ",
+                                                              TextSpan(
+                                                                text: "\$20.00",
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w600, // slightly bold
+                                                                  color: Color(
+                                                                      0xFF12284C), // darker navy color
                                                                 ),
-                                                                const TextSpan(
-                                                                  text:
-                                                                      "\$20.00",
-                                                                  style:
-                                                                      TextStyle(
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w600, // slightly bold
-                                                                    color: Color(
-                                                                        0xFF12284C), // darker navy color
-                                                                  ),
-                                                                ),
-                                                                const TextSpan(
-                                                                  text:
-                                                                      " non-refundable booking fee per tee time is charged for reservations made outside the 7-day window.",
-                                                                ),
-                                                              ],
-                                                            )),
-                                                          ),
-                                                        ],
-                                                      ),
+                                                              ),
+                                                              TextSpan(
+                                                                text:
+                                                                    " non-refundable booking fee per tee time is charged for reservations made outside the 7-day window.",
+                                                              ),
+                                                            ],
+                                                          )),
+                                                        ),
+                                                      ],
                                                     ),
                                                   ],
                                                 ),
                                               ),
                                             ],
                                           ),
-                                          SizedBox(
+                                          const SizedBox(
                                             height: 10,
                                           ),
                                           Wrap(
@@ -314,15 +308,14 @@ class TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
                                                 "Advance Booking (Outside 7-Day Window)",
                                                 textAlign: TextAlign.start,
                                                 style: GoogleFonts.poppins(
-                                                  color:
-                                                      const Color(0xFF244065),
+                                                  color: AppColors.ink,
                                                   fontSize: 13,
                                                   fontWeight: FontWeight.w600,
                                                 ),
                                               ),
                                               Padding(
-                                                padding:
-                                                    EdgeInsets.only(left: 8.0),
+                                                padding: const EdgeInsets.only(
+                                                    left: 8.0),
                                                 child: Column(
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.start,
@@ -331,61 +324,58 @@ class TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
                                                       "Tee times may be booked more than 7 days in advance.",
                                                     ),
                                                     const SizedBox(height: 8),
-                                                    Container(
-                                                      child: Row(
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          Text(
-                                                            "•  ", // 👈 must be 'text:' not just a string
+                                                    Row(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Text(
+                                                          "•  ", // 👈 must be 'text:' not just a string
+                                                          style: GoogleFonts
+                                                              .poppins(
+                                                            fontSize: 14,
+                                                            color: const Color(
+                                                                0xFF244065),
+                                                            height: 1.5,
+                                                          ),
+                                                        ),
+                                                        SizedBox(
+                                                          width: 310,
+                                                          child: RichText(
+                                                              text: TextSpan(
                                                             style: GoogleFonts
                                                                 .poppins(
-                                                              fontSize: 14,
+                                                              fontSize: 13,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w400,
                                                               color: const Color(
                                                                   0xFF244065),
                                                               height: 1.5,
                                                             ),
-                                                          ),
-                                                          Container(
-                                                            width: 310,
-                                                            child: RichText(
-                                                                text: TextSpan(
-                                                              style: GoogleFonts
-                                                                  .poppins(
-                                                                fontSize: 13,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w400,
-                                                                color: const Color(
-                                                                    0xFF244065),
-                                                                height: 1.5,
+                                                            children: const [
+                                                              TextSpan(
+                                                                text: "A ",
                                                               ),
-                                                              children: [
-                                                                const TextSpan(
-                                                                  text: "A ",
+                                                              TextSpan(
+                                                                text: "\$20.00",
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w600, // slightly bold
+                                                                  color: Color(
+                                                                      0xFF12284C), // darker navy color
                                                                 ),
-                                                                const TextSpan(
-                                                                  text:
-                                                                      "\$20.00",
-                                                                  style:
-                                                                      TextStyle(
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w600, // slightly bold
-                                                                    color: Color(
-                                                                        0xFF12284C), // darker navy color
-                                                                  ),
-                                                                ),
-                                                                const TextSpan(
-                                                                  text:
-                                                                      " non-refundable advance booking fee per tee time is required at the time of booking.",
-                                                                ),
-                                                              ],
-                                                            )),
-                                                          ),
-                                                        ],
-                                                      ),
+                                                              ),
+                                                              TextSpan(
+                                                                text:
+                                                                    " non-refundable advance booking fee per tee time is required at the time of booking.",
+                                                              ),
+                                                            ],
+                                                          )),
+                                                        ),
+                                                      ],
                                                     ),
                                                     const SizedBox(height: 8),
                                                     buildBullet(
@@ -404,7 +394,7 @@ class TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
                                               ),
                                             ],
                                           ),
-                                          SizedBox(
+                                          const SizedBox(
                                             height: 10,
                                           ),
                                           Wrap(
@@ -415,15 +405,14 @@ class TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
                                                 "Captain’s Responsibility",
                                                 textAlign: TextAlign.start,
                                                 style: GoogleFonts.poppins(
-                                                  color:
-                                                      const Color(0xFF244065),
+                                                  color: AppColors.ink,
                                                   fontSize: 15,
                                                   fontWeight: FontWeight.w600,
                                                 ),
                                               ),
                                               Padding(
-                                                padding:
-                                                    EdgeInsets.only(left: 8.0),
+                                                padding: const EdgeInsets.only(
+                                                    left: 8.0),
                                                 child: Column(
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.start,
@@ -444,7 +433,7 @@ class TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
                                               ),
                                             ],
                                           ),
-                                          SizedBox(
+                                          const SizedBox(
                                             height: 10,
                                           ),
                                           Wrap(
@@ -455,15 +444,14 @@ class TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
                                                 "Cancellation & No-Show Policy",
                                                 textAlign: TextAlign.start,
                                                 style: GoogleFonts.poppins(
-                                                  color:
-                                                      const Color(0xFF244065),
+                                                  color: AppColors.ink,
                                                   fontSize: 15,
                                                   fontWeight: FontWeight.w600,
                                                 ),
                                               ),
                                               Padding(
-                                                padding:
-                                                    EdgeInsets.only(left: 8.0),
+                                                padding: const EdgeInsets.only(
+                                                    left: 8.0),
                                                 child: Column(
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.start,
@@ -492,7 +480,7 @@ class TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
                                               ),
                                             ],
                                           ),
-                                          SizedBox(
+                                          const SizedBox(
                                             height: 10,
                                           ),
                                           Wrap(
@@ -503,15 +491,14 @@ class TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
                                                 "Gift Card Policies",
                                                 textAlign: TextAlign.start,
                                                 style: GoogleFonts.poppins(
-                                                  color:
-                                                      const Color(0xFF244065),
+                                                  color: AppColors.ink,
                                                   fontSize: 15,
                                                   fontWeight: FontWeight.w600,
                                                 ),
                                               ),
                                               Padding(
-                                                padding:
-                                                    EdgeInsets.only(left: 8.0),
+                                                padding: const EdgeInsets.only(
+                                                    left: 8.0),
                                                 child: Column(
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.start,
@@ -570,7 +557,7 @@ class TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
           "•  ",
           style: GoogleFonts.poppins(
             fontSize: 14,
-            color: Color(0xFF244065),
+            color: AppColors.ink,
             height: 1.5,
           ),
         ),
@@ -580,7 +567,7 @@ class TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
             style: GoogleFonts.poppins(
               fontSize: 13,
               fontWeight: FontWeight.w400,
-              color: const Color(0xFF244065),
+              color: AppColors.ink,
               height: 1.5,
             ),
           ),

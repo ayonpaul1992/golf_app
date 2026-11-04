@@ -1,10 +1,11 @@
+import 'package:driver_pos/theme/app_theme.dart';
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '/screens/selcet_booking_class.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/http.dart' as http;
+import 'package:driver_pos/services/api_http.dart' as http;
 
 class CustomDrawer extends StatefulWidget {
   final String activeTile;
@@ -144,13 +145,13 @@ class _CustomDrawerState extends State<CustomDrawer> {
   //       child: ListTile(
   //         leading: Icon(
   //           icon,
-  //           color: isActive ? Color(0xFF0f625c) : Color(0xFF303131),
+  //           color: isActive ? Color(0xFF0f625c) : AppColors.textStrong,
   //           size: 20,
   //         ),
   //         title: Text(
   //           title,
   //           style: TextStyle(
-  //             color: isActive ? Color(0xFF0f625c) : Color(0xFF303131),
+  //             color: isActive ? Color(0xFF0f625c) : AppColors.textStrong,
   //             fontSize: 15,
   //             fontWeight: FontWeight.w600,
   //           ),
@@ -207,13 +208,14 @@ class _CustomDrawerState extends State<CustomDrawer> {
         child: ListTile(
           leading: Icon(
             icon,
-            color: isActive ? const Color(0xFF0f625c) : const Color(0xFF303131),
+            color: isActive ? const Color(0xFF0f625c) : AppColors.textStrong,
             size: 22, // Slightly increased for better visibility
           ),
           title: Text(
             title,
             style: TextStyle(
-              color: isActive ? const Color(0xFF0f625c) : const Color(0xFF303131),
+              color:
+                  isActive ? const Color(0xFF0f625c) : AppColors.textStrong,
               fontSize: 15,
               fontWeight: FontWeight.w600,
             ),

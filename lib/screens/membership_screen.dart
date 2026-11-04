@@ -1,13 +1,12 @@
-import 'dart:convert';
+import 'package:driver_pos/repositories/feature_repositories.dart';
+import 'package:driver_pos/theme/app_theme.dart';
 
-import 'package:driver_pos/services/api_config.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '/components/custom_bottom_nav_bar.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../components/member_app_bar.dart';
-import 'package:http/http.dart' as http;
 
 class MembershipScreen extends StatefulWidget {
   final String mmbspId;
@@ -52,23 +51,15 @@ class MembershipScreenState extends State<MembershipScreen>
     //   isLoading = true;
     // });
     try {
-      final String baseUrl = ApiConfig.baseUrl;
-      final String? token = await secureStorage.read(key: 'accessToken');
       final String? golfCourse =
           await secureStorage.read(key: 'golfCourseName');
 
-      final response = Uri.parse(
-        '$baseUrl/customer/myMembership?golfCourse=$golfCourse',
-      ).resolveUri(Uri());
 
       // Example using http package:
-      final httpResponse = await http.get(response, headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      });
+      final httpResponse = await bookingRepository.memberships(golfCourse);
 
       if (httpResponse.statusCode == 200) {
-        final data = jsonDecode(httpResponse.body) as Map<String, dynamic>;
+        httpResponse.json as Map<String, dynamic>;
         // print(data);
         // return data;
       } else {
@@ -119,7 +110,7 @@ class MembershipScreenState extends State<MembershipScreen>
                 text: TextSpan(
                   text: "Gold Couples Membership - ", // 👈 first part
                   style: GoogleFonts.poppins(
-                      color: const Color(0xFF244065),
+                      color: AppColors.ink,
                       fontSize: 16,
                       fontWeight: FontWeight.w600),
                   children: const [
@@ -140,7 +131,7 @@ class MembershipScreenState extends State<MembershipScreen>
               color: Colors.transparent, // 👈 keeps your table bg visible
               borderRadius: BorderRadius.circular(12), // 👈 Rounded corners
               border: Border.all(
-                color: const Color(0xFFFFFFFF),
+                color: AppColors.surface,
                 width: 1.5,
               ),
             ),
@@ -160,14 +151,14 @@ class MembershipScreenState extends State<MembershipScreen>
               children: [
                 // Header Row
                 TableRow(
-                  decoration: const BoxDecoration(color: Color(0xFFFFFFFF)),
+                  decoration: const BoxDecoration(color: AppColors.surface),
                   children: [
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Text(
                         "Time/Day",
                         style: GoogleFonts.poppins(
-                            color: const Color(0xFF244065),
+                            color: AppColors.ink,
                             fontWeight: FontWeight.w600,
                             fontSize: 12),
                       ),
@@ -177,7 +168,7 @@ class MembershipScreenState extends State<MembershipScreen>
                       child: Text(
                         "9 Holes",
                         style: GoogleFonts.poppins(
-                            color: const Color(0xFF244065),
+                            color: AppColors.ink,
                             fontWeight: FontWeight.w600,
                             fontSize: 12),
                       ),
@@ -187,7 +178,7 @@ class MembershipScreenState extends State<MembershipScreen>
                       child: Text(
                         "18 Holes",
                         style: GoogleFonts.poppins(
-                            color: const Color(0xFF244065),
+                            color: AppColors.ink,
                             fontWeight: FontWeight.w600,
                             fontSize: 12),
                       ),
@@ -202,7 +193,7 @@ class MembershipScreenState extends State<MembershipScreen>
                       decoration: const BoxDecoration(
                         border: Border(
                           bottom: BorderSide(
-                              color: Color(0xFFE8E8E8),
+                              color: AppColors.divider,
                               width: 1), // 👈 bottom border
                         ),
                       ),
@@ -214,7 +205,7 @@ class MembershipScreenState extends State<MembershipScreen>
                             Text(
                               "Weekday",
                               style: GoogleFonts.poppins(
-                                  color: const Color(0xFF3F4B4B),
+                                  color: AppColors.textBody,
                                   fontSize: 14,
                                   fontWeight: FontWeight.w600),
                             ),
@@ -222,7 +213,7 @@ class MembershipScreenState extends State<MembershipScreen>
                               text: TextSpan(
                                 text: "Mon ",
                                 style: GoogleFonts.poppins(
-                                    color: const Color(0xFF3F4B4B),
+                                    color: AppColors.textBody,
                                     fontSize: 11,
                                     fontWeight: FontWeight.w500),
                                 children: const [
@@ -241,7 +232,7 @@ class MembershipScreenState extends State<MembershipScreen>
                       decoration: const BoxDecoration(
                         border: Border(
                           bottom:
-                              BorderSide(color: Color(0xFFE8E8E8), width: 1),
+                              BorderSide(color: AppColors.divider, width: 1),
                         ),
                       ),
                       child: Padding(
@@ -253,7 +244,7 @@ class MembershipScreenState extends State<MembershipScreen>
                               text: TextSpan(
                                 text: "\$",
                                 style: GoogleFonts.poppins(
-                                    color: const Color(0xFF3F4B4B),
+                                    color: AppColors.textBody,
                                     fontSize: 12,
                                     fontWeight: FontWeight.w700),
                                 children: const [TextSpan(text: "18.00")],
@@ -263,7 +254,7 @@ class MembershipScreenState extends State<MembershipScreen>
                               text: TextSpan(
                                 text: "\$",
                                 style: GoogleFonts.poppins(
-                                    color: const Color(0xFF3F4B4B),
+                                    color: AppColors.textBody,
                                     fontSize: 12,
                                     fontWeight: FontWeight.w700),
                                 children: const [TextSpan(text: "14.00")],
@@ -279,7 +270,7 @@ class MembershipScreenState extends State<MembershipScreen>
                       decoration: const BoxDecoration(
                         border: Border(
                           bottom:
-                              BorderSide(color: Color(0xFFE8E8E8), width: 1),
+                              BorderSide(color: AppColors.divider, width: 1),
                         ),
                       ),
                       child: Padding(
@@ -291,7 +282,7 @@ class MembershipScreenState extends State<MembershipScreen>
                               text: TextSpan(
                                 text: "\$",
                                 style: GoogleFonts.poppins(
-                                    color: const Color(0xFF3F4B4B),
+                                    color: AppColors.textBody,
                                     fontSize: 12,
                                     fontWeight: FontWeight.w700),
                                 children: const [TextSpan(text: "24.00")],
@@ -301,7 +292,7 @@ class MembershipScreenState extends State<MembershipScreen>
                               text: TextSpan(
                                 text: "\$",
                                 style: GoogleFonts.poppins(
-                                    color: const Color(0xFF3F4B4B),
+                                    color: AppColors.textBody,
                                     fontSize: 12,
                                     fontWeight: FontWeight.w700),
                                 children: const [TextSpan(text: "17.00")],
@@ -321,7 +312,7 @@ class MembershipScreenState extends State<MembershipScreen>
                       decoration: const BoxDecoration(
                         border: Border(
                           bottom: BorderSide(
-                              color: Color(0xFFE8E8E8),
+                              color: AppColors.divider,
                               width: 1), // 👈 bottom border
                         ),
                       ),
@@ -333,7 +324,7 @@ class MembershipScreenState extends State<MembershipScreen>
                             Text(
                               "Weekday",
                               style: GoogleFonts.poppins(
-                                  color: const Color(0xFF3F4B4B),
+                                  color: AppColors.textBody,
                                   fontSize: 14,
                                   fontWeight: FontWeight.w600),
                             ),
@@ -341,7 +332,7 @@ class MembershipScreenState extends State<MembershipScreen>
                               text: TextSpan(
                                 text: "Fri ",
                                 style: GoogleFonts.poppins(
-                                    color: const Color(0xFF3F4B4B),
+                                    color: AppColors.textBody,
                                     fontSize: 11,
                                     fontWeight: FontWeight.w500),
                                 children: const [
@@ -360,7 +351,7 @@ class MembershipScreenState extends State<MembershipScreen>
                       decoration: const BoxDecoration(
                         border: Border(
                           bottom:
-                              BorderSide(color: Color(0xFFE8E8E8), width: 1),
+                              BorderSide(color: AppColors.divider, width: 1),
                         ),
                       ),
                       child: Padding(
@@ -372,7 +363,7 @@ class MembershipScreenState extends State<MembershipScreen>
                               text: TextSpan(
                                 text: "\$",
                                 style: GoogleFonts.poppins(
-                                    color: const Color(0xFF3F4B4B),
+                                    color: AppColors.textBody,
                                     fontSize: 12,
                                     fontWeight: FontWeight.w700),
                                 children: const [TextSpan(text: "18.00")],
@@ -382,7 +373,7 @@ class MembershipScreenState extends State<MembershipScreen>
                               text: TextSpan(
                                 text: "\$",
                                 style: GoogleFonts.poppins(
-                                    color: const Color(0xFF3F4B4B),
+                                    color: AppColors.textBody,
                                     fontSize: 12,
                                     fontWeight: FontWeight.w700),
                                 children: const [TextSpan(text: "14.00")],
@@ -398,7 +389,7 @@ class MembershipScreenState extends State<MembershipScreen>
                       decoration: const BoxDecoration(
                         border: Border(
                           bottom:
-                              BorderSide(color: Color(0xFFE8E8E8), width: 1),
+                              BorderSide(color: AppColors.divider, width: 1),
                         ),
                       ),
                       child: Padding(
@@ -410,7 +401,7 @@ class MembershipScreenState extends State<MembershipScreen>
                               text: TextSpan(
                                 text: "\$",
                                 style: GoogleFonts.poppins(
-                                    color: const Color(0xFF3F4B4B),
+                                    color: AppColors.textBody,
                                     fontSize: 12,
                                     fontWeight: FontWeight.w700),
                                 children: const [TextSpan(text: "24.00")],
@@ -420,7 +411,7 @@ class MembershipScreenState extends State<MembershipScreen>
                               text: TextSpan(
                                 text: "\$",
                                 style: GoogleFonts.poppins(
-                                    color: const Color(0xFF3F4B4B),
+                                    color: AppColors.textBody,
                                     fontSize: 12,
                                     fontWeight: FontWeight.w700),
                                 children: const [TextSpan(text: "17.00")],
@@ -444,7 +435,7 @@ class MembershipScreenState extends State<MembershipScreen>
                           Text(
                             "Weekday",
                             style: GoogleFonts.poppins(
-                                color: const Color(0xFF3F4B4B),
+                                color: AppColors.textBody,
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600),
                           ),
@@ -452,7 +443,7 @@ class MembershipScreenState extends State<MembershipScreen>
                             text: TextSpan(
                               text: "Fri ",
                               style: GoogleFonts.poppins(
-                                  color: const Color(0xFF3F4B4B),
+                                  color: AppColors.textBody,
                                   fontSize: 11,
                                   fontWeight: FontWeight.w500),
                               children: const [
@@ -475,7 +466,7 @@ class MembershipScreenState extends State<MembershipScreen>
                             text: TextSpan(
                               text: "\$",
                               style: GoogleFonts.poppins(
-                                  color: const Color(0xFF3F4B4B),
+                                  color: AppColors.textBody,
                                   fontSize: 12,
                                   fontWeight: FontWeight.w700),
                               children: const [TextSpan(text: "18.00")],
@@ -485,7 +476,7 @@ class MembershipScreenState extends State<MembershipScreen>
                             text: TextSpan(
                               text: "\$",
                               style: GoogleFonts.poppins(
-                                  color: const Color(0xFF3F4B4B),
+                                  color: AppColors.textBody,
                                   fontSize: 12,
                                   fontWeight: FontWeight.w700),
                               children: const [TextSpan(text: "14.00")],
@@ -505,7 +496,7 @@ class MembershipScreenState extends State<MembershipScreen>
                             text: TextSpan(
                               text: "\$",
                               style: GoogleFonts.poppins(
-                                  color: const Color(0xFF3F4B4B),
+                                  color: AppColors.textBody,
                                   fontSize: 12,
                                   fontWeight: FontWeight.w700),
                               children: const [TextSpan(text: "24.00")],
@@ -515,7 +506,7 @@ class MembershipScreenState extends State<MembershipScreen>
                             text: TextSpan(
                               text: "\$",
                               style: GoogleFonts.poppins(
-                                  color: const Color(0xFF3F4B4B),
+                                  color: AppColors.textBody,
                                   fontSize: 12,
                                   fontWeight: FontWeight.w700),
                               children: const [TextSpan(text: "17.00")],
@@ -578,7 +569,7 @@ class MembershipScreenState extends State<MembershipScreen>
                   showAll
                       ? Icons.keyboard_arrow_up_sharp
                       : Icons.keyboard_arrow_down_sharp,
-                  color: const Color(0xFF244065),
+                  color: AppColors.ink,
                   size: 30,
                 ),
               );
@@ -608,7 +599,7 @@ class MembershipScreenState extends State<MembershipScreen>
                 // child: Text(
                 //   'My Gift Cards',
                 //   style: GoogleFonts.nunito(
-                //     color: const Color(0xFF244065),
+                //     color: AppColors.ink,
                 //     fontSize: 18,
                 //     fontWeight: FontWeight.w700,
                 //   ),
@@ -641,7 +632,7 @@ class MembershipScreenState extends State<MembershipScreen>
                   showAllTwo
                       ? Icons.keyboard_arrow_up_sharp
                       : Icons.keyboard_arrow_down_sharp,
-                  color: const Color(0xFF244065),
+                  color: AppColors.ink,
                   size: 30,
                 ),
               );
@@ -671,7 +662,7 @@ class MembershipScreenState extends State<MembershipScreen>
                 // child: Text(
                 //   'My Gift Cards',
                 //   style: GoogleFonts.nunito(
-                //     color: const Color(0xFF244065),
+                //     color: AppColors.ink,
                 //     fontSize: 18,
                 //     fontWeight: FontWeight.w700,
                 //   ),
@@ -704,7 +695,7 @@ class MembershipScreenState extends State<MembershipScreen>
                   showAllThree
                       ? Icons.keyboard_arrow_up_sharp
                       : Icons.keyboard_arrow_down_sharp,
-                  color: const Color(0xFF244065),
+                  color: AppColors.ink,
                   size: 30,
                 ),
               );
@@ -734,7 +725,7 @@ class MembershipScreenState extends State<MembershipScreen>
                 // child: Text(
                 //   'My Gift Cards',
                 //   style: GoogleFonts.nunito(
-                //     color: const Color(0xFF244065),
+                //     color: AppColors.ink,
                 //     fontSize: 18,
                 //     fontWeight: FontWeight.w700,
                 //   ),
@@ -767,7 +758,7 @@ class MembershipScreenState extends State<MembershipScreen>
                   showAllFour
                       ? Icons.keyboard_arrow_up_sharp
                       : Icons.keyboard_arrow_down_sharp,
-                  color: const Color(0xFF244065),
+                  color: AppColors.ink,
                   size: 30,
                 ),
               );
@@ -819,7 +810,7 @@ class MembershipScreenState extends State<MembershipScreen>
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 15),
         child: Container(
-          color: const Color(0xFFFAFCFA),
+          color: AppColors.pageBackground,
           width: double.infinity,
           height: double.infinity,
           child: SingleChildScrollView(
@@ -837,7 +828,7 @@ class MembershipScreenState extends State<MembershipScreen>
                       Container(
                         width: 40,
                         height: 1.1,
-                        color: const Color(0xFFB2C1C0),
+                        color: AppColors.border,
                       ),
                       const SizedBox(
                         width: 10,
@@ -845,7 +836,7 @@ class MembershipScreenState extends State<MembershipScreen>
                       Text(
                         "Current Membership Plan",
                         style: GoogleFonts.poppins(
-                            color: const Color(0xFF244065),
+                            color: AppColors.ink,
                             fontSize: 14,
                             fontWeight: FontWeight.w600),
                       ),
@@ -855,7 +846,7 @@ class MembershipScreenState extends State<MembershipScreen>
                       Container(
                         width: 40,
                         height: 1.1,
-                        color: const Color(0xFFB2C1C0),
+                        color: AppColors.border,
                       ),
                     ],
                   )),
@@ -870,7 +861,7 @@ class MembershipScreenState extends State<MembershipScreen>
                     padding: const EdgeInsets.only(
                         top: 10, left: 10, right: 10, bottom: 40),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF9ECF9A),
+                      color: AppColors.primary,
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Column(
@@ -889,7 +880,7 @@ class MembershipScreenState extends State<MembershipScreen>
                               text: TextSpan(
                                 text: "Public Daily Fee - ", // 👈 first part
                                 style: GoogleFonts.poppins(
-                                    color: const Color(0xFFFFFFFF),
+                                    color: AppColors.surface,
                                     fontSize: 16,
                                     fontWeight: FontWeight.w600),
                                 children: const [
@@ -912,7 +903,7 @@ class MembershipScreenState extends State<MembershipScreen>
                             borderRadius:
                                 BorderRadius.circular(12), // 👈 Rounded corners
                             border: Border.all(
-                              color: const Color(0xFFE8E8E8),
+                              color: AppColors.divider,
                               width: 1.5,
                             ),
                           ),
@@ -920,13 +911,13 @@ class MembershipScreenState extends State<MembershipScreen>
                           child: Table(
                             border: const TableBorder(
                               top: BorderSide(
-                                  color: Color(0xFFE8E8E8), width: 0),
+                                  color: AppColors.divider, width: 0),
                               bottom: BorderSide(
-                                  color: Color(0xFFE8E8E8), width: 0),
+                                  color: AppColors.divider, width: 0),
                               left: BorderSide(
-                                  color: Color(0xFFE8E8E8), width: 0),
+                                  color: AppColors.divider, width: 0),
                               right: BorderSide(
-                                  color: Color(0xFFE8E8E8), width: 0),
+                                  color: AppColors.divider, width: 0),
                             ),
                             columnWidths: const {
                               0: FlexColumnWidth(2),
@@ -937,14 +928,14 @@ class MembershipScreenState extends State<MembershipScreen>
                               // Header Row
                               TableRow(
                                 decoration: const BoxDecoration(
-                                    color: Color(0xFFE8E8E8)),
+                                    color: AppColors.divider),
                                 children: [
                                   Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: Text(
                                       "Time/Day",
                                       style: GoogleFonts.poppins(
-                                          color: const Color(0xFF244065),
+                                          color: AppColors.ink,
                                           fontWeight: FontWeight.w600,
                                           fontSize: 12),
                                     ),
@@ -954,7 +945,7 @@ class MembershipScreenState extends State<MembershipScreen>
                                     child: Text(
                                       "9 Holes",
                                       style: GoogleFonts.poppins(
-                                          color: const Color(0xFF244065),
+                                          color: AppColors.ink,
                                           fontWeight: FontWeight.w600,
                                           fontSize: 12),
                                     ),
@@ -964,7 +955,7 @@ class MembershipScreenState extends State<MembershipScreen>
                                     child: Text(
                                       "18 Holes",
                                       style: GoogleFonts.poppins(
-                                          color: const Color(0xFF244065),
+                                          color: AppColors.ink,
                                           fontWeight: FontWeight.w600,
                                           fontSize: 12),
                                     ),
@@ -979,7 +970,7 @@ class MembershipScreenState extends State<MembershipScreen>
                                     decoration: const BoxDecoration(
                                       border: Border(
                                         bottom: BorderSide(
-                                            color: Color(0xFFE8E8E8),
+                                            color: AppColors.divider,
                                             width: 1), // 👈 bottom border
                                       ),
                                     ),
@@ -992,7 +983,7 @@ class MembershipScreenState extends State<MembershipScreen>
                                           Text(
                                             "Weekday",
                                             style: GoogleFonts.poppins(
-                                                color: const Color(0xFFFFFFFF),
+                                                color: AppColors.surface,
                                                 fontSize: 14,
                                                 fontWeight: FontWeight.w600),
                                           ),
@@ -1001,7 +992,7 @@ class MembershipScreenState extends State<MembershipScreen>
                                               text: "Mon ",
                                               style: GoogleFonts.poppins(
                                                   color:
-                                                      const Color(0xFFFFFFFF),
+                                                      AppColors.surface,
                                                   fontSize: 11,
                                                   fontWeight: FontWeight.w500),
                                               children: const [
@@ -1020,7 +1011,7 @@ class MembershipScreenState extends State<MembershipScreen>
                                     decoration: const BoxDecoration(
                                       border: Border(
                                         bottom: BorderSide(
-                                            color: Color(0xFFE8E8E8), width: 1),
+                                            color: AppColors.divider, width: 1),
                                       ),
                                     ),
                                     child: Padding(
@@ -1034,7 +1025,7 @@ class MembershipScreenState extends State<MembershipScreen>
                                               text: "\$",
                                               style: GoogleFonts.poppins(
                                                   color:
-                                                      const Color(0xFFFFFFFF),
+                                                      AppColors.surface,
                                                   fontSize: 12,
                                                   fontWeight: FontWeight.w700),
                                               children: const [
@@ -1047,7 +1038,7 @@ class MembershipScreenState extends State<MembershipScreen>
                                               text: "\$",
                                               style: GoogleFonts.poppins(
                                                   color:
-                                                      const Color(0xFFFFFFFF),
+                                                      AppColors.surface,
                                                   fontSize: 12,
                                                   fontWeight: FontWeight.w700),
                                               children: const [
@@ -1065,7 +1056,7 @@ class MembershipScreenState extends State<MembershipScreen>
                                     decoration: const BoxDecoration(
                                       border: Border(
                                         bottom: BorderSide(
-                                            color: Color(0xFFE8E8E8), width: 1),
+                                            color: AppColors.divider, width: 1),
                                       ),
                                     ),
                                     child: Padding(
@@ -1079,7 +1070,7 @@ class MembershipScreenState extends State<MembershipScreen>
                                               text: "\$",
                                               style: GoogleFonts.poppins(
                                                   color:
-                                                      const Color(0xFFFFFFFF),
+                                                      AppColors.surface,
                                                   fontSize: 12,
                                                   fontWeight: FontWeight.w700),
                                               children: const [
@@ -1092,7 +1083,7 @@ class MembershipScreenState extends State<MembershipScreen>
                                               text: "\$",
                                               style: GoogleFonts.poppins(
                                                   color:
-                                                      const Color(0xFFFFFFFF),
+                                                      AppColors.surface,
                                                   fontSize: 12,
                                                   fontWeight: FontWeight.w700),
                                               children: const [
@@ -1114,7 +1105,7 @@ class MembershipScreenState extends State<MembershipScreen>
                                     decoration: const BoxDecoration(
                                       border: Border(
                                         bottom: BorderSide(
-                                            color: Color(0xFFE8E8E8),
+                                            color: AppColors.divider,
                                             width: 1), // 👈 bottom border
                                       ),
                                     ),
@@ -1127,7 +1118,7 @@ class MembershipScreenState extends State<MembershipScreen>
                                           Text(
                                             "Weekday",
                                             style: GoogleFonts.poppins(
-                                                color: const Color(0xFFFFFFFF),
+                                                color: AppColors.surface,
                                                 fontSize: 14,
                                                 fontWeight: FontWeight.w600),
                                           ),
@@ -1136,7 +1127,7 @@ class MembershipScreenState extends State<MembershipScreen>
                                               text: "Fri ",
                                               style: GoogleFonts.poppins(
                                                   color:
-                                                      const Color(0xFFFFFFFF),
+                                                      AppColors.surface,
                                                   fontSize: 11,
                                                   fontWeight: FontWeight.w500),
                                               children: const [
@@ -1155,7 +1146,7 @@ class MembershipScreenState extends State<MembershipScreen>
                                     decoration: const BoxDecoration(
                                       border: Border(
                                         bottom: BorderSide(
-                                            color: Color(0xFFE8E8E8), width: 1),
+                                            color: AppColors.divider, width: 1),
                                       ),
                                     ),
                                     child: Padding(
@@ -1169,7 +1160,7 @@ class MembershipScreenState extends State<MembershipScreen>
                                               text: "\$",
                                               style: GoogleFonts.poppins(
                                                   color:
-                                                      const Color(0xFFFFFFFF),
+                                                      AppColors.surface,
                                                   fontSize: 12,
                                                   fontWeight: FontWeight.w700),
                                               children: const [
@@ -1182,7 +1173,7 @@ class MembershipScreenState extends State<MembershipScreen>
                                               text: "\$",
                                               style: GoogleFonts.poppins(
                                                   color:
-                                                      const Color(0xFFFFFFFF),
+                                                      AppColors.surface,
                                                   fontSize: 12,
                                                   fontWeight: FontWeight.w700),
                                               children: const [
@@ -1200,7 +1191,7 @@ class MembershipScreenState extends State<MembershipScreen>
                                     decoration: const BoxDecoration(
                                       border: Border(
                                         bottom: BorderSide(
-                                            color: Color(0xFFE8E8E8), width: 1),
+                                            color: AppColors.divider, width: 1),
                                       ),
                                     ),
                                     child: Padding(
@@ -1214,7 +1205,7 @@ class MembershipScreenState extends State<MembershipScreen>
                                               text: "\$",
                                               style: GoogleFonts.poppins(
                                                   color:
-                                                      const Color(0xFFFFFFFF),
+                                                      AppColors.surface,
                                                   fontSize: 12,
                                                   fontWeight: FontWeight.w700),
                                               children: const [
@@ -1227,7 +1218,7 @@ class MembershipScreenState extends State<MembershipScreen>
                                               text: "\$",
                                               style: GoogleFonts.poppins(
                                                   color:
-                                                      const Color(0xFFFFFFFF),
+                                                      AppColors.surface,
                                                   fontSize: 12,
                                                   fontWeight: FontWeight.w700),
                                               children: const [
@@ -1254,7 +1245,7 @@ class MembershipScreenState extends State<MembershipScreen>
                                         Text(
                                           "Weekday",
                                           style: GoogleFonts.poppins(
-                                              color: const Color(0xFFFFFFFF),
+                                              color: AppColors.surface,
                                               fontSize: 14,
                                               fontWeight: FontWeight.w600),
                                         ),
@@ -1262,7 +1253,7 @@ class MembershipScreenState extends State<MembershipScreen>
                                           text: TextSpan(
                                             text: "Fri ",
                                             style: GoogleFonts.poppins(
-                                                color: const Color(0xFFFFFFFF),
+                                                color: AppColors.surface,
                                                 fontSize: 11,
                                                 fontWeight: FontWeight.w500),
                                             children: const [
@@ -1286,7 +1277,7 @@ class MembershipScreenState extends State<MembershipScreen>
                                           text: TextSpan(
                                             text: "\$",
                                             style: GoogleFonts.poppins(
-                                                color: const Color(0xFFFFFFFF),
+                                                color: AppColors.surface,
                                                 fontSize: 12,
                                                 fontWeight: FontWeight.w700),
                                             children: const [
@@ -1298,7 +1289,7 @@ class MembershipScreenState extends State<MembershipScreen>
                                           text: TextSpan(
                                             text: "\$",
                                             style: GoogleFonts.poppins(
-                                                color: const Color(0xFFFFFFFF),
+                                                color: AppColors.surface,
                                                 fontSize: 12,
                                                 fontWeight: FontWeight.w700),
                                             children: const [
@@ -1321,7 +1312,7 @@ class MembershipScreenState extends State<MembershipScreen>
                                           text: TextSpan(
                                             text: "\$",
                                             style: GoogleFonts.poppins(
-                                                color: const Color(0xFFFFFFFF),
+                                                color: AppColors.surface,
                                                 fontSize: 12,
                                                 fontWeight: FontWeight.w700),
                                             children: const [
@@ -1333,7 +1324,7 @@ class MembershipScreenState extends State<MembershipScreen>
                                           text: TextSpan(
                                             text: "\$",
                                             style: GoogleFonts.poppins(
-                                                color: const Color(0xFFFFFFFF),
+                                                color: AppColors.surface,
                                                 fontSize: 12,
                                                 fontWeight: FontWeight.w700),
                                             children: const [
@@ -1366,7 +1357,7 @@ class MembershipScreenState extends State<MembershipScreen>
                             _launchMailURL();
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF244065),
+                            backgroundColor: AppColors.ink,
                             elevation: 5,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20),
@@ -1411,7 +1402,7 @@ class MembershipScreenState extends State<MembershipScreen>
                       Container(
                         width: 40,
                         height: 1.1,
-                        color: const Color(0xFFB2C1C0),
+                        color: AppColors.border,
                       ),
                       const SizedBox(
                         width: 10,
@@ -1419,7 +1410,7 @@ class MembershipScreenState extends State<MembershipScreen>
                       Text(
                         "Other Membership Plans",
                         style: GoogleFonts.poppins(
-                            color: const Color(0xFF244065),
+                            color: AppColors.ink,
                             fontSize: 14,
                             fontWeight: FontWeight.w600),
                       ),
@@ -1429,7 +1420,7 @@ class MembershipScreenState extends State<MembershipScreen>
                       Container(
                         width: 40,
                         height: 1.1,
-                        color: const Color(0xFFB2C1C0),
+                        color: AppColors.border,
                       ),
                     ],
                   )),

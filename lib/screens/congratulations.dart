@@ -1,6 +1,6 @@
+import 'package:driver_pos/theme/app_theme.dart';
 // ignore_for_file: deprecated_member_use, use_build_context_synchronously
 // import 'package:flutter/cupertino.dart';
-import 'package:driver_pos/main.dart';
 import 'package:driver_pos/screens/selcet_booking_class.dart';
 import 'package:driver_pos/services/deep_link_service.dart';
 import 'package:flutter/material.dart';
@@ -54,14 +54,14 @@ class CongratulationsPageState extends State<CongratulationsPage> {
           ? const Center(
               child: CircularProgressIndicator(
                 valueColor: AlwaysStoppedAnimation<Color>(
-                  Color(0xFF9ECF9A),
+                  AppColors.primary,
                 ),
               ),
             )
           : Padding(
               padding: const EdgeInsets.symmetric(),
               child: Container(
-                color: const Color(0xFFFAFCFA),
+                color: AppColors.pageBackground,
                 width: double.infinity,
                 height: double.infinity,
                 child: Center(
@@ -69,11 +69,11 @@ class CongratulationsPageState extends State<CongratulationsPage> {
                       child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Container(
+                      const SizedBox(
                         width: 80,
                         height: 80,
-                        child: const CircleAvatar(
-                          backgroundColor: Color(0xFF9ECF9A),
+                        child: CircleAvatar(
+                          backgroundColor: AppColors.primary,
                           child: Center(
                             child: Icon(
                               Icons.event_available,
@@ -89,7 +89,7 @@ class CongratulationsPageState extends State<CongratulationsPage> {
                       Text(
                         "Congratulations!",
                         style: GoogleFonts.poppins(
-                            color: const Color(0xFF244065),
+                            color: AppColors.ink,
                             fontWeight: FontWeight.w600,
                             fontSize: 20),
                       ),
@@ -99,7 +99,7 @@ class CongratulationsPageState extends State<CongratulationsPage> {
                       Text(
                         "Your payment has been received",
                         style: GoogleFonts.poppins(
-                            color: const Color(0xFF244065),
+                            color: AppColors.ink,
                             fontWeight: FontWeight.w600,
                             fontSize: 14),
                       ),
@@ -122,15 +122,15 @@ class CongratulationsPageState extends State<CongratulationsPage> {
                         child: AnimatedContainer(
                           duration: const Duration(milliseconds: 300),
                           decoration: BoxDecoration(
-                            color: const Color(0xFF9ECF9A),
+                            color: AppColors.primary,
                             borderRadius: BorderRadius.circular(50),
                             border: Border.all(
-                              color: const Color(0xFF9ECF9A),
+                              color: AppColors.primary,
                               width: 1,
                             ),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withOpacity(0.1),
+                                color: Colors.black.withValues(alpha: 0.1),
                                 blurRadius: 3,
                                 spreadRadius: 1,
                                 offset: const Offset(0, 2),

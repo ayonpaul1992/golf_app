@@ -1,6 +1,6 @@
+import 'package:driver_pos/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-
 
 class UserentryAppbar extends StatelessWidget implements PreferredSizeWidget {
   final GlobalKey<ScaffoldState> scaffoldKey;
@@ -12,7 +12,8 @@ class UserentryAppbar extends StatelessWidget implements PreferredSizeWidget {
     super.key,
     required this.userId,
     this.onBackPressed,
-    this.showLeading = true, required this.scaffoldKey,
+    this.showLeading = true,
+    required this.scaffoldKey,
   });
 
   @override
@@ -30,7 +31,7 @@ class UserentryAppbar extends StatelessWidget implements PreferredSizeWidget {
         'driver.io',
         textAlign: TextAlign.center,
         style: GoogleFonts.poppins(
-          color: const Color(0xFF244065),
+          color: AppColors.ink,
           fontSize: 20,
           fontWeight: FontWeight.w600,
         ),

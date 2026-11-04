@@ -1,6 +1,6 @@
-import 'dart:convert';
+import 'package:driver_pos/repositories/feature_repositories.dart';
+import 'package:driver_pos/theme/app_theme.dart';
 
-import 'package:driver_pos/services/api_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -9,7 +9,6 @@ import '/components/custom_app_bar.dart';
 import '/components/custom_drawer.dart';
 import '/components/custom_bottom_nav_bar.dart';
 import '/screens/parchase_giftcard_three.dart';
-import 'package:http/http.dart' as http;
 
 // Add a global RouteObserver for navigation events
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
@@ -189,23 +188,14 @@ class ParchaseGiftCardTwoPageState extends State<ParchaseGiftCardTwoPage>
   }
 
   fetchUserPhoneSuggestions(String param) async {
-    final String baseUrl = ApiConfig.baseUrl;
 
-    String apiUrl = '$baseUrl/customer/email-or-phone?phoneNumber=$param';
 
-    String? token = await secureStorage.read(key: 'accessToken') ?? '';
     try {
       // Replace with your actual API call using http or dio
       // Example using http package:
-      final response = await http.get(
-        Uri.parse(apiUrl),
-        headers: {
-          'Authorization': 'Bearer $token',
-          'Content-Type': 'application/json',
-        },
-      );
+      final response = await giftCardRepository.customerByPhone(param);
       if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
+        final data = response.json;
 
         final phoneNumber = data['data']['phoneNumber'] ?? '';
         final name = data['data']['fullName'] ?? '';
@@ -218,27 +208,20 @@ class ParchaseGiftCardTwoPageState extends State<ParchaseGiftCardTwoPage>
 
         print(phoneSuggestions);
       }
-    } catch (e) {}
+    } catch (e) {
+      debugPrint('Recipient lookup failed');
+    }
   }
 
   fetchUserEmailSuggestions(String param) async {
-    final String baseUrl = ApiConfig.baseUrl;
 
-    String apiUrl = '$baseUrl/customer/email-or-phone?email=$param';
 
-    String? token = await secureStorage.read(key: 'accessToken') ?? '';
     try {
       // Replace with your actual API call using http or dio
       // Example using http package:
-      final response = await http.get(
-        Uri.parse(apiUrl),
-        headers: {
-          'Authorization': 'Bearer $token',
-          'Content-Type': 'application/json',
-        },
-      );
+      final response = await giftCardRepository.customerByEmail(param);
       if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
+        final data = response.json;
 
         final email = data['data']['email'] ?? '';
         final name = data['data']['fullName'] ?? '';
@@ -251,30 +234,23 @@ class ParchaseGiftCardTwoPageState extends State<ParchaseGiftCardTwoPage>
 
         print(emailSuggestions);
       }
-    } catch (e) {}
+    } catch (e) {
+      debugPrint('Recipient lookup failed');
+    }
   }
 
   fetchUserDetailsByPhone(String param) async {
     // Simulate a network call to fetch user details based on phone number
     await Future.delayed(const Duration(seconds: 1));
 
-    final String baseUrl = ApiConfig.baseUrl;
 
-    String apiUrl = '$baseUrl/customer/email-or-phone?phoneNumber=$param';
 
-    String? token = await secureStorage.read(key: 'accessToken') ?? '';
     try {
       // Replace with your actual API call using http or dio
       // Example using http package:
-      final response = await http.get(
-        Uri.parse(apiUrl),
-        headers: {
-          'Authorization': 'Bearer $token',
-          'Content-Type': 'application/json',
-        },
-      );
+      final response = await giftCardRepository.customerByPhone(param);
       if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
+        final data = response.json;
 
         print(data);
 
@@ -316,23 +292,14 @@ class ParchaseGiftCardTwoPageState extends State<ParchaseGiftCardTwoPage>
     // Simulate a network call to fetch user details based on phone number
     await Future.delayed(const Duration(seconds: 1));
 
-    final String baseUrl = ApiConfig.baseUrl;
 
-    String apiUrl = '$baseUrl/customer/email-or-phone?email=$param';
 
-    String? token = await secureStorage.read(key: 'accessToken') ?? '';
     try {
       // Replace with your actual API call using http or dio
       // Example using http package:
-      final response = await http.get(
-        Uri.parse(apiUrl),
-        headers: {
-          'Authorization': 'Bearer $token',
-          'Content-Type': 'application/json',
-        },
-      );
+      final response = await giftCardRepository.customerByEmail(param);
       if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
+        final data = response.json;
 
         print(data);
 
@@ -476,7 +443,7 @@ class ParchaseGiftCardTwoPageState extends State<ParchaseGiftCardTwoPage>
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(50),
         borderSide: const BorderSide(
-          color: Color(0xFF9ECF9A),
+          color: AppColors.primary,
           width: 1,
         ),
       ),
@@ -489,7 +456,7 @@ class ParchaseGiftCardTwoPageState extends State<ParchaseGiftCardTwoPage>
       ),
       hintText: hintText,
       hintStyle: GoogleFonts.poppins(
-        color: const Color(0xFF6E7373),
+        color: AppColors.textMuted,
         fontSize: 14,
       ),
     );
@@ -506,9 +473,9 @@ class ParchaseGiftCardTwoPageState extends State<ParchaseGiftCardTwoPage>
     return TextFormField(
       controller: controller,
       focusNode: focusNode,
-      cursorColor: const Color(0xFF9ECF9A),
+      cursorColor: AppColors.primary,
       style: GoogleFonts.poppins(
-        color: const Color(0xFF2A4768),
+        color: AppColors.heading,
         fontSize: 14,
       ),
       decoration: _inputDecoration(hintText),
@@ -521,8 +488,8 @@ class ParchaseGiftCardTwoPageState extends State<ParchaseGiftCardTwoPage>
   @override
   Widget build(BuildContext context) {
     final currentImagePath = widget.selectedCardImage;
-    const darkGreenColor = Color(0xFF669933);
-    const lightGreenColor = Color(0xFF9ECF9A);
+    const darkGreenColor = AppColors.accent;
+    const lightGreenColor = AppColors.primary;
     final buttonColor = _isFormValid ? darkGreenColor : lightGreenColor;
 
     // Error messages
@@ -565,7 +532,7 @@ class ParchaseGiftCardTwoPageState extends State<ParchaseGiftCardTwoPage>
               .unfocus(); // Dismiss keyboard on anywhere tap outside fields
         },
         child: Container(
-          color: const Color(0xFFFAFCFA),
+          color: AppColors.pageBackground,
           width: double.infinity,
           height: double.infinity,
           child: SingleChildScrollView(
@@ -581,7 +548,7 @@ class ParchaseGiftCardTwoPageState extends State<ParchaseGiftCardTwoPage>
                         Container(
                           width: 40,
                           height: 1,
-                          color: const Color(0xFFB2C1C0),
+                          color: AppColors.border,
                         ),
                         const SizedBox(
                           width: 10,
@@ -591,7 +558,7 @@ class ParchaseGiftCardTwoPageState extends State<ParchaseGiftCardTwoPage>
                           child: Text(
                             "ENTER RECEIPIENT DETAILS AND AMOUNT",
                             style: GoogleFonts.poppins(
-                                color: const Color(0xFF244065),
+                                color: AppColors.ink,
                                 fontSize: 15,
                                 fontWeight: FontWeight.w600),
                             textAlign: TextAlign.center,
@@ -603,7 +570,7 @@ class ParchaseGiftCardTwoPageState extends State<ParchaseGiftCardTwoPage>
                         Container(
                           width: 40,
                           height: 1,
-                          color: const Color(0xFFB2C1C0),
+                          color: AppColors.border,
                         ),
                       ],
                     )),
@@ -616,10 +583,10 @@ class ParchaseGiftCardTwoPageState extends State<ParchaseGiftCardTwoPage>
                   margin: const EdgeInsets.symmetric(horizontal: 38),
                   padding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFF8F8F8),
+                    color: AppColors.surfaceMuted,
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(
-                      color: const Color(0xFFE9EBEB),
+                      color: AppColors.disabled,
                       width: 1,
                     ),
                   ),
@@ -657,6 +624,7 @@ class ParchaseGiftCardTwoPageState extends State<ParchaseGiftCardTwoPage>
                                 // ✅ Immediately focus the custom amount field
                                 Future.delayed(
                                     const Duration(milliseconds: 100), () {
+                                  if (!context.mounted) return;
                                   FocusScope.of(context)
                                       .requestFocus(customAmountFocusNode);
                                 });
@@ -679,11 +647,10 @@ class ParchaseGiftCardTwoPageState extends State<ParchaseGiftCardTwoPage>
                                   vertical: 2, horizontal: 6),
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(50),
-                                color: isActive
-                                    ? const Color(0xFF9ECF9A)
-                                    : Colors.white,
+                                color:
+                                    isActive ? AppColors.primary : Colors.white,
                                 border: Border.all(
-                                  color: const Color(0xFF9ECF9A),
+                                  color: AppColors.primary,
                                   width: 1,
                                 ),
                               ),
@@ -702,7 +669,7 @@ class ParchaseGiftCardTwoPageState extends State<ParchaseGiftCardTwoPage>
                                       ],
                                       textAlign: TextAlign.center,
                                       style: GoogleFonts.poppins(
-                                        color: const Color(0xFF2A4768),
+                                        color: AppColors.heading,
                                         fontSize: 15,
                                         fontWeight: FontWeight.w600,
                                       ),
@@ -723,21 +690,21 @@ class ParchaseGiftCardTwoPageState extends State<ParchaseGiftCardTwoPage>
                                       TextSpan(
                                         children: [
                                           TextSpan(
-                                            text: amounts[index]["first"]!,
+                                            text: amounts[index]["first"],
                                             style: GoogleFonts.poppins(
                                               color: isActive
                                                   ? Colors.white
-                                                  : const Color(0xFF2A4768),
+                                                  : AppColors.heading,
                                               fontSize: 15,
                                               fontWeight: FontWeight.w600,
                                             ),
                                           ),
                                           TextSpan(
-                                            text: amounts[index]["second"]!,
+                                            text: amounts[index]["second"],
                                             style: GoogleFonts.poppins(
                                               color: isActive
                                                   ? Colors.white
-                                                  : const Color(0xFF2A4768),
+                                                  : AppColors.heading,
                                               fontSize: 15,
                                               fontWeight: FontWeight.w600,
                                             ),
@@ -778,7 +745,7 @@ class ParchaseGiftCardTwoPageState extends State<ParchaseGiftCardTwoPage>
                       Text(
                         "Enter Recipient Mobile No*",
                         style: GoogleFonts.poppins(
-                          color: const Color(0xFF2A4768),
+                          color: AppColors.heading,
                           fontSize: 15,
                           fontWeight: FontWeight.w500,
                         ),
@@ -794,8 +761,9 @@ class ParchaseGiftCardTwoPageState extends State<ParchaseGiftCardTwoPage>
                                 (TextEditingValue textEditingValue) {
                               final phoneSuggestions = this.phoneSuggestions;
                               final input = textEditingValue.text.trim();
-                              if (input.isEmpty)
+                              if (input.isEmpty) {
                                 return const Iterable<String>.empty();
+                              }
 
                               if (input.length == 10) {
                                 return phoneSuggestions
@@ -817,7 +785,7 @@ class ParchaseGiftCardTwoPageState extends State<ParchaseGiftCardTwoPage>
                                 decoration: InputDecoration(
                                   hintText: "Enter recipient's phone number",
                                   suffixIcon: const Icon(Icons.arrow_drop_down,
-                                      color: Color(0xFF6E7373)),
+                                      color: AppColors.textMuted),
                                   filled: true,
                                   fillColor: Colors.white,
                                   contentPadding: const EdgeInsets.symmetric(
@@ -830,10 +798,10 @@ class ParchaseGiftCardTwoPageState extends State<ParchaseGiftCardTwoPage>
                                   focusedBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(50),
                                     borderSide: const BorderSide(
-                                        color: Color(0xFF9ECF9A), width: 1),
+                                        color: AppColors.primary, width: 1),
                                   ),
                                   hintStyle: GoogleFonts.poppins(
-                                    color: const Color(0xFF6E7373),
+                                    color: AppColors.textMuted,
                                     fontSize: 14,
                                   ),
                                 ),
@@ -888,7 +856,7 @@ class ParchaseGiftCardTwoPageState extends State<ParchaseGiftCardTwoPage>
                                               option,
                                               style: GoogleFonts.poppins(
                                                 fontSize: 14,
-                                                color: const Color(0xFF2A4768),
+                                                color: AppColors.heading,
                                               ),
                                             ),
                                             onTap: () {
@@ -916,7 +884,7 @@ class ParchaseGiftCardTwoPageState extends State<ParchaseGiftCardTwoPage>
                       Text(
                         "Enter Recipient Email*",
                         style: GoogleFonts.poppins(
-                          color: const Color(0xFF2A4768),
+                          color: AppColors.heading,
                           fontSize: 15,
                           fontWeight: FontWeight.w500,
                         ),
@@ -931,8 +899,9 @@ class ParchaseGiftCardTwoPageState extends State<ParchaseGiftCardTwoPage>
                                 (TextEditingValue textEditingValue) {
                               final emailSuggestions = this.emailSuggestions;
                               final input = textEditingValue.text.trim();
-                              if (input.isEmpty)
+                              if (input.isEmpty) {
                                 return const Iterable<String>.empty();
+                              }
                               return emailSuggestions.where((option) => option
                                   .toLowerCase()
                                   .contains(input.toLowerCase()));
@@ -946,7 +915,7 @@ class ParchaseGiftCardTwoPageState extends State<ParchaseGiftCardTwoPage>
                                 decoration: InputDecoration(
                                   hintText: "Enter recipient's email address",
                                   suffixIcon: const Icon(Icons.arrow_drop_down,
-                                      color: Color(0xFF6E7373)),
+                                      color: AppColors.textMuted),
                                   filled: true,
                                   fillColor: Colors.white,
                                   contentPadding: const EdgeInsets.symmetric(
@@ -959,10 +928,10 @@ class ParchaseGiftCardTwoPageState extends State<ParchaseGiftCardTwoPage>
                                   focusedBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(50),
                                     borderSide: const BorderSide(
-                                        color: Color(0xFF9ECF9A), width: 1),
+                                        color: AppColors.primary, width: 1),
                                   ),
                                   hintStyle: GoogleFonts.poppins(
-                                    color: const Color(0xFF6E7373),
+                                    color: AppColors.textMuted,
                                     fontSize: 14,
                                   ),
                                 ),
@@ -1018,7 +987,7 @@ class ParchaseGiftCardTwoPageState extends State<ParchaseGiftCardTwoPage>
                                               option,
                                               style: GoogleFonts.poppins(
                                                 fontSize: 14,
-                                                color: const Color(0xFF2A4768),
+                                                color: AppColors.heading,
                                               ),
                                             ),
                                             onTap: () => {
@@ -1044,7 +1013,7 @@ class ParchaseGiftCardTwoPageState extends State<ParchaseGiftCardTwoPage>
                       Text(
                         "Enter Recipient Name*",
                         style: GoogleFonts.poppins(
-                          color: const Color(0xFF2A4768),
+                          color: AppColors.heading,
                           fontSize: 15,
                           fontWeight: FontWeight.w500,
                         ),
@@ -1068,7 +1037,7 @@ class ParchaseGiftCardTwoPageState extends State<ParchaseGiftCardTwoPage>
                       Text(
                         "From",
                         style: GoogleFonts.poppins(
-                          color: const Color(0xFF2A4768),
+                          color: AppColors.heading,
                           fontSize: 15,
                           fontWeight: FontWeight.w500,
                         ),
@@ -1081,7 +1050,7 @@ class ParchaseGiftCardTwoPageState extends State<ParchaseGiftCardTwoPage>
                         decoration:
                             _inputDecoration("Your name or sender's name"),
                         style: GoogleFonts.poppins(
-                          color: const Color(0xFF2A4768),
+                          color: AppColors.heading,
                           fontSize: 14,
                         ),
                       ),
@@ -1100,7 +1069,7 @@ class ParchaseGiftCardTwoPageState extends State<ParchaseGiftCardTwoPage>
                       Text(
                         "PLEASE NOTE : ",
                         style: GoogleFonts.poppins(
-                          color: const Color(0xFF2A4768),
+                          color: AppColors.heading,
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
                         ),
@@ -1116,14 +1085,14 @@ class ParchaseGiftCardTwoPageState extends State<ParchaseGiftCardTwoPage>
                             Container(
                                 padding: const EdgeInsets.only(top: 4),
                                 child: const Icon(Icons.circle,
-                                    color: Color(0xFF2A4768), size: 10)),
+                                    color: AppColors.heading, size: 10)),
                             const SizedBox(width: 7),
                             SizedBox(
                               width: 330,
                               child: Text(
                                 "Gift cards are valid only at the listed locations.",
                                 style: GoogleFonts.poppins(
-                                  color: const Color(0xFF6E7373),
+                                  color: AppColors.textMuted,
                                   fontSize: 13,
                                   fontWeight: FontWeight.w400,
                                 ),
@@ -1141,14 +1110,14 @@ class ParchaseGiftCardTwoPageState extends State<ParchaseGiftCardTwoPage>
                             Container(
                                 padding: const EdgeInsets.only(top: 4),
                                 child: const Icon(Icons.circle,
-                                    color: Color(0xFF2A4768), size: 10)),
+                                    color: AppColors.heading, size: 10)),
                             const SizedBox(width: 7),
                             SizedBox(
                               width: 330,
                               child: Text(
                                 "They may be used for green fees, cart rentals, merchandise, or other purchases as allowed by each course.",
                                 style: GoogleFonts.poppins(
-                                  color: const Color(0xFF6E7373),
+                                  color: AppColors.textMuted,
                                   fontSize: 13,
                                   fontWeight: FontWeight.w400,
                                 ),
@@ -1166,7 +1135,7 @@ class ParchaseGiftCardTwoPageState extends State<ParchaseGiftCardTwoPage>
                             Container(
                               padding: const EdgeInsets.only(top: 4),
                               child: const Icon(Icons.circle,
-                                  color: Color(0xFF2A4768), size: 10),
+                                  color: AppColors.heading, size: 10),
                             ),
                             const SizedBox(width: 7),
                             SizedBox(
@@ -1174,7 +1143,7 @@ class ParchaseGiftCardTwoPageState extends State<ParchaseGiftCardTwoPage>
                               child: Text(
                                 "Gift cards are not redeemable for cash.",
                                 style: GoogleFonts.poppins(
-                                  color: const Color(0xFF6E7373),
+                                  color: AppColors.textMuted,
                                   fontSize: 13,
                                   fontWeight: FontWeight.w400,
                                 ),

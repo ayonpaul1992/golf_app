@@ -1,8 +1,9 @@
+import 'package:driver_pos/repositories/feature_repositories.dart';
+import 'package:driver_pos/services/session_service.dart';
+import 'package:driver_pos/theme/app_theme.dart';
 // ignore_for_file: deprecated_member_use, use_build_context_synchronously
 
-import 'dart:convert';
 
-import 'package:driver_pos/services/api_config.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -18,9 +19,6 @@ import 'my_reservation.dart';
 import 'my_transaction.dart';
 import 'my_setting.dart';
 import 'edit_profile.dart';
-import 'package:http/http.dart' as http;
-import 'package:crypto/crypto.dart';
-import 'package:cryptography/cryptography.dart';
 
 // Add a global RouteObserver for navigation events
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
@@ -119,7 +117,7 @@ class MyProfilePageState extends State<MyProfilePage> with RouteAware {
         },
       ),
       body: Container(
-        color: const Color(0xFFFAFCFA),
+        color: AppColors.pageBackground,
         width: double.infinity,
         height: double.infinity,
         child: SingleChildScrollView(
@@ -137,7 +135,7 @@ class MyProfilePageState extends State<MyProfilePage> with RouteAware {
                       Container(
                         width: 40,
                         height: 1,
-                        color: const Color(0xFFB2C1C0),
+                        color: AppColors.border,
                       ),
                       const SizedBox(
                         width: 10,
@@ -145,7 +143,7 @@ class MyProfilePageState extends State<MyProfilePage> with RouteAware {
                       Text(
                         "My Profile",
                         style: GoogleFonts.poppins(
-                            color: const Color(0xFF244065),
+                            color: AppColors.ink,
                             fontSize: 22,
                             fontWeight: FontWeight.w600),
                       ),
@@ -155,7 +153,7 @@ class MyProfilePageState extends State<MyProfilePage> with RouteAware {
                       Container(
                         width: 40,
                         height: 1,
-                        color: const Color(0xFFB2C1C0),
+                        color: AppColors.border,
                       ),
                     ],
                   )),
@@ -183,7 +181,7 @@ class MyProfilePageState extends State<MyProfilePage> with RouteAware {
                           padding: const EdgeInsets.only(
                               top: 4, bottom: 4, right: 10, left: 10),
                           decoration: BoxDecoration(
-                            color: const Color(0xFFF8F8F8),
+                            color: AppColors.surfaceMuted,
                             borderRadius: BorderRadius.circular(20),
                             border: Border.all(
                               color: Colors.transparent,
@@ -196,7 +194,7 @@ class MyProfilePageState extends State<MyProfilePage> with RouteAware {
                               style: GoogleFonts.poppins(
                                 fontWeight: FontWeight.w600,
                                 fontSize: 12,
-                                color: const Color(0xFF244065),
+                                color: AppColors.ink,
                               ),
                             ),
                           ),
@@ -205,7 +203,7 @@ class MyProfilePageState extends State<MyProfilePage> with RouteAware {
                           width: 25,
                           height: 25,
                           decoration: BoxDecoration(
-                            color: const Color(0xFFF8F8F8),
+                            color: AppColors.surfaceMuted,
                             borderRadius: BorderRadius.circular(20),
                             border: Border.all(
                               color: Colors.transparent,
@@ -250,7 +248,7 @@ class MyProfilePageState extends State<MyProfilePage> with RouteAware {
                               style: GoogleFonts.poppins(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
-                                color: const Color(0xFF6E7373),
+                                color: AppColors.textMuted,
                               ),
                             ),
                           )),
@@ -262,7 +260,7 @@ class MyProfilePageState extends State<MyProfilePage> with RouteAware {
                         ClipRRect(
                           borderRadius: BorderRadius.circular(100),
                           child: Container(
-                            color: const Color(0xFFF8F8F8),
+                            color: AppColors.surfaceMuted,
                             width: 90,
                             height: 90,
                           ),
@@ -295,7 +293,7 @@ class MyProfilePageState extends State<MyProfilePage> with RouteAware {
                           userName,
                           style: GoogleFonts.poppins(
                             fontSize: 22,
-                            color: const Color(0xFFFFFFFF),
+                            color: AppColors.surface,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -306,7 +304,7 @@ class MyProfilePageState extends State<MyProfilePage> with RouteAware {
                           "+1 $userPhone",
                           style: GoogleFonts.poppins(
                               fontSize: 14,
-                              color: const Color(0xFFFFFFFF),
+                              color: AppColors.surface,
                               fontWeight: FontWeight.w600),
                         ),
                         const SizedBox(
@@ -316,7 +314,7 @@ class MyProfilePageState extends State<MyProfilePage> with RouteAware {
                           userEmail,
                           style: GoogleFonts.poppins(
                               fontSize: 14,
-                              color: const Color(0xFFFFFFFF),
+                              color: AppColors.surface,
                               fontWeight: FontWeight.w600),
                         ),
                         const SizedBox(
@@ -329,7 +327,7 @@ class MyProfilePageState extends State<MyProfilePage> with RouteAware {
                         //     padding: const EdgeInsets.only(
                         //         left: 7, right: 7, top: 5, bottom: 5),
                         //     decoration: BoxDecoration(
-                        //       color: const Color(0xFF244065),
+                        //       color: AppColors.ink,
                         //       borderRadius: BorderRadius.circular(50),
                         //     ),
                         //     child: Row(
@@ -356,7 +354,7 @@ class MyProfilePageState extends State<MyProfilePage> with RouteAware {
                         //                   style: GoogleFonts.poppins(
                         //                     fontWeight: FontWeight.w500,
                         //                     fontSize: 14,
-                        //                     color: const Color(0xFFFFFFFF),
+                        //                     color: AppColors.surface,
                         //                   ),
                         //                 )
                         //               ],
@@ -366,7 +364,7 @@ class MyProfilePageState extends State<MyProfilePage> with RouteAware {
                         //         const Icon(
                         //           // Moved Icon outside the Stack and removed Container
                         //           Icons.arrow_forward_ios_outlined,
-                        //           color: Color(0xFFFFFFFF),
+                        //           color: AppColors.surface,
                         //           size: 13,
                         //         ),
                         //       ],
@@ -389,7 +387,7 @@ class MyProfilePageState extends State<MyProfilePage> with RouteAware {
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 7, vertical: 5),
                             decoration: BoxDecoration(
-                              color: const Color(0xFF244065),
+                              color: AppColors.ink,
                               borderRadius: BorderRadius.circular(50),
                             ),
                             child: Row(
@@ -446,8 +444,8 @@ class MyProfilePageState extends State<MyProfilePage> with RouteAware {
                       decoration: BoxDecoration(
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFF9ECF9A)
-                                .withOpacity(0.15), // make it visible
+                            color: AppColors.primary
+                                .withValues(alpha: 0.15), // make it visible
                             blurRadius: 20, // soft edges
                             spreadRadius:
                                 6, // controls how far the shadow spreads
@@ -476,7 +474,7 @@ class MyProfilePageState extends State<MyProfilePage> with RouteAware {
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(50),
                                 border: Border.all(
-                                  color: const Color(0xFF9ECF9A),
+                                  color: AppColors.primary,
                                   width: 1,
                                 ),
                               ),
@@ -491,7 +489,7 @@ class MyProfilePageState extends State<MyProfilePage> with RouteAware {
                                         width: 40,
                                         height: 40,
                                         decoration: const BoxDecoration(
-                                          color: Color(0xFFF8F8F8),
+                                          color: AppColors.surfaceMuted,
                                           borderRadius: BorderRadius.all(
                                               Radius.circular(
                                                   100)), // Use Radius.circular
@@ -500,7 +498,7 @@ class MyProfilePageState extends State<MyProfilePage> with RouteAware {
                                           child: Icon(
                                             Icons.edit,
                                             size: 17,
-                                            color: Color(0xFF6B7280),
+                                            color: AppColors.textSecondary,
                                           ),
                                         ),
                                       ),
@@ -510,7 +508,7 @@ class MyProfilePageState extends State<MyProfilePage> with RouteAware {
                                       Text(
                                         "Edit Profile",
                                         style: GoogleFonts.poppins(
-                                          color: const Color(0xFF244065),
+                                          color: AppColors.ink,
                                           fontSize: 14,
                                           fontWeight: FontWeight.w600,
                                         ),
@@ -520,7 +518,7 @@ class MyProfilePageState extends State<MyProfilePage> with RouteAware {
                                   const Icon(
                                     Icons.arrow_forward_ios_outlined,
                                     size: 13,
-                                    color: Color(0xFF9ECF9A),
+                                    color: AppColors.primary,
                                   )
                                 ],
                               ),
@@ -536,8 +534,8 @@ class MyProfilePageState extends State<MyProfilePage> with RouteAware {
                       decoration: BoxDecoration(
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFF9ECF9A)
-                                .withOpacity(0.15), // make it visible
+                            color: AppColors.primary
+                                .withValues(alpha: 0.15), // make it visible
                             blurRadius: 20, // soft edges
                             spreadRadius:
                                 6, // controls how far the shadow spreads
@@ -566,7 +564,7 @@ class MyProfilePageState extends State<MyProfilePage> with RouteAware {
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(50),
                                 border: Border.all(
-                                  color: const Color(0xFF9ECF9A),
+                                  color: AppColors.primary,
                                   width: 1,
                                 ),
                               ),
@@ -581,7 +579,7 @@ class MyProfilePageState extends State<MyProfilePage> with RouteAware {
                                         width: 40,
                                         height: 40,
                                         decoration: const BoxDecoration(
-                                          color: Color(0xFFF8F8F8),
+                                          color: AppColors.surfaceMuted,
                                           borderRadius: BorderRadius.all(
                                               Radius.circular(
                                                   100)), // Use Radius.circular
@@ -590,7 +588,7 @@ class MyProfilePageState extends State<MyProfilePage> with RouteAware {
                                           child: Icon(
                                             Icons.card_giftcard,
                                             size: 17,
-                                            color: Color(0xFF6B7280),
+                                            color: AppColors.textSecondary,
                                           ),
                                         ),
                                       ),
@@ -600,7 +598,7 @@ class MyProfilePageState extends State<MyProfilePage> with RouteAware {
                                       Text(
                                         "My Gift Card",
                                         style: GoogleFonts.poppins(
-                                          color: const Color(0xFF244065),
+                                          color: AppColors.ink,
                                           fontSize: 14,
                                           fontWeight: FontWeight.w600,
                                         ),
@@ -610,7 +608,7 @@ class MyProfilePageState extends State<MyProfilePage> with RouteAware {
                                   const Icon(
                                     Icons.arrow_forward_ios_outlined,
                                     size: 13,
-                                    color: Color(0xFF9ECF9A),
+                                    color: AppColors.primary,
                                   )
                                 ],
                               ),
@@ -626,8 +624,8 @@ class MyProfilePageState extends State<MyProfilePage> with RouteAware {
                       decoration: BoxDecoration(
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFF9ECF9A)
-                                .withOpacity(0.15), // make it visible
+                            color: AppColors.primary
+                                .withValues(alpha: 0.15), // make it visible
                             blurRadius: 20, // soft edges
                             spreadRadius:
                                 6, // controls how far the shadow spreads
@@ -656,7 +654,7 @@ class MyProfilePageState extends State<MyProfilePage> with RouteAware {
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(50),
                                 border: Border.all(
-                                  color: const Color(0xFF9ECF9A),
+                                  color: AppColors.primary,
                                   width: 1,
                                 ),
                               ),
@@ -671,7 +669,7 @@ class MyProfilePageState extends State<MyProfilePage> with RouteAware {
                                         width: 40,
                                         height: 40,
                                         decoration: const BoxDecoration(
-                                          color: Color(0xFFF8F8F8),
+                                          color: AppColors.surfaceMuted,
                                           borderRadius: BorderRadius.all(
                                             Radius.circular(100),
                                           ), // Use Radius.circular
@@ -680,7 +678,7 @@ class MyProfilePageState extends State<MyProfilePage> with RouteAware {
                                           child: Icon(
                                             Icons.fact_check,
                                             size: 17,
-                                            color: Color(0xFF6B7280),
+                                            color: AppColors.textSecondary,
                                           ),
                                         ),
                                       ),
@@ -690,7 +688,7 @@ class MyProfilePageState extends State<MyProfilePage> with RouteAware {
                                       Text(
                                         "My Transactions",
                                         style: GoogleFonts.poppins(
-                                          color: const Color(0xFF244065),
+                                          color: AppColors.ink,
                                           fontSize: 14,
                                           fontWeight: FontWeight.w600,
                                         ),
@@ -700,7 +698,7 @@ class MyProfilePageState extends State<MyProfilePage> with RouteAware {
                                   const Icon(
                                     Icons.arrow_forward_ios_outlined,
                                     size: 13,
-                                    color: Color(0xFF9ECF9A),
+                                    color: AppColors.primary,
                                   )
                                 ],
                               ),
@@ -716,8 +714,8 @@ class MyProfilePageState extends State<MyProfilePage> with RouteAware {
                       decoration: BoxDecoration(
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFF9ECF9A)
-                                .withOpacity(0.15), // make it visible
+                            color: AppColors.primary
+                                .withValues(alpha: 0.15), // make it visible
                             blurRadius: 20, // soft edges
                             spreadRadius:
                                 6, // controls how far the shadow spreads
@@ -746,7 +744,7 @@ class MyProfilePageState extends State<MyProfilePage> with RouteAware {
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(50),
                                 border: Border.all(
-                                  color: const Color(0xFF9ECF9A),
+                                  color: AppColors.primary,
                                   width: 1,
                                 ),
                               ),
@@ -761,7 +759,7 @@ class MyProfilePageState extends State<MyProfilePage> with RouteAware {
                                         width: 40,
                                         height: 40,
                                         decoration: const BoxDecoration(
-                                          color: Color(0xFFF8F8F8),
+                                          color: AppColors.surfaceMuted,
                                           borderRadius: BorderRadius.all(
                                               Radius.circular(
                                                   100)), // Use Radius.circular
@@ -770,7 +768,7 @@ class MyProfilePageState extends State<MyProfilePage> with RouteAware {
                                           child: Icon(
                                             Icons.date_range_outlined,
                                             size: 17,
-                                            color: Color(0xFF6B7280),
+                                            color: AppColors.textSecondary,
                                           ),
                                         ),
                                       ),
@@ -780,7 +778,7 @@ class MyProfilePageState extends State<MyProfilePage> with RouteAware {
                                       Text(
                                         "My Reservations",
                                         style: GoogleFonts.poppins(
-                                          color: const Color(0xFF244065),
+                                          color: AppColors.ink,
                                           fontSize: 14,
                                           fontWeight: FontWeight.w600,
                                         ),
@@ -790,7 +788,7 @@ class MyProfilePageState extends State<MyProfilePage> with RouteAware {
                                   const Icon(
                                     Icons.arrow_forward_ios_outlined,
                                     size: 13,
-                                    color: Color(0xFF9ECF9A),
+                                    color: AppColors.primary,
                                   )
                                 ],
                               ),
@@ -806,8 +804,8 @@ class MyProfilePageState extends State<MyProfilePage> with RouteAware {
                       decoration: BoxDecoration(
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFF9ECF9A)
-                                .withOpacity(0.15), // make it visible
+                            color: AppColors.primary
+                                .withValues(alpha: 0.15), // make it visible
                             blurRadius: 20, // soft edges
                             spreadRadius:
                                 6, // controls how far the shadow spreads
@@ -836,7 +834,7 @@ class MyProfilePageState extends State<MyProfilePage> with RouteAware {
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(50),
                                 border: Border.all(
-                                  color: const Color(0xFF9ECF9A),
+                                  color: AppColors.primary,
                                   width: 1,
                                 ),
                               ),
@@ -851,7 +849,7 @@ class MyProfilePageState extends State<MyProfilePage> with RouteAware {
                                         width: 40,
                                         height: 40,
                                         decoration: const BoxDecoration(
-                                          color: Color(0xFFF8F8F8),
+                                          color: AppColors.surfaceMuted,
                                           borderRadius: BorderRadius.all(
                                               Radius.circular(
                                                   100)), // Use Radius.circular
@@ -860,7 +858,7 @@ class MyProfilePageState extends State<MyProfilePage> with RouteAware {
                                           child: Icon(
                                             Icons.settings,
                                             size: 17,
-                                            color: Color(0xFF6B7280),
+                                            color: AppColors.textSecondary,
                                           ),
                                         ),
                                       ),
@@ -870,7 +868,7 @@ class MyProfilePageState extends State<MyProfilePage> with RouteAware {
                                       Text(
                                         "Settings",
                                         style: GoogleFonts.poppins(
-                                          color: const Color(0xFF244065),
+                                          color: AppColors.ink,
                                           fontSize: 14,
                                           fontWeight: FontWeight.w600,
                                         ),
@@ -880,7 +878,7 @@ class MyProfilePageState extends State<MyProfilePage> with RouteAware {
                                   const Icon(
                                     Icons.arrow_forward_ios_outlined,
                                     size: 13,
-                                    color: Color(0xFF9ECF9A),
+                                    color: AppColors.primary,
                                   )
                                 ],
                               ),
@@ -896,8 +894,8 @@ class MyProfilePageState extends State<MyProfilePage> with RouteAware {
                       decoration: BoxDecoration(
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFF9ECF9A)
-                                .withOpacity(0.15), // make it visible
+                            color: AppColors.primary
+                                .withValues(alpha: 0.15), // make it visible
                             blurRadius: 20, // soft edges
                             spreadRadius:
                                 6, // controls how far the shadow spreads
@@ -981,54 +979,11 @@ class MyProfilePageState extends State<MyProfilePage> with RouteAware {
                                           );
 
                                           try {
-                                            final token = await secureStorage
-                                                .read(key: 'accessToken');
 
-                                            // --- encryption logic (unchanged) ---
-                                            final loginPayload = {
-                                              'password': password
-                                            };
-                                            final secret = 'course1999golf01';
-                                            final keyHash = sha256
-                                                .convert(utf8.encode(secret))
-                                                .bytes;
-                                            final secretKey =
-                                                SecretKey(keyHash);
-                                            final algorithm =
-                                                AesGcm.with256bits();
-                                            final iv = algorithm.newNonce();
+                                            final requestPayload = {'password': password};
 
-                                            final secretBox =
-                                                await algorithm.encrypt(
-                                              utf8.encode(
-                                                  jsonEncode(loginPayload)),
-                                              secretKey: secretKey,
-                                              nonce: iv,
-                                            );
 
-                                            final encryptedPayload = {
-                                              'iv': base64Encode(iv),
-                                              'data': base64Encode(
-                                                  secretBox.cipherText),
-                                              'tag': base64Encode(
-                                                  secretBox.mac.bytes),
-                                            };
-
-                                            final String baseUrl =
-                                                ApiConfig.baseUrl;
-
-                                            final response = await http.delete(
-                                              Uri.parse(
-                                                  '$baseUrl/customer/delete'),
-                                              headers: {
-                                                'Authorization':
-                                                    'Bearer $token',
-                                                'Content-Type':
-                                                    'application/json',
-                                              },
-                                              body:
-                                                  jsonEncode(encryptedPayload),
-                                            );
+                                            final response = await profileRepository.deleteAccount(requestPayload);
 
                                             // ✅ Close loading dialog using rootNavigator
                                             Navigator.of(parentContext,
@@ -1038,7 +993,7 @@ class MyProfilePageState extends State<MyProfilePage> with RouteAware {
                                             if (!parentContext.mounted) return;
 
                                             if (response.statusCode == 200) {
-                                              await secureStorage.deleteAll();
+                                              await SessionService().clearSession(clearAll: true);
 
                                               rootScaffoldMessengerKey
                                                   .currentState
@@ -1096,7 +1051,7 @@ class MyProfilePageState extends State<MyProfilePage> with RouteAware {
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(50),
                                 border: Border.all(
-                                  color: const Color(0xFF9ECF9A),
+                                  color: AppColors.primary,
                                   width: 1,
                                 ),
                               ),
@@ -1111,7 +1066,7 @@ class MyProfilePageState extends State<MyProfilePage> with RouteAware {
                                         width: 40,
                                         height: 40,
                                         decoration: const BoxDecoration(
-                                          color: Color(0xFFF8F8F8),
+                                          color: AppColors.surfaceMuted,
                                           borderRadius: BorderRadius.all(
                                             Radius.circular(100),
                                           ), // Use Radius.circular
@@ -1120,7 +1075,7 @@ class MyProfilePageState extends State<MyProfilePage> with RouteAware {
                                           child: Icon(
                                             Icons.delete_forever,
                                             size: 17,
-                                            color: Color(0xFF6B7280),
+                                            color: AppColors.textSecondary,
                                           ),
                                         ),
                                       ),
@@ -1130,7 +1085,7 @@ class MyProfilePageState extends State<MyProfilePage> with RouteAware {
                                       Text(
                                         "Delete Account",
                                         style: GoogleFonts.poppins(
-                                          color: const Color(0xFF244065),
+                                          color: AppColors.ink,
                                           fontSize: 14,
                                           fontWeight: FontWeight.w600,
                                         ),
@@ -1140,7 +1095,7 @@ class MyProfilePageState extends State<MyProfilePage> with RouteAware {
                                   const Icon(
                                     Icons.arrow_forward_ios_outlined,
                                     size: 13,
-                                    color: Color(0xFF9ECF9A),
+                                    color: AppColors.primary,
                                   )
                                 ],
                               ),
@@ -1188,7 +1143,7 @@ class MyProfilePageState extends State<MyProfilePage> with RouteAware {
                                 if (confirm != true) {
                                   return;
                                 }
-                                await secureStorage.deleteAll();
+                                await SessionService().logout();
                                 final prefs =
                                     await SharedPreferences.getInstance();
                                 prefs.remove('biometric_setup_done');
@@ -1209,7 +1164,7 @@ class MyProfilePageState extends State<MyProfilePage> with RouteAware {
                                 // );
                               },
                               style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color(0xFF9ECF9A)),
+                                  backgroundColor: AppColors.primary),
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 15.0, vertical: 10.0),
@@ -1217,7 +1172,7 @@ class MyProfilePageState extends State<MyProfilePage> with RouteAware {
                                   child: Text(
                                     "Logout",
                                     style: GoogleFonts.poppins(
-                                      color: const Color(0xFFFFFFFF),
+                                      color: AppColors.surface,
                                       fontSize: 16,
                                       fontWeight: FontWeight.w600,
                                     ),
@@ -1231,7 +1186,7 @@ class MyProfilePageState extends State<MyProfilePage> with RouteAware {
                             right: 15,
                             child: Icon(
                               Icons.arrow_forward,
-                              color: Color(0xFFFFFFFF),
+                              color: AppColors.surface,
                               size: 18,
                             ),
                           )

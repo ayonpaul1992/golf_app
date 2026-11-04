@@ -1,6 +1,9 @@
+import 'package:driver_pos/controllers/async_action_controller.dart';
+import 'package:driver_pos/repositories/feature_repositories.dart';
+import 'package:driver_pos/services/session_service.dart';
+import 'package:driver_pos/theme/app_theme.dart';
 // ignore_for_file: deprecated_member_use, use_build_context_synchronously
 
-import 'dart:convert';
 import 'dart:io';
 import 'package:driver_pos/services/api_config.dart';
 import 'package:flutter/foundation.dart';
@@ -8,21 +11,18 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '/screens/dashboard.dart';
-import 'package:http/http.dart' as http;
 import '/components/userentry_app_bar.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'signup.dart';
 import 'forgot_password.dart';
 import 'reset_password.dart';
-import 'package:crypto/crypto.dart';
-import 'package:cryptography/cryptography.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/services.dart';
 
 import '../services/biometric_auth.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+  const LoginPage({super.key, this.repository});
+  final AuthRepository? repository;
 
   @override
   State<StatefulWidget> createState() => LoginPageState();
@@ -34,70 +34,61 @@ class LoginPageState extends State<LoginPage> {
   final FlutterSecureStorage secureStorage = const FlutterSecureStorage();
   final phoneText = TextEditingController();
   final passText = TextEditingController();
-  bool isLoading = false; // For showing a loading spinner
+  final _loginAction = AsyncActionController<void>();
+  bool get isLoading => _loginAction.isLoading;
+  @override
+  void initState() {
+    super.initState();
+    _loginAction.addListener(_actionChanged);
+  }
+
+  void _actionChanged() {
+    if (mounted) setState(() {});
+  }
+
   bool _isHoveredForgotPassword = false;
   String selectedCountryCode = '+91';
   bool isPhoneFocused = false;
   final FocusNode phoneFocusNode = FocusNode();
   @override
   void dispose() {
+    _loginAction.dispose();
+    phoneText.dispose();
+    passText.dispose();
     phoneFocusNode.dispose();
     super.dispose();
   }
 
   // Function to show the error or success messages
   void _showMessage(String message) {
+    if (!mounted) return;
     ScaffoldMessenger.of(context)
         .showSnackBar(SnackBar(content: Text(message)));
   }
 
-  Future<void> _loginUser() async {
-    setState(() {
-      isLoading = true;
-    });
+  Future<void> _loginUser() {
+    if (isLoading) return Future.value();
+    return _loginAction.run(_performLogin);
+  }
 
-    final String baseUrl = ApiConfig.baseUrl;
+  Future<void> _performLogin() async {
     final String golfCourseCode = ApiConfig.golfCourseCode;
-
-    final String apiUrl =
-        '$baseUrl/auth/login?role=customer&golfCourseCode=$golfCourseCode';
 
     try {
       final loginPayload = {
         'email': phoneText.text.trim(),
-        'password': passText.text.trim(),
+        'password': passText.text,
       };
 
-      // Encrypt the loginPayload
-      final secret =
-          'course1999golf01'; // must match Node backend ENCRYPT_SECRET
-      final keyHash = sha256.convert(utf8.encode(secret)).bytes;
-      final secretKey = SecretKey(keyHash);
-      final algorithm = AesGcm.with256bits();
-      final iv = algorithm.newNonce();
+      // Prepare the login payload
+      final requestPayload = Map<String, dynamic>.from(loginPayload);
 
-      final secretBox = await algorithm.encrypt(
-        utf8.encode(jsonEncode(loginPayload)),
-        secretKey: secretKey,
-        nonce: iv,
-      );
-
-      final encryptedPayload = {
-        'iv': base64Encode(iv),
-        'data': base64Encode(secretBox.cipherText),
-        'tag': base64Encode(secretBox.mac.bytes),
-      };
-
-      final response = await http.post(
-        Uri.parse(apiUrl),
-        headers: <String, String>{
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode(encryptedPayload),
-      );
+      final response = await (widget.repository ?? authRepository)
+          .login(requestPayload, golfCourseCode);
+      if (!mounted) return;
 
       if (response.statusCode == 200) {
-        final Map<String, dynamic> data = jsonDecode(response.body);
+        final Map<String, dynamic> data = response.json;
 
         if (data['success'] == true) {
           final userData = data['data'];
@@ -111,6 +102,7 @@ class LoginPageState extends State<LoginPage> {
                   builder: (context) => ResetPasswordPage(
                     userId: userId,
                     emailOrMobile: phoneText.text.trim(),
+                    golfCourseCode: golfCourseCode,
                   ),
                 ),
               );
@@ -120,30 +112,32 @@ class LoginPageState extends State<LoginPage> {
 
           // Save tokens and other data
           await secureStorage.write(
-              key: 'userName', value: userData['fullName']);
-          await secureStorage.write(key: 'userEmail', value: userData['email']);
+              key: 'userName', value: userData['fullName']?.toString());
           await secureStorage.write(
-              key: 'userPhone', value: userData['phoneNumber']);
+              key: 'userEmail', value: userData['email']?.toString());
           await secureStorage.write(
-              key: 'profilePic', value: userData['profilePicture']);
+              key: 'userPhone', value: userData['phoneNumber']?.toString());
           await secureStorage.write(
-              key: 'accountNumber', value: userData['accountNumber']);
+              key: 'profilePic', value: userData['profilePicture']?.toString());
           await secureStorage.write(
-              key: 'membership', value: userData['membership']);
+              key: 'accountNumber',
+              value: userData['accountNumber']?.toString());
           await secureStorage.write(
-              key: 'golfCourseId', value: userData['golfCourse']['_id']);
+              key: 'membership', value: userData['membership']?.toString());
           await secureStorage.write(
-              key: 'golfCourseName', value: userData['golfCourse']['name']);
+              key: 'golfCourseId',
+              value: userData['golfCourse']['_id']?.toString());
           await secureStorage.write(
-              key: 'golfCourseLogo', value: userData['golfCourse']['logo']);
+              key: 'golfCourseName',
+              value: userData['golfCourse']['name']?.toString());
+          await secureStorage.write(
+              key: 'golfCourseLogo',
+              value: userData['golfCourse']['logo']?.toString());
           await secureStorage.write(
               key: 'golfCourseSmallLogo',
-              value: userData['golfCourse']['small_logo']);
-          await secureStorage.write(
-              key: 'accessToken', value: data['accessToken']);
-          await secureStorage.write(
-              key: 'refreshToken', value: data['refreshToken']);
-          await secureStorage.write(key: 'isLoggedIn', value: 'true');
+              value: userData['golfCourse']['small_logo']?.toString());
+          await SessionService().saveSession(
+              data['accessToken'] as String, data['refreshToken'] as String?);
 
           if (mounted) {
             setupPushNotifications(userId);
@@ -277,8 +271,8 @@ class LoginPageState extends State<LoginPage> {
         }
       } else {
         print('Login failed. Status code: ${response.statusCode}');
-        print('Response body: ${response.body}');
-        _showMessage('Login failed, Email ID and Password do not match');
+        _showMessage(response.message ??
+            'Unable to sign in (HTTP ${response.statusCode}). Please try again.');
       }
     } on SocketException catch (e) {
       _showMessage('Network error: Could not connect to the server. $e');
@@ -286,43 +280,43 @@ class LoginPageState extends State<LoginPage> {
     } catch (error) {
       _showMessage('Unexpected error: $error');
       print('Unexpected error: $error');
-    } finally {
-      if (mounted) {
-        setState(() {
-          isLoading = false;
-        });
-      }
     }
   }
 
   Future<void> setupPushNotifications(String userId) async {
-    // 1. Ask for permission
-    NotificationSettings settings =
-        await FirebaseMessaging.instance.requestPermission(
-      alert: true,
-      badge: true,
-      sound: true,
-    );
+    try {
+      // 1. Ask for permission
+      NotificationSettings settings =
+          await FirebaseMessaging.instance.requestPermission(
+        alert: true,
+        badge: true,
+        sound: true,
+      );
 
-    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
-      debugPrint("✅ Notifications allowed");
+      if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+        debugPrint("✅ Notifications allowed");
 
-      // 2. Get FCM token
-      String? fcmToken = await FirebaseMessaging.instance.getToken();
-      if (fcmToken != null) {
-        debugPrint("🔑 FCM token: $fcmToken");
+        // 2. Get FCM token
+        String? fcmToken = await FirebaseMessaging.instance.getToken();
+        if (fcmToken != null) {
+          debugPrint("FCM registration is available");
 
-        // 3. Send token to backend with userId
-        // await sendTokenToServer(userId, fcmToken);
+          // 3. Send token to backend with userId
+          // await sendTokenToServer(userId, fcmToken);
+        }
+
+        // 4. (Optional) iOS APNs token
+        if (Platform.isIOS && !kIsWeb) {
+          String? apnsToken = await FirebaseMessaging.instance.getAPNSToken();
+          debugPrint(apnsToken == null
+              ? "APNs registration pending"
+              : "APNs registration is available");
+        }
+      } else {
+        debugPrint("❌ Notifications not allowed");
       }
-
-      // 4. (Optional) iOS APNs token
-      if (Platform.isIOS && !kIsWeb) {
-        String? apnsToken = await FirebaseMessaging.instance.getAPNSToken();
-        debugPrint("📌 APNs token: $apnsToken");
-      }
-    } else {
-      debugPrint("❌ Notifications not allowed");
+    } catch (_) {
+      debugPrint('Push registration unavailable; login remains active.');
     }
   }
 
@@ -339,7 +333,7 @@ class LoginPageState extends State<LoginPage> {
         showLeading: false,
       ),
       body: Container(
-        color: const Color(0xFFFAFCFA),
+        color: AppColors.pageBackground,
         width: double.infinity,
         height: double.infinity,
         child: SingleChildScrollView(
@@ -352,7 +346,7 @@ class LoginPageState extends State<LoginPage> {
               Text(
                 "Quick. Simple. Secure.",
                 style: GoogleFonts.poppins(
-                  color: const Color(0xFF669933),
+                  color: AppColors.accent,
                   fontWeight: FontWeight.w600,
                   fontSize: 15,
                 ),
@@ -367,7 +361,7 @@ class LoginPageState extends State<LoginPage> {
                         Container(
                           width: 40,
                           height: 1,
-                          color: const Color(0xFFB2C1C0),
+                          color: AppColors.border,
                         ),
                         const SizedBox(
                           width: 10,
@@ -375,7 +369,7 @@ class LoginPageState extends State<LoginPage> {
                         Text(
                           "Login with phone no",
                           style: GoogleFonts.poppins(
-                              color: const Color(0xFF244065),
+                              color: AppColors.ink,
                               fontSize: 22,
                               fontWeight: FontWeight.w600),
                         ),
@@ -385,7 +379,7 @@ class LoginPageState extends State<LoginPage> {
                         Container(
                           width: 40,
                           height: 1,
-                          color: const Color(0xFFB2C1C0),
+                          color: AppColors.border,
                         ),
                       ],
                     )),
@@ -397,7 +391,7 @@ class LoginPageState extends State<LoginPage> {
                   "Enter your mobile number to receive a one-time passcode and access your account instantly.",
                   textAlign: TextAlign.center,
                   style: GoogleFonts.poppins(
-                    color: const Color(0xFF6E7373),
+                    color: AppColors.textMuted,
                     fontWeight: FontWeight.w400,
                     fontSize: 13,
                   ),
@@ -411,7 +405,7 @@ class LoginPageState extends State<LoginPage> {
                       Text(
                         'Enter Mobile Number or Email Id',
                         style: GoogleFonts.poppins(
-                          color: const Color(0xFF6E7373),
+                          color: AppColors.textMuted,
                           fontSize: 14,
                           fontWeight: FontWeight.w400,
                         ),
@@ -434,13 +428,13 @@ class LoginPageState extends State<LoginPage> {
                                 borderRadius: BorderRadius.circular(50),
                                 border: Border.all(
                                   color: isPhoneFocused
-                                      ? const Color(0xFF9ECF9A)
-                                      : const Color(0xFFB2C1C0),
+                                      ? AppColors.primary
+                                      : AppColors.border,
                                   width: 1,
                                 ),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.black.withOpacity(0.1),
+                                    color: Colors.black.withValues(alpha: 0.1),
                                     blurRadius: 6,
                                     offset: const Offset(0, 3),
                                   ),
@@ -455,14 +449,14 @@ class LoginPageState extends State<LoginPage> {
                                   border: InputBorder.none,
                                   hintText: '',
                                   hintStyle: TextStyle(
-                                    color: Color(0xFF244065),
+                                    color: AppColors.ink,
                                     fontWeight: FontWeight.w600,
                                     fontSize: 14,
                                   ),
                                 ),
                                 keyboardType: TextInputType.emailAddress,
                                 style: GoogleFonts.poppins(
-                                  color: const Color(0xFF244065),
+                                  color: AppColors.ink,
                                   fontWeight: FontWeight.w600,
                                   fontSize: 14,
                                 ),
@@ -500,7 +494,7 @@ class LoginPageState extends State<LoginPage> {
                       Text(
                         'Enter Password',
                         style: GoogleFonts.poppins(
-                          color: const Color(0xFF6E7373),
+                          color: AppColors.textMuted,
                           fontSize: 14,
                           fontWeight: FontWeight.w400,
                         ),
@@ -517,14 +511,13 @@ class LoginPageState extends State<LoginPage> {
                             boxShadow: [
                               BoxShadow(
                                 color: Colors.black
-                                    .withOpacity(0.1), // Shadow color
+                                    .withValues(alpha: 0.1), // Shadow color
                                 blurRadius: 6,
                                 offset: const Offset(0, 3), // Shadow position
                               ),
                             ],
                             border: Border.all(
-                              color:
-                                  const Color(0xFFB2C1C0), // Add a color here
+                              color: AppColors.border, // Add a color here
                               width: 1, // Optional: set the border width
                             ),
                           ),
@@ -538,7 +531,7 @@ class LoginPageState extends State<LoginPage> {
                                   _isPassVisible
                                       ? Icons.visibility
                                       : Icons.visibility_off,
-                                  color: const Color(0xFF648683),
+                                  color: AppColors.textSubtle,
                                 ),
                                 onPressed: () {
                                   setState(() {
@@ -549,7 +542,7 @@ class LoginPageState extends State<LoginPage> {
                               ),
                             ),
                             style: GoogleFonts.poppins(
-                              color: const Color(0xFF244065),
+                              color: AppColors.ink,
                               fontWeight: FontWeight.w600,
                               fontSize: 14,
                             ),
@@ -621,7 +614,7 @@ class LoginPageState extends State<LoginPage> {
                                   _loginUser(); // ✅ Call login function if all validations passed
                                 },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF9ECF9A),
+                            backgroundColor: AppColors.primary,
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 15.0, vertical: 10.0),
                           ),
@@ -633,7 +626,7 @@ class LoginPageState extends State<LoginPage> {
                                 : Text(
                                     "Proceed",
                                     style: GoogleFonts.poppins(
-                                      color: const Color(0xFFFFFFFF),
+                                      color: AppColors.surface,
                                       fontSize: 16,
                                       fontWeight: FontWeight.w600,
                                     ),
@@ -645,7 +638,7 @@ class LoginPageState extends State<LoginPage> {
                           right: 15,
                           child: Icon(
                             Icons.arrow_forward,
-                            color: Color(0xFFFFFFFF),
+                            color: AppColors.surface,
                             size: 18,
                           ),
                         ),
@@ -684,11 +677,11 @@ class LoginPageState extends State<LoginPage> {
                               decoration: TextDecoration.underline,
                               height: 1.0,
                               color: _isHoveredForgotPassword
-                                  ? const Color(0xFF669933)
-                                  : const Color(0xFF6E7373), // 🔴 hover = red
+                                  ? AppColors.accent
+                                  : AppColors.textMuted, // 🔴 hover = red
                               decorationColor: _isHoveredForgotPassword
-                                  ? const Color(0xFF669933)
-                                  : const Color(0xFF6E7373),
+                                  ? AppColors.accent
+                                  : AppColors.textMuted,
                             ),
                           ),
                         ),
@@ -715,7 +708,7 @@ class LoginPageState extends State<LoginPage> {
                           style: GoogleFonts.poppins(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
-                            color: const Color(0xFF669933),
+                            color: AppColors.accent,
                             height: 1.0, // match previous height
                           ),
                         ),
@@ -739,7 +732,7 @@ class LoginPageState extends State<LoginPage> {
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(50),
         borderSide: const BorderSide(
-          color: Color(0xFF9ECF9A),
+          color: AppColors.primary,
           width: 1,
         ),
       ),
@@ -752,7 +745,7 @@ class LoginPageState extends State<LoginPage> {
       ),
       hintText: hintText,
       hintStyle: GoogleFonts.poppins(
-        color: const Color(0xFF6E7373),
+        color: AppColors.textMuted,
         fontSize: 14,
       ),
     );

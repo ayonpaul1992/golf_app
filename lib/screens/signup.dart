@@ -1,10 +1,11 @@
+import 'package:driver_pos/repositories/feature_repositories.dart';
+import 'package:driver_pos/theme/app_theme.dart';
 // ignore_for_file: deprecated_member_use, use_build_context_synchronously, depend_on_referenced_packages
 
 import 'package:driver_pos/services/api_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '/components/userentry_app_bar.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -13,8 +14,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'dart:io' as io show File;
-import 'package:crypto/crypto.dart';
-import 'package:cryptography/cryptography.dart';
 
 class SignupPage extends StatefulWidget {
   const SignupPage({super.key});
@@ -97,11 +96,10 @@ class SignupPageState extends State<SignupPage> {
   Future<void> _callSignupApi() async {
     // Example API call, replace with your actual endpoint and logic
 
-    final String baseUrl = ApiConfig.baseUrl;
     final String golfCourseCode = ApiConfig.golfCourseCode;
 
     final response =
-        await http.get(Uri.parse('$baseUrl/pageSettings/$golfCourseCode'));
+        await authRepository.pageSettings(golfCourseCode);
     if (response.statusCode == 200) {
       final data = response.body; // Process the response data as needed
       final decodedData = jsonDecode(data);
@@ -121,42 +119,18 @@ class SignupPageState extends State<SignupPage> {
 
   // Function to handle form submission
   Future<void> _submitForm(formData) async {
-    print('Form Data: $formData');
 
-    final String baseUrl = ApiConfig.baseUrl;
     // Example form submission logic, replace with your actual endpoint and logic
-    final url = '$baseUrl/auth/sign-up';
 
     final payload = formData;
 
-    final secret = 'course1999golf01'; // must match Node backend ENCRYPT_SECRET
-    final keyHash = sha256.convert(utf8.encode(secret)).bytes;
-    final secretKey = SecretKey(keyHash);
-    final algorithm = AesGcm.with256bits();
-    final iv = algorithm.newNonce();
-
-    final secretBox = await algorithm.encrypt(
-      utf8.encode(jsonEncode(payload)),
-      secretKey: secretKey,
-      nonce: iv,
-    );
-
-    final encryptedPayload = {
-      'iv': base64Encode(iv),
-      'data': base64Encode(secretBox.cipherText),
-      'tag': base64Encode(secretBox.mac.bytes),
-    };
-    final response = await http.post(
-      Uri.parse(url),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: jsonEncode(encryptedPayload),
-    );
+    final requestPayload =
+        Map<String, dynamic>.from(payload);
+    final response = await authRepository.signUp(requestPayload);
 
     if (response.statusCode == 200) {
       // Signup success
-      jsonDecode(response.body);
+      response.json;
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
@@ -180,7 +154,7 @@ class SignupPageState extends State<SignupPage> {
       // Signup error
       String errorMsg = 'Signup failed';
       try {
-        final error = jsonDecode(response.body);
+        final error = response.json;
         errorMsg = error['message'] ?? errorMsg;
       } catch (_) {}
       ScaffoldMessenger.of(context).showSnackBar(
@@ -209,11 +183,11 @@ class SignupPageState extends State<SignupPage> {
       body: isLoading
           ? const Center(
               child: CircularProgressIndicator(
-                color: Color(0xFF9ECF9A),
+                color: AppColors.primary,
               ),
             )
           : Container(
-              color: const Color(0xFFFAFCFA),
+              color: AppColors.pageBackground,
               width: double.infinity,
               height: double.infinity,
               child: SingleChildScrollView(
@@ -226,7 +200,7 @@ class SignupPageState extends State<SignupPage> {
                     Text(
                       "Quick. Simple. Secure.",
                       style: GoogleFonts.poppins(
-                        color: const Color(0xFF669933),
+                        color: AppColors.accent,
                         fontWeight: FontWeight.w600,
                         fontSize: 15,
                       ),
@@ -241,7 +215,7 @@ class SignupPageState extends State<SignupPage> {
                               Container(
                                 width: 40,
                                 height: 1,
-                                color: const Color(0xFFB2C1C0),
+                                color: AppColors.border,
                               ),
                               const SizedBox(
                                 width: 10,
@@ -249,7 +223,7 @@ class SignupPageState extends State<SignupPage> {
                               Text(
                                 "Register to get started",
                                 style: GoogleFonts.poppins(
-                                    color: const Color(0xFF244065),
+                                    color: AppColors.ink,
                                     fontSize: 22,
                                     fontWeight: FontWeight.w600),
                               ),
@@ -259,7 +233,7 @@ class SignupPageState extends State<SignupPage> {
                               Container(
                                 width: 40,
                                 height: 1,
-                                color: const Color(0xFFB2C1C0),
+                                color: AppColors.border,
                               ),
                             ],
                           )),
@@ -271,7 +245,7 @@ class SignupPageState extends State<SignupPage> {
                         "Enter your details below and start your journey with driver.io.",
                         textAlign: TextAlign.center,
                         style: GoogleFonts.poppins(
-                          color: const Color(0xFF6E7373),
+                          color: AppColors.textMuted,
                           fontWeight: FontWeight.w400,
                           fontSize: 13,
                         ),
@@ -290,7 +264,7 @@ class SignupPageState extends State<SignupPage> {
                         //       Text(
                         //         field['displayName'] ?? '',
                         //         style: GoogleFonts.poppins(
-                        //           color: const Color(0xFF6E7373),
+                        //           color: AppColors.textMuted,
                         //           fontSize: 14,
                         //           fontWeight: FontWeight.w400,
                         //         ),
@@ -307,13 +281,13 @@ class SignupPageState extends State<SignupPage> {
                         //             borderRadius: BorderRadius.circular(50),
                         //             boxShadow: [
                         //               BoxShadow(
-                        //                 color: Colors.black.withOpacity(0.1),
+                        //                 color: Colors.black.withValues(alpha: 0.1),
                         //                 blurRadius: 6,
                         //                 offset: const Offset(0, 3),
                         //               ),
                         //             ],
                         //             border: Border.all(
-                        //               color: const Color(0xFFB2C1C0),
+                        //               color: AppColors.border,
                         //               width: 1,
                         //             ),
                         //           ),
@@ -329,7 +303,7 @@ class SignupPageState extends State<SignupPage> {
                         //                     keyboardType:
                         //                         TextInputType.emailAddress,
                         //                     style: GoogleFonts.poppins(
-                        //                       color: const Color(0xFF244065),
+                        //                       color: AppColors.ink,
                         //                       fontWeight: FontWeight.w600,
                         //                       fontSize: 14,
                         //                     ),
@@ -342,7 +316,7 @@ class SignupPageState extends State<SignupPage> {
                         //                     ),
                         //                     obscureText: true,
                         //                     style: GoogleFonts.poppins(
-                        //                       color: const Color(0xFF244065),
+                        //                       color: AppColors.ink,
                         //                       fontWeight: FontWeight.w600,
                         //                       fontSize: 14,
                         //                     ),
@@ -359,7 +333,7 @@ class SignupPageState extends State<SignupPage> {
                         //                           .digitsOnly,
                         //                     ],
                         //                     style: GoogleFonts.poppins(
-                        //                       color: const Color(0xFF244065),
+                        //                       color: AppColors.ink,
                         //                       fontWeight: FontWeight.w600,
                         //                       fontSize: 14,
                         //                     ),
@@ -445,7 +419,7 @@ class SignupPageState extends State<SignupPage> {
                         //                       field['placeholder'] ?? '',
                         //                     ),
                         //                     style: GoogleFonts.poppins(
-                        //                       color: const Color(0xFF244065),
+                        //                       color: AppColors.ink,
                         //                       fontWeight: FontWeight.w600,
                         //                       fontSize: 14,
                         //                     ),
@@ -470,7 +444,7 @@ class SignupPageState extends State<SignupPage> {
                                 child: Text(
                                   field['displayName'] ?? '',
                                   style: GoogleFonts.poppins(
-                                    color: const Color(0xFF6E7373),
+                                    color: AppColors.textMuted,
                                     fontSize: 14,
                                     fontWeight: FontWeight.w400,
                                   ),
@@ -487,13 +461,14 @@ class SignupPageState extends State<SignupPage> {
                                     borderRadius: BorderRadius.circular(50),
                                     boxShadow: [
                                       BoxShadow(
-                                        color: Colors.black.withOpacity(0.1),
+                                        color:
+                                            Colors.black.withValues(alpha: 0.1),
                                         blurRadius: 6,
                                         offset: const Offset(0, 3),
                                       ),
                                     ],
                                     border: Border.all(
-                                      color: const Color(0xFFB2C1C0),
+                                      color: AppColors.border,
                                       width: 1,
                                     ),
                                   ),
@@ -509,7 +484,7 @@ class SignupPageState extends State<SignupPage> {
                                             keyboardType:
                                                 TextInputType.emailAddress,
                                             style: GoogleFonts.poppins(
-                                              color: const Color(0xFF244065),
+                                              color: AppColors.ink,
                                               fontWeight: FontWeight.w600,
                                               fontSize: 14,
                                             ),
@@ -522,7 +497,7 @@ class SignupPageState extends State<SignupPage> {
                                                 field['placeholder'] ?? ''),
                                             obscureText: true,
                                             style: GoogleFonts.poppins(
-                                              color: const Color(0xFF244065),
+                                              color: AppColors.ink,
                                               fontWeight: FontWeight.w600,
                                               fontSize: 14,
                                             ),
@@ -539,7 +514,7 @@ class SignupPageState extends State<SignupPage> {
                                                   .digitsOnly
                                             ],
                                             style: GoogleFonts.poppins(
-                                              color: const Color(0xFF244065),
+                                              color: AppColors.ink,
                                               fontWeight: FontWeight.w600,
                                               fontSize: 14,
                                             ),
@@ -572,8 +547,7 @@ class SignupPageState extends State<SignupPage> {
                                                         field['placeholder'] ??
                                                         ''),
                                                 style: GoogleFonts.poppins(
-                                                  color:
-                                                      const Color(0xFF244065),
+                                                  color: AppColors.ink,
                                                   fontWeight: FontWeight.w600,
                                                   fontSize: 14,
                                                 ),
@@ -679,7 +653,7 @@ class SignupPageState extends State<SignupPage> {
                                               child: Row(
                                                 children: [
                                                   const Icon(Icons.attach_file,
-                                                      color: Color(0xFF244065)),
+                                                      color: AppColors.ink),
                                                   const SizedBox(width: 8),
                                                   Text(
                                                     field['placeholder'] ??
@@ -704,7 +678,7 @@ class SignupPageState extends State<SignupPage> {
                                             decoration: _inputDecoration(
                                                 field['placeholder'] ?? ''),
                                             style: GoogleFonts.poppins(
-                                              color: const Color(0xFF244065),
+                                              color: AppColors.ink,
                                               fontWeight: FontWeight.w600,
                                               fontSize: 14,
                                             ),
@@ -785,7 +759,7 @@ class SignupPageState extends State<SignupPage> {
                                     }
                                   },
                                   style: ElevatedButton.styleFrom(
-                                      backgroundColor: const Color(0xFF9ECF9A)),
+                                      backgroundColor: AppColors.primary),
                                   child: Padding(
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 15.0, vertical: 10.0),
@@ -793,7 +767,7 @@ class SignupPageState extends State<SignupPage> {
                                       child: Text(
                                         "Create an account",
                                         style: GoogleFonts.poppins(
-                                          color: const Color(0xFFFFFFFF),
+                                          color: AppColors.surface,
                                           fontSize: 16,
                                           fontWeight: FontWeight.w600,
                                         ),
@@ -806,7 +780,7 @@ class SignupPageState extends State<SignupPage> {
                                 top: 16.5,
                                 right: 15,
                                 child: Icon(Icons.arrow_forward,
-                                    color: Color(0xFFFFFFFF), size: 18),
+                                    color: AppColors.surface, size: 18),
                               )
                             ],
                           ),
@@ -862,7 +836,7 @@ class SignupPageState extends State<SignupPage> {
                         //             }
                         //           },
                         //           style: ElevatedButton.styleFrom(
-                        //               backgroundColor: const Color(0xFF9ECF9A)),
+                        //               backgroundColor: AppColors.primary),
                         //           child: Padding(
                         //             padding: const EdgeInsets.symmetric(
                         //                 horizontal: 15.0, vertical: 10.0),
@@ -870,7 +844,7 @@ class SignupPageState extends State<SignupPage> {
                         //               child: Text(
                         //                 "Create an account",
                         //                 style: GoogleFonts.poppins(
-                        //                   color: const Color(0xFFFFFFFF),
+                        //                   color: AppColors.surface,
                         //                   fontSize: 16,
                         //                   fontWeight: FontWeight.w600,
                         //                 ),
@@ -884,7 +858,7 @@ class SignupPageState extends State<SignupPage> {
                         //         right: 15,
                         //         child: Icon(
                         //           Icons.arrow_forward,
-                        //           color: Color(0xFFFFFFFF),
+                        //           color: AppColors.surface,
                         //           size: 18,
                         //         ),
                         //       )
@@ -905,7 +879,7 @@ class SignupPageState extends State<SignupPage> {
                                   style: GoogleFonts.poppins(
                                       fontSize: 14,
                                       fontWeight: FontWeight.w400,
-                                      color: const Color(0xFF6E7373)),
+                                      color: AppColors.textMuted),
                                 ),
                                 const SizedBox(
                                   width: 4,
@@ -923,7 +897,7 @@ class SignupPageState extends State<SignupPage> {
                                     style: GoogleFonts.poppins(
                                       fontSize: 14,
                                       fontWeight: FontWeight.w600,
-                                      color: const Color(0xFF669933),
+                                      color: AppColors.accent,
                                     ),
                                   ),
                                 )
@@ -951,7 +925,7 @@ class SignupPageState extends State<SignupPage> {
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(50),
         borderSide: const BorderSide(
-          color: Color(0xFF9ECF9A),
+          color: AppColors.primary,
           width: 1,
         ),
       ),
@@ -964,7 +938,7 @@ class SignupPageState extends State<SignupPage> {
       ),
       hintText: hintText,
       hintStyle: GoogleFonts.poppins(
-        color: const Color(0xFF6E7373),
+        color: AppColors.textMuted,
         fontSize: 14,
       ),
     );

@@ -1,12 +1,11 @@
 import 'dart:async';
 import 'package:app_links/app_links.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import '../main.dart';
 
 class DeepLinkService {
-  late final AppLinks _appLinks;
+  final AppLinks _appLinks = AppLinks();
   StreamSubscription<Uri>? _linkSubscription;
   bool _isInitialized = false;
   static bool _hasCheckedInitialLink = false;
@@ -20,14 +19,8 @@ class DeepLinkService {
 
   // 💡 NEW STATIC METHOD: Checks and caches the initial link on cold start
   static Future<void> checkInitialLink() async {
-    print("Cache : $_cachedInitialUri");
-
-    final FlutterSecureStorage secureStorage = const FlutterSecureStorage();
-    await secureStorage.write(
-        key: 'cachedUrl', value: _cachedInitialUri.toString());
-    // _cachedInitialUri = await secureStorage.read('cachedInitialUri');
-    // Only check for the initial link once per app session (process)
-    if (_cachedInitialUri != null) return;
+    if (_hasCheckedInitialLink) return;
+    _hasCheckedInitialLink = true;
 
     try {
       // Use a fresh instance of AppLinks here if needed, or rely on the class property
@@ -47,22 +40,27 @@ class DeepLinkService {
   }
 
   // 💡 NEW STATIC GETTER: Allows MyApp to quickly check if a link is pending
-  static bool get isLinkPending {
-    // We only care about success/failure links hijacking the start process
-    final isSuccess = _cachedInitialUri?.host == 'payment-success' ||
-        _cachedInitialUri?.path.contains('payment-success') == true;
-    final isFailed = _cachedInitialUri?.host == 'payment-failed' ||
-        _cachedInitialUri?.path.contains('payment-failed') == true;
+  static bool get isLinkPending =>
+      _cachedInitialUri != null &&
+      paymentRouteForUri(_cachedInitialUri!) != null;
 
-    return isSuccess || isFailed;
+  static String? paymentRouteForUri(Uri uri) {
+    final target = uri.host == 'payment-success' || uri.host == 'payment-failed'
+        ? uri.host
+        : (uri.pathSegments.isEmpty ? '' : uri.pathSegments.last);
+    return switch (target) {
+      'payment-success' => '/payment-success',
+      'payment-failed' => '/payment-failed',
+      _ => null,
+    };
   }
 
   /// Initializes deep link handling. Must be called once.
-  void initDeepLinks() async {
+  Future<void> initDeepLinks() async {
     if (_isInitialized) return;
     _isInitialized = true;
 
-    _appLinks = AppLinks();
+    await checkInitialLink();
 
     // 1. Handle initial link (cold start) using the cached URI
     if (_cachedInitialUri != null) {
@@ -80,10 +78,8 @@ class DeepLinkService {
   /// Handles navigation based on the received URI.
   void _handleLink(Uri uri, {required bool isInitial}) async {
     // --- START: Wait for Navigator to be ready (Existing Fix) ---
-    final isLinkRoute = uri.host == 'payment-success' ||
-        uri.host == 'payment-failed' ||
-        uri.path.contains('payment-success') ||
-        uri.path.contains('payment-failed');
+    final targetRoute = paymentRouteForUri(uri);
+    final isLinkRoute = targetRoute != null;
 
     // Only wait aggressively if this is a route that needs to replace the stack
     if (isInitial || isLinkRoute) {
@@ -107,15 +103,6 @@ class DeepLinkService {
     if (navigatorState == null || !navigatorState.mounted) {
       debugPrint("❌ Navigator is not mounted. Cannot process deep link: $uri");
       return;
-    }
-
-    String? targetRoute;
-
-    if (uri.host == 'payment-success' || uri.path.contains('payment-success')) {
-      targetRoute = '/payment-success';
-    } else if (uri.host == 'payment-failed' ||
-        uri.path.contains('payment-failed')) {
-      targetRoute = '/payment-failed';
     }
 
     if (targetRoute != null) {
@@ -152,7 +139,9 @@ class DeepLinkService {
         "🧹 DeepLinkService: Cleared cached initial route and marked as checked.");
   }
 
-  void dispose() {
-    _linkSubscription?.cancel();
+  Future<void> dispose() async {
+    await _linkSubscription?.cancel();
+    _linkSubscription = null;
+    _isInitialized = false;
   }
 }

@@ -1,11 +1,11 @@
-import 'dart:convert';
+import 'package:driver_pos/services/session_service.dart';
+import 'package:driver_pos/repositories/feature_repositories.dart';
+import 'package:driver_pos/theme/app_theme.dart';
 import 'package:driver_pos/services/api_config.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
 import '/components/custom_bottom_nav_bar.dart';
 import '/screens/login.dart';
-import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '/components/custom_app_bar.dart';
 import '/components/custom_drawer.dart';
@@ -55,71 +55,33 @@ class SelcetBookingClassState extends State<SelcetBookingClass> {
   }
 
   void debugToken(String token) {
-    final decoded = JwtDecoder.decode(token);
     final expiry = JwtDecoder.getExpirationDate(token);
-    print("Decoded Token: $decoded");
     print("Expires at: $expiry");
   }
 
-  Future<bool> isTokenValid() async {
-    String? token = await secureStorage.read(key: 'accessToken');
-
-    if (token == null || token.isEmpty) return false;
-
-    // Check expiration
-    bool isExpired = JwtDecoder.isExpired(token);
-    return !isExpired;
-  }
+  Future<bool> isTokenValid() => SessionService().hasValidSession();
 
   Future<void> _fetchTeesheets() async {
     setState(() => isLoading = true);
 
-    final String baseUrl = ApiConfig.baseUrl;
     final String golfCourseCode = ApiConfig.golfCourseCode;
 
-    String apiUrl =
-        '$baseUrl/teesheet/customer-facility?golfCourseCode=$golfCourseCode';
 
-    String? token = await secureStorage.read(key: 'accessToken') ?? '';
 
-    // debugToken(token); // Debug the token
-    isTokenValid().then((isValid) {
-      if (!isValid) {
-        // _showMessage('Token is invalid or expired. Please log in again.');
-        // secureStorage.delete(key: 'accessToken'); // Clear invalid token
-        secureStorage.deleteAll();
-        const SnackBar(
-          content: Text('Session expired. Redirecting to login.'),
-          duration: Duration(seconds: 2),
-        );
-
-        if (!mounted) return;
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const LoginPage(),
-          ),
-          (route) => false,
-        );
-
-        return;
-      } else {
-        // print('Token is valid');
-        // debugToken(token); // Debug the token if valid
-      }
-    });
+    if (!await isTokenValid()) {
+      if (!mounted) return;
+      setState(() => isLoading = false);
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Session expired. Please sign in again.')));
+      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const LoginPage()), (route) => false);
+      return;
+    }
+    if (!mounted) return;
 
     try {
-      final response = await http.get(
-        Uri.parse(apiUrl),
-        headers: {
-          'Authorization': 'Bearer $token',
-          'Content-Type': 'application/json',
-        },
-      );
+      final response = await bookingRepository.facilities(golfCourseCode);
 
       if (response.statusCode == 200) {
-        final dynamic data = jsonDecode(response.body);
+        final dynamic data = response.json;
 
         if (data is Map<String, dynamic> && data['data'] is List) {
           setState(() {
@@ -219,7 +181,7 @@ class SelcetBookingClassState extends State<SelcetBookingClass> {
                         item,
                         style: GoogleFonts.poppins(
                           fontSize: 14,
-                          color: const Color(0xFF244065),
+                          color: AppColors.ink,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -262,24 +224,14 @@ class SelcetBookingClassState extends State<SelcetBookingClass> {
   }
 
   Future<void> _fetchReservationGroups(String teeSheetId) async {
-    String? token = await secureStorage.read(key: 'accessToken') ?? '';
 
-    final String baseUrl = ApiConfig.baseUrl;
 
-    final String url =
-        '$baseUrl/reservationGroup/customer?teeSheet=$teeSheetId';
 
     try {
-      final response = await http.get(
-        Uri.parse(url),
-        headers: {
-          'Authorization': 'Bearer $token',
-          'Content-Type': 'application/json',
-        },
-      );
+      final response = await bookingRepository.reservationGroups(teeSheetId);
 
       if (response.statusCode == 200) {
-        final body = jsonDecode(response.body);
+        final body = response.json;
         setState(() {
           _reservationGroups = List<Map<String, dynamic>>.from(body['data']);
         });
@@ -324,7 +276,7 @@ class SelcetBookingClassState extends State<SelcetBookingClass> {
       body: isLoading
           ? const Center(
               child: CircularProgressIndicator(
-                color: Color(0xFF9ECF9A),
+                color: AppColors.primary,
               ),
             )
           : RefreshIndicator(
@@ -347,7 +299,7 @@ class SelcetBookingClassState extends State<SelcetBookingClass> {
                       ),
                       child: Container(
                         // 🟢 Now the Container has its color back, and it will fill the screen.
-                        color: const Color(0xFFFAFCFA),
+                        color: AppColors.pageBackground,
                         width: double.infinity,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -363,7 +315,7 @@ class SelcetBookingClassState extends State<SelcetBookingClass> {
                                   Container(
                                     width: 40,
                                     height: 1,
-                                    color: const Color(0xFFB2C1C0),
+                                    color: AppColors.border,
                                   ),
                                   const SizedBox(
                                     width: 10,
@@ -371,7 +323,7 @@ class SelcetBookingClassState extends State<SelcetBookingClass> {
                                   Text(
                                     "Select a Tee sheet",
                                     style: GoogleFonts.poppins(
-                                        color: const Color(0xFF244065),
+                                        color: AppColors.ink,
                                         fontSize: 22,
                                         fontWeight: FontWeight.w600),
                                   ),
@@ -381,7 +333,7 @@ class SelcetBookingClassState extends State<SelcetBookingClass> {
                                   Container(
                                     width: 40,
                                     height: 1,
-                                    color: const Color(0xFFB2C1C0),
+                                    color: AppColors.border,
                                   ),
                                 ],
                               ),
@@ -393,7 +345,7 @@ class SelcetBookingClassState extends State<SelcetBookingClass> {
                                 "Select a tee sheet to book a tee time or enjoy other activities.",
                                 textAlign: TextAlign.center,
                                 style: GoogleFonts.poppins(
-                                  color: const Color(0xFF6E7373),
+                                  color: AppColors.textMuted,
                                   fontWeight: FontWeight.w400,
                                   fontSize: 13,
                                 ),
@@ -431,7 +383,7 @@ class SelcetBookingClassState extends State<SelcetBookingClass> {
                                     Text(
                                       'Select Facility',
                                       style: GoogleFonts.poppins(
-                                        color: const Color(0xFF6E7373),
+                                        color: AppColors.textMuted,
                                         fontSize: 14,
                                         fontWeight: FontWeight.w400,
                                       ),
@@ -591,7 +543,7 @@ class SelcetBookingClassState extends State<SelcetBookingClass> {
                                               },
                                               style: ElevatedButton.styleFrom(
                                                 backgroundColor:
-                                                    const Color(0xFF9ECF9A),
+                                                    AppColors.primary,
                                               ),
                                               child: Padding(
                                                 padding:

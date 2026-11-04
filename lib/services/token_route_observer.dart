@@ -1,117 +1,77 @@
 import 'package:flutter/material.dart';
-import 'package:jwt_decoder/jwt_decoder.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-import '../screens/login.dart'; // Import your LoginPage
-
-// class TokenRouteObserver extends RouteObserver<PageRoute<dynamic>> {
-//   final FlutterSecureStorage secureStorage = const FlutterSecureStorage();
-
-//   void _checkToken(BuildContext context) async {
-//     final token = await secureStorage.read(key: 'accessToken');
-
-//     if (JwtDecoder.isExpired(token!)) {
-//       // Clear all stored tokens
-//       await secureStorage.deleteAll();
-
-//       if (!context.mounted) return;
-
-//       // print("Token expired, navigating to login");
-
-//       // Show a dialog or snackbar if needed
-//       // For example, you can use a snackbar to inform the user
-//       ScaffoldMessenger.of(context).showSnackBar(
-//         const SnackBar(
-//           content: Text("Session expired, please log in again."),
-//         ),
-//       );
-
-//       // Navigate to login
-//       Navigator.pushAndRemoveUntil(
-//         context,
-//         MaterialPageRoute(builder: (context) => const LoginPage()),
-//         (route) => false,
-//       );
-//     }
-//   }
-
-//   @override
-//   void didPush(Route route, Route? previousRoute) {
-//     super.didPush(route, previousRoute);
-//     if (route is PageRoute) {
-//       _checkToken(route.navigator!.context);
-//     }
-//   }
-
-//   @override
-//   void didPop(Route route, Route? previousRoute) {
-//     super.didPop(route, previousRoute);
-//     if (previousRoute is PageRoute) {
-//       _checkToken(previousRoute.navigator!.context);
-//     }
-//   }
-// }
+import '../screens/login.dart';
+import 'session_service.dart';
 
 class TokenRouteObserver extends RouteObserver<PageRoute<dynamic>> {
-  final FlutterSecureStorage secureStorage = const FlutterSecureStorage();
+  TokenRouteObserver({SessionService? session, WidgetBuilder? loginBuilder})
+      : _session = session ?? SessionService(),
+        _loginBuilder = loginBuilder ?? ((_) => const LoginPage());
 
+  final SessionService _session;
+  final WidgetBuilder _loginBuilder;
   bool _isChecking = false;
+  NavigatorState? _pendingCheck;
 
-  Future<void> _checkToken(BuildContext context) async {
-    if (_isChecking) return;
+  Future<void> _checkToken(NavigatorState navigator) async {
+    if (!navigator.mounted) return;
+    if (_isChecking) {
+      _pendingCheck = navigator;
+      return;
+    }
     _isChecking = true;
-
     try {
-      final token = await secureStorage.read(key: 'accessToken');
-
-      if (token == null || token.isEmpty) {
+      final token = await _session.storage.read(key: 'accessToken');
+      final loggedIn = await _session.storage.read(key: 'isLoggedIn');
+      // Public sign-in and registration routes must remain available.
+      if (token == null && loggedIn != 'true') return;
+      if (SessionService.isTokenValid(token) ||
+          (loggedIn == 'true' && await _session.hasValidSession())) {
         return;
       }
 
-      if (JwtDecoder.isExpired(token)) {
-        await secureStorage.deleteAll();
-
-        if (!context.mounted) return;
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("Session expired, please log in again."),
-          ),
-        );
-
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (_) => const LoginPage()),
-          (route) => false,
-        );
-      }
+      await _session.clearSession();
+      if (!navigator.mounted) return;
+      ScaffoldMessenger.maybeOf(navigator.context)?.showSnackBar(
+        const SnackBar(content: Text('Session expired, please log in again.')),
+      );
+      navigator.pushAndRemoveUntil(
+        MaterialPageRoute(builder: _loginBuilder),
+        (_) => false,
+      );
     } catch (e) {
-      debugPrint("Token check error: $e");
+      debugPrint('Token check error: $e');
     } finally {
       _isChecking = false;
+      final pending = _pendingCheck;
+      _pendingCheck = null;
+      if (pending != null && pending.mounted) _checkToken(pending);
     }
   }
 
-  bool _isValidPageRoute(Route route) {
-    return route is PageRoute &&
-        route.settings.name != null; // ignore unnamed internal routes
+  void _scheduleCheck(Route? route) {
+    if (route is! PageRoute) return;
+    final navigator = route.navigator;
+    if (navigator == null) return;
+    // Navigator is locked during observer notifications, including replacement.
+    WidgetsBinding.instance.addPostFrameCallback((_) => _checkToken(navigator));
   }
 
   @override
   void didPush(Route route, Route? previousRoute) {
     super.didPush(route, previousRoute);
-
-    if (_isValidPageRoute(route)) {
-      _checkToken(route.navigator!.context);
-    }
+    _scheduleCheck(route);
   }
 
   @override
   void didPop(Route route, Route? previousRoute) {
     super.didPop(route, previousRoute);
+    _scheduleCheck(previousRoute);
+  }
 
-    if (previousRoute != null && _isValidPageRoute(previousRoute)) {
-      _checkToken(previousRoute.navigator!.context);
-    }
+  @override
+  void didReplace({Route? newRoute, Route? oldRoute}) {
+    super.didReplace(newRoute: newRoute, oldRoute: oldRoute);
+    _scheduleCheck(newRoute);
   }
 }

@@ -1,8 +1,8 @@
+import 'package:driver_pos/theme/app_theme.dart';
+import '../models/history_page.dart';
+import '../repositories/history_repository.dart';
 // ignore_for_file: deprecated_member_use, use_build_context_synchronously
 
-import 'dart:convert';
-
-import 'package:driver_pos/services/api_config.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -11,7 +11,6 @@ import 'package:intl/intl.dart';
 import '/components/custom_app_bar.dart';
 import '/components/custom_drawer.dart';
 import '/components/custom_bottom_nav_bar.dart';
-import 'package:http/http.dart' as http;
 
 class TabCardScreenPage extends StatefulWidget {
   final String tabcardId;
@@ -51,9 +50,7 @@ class _TabCardScreenPageState extends State<TabCardScreenPage>
   @override
   void initState() {
     super.initState();
-    fetchStoreCredits();
-    fetchRainchecks();
-    fetchGiftCards();
+    _loadBalances();
     _tabController = TabController(length: 3, vsync: this);
     _tabController.addListener(() {
       setState(() {}); // so our custom tab updates when selected tab changes
@@ -63,120 +60,117 @@ class _TabCardScreenPageState extends State<TabCardScreenPage>
   @override
   void dispose() {
     _tabController.dispose();
+    _historyRepository.dispose();
+    _scrollController1.dispose();
+    _scrollController2.dispose();
+    _scrollController3.dispose();
     super.dispose();
   }
 
-  Future<void> fetchStoreCredits() async {
-    String? storedUserProfileImage =
-        await secureStorage.read(key: 'profilePic');
-    final String baseUrl = ApiConfig.baseUrl;
+  final _historyRepository = HistoryRepository();
+  final List<HistoryPage?> _pages = [null, null, null];
+  bool _loadingMore = false;
 
-    String apiUrl = '$baseUrl/storecredit/myStoreCredit?limit=20&page=1';
-    final String? token = await secureStorage.read(key: 'accessToken');
-
+  Future<void> _loadBalances() async {
     try {
-      final response = Uri.parse(apiUrl).resolveUri(Uri());
-
-      final httpResponse = await http.get(
-        response,
-        headers: {'Authorization': 'Bearer $token'},
-      );
-
-      if (httpResponse.statusCode == 200) {
-        final responseData =
-            jsonDecode(httpResponse.body) as Map<String, dynamic>;
-        // print('Store Credits: $responseData');
-
-        // ✅ Get stored name BEFORE setState
-        String? storedName = await secureStorage.read(key: 'userName');
-
-        setState(() {
-          userName = storedName ?? '';
-          totalStoreCredits = responseData['data']['credit'];
-
-          history = List<Map<String, dynamic>>.from(
-              responseData['data']['history'] ?? []);
-          userProfileImage = storedUserProfileImage ?? '';
-          isLoading = false; // Set loading to false after fetching data
-        });
-
-        // print('User Name: $userName');
-      }
-    } catch (e) {
-      debugPrint('Error fetching store credits: $e');
+      await Future.wait(
+          [fetchStoreCredits(), fetchRainchecks(), fetchGiftCards()]);
+    } finally {
+      if (mounted) setState(() => isLoading = false);
     }
   }
 
-  Future<void> fetchRainchecks() async {
-    final String baseUrl = ApiConfig.baseUrl;
-
-    String apiUrl = '$baseUrl/raincheck/myRainChecks?limit=20&page=1';
-    final String? token = await secureStorage.read(key: 'accessToken');
-
+  Future<void> _fetchBalance(int index, {bool append = false}) async {
     try {
-      final response = Uri.parse(apiUrl).resolveUri(Uri());
-
-      final httpResponse = await http.get(
-        response,
-        headers: {'Authorization': 'Bearer $token'},
+      final page = await _historyRepository.fetch(
+        [
+          'storecredit/myStoreCredit',
+          'raincheck/myRainChecks',
+          'giftCard/myGiftCards'
+        ][index],
+        page: append ? _pages[index]!.page + 1 : 1,
+        limit: 20,
+        storeCredit: index == 0,
       );
-
-      if (httpResponse.statusCode == 200) {
-        final responseData =
-            jsonDecode(httpResponse.body) as Map<String, dynamic>;
-
-        totalRainchecks = responseData['amount']['totalAmount'] ?? 0.00;
-        rainChecks =
-            List<Map<String, dynamic>>.from(responseData['data'] ?? []);
-
-        // print('Rainchecks data : $responseData');
-        // print('Total Rainchecks: $totalRainchecks');
+      if (!mounted) return;
+      setState(() {
+        _pages[index] = page;
+        switch (index) {
+          case 0:
+            totalStoreCredits = page.summary['credit'] ?? 0;
+            history = append ? [...history, ...page.items] : page.items;
+            break;
+          case 1:
+            totalRainchecks = page.summary['totalAmount'] ?? 0;
+            rainChecks = append ? [...rainChecks, ...page.items] : page.items;
+            break;
+          case 2:
+            totalGiftCards = page.summary['totalRemainingBalance'] ?? 0;
+            giftCards = append ? [...giftCards, ...page.items] : page.items;
+        }
+      });
+      if (index == 0) {
+        final name = await secureStorage.read(key: 'userName');
+        final picture = await secureStorage.read(key: 'profilePic');
+        if (mounted) {
+          setState(() {
+            userName = name ?? '';
+            userProfileImage = picture ?? '';
+          });
+        }
       }
-    } catch (e) {
-      debugPrint('Error fetching store credits: $e');
+    } on ApiException catch (error) {
+      // A customer with no store-credit account is a valid empty state.
+      if (index == 0 && error.status == 404) return;
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content: Text('Unable to load balances. Please retry.')),
+        );
+      }
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content: Text('Unable to load balances. Please retry.')),
+        );
+      }
     }
   }
 
-  Future<void> fetchGiftCards() async {
-    final String baseUrl = ApiConfig.baseUrl;
+  Future<void> fetchStoreCredits() => _fetchBalance(0);
+  Future<void> fetchRainchecks() => _fetchBalance(1);
+  Future<void> fetchGiftCards() => _fetchBalance(2);
 
-    String apiUrl = '$baseUrl/giftCard/myGiftCards?limit=20&page=1';
-    final String? token = await secureStorage.read(key: 'accessToken');
-
+  Future<void> _loadMoreBalance() async {
+    final index = _tabController.index;
+    if (_loadingMore || _pages[index]?.hasMore != true) return;
+    setState(() => _loadingMore = true);
     try {
-      final response = Uri.parse(apiUrl).resolveUri(Uri());
-
-      final httpResponse = await http.get(
-        response,
-        headers: {'Authorization': 'Bearer $token'},
-      );
-
-      if (httpResponse.statusCode == 200) {
-        final responseData =
-            jsonDecode(httpResponse.body) as Map<String, dynamic>;
-
-        totalGiftCards =
-            responseData['amount']['totalRemainingBalance'] ?? 0.00;
-
-        giftCards = List<Map<String, dynamic>>.from(responseData['data']);
-
-        // print('Gift Cards data : ${giftCards.length}');
-
-        // print('Giftcards data : $responseData');
-        // print('Total Giftcards: $totalGiftCards');
-
+      await _fetchBalance(index, append: true);
+      if (mounted) {
         setState(() {
-          isLoading = false; // Set loading to false after fetching data
+          if (index == 0) showAll = true;
+          if (index == 1) showAllRchk = true;
+          if (index == 2) showAllGCrd = true;
         });
       }
-    } catch (e) {
-      debugPrint('Error fetching store credits: $e');
+    } finally {
+      if (mounted) setState(() => _loadingMore = false);
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton:
+          !isLoading && _pages[_tabController.index]?.hasMore == true
+              ? FloatingActionButton.extended(
+                  onPressed: _loadingMore ? null : _loadMoreBalance,
+                  label: Text(_loadingMore ? 'Loading…' : 'Load more'),
+                  icon: const Icon(Icons.expand_more),
+                )
+              : null,
       key: _scaffoldKey,
       appBar: CustomAppBar(
         scaffoldKey: _scaffoldKey,
@@ -194,7 +188,7 @@ class _TabCardScreenPageState extends State<TabCardScreenPage>
       body: isLoading
           ? const Center(
               child: CircularProgressIndicator(
-                color: Color(0xFF9ECF9A),
+                color: AppColors.primary,
               ),
             )
           : Stack(children: [
@@ -256,13 +250,13 @@ class _TabCardScreenPageState extends State<TabCardScreenPage>
                 padding: const EdgeInsets.symmetric(vertical: 10),
                 margin: const EdgeInsets.symmetric(horizontal: 4),
                 decoration: BoxDecoration(
-                  color: isSelected
-                      ? const Color(0xFF9ECF9A)
-                      : const Color(0xFFFFFFFF),
+                  color:
+                      isSelected ? AppColors.primary : AppColors.surface,
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.1), // subtle shadow
+                      color:
+                          Colors.black.withValues(alpha: 0.1), // subtle shadow
                       blurRadius: 6,
                       offset: const Offset(0, 3), // horizontal: 0, vertical: 3
                     ),
@@ -274,7 +268,7 @@ class _TabCardScreenPageState extends State<TabCardScreenPage>
                   style: GoogleFonts.nunito(
                     fontWeight: FontWeight.bold,
                     fontSize: 14,
-                    color: isSelected ? Colors.white : const Color(0xFF244065),
+                    color: isSelected ? Colors.white : AppColors.ink,
                   ),
                 ),
               ),
@@ -294,7 +288,7 @@ class _TabCardScreenPageState extends State<TabCardScreenPage>
             margin: const EdgeInsets.only(bottom: 0),
             padding:
                 const EdgeInsets.only(left: 15, right: 15, top: 30, bottom: 30),
-            color: const Color(0xFF244065),
+            color: AppColors.ink,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -336,7 +330,7 @@ class _TabCardScreenPageState extends State<TabCardScreenPage>
                             Text(
                               'Welcome to your wallet',
                               style: GoogleFonts.nunito(
-                                  color: const Color(0xFFEDEFFF),
+                                  color: AppColors.infoSurface,
                                   fontSize: 14,
                                   fontWeight: FontWeight.w600),
                             ),
@@ -349,7 +343,7 @@ class _TabCardScreenPageState extends State<TabCardScreenPage>
                     //     _circleButton(Icons.notifications),
                     //     const SizedBox(width: 8),
                     //     _circleButton(Icons.settings,
-                    //         color: const Color(0xFF9ECF9A)),
+                    //         color: AppColors.primary),
                     //   ],
                     // ),
                   ],
@@ -384,7 +378,7 @@ class _TabCardScreenPageState extends State<TabCardScreenPage>
                             text: '\$',
                             style: GoogleFonts.nunito(
                                 fontSize: 34,
-                                color: const Color(0xFFFFFFFF),
+                                color: AppColors.surface,
                                 fontWeight: FontWeight.w800),
                             children: [
                               TextSpan(
@@ -397,14 +391,14 @@ class _TabCardScreenPageState extends State<TabCardScreenPage>
                         style: GoogleFonts.nunito(
                           fontWeight: FontWeight.w600,
                           fontSize: 14,
-                          color: const Color(0xFFFFFFFF),
+                          color: AppColors.surface,
                         ),
                       ),
                       const SizedBox(height: 20),
                       Text(
                         userName,
                         style: GoogleFonts.nunito(
-                          color: const Color(0xFFFFFFFF),
+                          color: AppColors.surface,
                           fontSize: 18,
                           fontWeight: FontWeight.w700,
                         ),
@@ -431,7 +425,7 @@ class _TabCardScreenPageState extends State<TabCardScreenPage>
             margin: const EdgeInsets.only(bottom: 0),
             padding:
                 const EdgeInsets.only(left: 15, right: 15, top: 30, bottom: 30),
-            color: const Color(0xFF244065),
+            color: AppColors.ink,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -473,7 +467,7 @@ class _TabCardScreenPageState extends State<TabCardScreenPage>
                             Text(
                               'Welcome to your wallet',
                               style: GoogleFonts.nunito(
-                                  color: const Color(0xFFEDEFFF),
+                                  color: AppColors.infoSurface,
                                   fontSize: 14,
                                   fontWeight: FontWeight.w600),
                             ),
@@ -486,7 +480,7 @@ class _TabCardScreenPageState extends State<TabCardScreenPage>
                     //     _circleButton(Icons.notifications),
                     //     const SizedBox(width: 8),
                     //     _circleButton(Icons.settings,
-                    //         color: const Color(0xFF9ECF9A)),
+                    //         color: AppColors.primary),
                     //   ],
                     // ),
                   ],
@@ -519,7 +513,7 @@ class _TabCardScreenPageState extends State<TabCardScreenPage>
                             text: '\$',
                             style: GoogleFonts.nunito(
                                 fontSize: 34,
-                                color: const Color(0xFFFFFFFF),
+                                color: AppColors.surface,
                                 fontWeight: FontWeight.w800),
                             children: [
                               TextSpan(
@@ -560,7 +554,7 @@ class _TabCardScreenPageState extends State<TabCardScreenPage>
             margin: const EdgeInsets.only(bottom: 0),
             padding:
                 const EdgeInsets.only(left: 15, right: 15, top: 30, bottom: 30),
-            color: const Color(0xFF244065),
+            color: AppColors.ink,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -603,7 +597,7 @@ class _TabCardScreenPageState extends State<TabCardScreenPage>
                             Text(
                               'Welcome to your wallet',
                               style: GoogleFonts.nunito(
-                                  color: const Color(0xFFEDEFFF),
+                                  color: AppColors.infoSurface,
                                   fontSize: 14,
                                   fontWeight: FontWeight.w600),
                             ),
@@ -616,7 +610,7 @@ class _TabCardScreenPageState extends State<TabCardScreenPage>
                     //     _circleButton(Icons.notifications),
                     //     const SizedBox(width: 8),
                     //     _circleButton(Icons.settings,
-                    //         color: const Color(0xFF9ECF9A)),
+                    //         color: AppColors.primary),
                     //   ],
                     // ),
                   ],
@@ -649,7 +643,7 @@ class _TabCardScreenPageState extends State<TabCardScreenPage>
                           text: '\$',
                           style: GoogleFonts.nunito(
                               fontSize: 34,
-                              color: const Color(0xFFFFFFFF),
+                              color: AppColors.surface,
                               fontWeight: FontWeight.w800),
                           children: [
                             TextSpan(
@@ -710,7 +704,7 @@ class _TabCardScreenPageState extends State<TabCardScreenPage>
                 child: Text(
                   'My Gift Cards',
                   style: GoogleFonts.nunito(
-                    color: const Color(0xFF244065),
+                    color: AppColors.ink,
                     fontSize: 18,
                     fontWeight: FontWeight.w700,
                   ),
@@ -760,7 +754,7 @@ class _TabCardScreenPageState extends State<TabCardScreenPage>
                     child: Text(
                       'Recent Transactions',
                       style: GoogleFonts.nunito(
-                        color: const Color(0xFF244065),
+                        color: AppColors.ink,
                         fontSize: 18,
                         fontWeight: FontWeight.w700,
                       ),
@@ -808,7 +802,7 @@ class _TabCardScreenPageState extends State<TabCardScreenPage>
                     child: Text(
                       'Available Rainchecks',
                       style: GoogleFonts.nunito(
-                        color: const Color(0xFF244065),
+                        color: AppColors.ink,
                         fontSize: 18,
                         fontWeight: FontWeight.w700,
                       ),
@@ -856,7 +850,7 @@ class _TabCardScreenPageState extends State<TabCardScreenPage>
                 Text(
                   giftCards['golfCourse']['name'],
                   style: GoogleFonts.nunito(
-                    color: const Color(0xFF244065),
+                    color: AppColors.ink,
                     fontWeight: FontWeight.w700,
                     fontSize: 14,
                   ),
@@ -868,7 +862,7 @@ class _TabCardScreenPageState extends State<TabCardScreenPage>
           Text(
             giftCards['number'],
             style: GoogleFonts.nunito(
-              color: const Color(0xFF244065),
+              color: AppColors.ink,
               fontSize: 18,
               fontWeight: FontWeight.w700,
             ),
@@ -887,7 +881,7 @@ class _TabCardScreenPageState extends State<TabCardScreenPage>
                 Text(
                   '\$${giftCards['remainingBalance'].toStringAsFixed(2)}',
                   style: GoogleFonts.nunito(
-                    color: const Color(0xFF669933),
+                    color: AppColors.accent,
                     fontSize: 16,
                     fontWeight: FontWeight.w800,
                   ),
@@ -895,7 +889,7 @@ class _TabCardScreenPageState extends State<TabCardScreenPage>
                 Text(
                     'Purchased At: ${DateFormat('yyyy-MM-dd').format(DateTime.parse(giftCards['createdAt']))}',
                     style: GoogleFonts.nunito(
-                        color: const Color(0xFF244065),
+                        color: AppColors.ink,
                         fontSize: 13,
                         fontWeight: FontWeight.w400)),
               ],
@@ -929,7 +923,7 @@ class _TabCardScreenPageState extends State<TabCardScreenPage>
                       borderRadius: BorderRadius.circular(8),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
+                          color: Colors.black.withValues(alpha: 0.1),
                           blurRadius: 6,
                           offset: const Offset(0, 3),
                         ),
@@ -942,7 +936,7 @@ class _TabCardScreenPageState extends State<TabCardScreenPage>
                             : Icons.arrow_upward,
                         color: history['operation'] == 'Sub'
                             ? const Color(0xFFE53935) // red
-                            : const Color(0xFF669933), // green
+                            : AppColors.accent, // green
                       ),
                     ),
                   ),
@@ -956,7 +950,7 @@ class _TabCardScreenPageState extends State<TabCardScreenPage>
                         TextSpan(
                           text: '${history['paymentType']} ',
                           style: GoogleFonts.nunito(
-                            color: const Color(0xFF244065),
+                            color: AppColors.ink,
                             fontWeight: FontWeight.w600,
                             fontSize: 14,
                           ),
@@ -990,7 +984,7 @@ class _TabCardScreenPageState extends State<TabCardScreenPage>
                       style: GoogleFonts.nunito(
                         color: history['operation'] == 'Sub'
                             ? const Color(0xFFE53935) // red
-                            : const Color(0xFF669933), // green
+                            : AppColors.accent, // green
                         fontWeight: FontWeight.w800,
                         fontSize: 14,
                       ),
@@ -1005,7 +999,7 @@ class _TabCardScreenPageState extends State<TabCardScreenPage>
                     TextSpan(
                       text: 'Bal. ',
                       style: GoogleFonts.nunito(
-                        color: const Color(0xFF244065),
+                        color: AppColors.ink,
                         fontWeight: FontWeight.w400,
                         fontSize: 13,
                       ),
@@ -1041,7 +1035,7 @@ class _TabCardScreenPageState extends State<TabCardScreenPage>
         gradient: const LinearGradient(
           colors: [
             Color(0xFFDDECDC), // left
-            Color(0xFFFFFFFF), // right
+            AppColors.surface, // right
           ],
           begin: Alignment.centerLeft,
           end: Alignment.centerRight,
@@ -1061,12 +1055,12 @@ class _TabCardScreenPageState extends State<TabCardScreenPage>
                   width: 52,
                   height: 52,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFFFFFFF),
+                    color: AppColors.surface,
                     borderRadius: BorderRadius.circular(7),
                     boxShadow: [
                       BoxShadow(
-                        color:
-                            Colors.black.withOpacity(0.1), // light gray shadow
+                        color: Colors.black
+                            .withValues(alpha: 0.1), // light gray shadow
                         blurRadius: 6,
                         offset:
                             const Offset(0, 3), // horizontal: 0, vertical: 3
@@ -1097,7 +1091,7 @@ class _TabCardScreenPageState extends State<TabCardScreenPage>
                     Text(
                       rainCheck['rainCheckNumber'],
                       style: GoogleFonts.nunito(
-                        color: const Color(0xFF244065),
+                        color: AppColors.ink,
                         fontWeight: FontWeight.w700,
                         fontSize: 16,
                       ),
@@ -1136,14 +1130,14 @@ class _TabCardScreenPageState extends State<TabCardScreenPage>
                       'Available: ',
                       style: GoogleFonts.nunito(
                           fontWeight: FontWeight.w400,
-                          color: const Color(0xFF244065),
+                          color: AppColors.ink,
                           fontSize: 13),
                     ),
                     Text.rich(
                       TextSpan(
                         text: '\$',
                         style: GoogleFonts.nunito(
-                          color: const Color(0xFF669933),
+                          color: AppColors.accent,
                           fontSize: 15,
                           fontWeight: FontWeight.w800,
                         ),
@@ -1151,7 +1145,7 @@ class _TabCardScreenPageState extends State<TabCardScreenPage>
                           TextSpan(
                             text: rainCheck['amount'].toStringAsFixed(2),
                             style: GoogleFonts.nunito(
-                              color: const Color(0xFF669933),
+                              color: AppColors.accent,
                               fontSize: 15,
                               fontWeight: FontWeight.w800,
                             ),
@@ -1165,7 +1159,7 @@ class _TabCardScreenPageState extends State<TabCardScreenPage>
                   TextSpan(
                     text: 'Expire on: ',
                     style: GoogleFonts.nunito(
-                      color: const Color(0xFF244065),
+                      color: AppColors.ink,
                       fontSize: 13,
                       fontWeight: FontWeight.w400,
                     ),
@@ -1173,7 +1167,7 @@ class _TabCardScreenPageState extends State<TabCardScreenPage>
                       TextSpan(
                         text: DateFormat('yyyy-MM-dd').format(DateTime.now()),
                         style: GoogleFonts.nunito(
-                          color: const Color(0xFF244065),
+                          color: AppColors.ink,
                           fontSize: 13,
                           fontWeight: FontWeight.w400,
                         ),

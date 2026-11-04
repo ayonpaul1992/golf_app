@@ -1,12 +1,9 @@
+import 'package:driver_pos/repositories/feature_repositories.dart';
+import 'package:driver_pos/theme/app_theme.dart';
 // ignore_for_file: deprecated_member_use, use_build_context_synchronously
 
-import 'dart:convert';
-import 'package:driver_pos/screens/congratulations.dart';
-import 'package:driver_pos/services/api_config.dart';
-import 'package:driver_pos/services/deep_link_service.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import '/components/dashboard_app_bar.dart';
@@ -19,7 +16,6 @@ import '../services/location_service.dart';
 import '../services/weather_service.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:app_links/app_links.dart';
 
 class DashboardPage extends StatefulWidget {
   // final String dshbId;
@@ -109,19 +105,11 @@ class DashboardPageState extends State<DashboardPage> {
     try {
       // Replace with your actual API call logic
       // Example using http package:
-      final String baseUrl = ApiConfig.baseUrl;
       // final String golfCourseCode = ApiConfig.golfCourseCode;
 
-      final response = await http.get(
-        Uri.parse(
-            '$baseUrl/teesheet/myBookings?bookingStatus=Booked&page=1&limit=1&isDashboard=true'),
-        headers: {
-          'Authorization':
-              'Bearer ${await secureStorage.read(key: "accessToken")}'
-        },
-      );
+      final response = await bookingRepository.upcoming();
       if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
+        final data = response.json;
         if (data['data'] != null && data['data'].isNotEmpty) {
           // print("Upcoming Tee Time: ${data['data'][0]}");
           return data['data'][0];
@@ -212,16 +200,6 @@ class DashboardPageState extends State<DashboardPage> {
   //   // }
   // }
 
-  void _handleDeepLink() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const CongratulationsPage(cngsId: ''),
-      ),
-    );
-    print("✅ DashboardPage detected pending deep link on init.");
-  }
-
   Future<void> _loadUserName() async {
     String? storedName = await secureStorage.read(key: 'userName');
     String? storedPic = await secureStorage.read(key: 'profilePic');
@@ -311,7 +289,7 @@ class DashboardPageState extends State<DashboardPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Container(
-                        color: const Color(0xFFFAFCFA),
+                        color: AppColors.pageBackground,
                         width: double.infinity,
                         height: MediaQuery.of(context).size.height,
                         child: Padding(
@@ -329,9 +307,8 @@ class DashboardPageState extends State<DashboardPage> {
                                       decoration: BoxDecoration(
                                         boxShadow: [
                                           BoxShadow(
-                                            color: const Color(0xFF9ECF9A)
-                                                .withOpacity(
-                                                    0.15), // make it visible
+                                            color: AppColors.primary.withValues(
+                                                alpha: 0.15), // make it visible
                                             blurRadius: 30, // soft edges
                                             spreadRadius:
                                                 1, // controls how far the shadow spreads
@@ -358,8 +335,7 @@ class DashboardPageState extends State<DashboardPage> {
                                                   borderRadius:
                                                       BorderRadius.circular(50),
                                                   border: Border.all(
-                                                    color:
-                                                        const Color(0xFF9ECF9A),
+                                                    color: AppColors.primary,
                                                     width: 1,
                                                   ),
                                                 ),
@@ -452,7 +428,7 @@ class DashboardPageState extends State<DashboardPage> {
                                                                           style: GoogleFonts.poppins(
                                                                               fontWeight: FontWeight.w500,
                                                                               fontSize: 11.5,
-                                                                              color: const Color(0xFFFFFFFF)),
+                                                                              color: AppColors.surface),
                                                                         )
                                                                       ],
                                                                     ),
@@ -580,7 +556,7 @@ class DashboardPageState extends State<DashboardPage> {
                                                       Icon(
                                                         Icons.date_range,
                                                         color:
-                                                            Color(0xFF669933),
+                                                            AppColors.accent,
                                                         size: 40,
                                                       )
                                                     ],
@@ -650,15 +626,16 @@ class DashboardPageState extends State<DashboardPage> {
                                                       const EdgeInsets.all(20),
                                                   decoration: BoxDecoration(
                                                     color:
-                                                        const Color(0xFFFFFFFF),
+                                                        AppColors.surface,
                                                     borderRadius:
                                                         BorderRadius.circular(
                                                             20),
                                                     boxShadow: [
                                                       BoxShadow(
                                                         color: Colors.black
-                                                            .withOpacity(
-                                                                0.1), // light shadow
+                                                            .withValues(
+                                                                alpha:
+                                                                    0.1), // light shadow
                                                         offset: const Offset(1,
                                                             1), // x: right, y: down
                                                         blurRadius:
@@ -676,7 +653,7 @@ class DashboardPageState extends State<DashboardPage> {
                                                       const Icon(
                                                         Icons.edit_calendar,
                                                         color:
-                                                            Color(0xFF669933),
+                                                            AppColors.accent,
                                                         size: 36,
                                                       ),
                                                       const SizedBox(
@@ -718,15 +695,16 @@ class DashboardPageState extends State<DashboardPage> {
                                                       const EdgeInsets.all(20),
                                                   decoration: BoxDecoration(
                                                     color:
-                                                        const Color(0xFFFFFFFF),
+                                                        AppColors.surface,
                                                     borderRadius:
                                                         BorderRadius.circular(
                                                             20),
                                                     boxShadow: [
                                                       BoxShadow(
                                                         color: Colors.black
-                                                            .withOpacity(
-                                                                0.1), // light shadow
+                                                            .withValues(
+                                                                alpha:
+                                                                    0.1), // light shadow
                                                         offset: const Offset(1,
                                                             1), // x: right, y: down
                                                         blurRadius:
@@ -744,7 +722,7 @@ class DashboardPageState extends State<DashboardPage> {
                                                       const Icon(
                                                         Icons.history,
                                                         color:
-                                                            Color(0xFF669933),
+                                                            AppColors.accent,
                                                         size: 36,
                                                       ),
                                                       const SizedBox(
@@ -785,7 +763,7 @@ class DashboardPageState extends State<DashboardPage> {
                                                     width: 40,
                                                     height: 1,
                                                     color:
-                                                        const Color(0xFFB2C1C0),
+                                                        AppColors.border,
                                                   ),
                                                   const SizedBox(
                                                     width: 10,
@@ -806,7 +784,7 @@ class DashboardPageState extends State<DashboardPage> {
                                                     width: 40,
                                                     height: 1,
                                                     color:
-                                                        const Color(0xFFB2C1C0),
+                                                        AppColors.border,
                                                   ),
                                                 ],
                                               )),
@@ -857,10 +835,10 @@ class DashboardPageState extends State<DashboardPage> {
                                                                         decoration:
                                                                             BoxDecoration(
                                                                           color:
-                                                                              const Color(0xFFFFFFFF),
+                                                                              AppColors.surface,
                                                                           border: Border.all(
                                                                               width: 1.2,
-                                                                              color: const Color(0xFFE8E8E8)),
+                                                                              color: AppColors.divider),
                                                                           borderRadius:
                                                                               BorderRadius.circular(10),
                                                                         ),
@@ -895,7 +873,7 @@ class DashboardPageState extends State<DashboardPage> {
                                                                               children: [
                                                                                 Container(
                                                                                   decoration: BoxDecoration(
-                                                                                    color: const Color(0xFFF7FAF4),
+                                                                                    color: AppColors.surfaceTint,
                                                                                     borderRadius: BorderRadius.circular(50),
                                                                                   ),
                                                                                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
@@ -914,7 +892,7 @@ class DashboardPageState extends State<DashboardPage> {
                                                                             Text(
                                                                               upcomingTeeTime!['golfCourse']['name'],
                                                                               style: GoogleFonts.poppins(
-                                                                                color: const Color(0xFF244065),
+                                                                                color: AppColors.ink,
                                                                                 fontSize: 13,
                                                                                 fontWeight: FontWeight.w600,
                                                                               ),
@@ -925,21 +903,21 @@ class DashboardPageState extends State<DashboardPage> {
                                                                               children: [
                                                                                 const Icon(
                                                                                   Icons.calendar_month_outlined,
-                                                                                  color: Color(0xFF6B7280),
+                                                                                  color: AppColors.textSecondary,
                                                                                   size: 18,
                                                                                 ),
                                                                                 Text(
                                                                                   upcomingTeeTime!['startingSlot'],
-                                                                                  style: GoogleFonts.poppins(color: const Color(0xFF6E7373), fontSize: 13, fontWeight: FontWeight.w500),
+                                                                                  style: GoogleFonts.poppins(color: AppColors.textMuted, fontSize: 13, fontWeight: FontWeight.w500),
                                                                                 ),
                                                                                 Container(
-                                                                                  color: const Color(0xFF6E7373),
+                                                                                  color: AppColors.textMuted,
                                                                                   width: 1,
                                                                                   height: 15,
                                                                                 ),
                                                                                 Text(
                                                                                   upcomingTeeTime!['date'] != null ? DateFormat('EEE, MMM d').format(DateFormat('EEEE dd, MMMM, yyyy').parse(upcomingTeeTime!['date'])) : 'Unknown Date',
-                                                                                  style: GoogleFonts.poppins(color: const Color(0xFF6E7373), fontSize: 13, fontWeight: FontWeight.w500),
+                                                                                  style: GoogleFonts.poppins(color: AppColors.textMuted, fontSize: 13, fontWeight: FontWeight.w500),
                                                                                 ),
                                                                               ],
                                                                             )
@@ -965,7 +943,7 @@ class DashboardPageState extends State<DashboardPage> {
                                                                       children: [
                                                                         Container(
                                                                           decoration: BoxDecoration(
-                                                                              color: const Color(0xFFF7FAF4),
+                                                                              color: AppColors.surfaceTint,
                                                                               borderRadius: BorderRadius.circular(50)),
                                                                           child:
                                                                               Padding(
@@ -977,11 +955,11 @@ class DashboardPageState extends State<DashboardPage> {
                                                                                 children: [
                                                                                   Text(
                                                                                     "Holes: ",
-                                                                                    style: GoogleFonts.poppins(fontSize: 14, color: const Color(0xFF6E7373), fontWeight: FontWeight.w500),
+                                                                                    style: GoogleFonts.poppins(fontSize: 14, color: AppColors.textMuted, fontWeight: FontWeight.w500),
                                                                                   ),
                                                                                   Text(
                                                                                     upcomingTeeTime!['holes'].toString(),
-                                                                                    style: GoogleFonts.poppins(fontSize: 14, color: const Color(0xFF244065), fontWeight: FontWeight.w600),
+                                                                                    style: GoogleFonts.poppins(fontSize: 14, color: AppColors.ink, fontWeight: FontWeight.w600),
                                                                                   ),
                                                                                 ],
                                                                               ),
@@ -990,7 +968,7 @@ class DashboardPageState extends State<DashboardPage> {
                                                                         ),
                                                                         Container(
                                                                           decoration: BoxDecoration(
-                                                                              color: const Color(0xFFF7FAF4),
+                                                                              color: AppColors.surfaceTint,
                                                                               borderRadius: BorderRadius.circular(50)),
                                                                           child:
                                                                               Padding(
@@ -1002,11 +980,11 @@ class DashboardPageState extends State<DashboardPage> {
                                                                                 children: [
                                                                                   Text(
                                                                                     "Players: ",
-                                                                                    style: GoogleFonts.poppins(fontSize: 14, color: const Color(0xFF6E7373), fontWeight: FontWeight.w500),
+                                                                                    style: GoogleFonts.poppins(fontSize: 14, color: AppColors.textMuted, fontWeight: FontWeight.w500),
                                                                                   ),
                                                                                   Text(
                                                                                     upcomingTeeTime!['persons'].toString(),
-                                                                                    style: GoogleFonts.poppins(fontSize: 14, color: const Color(0xFF244065), fontWeight: FontWeight.w600),
+                                                                                    style: GoogleFonts.poppins(fontSize: 14, color: AppColors.ink, fontWeight: FontWeight.w600),
                                                                                   ),
                                                                                 ],
                                                                               ),
@@ -1015,7 +993,7 @@ class DashboardPageState extends State<DashboardPage> {
                                                                         ),
                                                                         Container(
                                                                           decoration: BoxDecoration(
-                                                                              color: const Color(0xFFF7FAF4),
+                                                                              color: AppColors.surfaceTint,
                                                                               borderRadius: BorderRadius.circular(50)),
                                                                           child:
                                                                               Padding(
@@ -1027,11 +1005,11 @@ class DashboardPageState extends State<DashboardPage> {
                                                                                 children: [
                                                                                   Text(
                                                                                     "Carts: ",
-                                                                                    style: GoogleFonts.poppins(fontSize: 14, color: const Color(0xFF6E7373), fontWeight: FontWeight.w500),
+                                                                                    style: GoogleFonts.poppins(fontSize: 14, color: AppColors.textMuted, fontWeight: FontWeight.w500),
                                                                                   ),
                                                                                   Text(
                                                                                     upcomingTeeTime!['carts'].toString(),
-                                                                                    style: GoogleFonts.poppins(fontSize: 14, color: const Color(0xFF244065), fontWeight: FontWeight.w600),
+                                                                                    style: GoogleFonts.poppins(fontSize: 14, color: AppColors.ink, fontWeight: FontWeight.w600),
                                                                                   ),
                                                                                 ],
                                                                               ),
@@ -1112,7 +1090,7 @@ class DashboardPageState extends State<DashboardPage> {
                                               },
                                               style: ElevatedButton.styleFrom(
                                                   backgroundColor:
-                                                      const Color(0xFF9ECF9A)),
+                                                      AppColors.primary),
                                               child: Padding(
                                                 padding:
                                                     const EdgeInsets.symmetric(
@@ -1138,7 +1116,7 @@ class DashboardPageState extends State<DashboardPage> {
                                             right: 15,
                                             child: Icon(
                                               Icons.arrow_forward,
-                                              color: Color(0xFFFFFFFF),
+                                              color: AppColors.surface,
                                               size: 18,
                                             ),
                                           )
@@ -1177,7 +1155,7 @@ class DashboardPageState extends State<DashboardPage> {
           //               crossAxisAlignment: CrossAxisAlignment.start,
           //               children: [
           //                 Container(
-          //                   color: const Color(0xFFFAFCFA),
+          //                   color: AppColors.pageBackground,
           //                   width: double.infinity,
           //                   height: MediaQuery.of(context).size.height,
           //                   child: Padding(
@@ -1197,8 +1175,8 @@ class DashboardPageState extends State<DashboardPage> {
           //                               decoration: BoxDecoration(
           //                                 boxShadow: [
           //                                   BoxShadow(
-          //                                     color: const Color(0xFF9ECF9A)
-          //                                         .withOpacity(0.15),
+          //                                     color: AppColors.primary
+          //                                         .withValues(alpha: 0.15),
           //                                     blurRadius: 30,
           //                                     spreadRadius: 1,
           //                                     offset: const Offset(3, 0),
@@ -1320,7 +1298,7 @@ class DashboardPageState extends State<DashboardPage> {
           //                                                                   fontSize:
           //                                                                       11.5,
           //                                                                   color:
-          //                                                                       const Color(0xFFFFFFFF)),
+          //                                                                       AppColors.surface),
           //                                                             )
           //                                                           ],
           //                                                         ),
@@ -1447,7 +1425,7 @@ class DashboardPageState extends State<DashboardPage> {
           //                                               Icon(
           //                                                 Icons.date_range,
           //                                                 color:
-          //                                                     Color(0xFF669933),
+          //                                                     AppColors.accent,
           //                                                 size: 40,
           //                                               )
           //                                             ],
@@ -1525,7 +1503,7 @@ class DashboardPageState extends State<DashboardPage> {
           //                                             boxShadow: [
           //                                               BoxShadow(
           //                                                 color: Colors.black
-          //                                                     .withOpacity(0.1),
+          //                                                     .withValues(alpha: 0.1),
           //                                                 offset: const Offset(
           //                                                     1, 1),
           //                                                 blurRadius: 10,
@@ -1541,7 +1519,7 @@ class DashboardPageState extends State<DashboardPage> {
           //                                               const Icon(
           //                                                 Icons.edit_calendar,
           //                                                 color:
-          //                                                     Color(0xFF669933),
+          //                                                     AppColors.accent,
           //                                                 size: 36,
           //                                               ),
           //                                               const SizedBox(
@@ -1592,7 +1570,7 @@ class DashboardPageState extends State<DashboardPage> {
           //                                             boxShadow: [
           //                                               BoxShadow(
           //                                                 color: Colors.black
-          //                                                     .withOpacity(0.1),
+          //                                                     .withValues(alpha: 0.1),
           //                                                 offset: const Offset(
           //                                                     1, 1),
           //                                                 blurRadius: 10,
@@ -1608,7 +1586,7 @@ class DashboardPageState extends State<DashboardPage> {
           //                                               const Icon(
           //                                                 Icons.history,
           //                                                 color:
-          //                                                     Color(0xFF669933),
+          //                                                     AppColors.accent,
           //                                                 size: 36,
           //                                               ),
           //                                               const SizedBox(
@@ -1648,7 +1626,7 @@ class DashboardPageState extends State<DashboardPage> {
           //                                         width: 40,
           //                                         height: 1,
           //                                         color:
-          //                                             const Color(0xFFB2C1C0),
+          //                                             AppColors.border,
           //                                       ),
           //                                       const SizedBox(
           //                                         width: 10,
@@ -1669,7 +1647,7 @@ class DashboardPageState extends State<DashboardPage> {
           //                                         width: 40,
           //                                         height: 1,
           //                                         color:
-          //                                             const Color(0xFFB2C1C0),
+          //                                             AppColors.border,
           //                                       ),
           //                                     ],
           //                                   ),
@@ -1720,7 +1698,7 @@ class DashboardPageState extends State<DashboardPage> {
           //                                                                   width:
           //                                                                       1.2,
           //                                                                   color:
-          //                                                                       const Color(0xFFE8E8E8)),
+          //                                                                       AppColors.divider),
           //                                                               borderRadius:
           //                                                                   BorderRadius.circular(10),
           //                                                             ),
@@ -1753,7 +1731,7 @@ class DashboardPageState extends State<DashboardPage> {
           //                                                                   children: [
           //                                                                     Container(
           //                                                                       decoration: BoxDecoration(
-          //                                                                         color: const Color(0xFFF7FAF4),
+          //                                                                         color: AppColors.surfaceTint,
           //                                                                         borderRadius: BorderRadius.circular(50),
           //                                                                       ),
           //                                                                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
@@ -1774,7 +1752,7 @@ class DashboardPageState extends State<DashboardPage> {
           //                                                                   upcomingTeeTime!['golfCourse'],
           //                                                                   style:
           //                                                                       GoogleFonts.poppins(
-          //                                                                     color: const Color(0xFF244065),
+          //                                                                     color: AppColors.ink,
           //                                                                     fontSize: 13,
           //                                                                     fontWeight: FontWeight.w600,
           //                                                                   ),
@@ -1785,21 +1763,21 @@ class DashboardPageState extends State<DashboardPage> {
           //                                                                   children: [
           //                                                                     const Icon(
           //                                                                       Icons.calendar_month_outlined,
-          //                                                                       color: Color(0xFF6B7280),
+          //                                                                       color: AppColors.textSecondary,
           //                                                                       size: 18,
           //                                                                     ),
           //                                                                     Text(
           //                                                                       upcomingTeeTime!['startingSlot'],
-          //                                                                       style: GoogleFonts.poppins(color: const Color(0xFF6E7373), fontSize: 13, fontWeight: FontWeight.w500),
+          //                                                                       style: GoogleFonts.poppins(color: AppColors.textMuted, fontSize: 13, fontWeight: FontWeight.w500),
           //                                                                     ),
           //                                                                     Container(
-          //                                                                       color: const Color(0xFF6E7373),
+          //                                                                       color: AppColors.textMuted,
           //                                                                       width: 1,
           //                                                                       height: 15,
           //                                                                     ),
           //                                                                     Text(
           //                                                                       upcomingTeeTime!['date'] != null ? DateFormat('EEE, MMM d').format(DateFormat('EEEE dd, MMMM, yyyy').parse(upcomingTeeTime!['date'])) : 'Unknown Date',
-          //                                                                       style: GoogleFonts.poppins(color: const Color(0xFF6E7373), fontSize: 13, fontWeight: FontWeight.w500),
+          //                                                                       style: GoogleFonts.poppins(color: AppColors.textMuted, fontSize: 13, fontWeight: FontWeight.w500),
           //                                                                     ),
           //                                                                   ],
           //                                                                 )
@@ -1826,7 +1804,7 @@ class DashboardPageState extends State<DashboardPage> {
           //                                                             Container(
           //                                                               decoration: BoxDecoration(
           //                                                                   color:
-          //                                                                       const Color(0xFFF7FAF4),
+          //                                                                       AppColors.surfaceTint,
           //                                                                   borderRadius: BorderRadius.circular(50)),
           //                                                               child:
           //                                                                   Padding(
@@ -1841,11 +1819,11 @@ class DashboardPageState extends State<DashboardPage> {
           //                                                                     children: [
           //                                                                       Text(
           //                                                                         "Holes: ",
-          //                                                                         style: GoogleFonts.poppins(fontSize: 14, color: const Color(0xFF6E7373), fontWeight: FontWeight.w500),
+          //                                                                         style: GoogleFonts.poppins(fontSize: 14, color: AppColors.textMuted, fontWeight: FontWeight.w500),
           //                                                                       ),
           //                                                                       Text(
           //                                                                         upcomingTeeTime!['holes'].toString(),
-          //                                                                         style: GoogleFonts.poppins(fontSize: 14, color: const Color(0xFF244065), fontWeight: FontWeight.w600),
+          //                                                                         style: GoogleFonts.poppins(fontSize: 14, color: AppColors.ink, fontWeight: FontWeight.w600),
           //                                                                       ),
           //                                                                     ],
           //                                                                   ),
@@ -1855,7 +1833,7 @@ class DashboardPageState extends State<DashboardPage> {
           //                                                             Container(
           //                                                               decoration: BoxDecoration(
           //                                                                   color:
-          //                                                                       const Color(0xFFF7FAF4),
+          //                                                                       AppColors.surfaceTint,
           //                                                                   borderRadius: BorderRadius.circular(50)),
           //                                                               child:
           //                                                                   Padding(
@@ -1870,11 +1848,11 @@ class DashboardPageState extends State<DashboardPage> {
           //                                                                     children: [
           //                                                                       Text(
           //                                                                         "Players: ",
-          //                                                                         style: GoogleFonts.poppins(fontSize: 14, color: const Color(0xFF6E7373), fontWeight: FontWeight.w500),
+          //                                                                         style: GoogleFonts.poppins(fontSize: 14, color: AppColors.textMuted, fontWeight: FontWeight.w500),
           //                                                                       ),
           //                                                                       Text(
           //                                                                         upcomingTeeTime!['persons'].toString(),
-          //                                                                         style: GoogleFonts.poppins(fontSize: 14, color: const Color(0xFF244065), fontWeight: FontWeight.w600),
+          //                                                                         style: GoogleFonts.poppins(fontSize: 14, color: AppColors.ink, fontWeight: FontWeight.w600),
           //                                                                       ),
           //                                                                     ],
           //                                                                   ),
@@ -1884,7 +1862,7 @@ class DashboardPageState extends State<DashboardPage> {
           //                                                             Container(
           //                                                               decoration: BoxDecoration(
           //                                                                   color:
-          //                                                                       const Color(0xFFF7FAF4),
+          //                                                                       AppColors.surfaceTint,
           //                                                                   borderRadius: BorderRadius.circular(50)),
           //                                                               child:
           //                                                                   Padding(
@@ -1899,11 +1877,11 @@ class DashboardPageState extends State<DashboardPage> {
           //                                                                     children: [
           //                                                                       Text(
           //                                                                         "Carts: ",
-          //                                                                         style: GoogleFonts.poppins(fontSize: 14, color: const Color(0xFF6E7373), fontWeight: FontWeight.w500),
+          //                                                                         style: GoogleFonts.poppins(fontSize: 14, color: AppColors.textMuted, fontWeight: FontWeight.w500),
           //                                                                       ),
           //                                                                       Text(
           //                                                                         upcomingTeeTime!['carts'].toString(),
-          //                                                                         style: GoogleFonts.poppins(fontSize: 14, color: const Color(0xFF244065), fontWeight: FontWeight.w600),
+          //                                                                         style: GoogleFonts.poppins(fontSize: 14, color: AppColors.ink, fontWeight: FontWeight.w600),
           //                                                                       ),
           //                                                                     ],
           //                                                                   ),
@@ -1979,7 +1957,7 @@ class DashboardPageState extends State<DashboardPage> {
           //                                       },
           //                                       style: ElevatedButton.styleFrom(
           //                                         backgroundColor:
-          //                                             const Color(0xFF9ECF9A),
+          //                                             AppColors.primary,
           //                                       ),
           //                                       child: Padding(
           //                                         padding: const EdgeInsets

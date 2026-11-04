@@ -1,17 +1,15 @@
+import 'package:driver_pos/repositories/feature_repositories.dart';
+import 'package:driver_pos/theme/app_theme.dart';
 // ignore_for_file: deprecated_member_use, use_build_context_synchronously
 
-import 'dart:convert';
 
-import 'package:driver_pos/services/api_config.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '/components/custom_app_bar.dart';
 import '/components/custom_drawer.dart';
 import '/components/custom_bottom_nav_bar.dart';
 import '/screens/parchase_giftcard_two.dart';
-import 'package:http/http.dart' as http;
 
 // Add a global RouteObserver for navigation events
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
@@ -49,23 +47,14 @@ class ParchaseGiftCardOnePageState extends State<ParchaseGiftCardOnePage>
   Future<void> fetchGiftCardTabs() async {
     setState(() => isLoading = true);
 
-    final String baseUrl = ApiConfig.baseUrl;
 
-    String apiUrl = '$baseUrl/template/giftcards/customer';
 
-    String? token = await secureStorage.read(key: 'accessToken') ?? '';
     try {
       // Replace with your actual API call using http or dio
       // Example using http package:
-      final response = await http.get(
-        Uri.parse(apiUrl),
-        headers: {
-          'Authorization': 'Bearer $token',
-          'Content-Type': 'application/json',
-        },
-      );
+      final response = await giftCardRepository.templates();
       if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
+        final data = response.json;
         final dataList = data['data'] as List<dynamic>;
 
         // print(data['data']);
@@ -217,8 +206,8 @@ class ParchaseGiftCardOnePageState extends State<ParchaseGiftCardOnePage>
     final twoColumnWidth = (screenWidth - 30) / 2;
     final fullWidth = screenWidth - 20;
 
-    const darkGreenColor = Color(0xFF669933);
-    const lightGreenColor = Color(0xFF9ECF9A);
+    const darkGreenColor = AppColors.accent;
+    const lightGreenColor = AppColors.primary;
 
     final buttonColor = _isMessageValid ? darkGreenColor : lightGreenColor;
 
@@ -244,12 +233,12 @@ class ParchaseGiftCardOnePageState extends State<ParchaseGiftCardOnePage>
               height: MediaQuery.of(context).size.height * 0.7,
               child: const Center(
                 child: CircularProgressIndicator(
-                  color: Color(0xFF9ECF9A),
+                  color: AppColors.primary,
                 ),
               ),
             )
           : Container(
-              color: const Color(0xFFFAFCFA),
+              color: AppColors.pageBackground,
               width: double.infinity,
               height: double.infinity,
               child: GestureDetector(
@@ -271,7 +260,7 @@ class ParchaseGiftCardOnePageState extends State<ParchaseGiftCardOnePage>
                               Container(
                                 width: 40,
                                 height: 1,
-                                color: const Color(0xFFB2C1C0),
+                                color: AppColors.border,
                               ),
                               const SizedBox(
                                 width: 10,
@@ -281,7 +270,7 @@ class ParchaseGiftCardOnePageState extends State<ParchaseGiftCardOnePage>
                                 child: Text(
                                   "SELECT GIFT CARD DESIGN FOR SPECIAL OCCASIONS",
                                   style: GoogleFonts.poppins(
-                                      color: const Color(0xFF244065),
+                                      color: AppColors.ink,
                                       fontSize: 15,
                                       fontWeight: FontWeight.w600),
                                   textAlign: TextAlign.center,
@@ -293,7 +282,7 @@ class ParchaseGiftCardOnePageState extends State<ParchaseGiftCardOnePage>
                               Container(
                                 width: 40,
                                 height: 1,
-                                color: const Color(0xFFB2C1C0),
+                                color: AppColors.border,
                               ),
                             ],
                           )),
@@ -357,16 +346,16 @@ class ParchaseGiftCardOnePageState extends State<ParchaseGiftCardOnePage>
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 0, vertical: 12),
                                     backgroundColor: isActive
-                                        ? const Color(0xFF9ECF9A)
+                                        ? AppColors.primary
                                         : Colors.white,
                                     foregroundColor: isActive
                                         ? Colors.white
-                                        : const Color(0xFF2A4768),
+                                        : AppColors.heading,
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(30),
                                       side: BorderSide(
                                         color: isActive
-                                            ? const Color(0xFF9ECF9A)
+                                            ? AppColors.primary
                                             : Colors.grey.shade300,
                                       ),
                                     ),
@@ -414,7 +403,7 @@ class ParchaseGiftCardOnePageState extends State<ParchaseGiftCardOnePage>
                                   borderRadius: BorderRadius.circular(16),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: Colors.grey.withOpacity(0.5),
+                                      color: Colors.grey.withValues(alpha: 0.5),
                                       spreadRadius: 2,
                                       blurRadius: 7,
                                       offset: const Offset(0, 3),
@@ -472,7 +461,7 @@ class ParchaseGiftCardOnePageState extends State<ParchaseGiftCardOnePage>
                             Text(
                               "Write Your Message",
                               style: GoogleFonts.poppins(
-                                color: const Color(0xFF2A4768),
+                                color: AppColors.heading,
                                 fontSize: 15,
                                 fontWeight: FontWeight.w500,
                               ),
@@ -598,7 +587,7 @@ class ParchaseGiftCardOnePageState extends State<ParchaseGiftCardOnePage>
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(50),
         borderSide: const BorderSide(
-          color: Color(0xFF9ECF9A),
+          color: AppColors.primary,
           width: 1,
         ),
       ),
@@ -611,7 +600,7 @@ class ParchaseGiftCardOnePageState extends State<ParchaseGiftCardOnePage>
       ),
       hintText: hintText,
       hintStyle: GoogleFonts.poppins(
-        color: const Color(0xFF6E7373),
+        color: AppColors.textMuted,
         fontSize: 14,
       ),
     );
@@ -620,11 +609,11 @@ class ParchaseGiftCardOnePageState extends State<ParchaseGiftCardOnePage>
   Widget _buildMessageTextField(TextEditingController controller) {
     return TextFormField(
       controller: controller,
-      cursorColor: const Color(0xFF9ECF9A),
+      cursorColor: AppColors.primary,
       maxLines: 1,
       // Added max length property
       style: GoogleFonts.poppins(
-        color: const Color(0xFF2A4768),
+        color: AppColors.heading,
         fontSize: 14,
       ),
       decoration: _inputDecoration("Type your message here...", 10),

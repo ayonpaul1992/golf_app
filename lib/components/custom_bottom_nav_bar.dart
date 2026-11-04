@@ -1,3 +1,4 @@
+import 'package:driver_pos/theme/app_theme.dart';
 // ignore_for_file: deprecated_member_use
 
 import 'package:flutter/material.dart';
@@ -97,7 +98,7 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
             color: Colors.white,
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.4),
+                color: Colors.black.withValues(alpha: 0.4),
                 blurRadius: 10,
                 spreadRadius: 2,
                 offset: const Offset(0, 4),
@@ -156,7 +157,7 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
                               duration: const Duration(milliseconds: 200),
                               decoration: BoxDecoration(
                                 color: hoverIndex == index
-                                    ? const Color(0xFF9ECF9A)
+                                    ? AppColors.primary
                                     : Colors.transparent,
                                 shape: BoxShape.circle,
                               ),
@@ -168,8 +169,8 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
                                 color: hoverIndex == index
                                     ? Colors.white
                                     : (widget.selectedIndex == index
-                                        ? const Color(0xFF9ECF9A)
-                                        : const Color(0xFF244065)),
+                                        ? AppColors.primary
+                                        : AppColors.ink),
                               ),
                             ),
                           ],
@@ -185,8 +186,8 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
                               items[index]['label']!,
                               style: GoogleFonts.poppins(
                                 color: widget.selectedIndex == index
-                                    ? const Color(0xFF9ECF9A)
-                                    : const Color(0xFF648683),
+                                    ? AppColors.primary
+                                    : AppColors.textSubtle,
                                 fontSize: 13,
                                 fontWeight: FontWeight.w400,
                               ),

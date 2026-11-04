@@ -1,8 +1,8 @@
-import 'dart:convert';
-import 'package:driver_pos/services/api_config.dart';
+import 'package:driver_pos/theme/app_theme.dart';
+import '../models/history_page.dart';
+import '../repositories/history_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '/components/custom_app_bar.dart';
 import '/components/custom_drawer.dart';
@@ -95,41 +95,58 @@ class MyTransactionPageState extends State<MyTransactionPage> {
     fetchTransactions();
   }
 
-  Future<void> fetchTransactions() async {
-    setState(() {
-      isLoading = true;
-    });
-    try {
-      final token = await secureStorage.read(key: 'accessToken');
-      final String baseUrl = ApiConfig.baseUrl;
+  final _historyRepository = HistoryRepository();
+  HistoryPage? _historyPage;
+  bool _loadingMore = false;
+  int _historyRequest = 0;
 
-      final response = await http.get(
-        Uri.parse(
-            '$baseUrl/report/myTransactions?limit=50&startDate=${getDateRange(_selectedFilter)['startDate']}&endDate=${getDateRange(_selectedFilter)['endDate']}'),
-        headers: {
-          'Authorization': 'Bearer $token',
-          'Content-Type': 'application/json',
-        },
-      );
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-
-        setState(() {
-          transactions = List<Map<String, dynamic>>.from(data['data'] ?? []);
-        });
-        // return data['transactions'] ?? [];
-        // return data['data'] ?? []; // Replace with actual data when ready
-      } else {
-        throw Exception('Failed to load transactions');
-      }
-    } catch (e) {
-      // Handle error as needed
-      print('Error fetching transactions: $e');
-    } finally {
+  Future<void> fetchTransactions({bool append = false}) async {
+    if (append && (_loadingMore || _historyPage?.hasMore != true)) return;
+    final request = ++_historyRequest;
+    if (mounted) {
       setState(() {
-        isLoading = false;
+        if (append) {
+          _loadingMore = true;
+        } else {
+          isLoading = true;
+        }
       });
     }
+    try {
+      final page = await _historyRepository.fetch(
+        'report/myTransactions',
+        page: append ? _historyPage!.page + 1 : 1,
+        filters: Map<String, String>.from(getDateRange(_selectedFilter)),
+      );
+      if (!mounted || request != _historyRequest) return;
+      setState(() {
+        transactions = append ? [...transactions, ...page.items] : page.items;
+        _historyPage = page;
+      });
+    } catch (_) {
+      if (mounted && request == _historyRequest) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content: Text('Unable to load history. Please retry.')),
+        );
+      }
+    } finally {
+      if (mounted && request == _historyRequest) {
+        setState(() {
+          isLoading = false;
+          _loadingMore = false;
+        });
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _historyRequest++;
+    _historyRepository.dispose();
+    _dateController.dispose();
+    _dropdownOverlay?.remove();
+    super.dispose();
   }
 
   int? editingIndex;
@@ -154,7 +171,7 @@ class MyTransactionPageState extends State<MyTransactionPage> {
                     horizontal: 0), // Adjust horizontal padding
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  border: Border.all(color: const Color(0xFFB2C1C0)),
+                  border: Border.all(color: AppColors.border),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Column(
@@ -177,8 +194,8 @@ class MyTransactionPageState extends State<MyTransactionPage> {
                           style: GoogleFonts.poppins(
                             fontSize: 13,
                             color: option == _selectedFilter
-                                ? const Color(0xFF669933)
-                                : const Color(0xFF244065),
+                                ? AppColors.accent
+                                : AppColors.ink,
                             fontWeight: option == _selectedFilter
                                 ? FontWeight.w600
                                 : FontWeight.w500,
@@ -209,6 +226,14 @@ class MyTransactionPageState extends State<MyTransactionPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: !isLoading && _historyPage?.hasMore == true
+          ? FloatingActionButton.extended(
+              onPressed:
+                  _loadingMore ? null : () => fetchTransactions(append: true),
+              label: Text(_loadingMore ? 'Loading…' : 'Load more'),
+              icon: const Icon(Icons.expand_more),
+            )
+          : null,
       key: _scaffoldKey,
       appBar: CustomAppBar(
         scaffoldKey: _scaffoldKey,
@@ -226,7 +251,7 @@ class MyTransactionPageState extends State<MyTransactionPage> {
       body: isLoading
           ? const Center(
               child: CircularProgressIndicator(
-                color: Color(0xFF9ECF9A),
+                color: AppColors.primary,
               ),
             )
           : RefreshIndicator(
@@ -234,7 +259,7 @@ class MyTransactionPageState extends State<MyTransactionPage> {
               child: SingleChildScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
                 child: Container(
-                  color: const Color(0xFFFAFCFA),
+                  color: AppColors.pageBackground,
                   width: double.infinity,
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 15),
@@ -254,7 +279,7 @@ class MyTransactionPageState extends State<MyTransactionPage> {
                                 Text(
                                   "My Transactions",
                                   style: GoogleFonts.poppins(
-                                      color: const Color(0xFF244065),
+                                      color: AppColors.ink,
                                       fontSize: 17,
                                       fontWeight: FontWeight.w600),
                                 ),
@@ -267,7 +292,7 @@ class MyTransactionPageState extends State<MyTransactionPage> {
                                         style: GoogleFonts.poppins(
                                             fontSize: 13,
                                             fontWeight: FontWeight.w500,
-                                            color: const Color(0xFF6E7373)),
+                                            color: AppColors.textMuted),
                                       ),
                                       const SizedBox(width: 5),
                                       Text(
@@ -275,14 +300,14 @@ class MyTransactionPageState extends State<MyTransactionPage> {
                                         style: GoogleFonts.poppins(
                                             fontSize: 13,
                                             fontWeight: FontWeight.w600,
-                                            color: const Color(0xFF244065)),
+                                            color: AppColors.ink),
                                       ),
                                       Icon(
                                         _dropdownOverlay == null
                                             ? Icons.keyboard_arrow_down_rounded
                                             : Icons.keyboard_arrow_up_rounded,
                                         size: 22,
-                                        color: const Color(0xFF669933),
+                                        color: AppColors.accent,
                                       )
                                     ],
                                   ),
@@ -315,27 +340,8 @@ class MyTransactionPageState extends State<MyTransactionPage> {
                                 .contains('green'),
                             orElse: () => {},
                           );
-                          final products = orderItems.firstWhere(
-                            (item) => (item['name'] ?? '')
-                                .toString()
-                                .toLowerCase()
-                                .contains('product'),
-                            orElse: () => {},
-                          );
 
                           // Find Tips and Fees
-                          final tipsAndFees = orderItems.firstWhere(
-                            (item) =>
-                                (item['name'] ?? '')
-                                    .toString()
-                                    .toLowerCase()
-                                    .contains('tip') ||
-                                (item['name'] ?? '')
-                                    .toString()
-                                    .toLowerCase()
-                                    .contains('fee'),
-                            orElse: () => {},
-                          );
 
                           // Payment icon and label
                           String paymentIcon = 'assets/images/cashc.png';
@@ -366,10 +372,10 @@ class MyTransactionPageState extends State<MyTransactionPage> {
                                   children: [
                                     Container(
                                       decoration: BoxDecoration(
-                                        color: const Color(0xFFF8F8F8),
+                                        color: AppColors.surfaceMuted,
                                         borderRadius: BorderRadius.circular(15),
                                         border: Border.all(
-                                          color: const Color(0xFFE9EBEB),
+                                          color: AppColors.disabled,
                                           width: 1,
                                         ),
                                       ),
@@ -388,7 +394,7 @@ class MyTransactionPageState extends State<MyTransactionPage> {
                                                     const Icon(
                                                       Icons
                                                           .calendar_month_outlined,
-                                                      color: Color(0xFF648683),
+                                                      color: AppColors.textSubtle,
                                                       size: 20,
                                                     ),
                                                     const SizedBox(width: 6),
@@ -435,7 +441,7 @@ class MyTransactionPageState extends State<MyTransactionPage> {
                                             ),
                                           ),
                                           const Divider(
-                                            color: Color(0xFFE9EBEB),
+                                            color: AppColors.disabled,
                                             thickness: 1.5,
                                           ),
                                           Container(
@@ -542,7 +548,7 @@ class MyTransactionPageState extends State<MyTransactionPage> {
                                             ),
                                           ),
                                           const Divider(
-                                            color: Color(0xFFE9EBEB),
+                                            color: AppColors.disabled,
                                             thickness: 1.5,
                                           ),
                                           Container(
@@ -583,7 +589,7 @@ class MyTransactionPageState extends State<MyTransactionPage> {
                                             ),
                                           ),
                                           const Divider(
-                                            color: Color(0xFFE9EBEB),
+                                            color: AppColors.disabled,
                                             thickness: 1.5,
                                           ),
                                           Container(
@@ -669,7 +675,7 @@ class MyTransactionPageState extends State<MyTransactionPage> {
                                     Text(
                                       "No Transactions Found",
                                       style: GoogleFonts.poppins(
-                                        color: const Color(0xFF244065),
+                                        color: AppColors.ink,
                                         fontSize: 15,
                                         fontWeight: FontWeight.w600,
                                       ),
@@ -689,11 +695,11 @@ class MyTransactionPageState extends State<MyTransactionPage> {
       // body: isLoading
       //     ? const Center(
       //         child: CircularProgressIndicator(
-      //           color: Color(0xFF9ECF9A),
+      //           color: AppColors.primary,
       //         ),
       //       )
       //     : Container(
-      //         color: const Color(0xFFFAFCFA),
+      //         color: AppColors.pageBackground,
       //         width: double.infinity,
       //         height: double.infinity,
       //         child: Padding(
@@ -715,7 +721,7 @@ class MyTransactionPageState extends State<MyTransactionPage> {
       //                         Text(
       //                           "My Transactions",
       //                           style: GoogleFonts.poppins(
-      //                               color: const Color(0xFF244065),
+      //                               color: AppColors.ink,
       //                               fontSize: 17,
       //                               fontWeight: FontWeight.w600),
       //                         ),
@@ -728,7 +734,7 @@ class MyTransactionPageState extends State<MyTransactionPage> {
       //                                 style: GoogleFonts.poppins(
       //                                     fontSize: 13,
       //                                     fontWeight: FontWeight.w500,
-      //                                     color: const Color(0xFF6E7373)),
+      //                                     color: AppColors.textMuted),
       //                               ),
       //                               const SizedBox(width: 5),
       //                               Text(
@@ -736,14 +742,14 @@ class MyTransactionPageState extends State<MyTransactionPage> {
       //                                 style: GoogleFonts.poppins(
       //                                     fontSize: 13,
       //                                     fontWeight: FontWeight.w600,
-      //                                     color: const Color(0xFF244065)),
+      //                                     color: AppColors.ink),
       //                               ),
       //                               Icon(
       //                                 _dropdownOverlay == null
       //                                     ? Icons.keyboard_arrow_down_rounded
       //                                     : Icons.keyboard_arrow_up_rounded,
       //                                 size: 22,
-      //                                 color: const Color(0xFF669933),
+      //                                 color: AppColors.accent,
       //                               )
       //                             ],
       //                           ),
@@ -823,10 +829,10 @@ class MyTransactionPageState extends State<MyTransactionPage> {
       //                           children: [
       //                             Container(
       //                               decoration: BoxDecoration(
-      //                                 color: const Color(0xFFF8F8F8),
+      //                                 color: AppColors.surfaceMuted,
       //                                 borderRadius: BorderRadius.circular(15),
       //                                 border: Border.all(
-      //                                   color: const Color(0xFFE9EBEB),
+      //                                   color: AppColors.disabled,
       //                                   width: 1,
       //                                 ),
       //                               ),
@@ -844,7 +850,7 @@ class MyTransactionPageState extends State<MyTransactionPage> {
       //                                             const Icon(
       //                                               Icons
       //                                                   .calendar_month_outlined,
-      //                                               color: Color(0xFF648683),
+      //                                               color: AppColors.textSubtle,
       //                                               size: 20,
       //                                             ),
       //                                             const SizedBox(width: 6),
@@ -888,7 +894,7 @@ class MyTransactionPageState extends State<MyTransactionPage> {
       //                                     ),
       //                                   ),
       //                                   const Divider(
-      //                                     color: Color(0xFFE9EBEB),
+      //                                     color: AppColors.disabled,
       //                                     thickness: 1.5,
       //                                   ),
       //                                   Container(
@@ -961,7 +967,7 @@ class MyTransactionPageState extends State<MyTransactionPage> {
       //                                     ),
       //                                   ),
       //                                   const Divider(
-      //                                     color: Color(0xFFE9EBEB),
+      //                                     color: AppColors.disabled,
       //                                     thickness: 1.5,
       //                                   ),
       //                                   Container(
@@ -1000,7 +1006,7 @@ class MyTransactionPageState extends State<MyTransactionPage> {
       //                                     ),
       //                                   ),
       //                                   const Divider(
-      //                                     color: Color(0xFFE9EBEB),
+      //                                     color: AppColors.disabled,
       //                                     thickness: 1.5,
       //                                   ),
       //                                   Container(
@@ -1081,7 +1087,7 @@ class MyTransactionPageState extends State<MyTransactionPage> {
       //                           'No transactions found',
       //                           style: GoogleFonts.poppins(
       //                             fontSize: 15,
-      //                             color: const Color(0xFF244065),
+      //                             color: AppColors.ink,
       //                           ),
       //                         ),
       //                       )

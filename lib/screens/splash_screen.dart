@@ -1,3 +1,4 @@
+import 'package:driver_pos/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'login.dart';
@@ -38,7 +39,7 @@ class SplashScreenState extends State<SplashScreen> {
                     Container(
                       width: 40,
                       height: 1,
-                      color: const Color(0xFFB2C1C0),
+                      color: AppColors.border,
                     ),
                     const SizedBox(
                       width: 10,
@@ -46,7 +47,7 @@ class SplashScreenState extends State<SplashScreen> {
                     Text(
                       'Your Tee Time, Your Way',
                       style: GoogleFonts.poppins(
-                        color: const Color(0xFF244065),
+                        color: AppColors.ink,
                         fontSize: 17.5,
                         fontWeight: FontWeight.w600,
                       ),
@@ -57,7 +58,7 @@ class SplashScreenState extends State<SplashScreen> {
                     Container(
                       width: 40,
                       height: 1,
-                      color: const Color(0xFFB2C1C0),
+                      color: AppColors.border,
                     ),
                   ],
                 ),
@@ -71,7 +72,7 @@ class SplashScreenState extends State<SplashScreen> {
                     "Whether you're planning a solo round, a friendly foursome, or a tournament warm-up, booking has never been easier.",
                     textAlign: TextAlign.center, // ✅ Set text alignment here
                     style: GoogleFonts.poppins(
-                      color: const Color(0xFF6E7373),
+                      color: AppColors.textMuted,
                       fontSize: 13,
                       fontWeight: FontWeight.w400,
                     ),
@@ -93,7 +94,7 @@ class SplashScreenState extends State<SplashScreen> {
                           );
                         },
                         style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF9ECF9A)),
+                            backgroundColor: AppColors.primary),
                         child: Padding(
                           padding: const EdgeInsets.symmetric(
                               horizontal: 15.0, vertical: 10.0),
@@ -101,7 +102,7 @@ class SplashScreenState extends State<SplashScreen> {
                             child: Text(
                               "Proceed",
                               style: GoogleFonts.poppins(
-                                color: const Color(0xFFFFFFFF),
+                                color: AppColors.surface,
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
                               ),
@@ -115,7 +116,7 @@ class SplashScreenState extends State<SplashScreen> {
                       right: 15,
                       child: Icon(
                         Icons.arrow_forward,
-                        color: Color(0xFFFFFFFF),
+                        color: AppColors.surface,
                         size: 18,
                       ),
                     )
@@ -126,8 +127,6 @@ class SplashScreenState extends State<SplashScreen> {
           ),
         ),
       ),
-    
-    
     );
   }
 }

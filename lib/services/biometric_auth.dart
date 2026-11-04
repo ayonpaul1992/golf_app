@@ -182,4 +182,3 @@ class BiometricAuth {
     await prefs.remove('isBiometricEnabled');
   }
 }
-

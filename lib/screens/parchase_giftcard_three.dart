@@ -1,19 +1,15 @@
+import 'package:driver_pos/repositories/feature_repositories.dart';
+import 'package:driver_pos/theme/app_theme.dart';
 // ignore_for_file: deprecated_member_use, use_build_context_synchronously
 
-import 'dart:convert';
 
 import 'package:driver_pos/screens/new_test_cart.dart';
-import 'package:driver_pos/services/api_config.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '/components/custom_app_bar.dart';
 import '/components/custom_drawer.dart';
 import '/components/custom_bottom_nav_bar.dart';
-import 'package:crypto/crypto.dart';
-import 'package:cryptography/cryptography.dart';
-import 'package:http/http.dart' as http;
 
 // Add a global RouteObserver for navigation events
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
@@ -32,7 +28,7 @@ class ParchaseGiftCardThreePage extends StatefulWidget {
       giftMessage; // NEW: The actual message accompanying the gift card
 
   const ParchaseGiftCardThreePage({
-    Key? key,
+    super.key,
     required this.golfCourseId,
     required this.giftCardId,
     required this.selectedCardTrnsImage,
@@ -42,7 +38,7 @@ class ParchaseGiftCardThreePage extends StatefulWidget {
     required this.recipientEmail, // NEW required parameter
     required this.recipientMobileNo, // NEW required parameter
     required this.giftMessage, // NEW required parameter
-  }) : super(key: key);
+  });
 
   @override
   State<StatefulWidget> createState() => ParchaseGiftCardThreePageState();
@@ -59,11 +55,8 @@ class ParchaseGiftCardThreePageState extends State<ParchaseGiftCardThreePage>
   }
 
   purchaseGiftCard() async {
-    final String baseUrl = ApiConfig.baseUrl;
 
-    final String apiUrl = '$baseUrl/giftCard/purchase';
 
-    String? token = await secureStorage.read(key: 'accessToken') ?? '';
 
     try {
       final postData = {
@@ -80,41 +73,17 @@ class ParchaseGiftCardThreePageState extends State<ParchaseGiftCardThreePage>
 
       final payload = postData;
 
-      // Encrypt the payload
-      final secret =
-          'course1999golf01'; // must match Node backend ENCRYPT_SECRET
-      final keyHash = sha256.convert(utf8.encode(secret)).bytes;
-      final secretKey = SecretKey(keyHash);
-      final algorithm = AesGcm.with256bits();
-      final iv = algorithm.newNonce();
+      // Prepare the request payload
+      final requestPayload =
+          Map<String, dynamic>.from(payload);
 
-      final secretBox = await algorithm.encrypt(
-        utf8.encode(jsonEncode(payload)),
-        secretKey: secretKey,
-        nonce: iv,
-      );
-
-      final encryptedPayload = {
-        'iv': base64Encode(iv),
-        'data': base64Encode(secretBox.cipherText),
-        'tag': base64Encode(secretBox.mac.bytes),
-      };
-
-      final response = await http.post(
-        Uri.parse(apiUrl),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-        body: jsonEncode(encryptedPayload),
-      );
+      final response = await giftCardRepository.purchase(requestPayload);
 
       print('sendign');
       print(response.statusCode);
-      print(response.body);
 
       if (response.statusCode == 200) {
-        final Map<String, dynamic> data = jsonDecode(response.body);
+        final Map<String, dynamic> data = response.json;
 
         print('Response data: $data');
 
@@ -168,7 +137,7 @@ class ParchaseGiftCardThreePageState extends State<ParchaseGiftCardThreePage>
         },
       ),
       body: Container(
-        color: const Color(0xFFFAFCFA),
+        color: AppColors.pageBackground,
         width: double.infinity,
         height: double.infinity,
         child: GestureDetector(
@@ -191,7 +160,7 @@ class ParchaseGiftCardThreePageState extends State<ParchaseGiftCardThreePage>
                           Container(
                             width: 40,
                             height: 1,
-                            color: const Color(0xFFB2C1C0),
+                            color: AppColors.border,
                           ),
                           const SizedBox(
                             width: 10,
@@ -201,7 +170,7 @@ class ParchaseGiftCardThreePageState extends State<ParchaseGiftCardThreePage>
                             child: Text(
                               "TAKE A FINAL LOOK",
                               style: GoogleFonts.poppins(
-                                  color: const Color(0xFF244065),
+                                  color: AppColors.ink,
                                   fontSize: 15,
                                   fontWeight: FontWeight.w600),
                               textAlign: TextAlign.center,
@@ -213,7 +182,7 @@ class ParchaseGiftCardThreePageState extends State<ParchaseGiftCardThreePage>
                           Container(
                             width: 40,
                             height: 1,
-                            color: const Color(0xFFB2C1C0),
+                            color: AppColors.border,
                           ),
                         ],
                       )),
@@ -224,7 +193,7 @@ class ParchaseGiftCardThreePageState extends State<ParchaseGiftCardThreePage>
                   Text(
                     widget.recipientName.toUpperCase(),
                     style: GoogleFonts.greatVibes(
-                      color: const Color(0xFF669933),
+                      color: AppColors.accent,
                       fontSize: 47,
                       fontWeight: FontWeight.w600,
                     ),
@@ -234,7 +203,7 @@ class ParchaseGiftCardThreePageState extends State<ParchaseGiftCardThreePage>
                   Text(
                     widget.senderName.toUpperCase(),
                     style: GoogleFonts.notoSerif(
-                        color: const Color(0xFF244065),
+                        color: AppColors.ink,
                         fontSize: 35,
                         fontWeight: FontWeight.w500,
                         letterSpacing: 1.5),
@@ -250,7 +219,7 @@ class ParchaseGiftCardThreePageState extends State<ParchaseGiftCardThreePage>
                   Text(
                     widget.giftMessage.toUpperCase(),
                     style: GoogleFonts.poppins(
-                      color: const Color(0xFF2A4768),
+                      color: AppColors.heading,
                       fontSize: 20,
                       fontWeight: FontWeight.w600,
                     ),
@@ -266,7 +235,7 @@ class ParchaseGiftCardThreePageState extends State<ParchaseGiftCardThreePage>
                       borderRadius: BorderRadius.circular(15),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
+                          color: Colors.black.withValues(alpha: 0.1),
                           spreadRadius: 2,
                           blurRadius: 10,
                           offset: const Offset(0, 5),
@@ -318,7 +287,7 @@ class ParchaseGiftCardThreePageState extends State<ParchaseGiftCardThreePage>
                   Text(
                     "\$ ${widget.amount}",
                     style: GoogleFonts.poppins(
-                      color: const Color(0xFF2A4768),
+                      color: AppColors.heading,
                       fontSize: 23,
                       fontWeight: FontWeight.w600,
                     ),
@@ -353,8 +322,7 @@ class ParchaseGiftCardThreePageState extends State<ParchaseGiftCardThreePage>
                           purchaseGiftCard();
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                              const Color(0xFF669933), // Dark green color
+                          backgroundColor: AppColors.accent, // Dark green color
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(50),
                           ),
@@ -372,7 +340,7 @@ class ParchaseGiftCardThreePageState extends State<ParchaseGiftCardThreePage>
                         child: Text(
                           "\$ ${widget.amount}",
                           style: GoogleFonts.poppins(
-                            color: const Color(0xFFFFFFFF),
+                            color: AppColors.surface,
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
                           ),
